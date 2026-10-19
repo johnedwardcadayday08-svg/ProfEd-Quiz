@@ -141,7 +141,6 @@
             align-items: flex-end;
             justify-content: flex-end;
             overflow: hidden;
-            animation: profilePop 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
         .side-profile-img {
@@ -216,33 +215,26 @@
             transition: all 0.3s ease;
         }
 
-        /* FULLSCREEN EXPANSION CONFIGURATION (KAPAG NAKA-FULLSCREEN LANG) */
-        :fullscreen .container,
-        :-webkit-full-screen .container,
-        :-moz-full-screen .container,
-        :-ms-fullscreen .container {
-            max-width: 1450px !important;
-            margin-top: 5px !important;
-            margin-bottom: 5px !important;
-            padding-top: 22px !important;
+        /* FULLSCREEN EXPANSION CONFIGURATION (KAPAG NAKA-FULLSCREEN NA) */
+        body.is-fullscreen .container {
+            max-width: 1480px !important;
+            margin-top: 2px !important;
+            margin-bottom: 2px !important;
+            padding-top: 20px !important;
             padding-bottom: 22px !important;
-            height: calc(100vh - 85px);
+            height: calc(100vh - 105px) !important;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        :fullscreen .attorney-buttons-container .group-btn,
-        :-webkit-full-screen .attorney-buttons-container .group-btn,
-        :-moz-full-screen .attorney-buttons-container .group-btn {
-            padding: 18px 14px !important;
-            font-size: 16px !important;
+        body.is-fullscreen .attorney-buttons-container .group-btn {
+            padding: 22px 16px !important;
+            font-size: 17px !important;
             font-weight: 800 !important;
         }
 
-        :fullscreen #role-select,
-        :-webkit-full-screen #role-select,
-        :-moz-full-screen #role-select {
+        body.is-fullscreen #role-select {
             justify-content: space-around;
             height: 100%;
         }
@@ -1279,13 +1271,30 @@
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => console.log(err));
+                document.documentElement.requestFullscreen().then(() => {
+                    document.body.classList.add('is-fullscreen');
+                }).catch(err => console.log(err));
                 document.getElementById('fs-btn').innerText = "⤓ Exit Full";
             } else {
-                if (document.exitFullscreen) document.exitFullscreen();
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().then(() => {
+                        document.body.classList.remove('is-fullscreen');
+                    });
+                }
                 document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
             }
         }
+
+        // Auto-detect if user exits fullscreen via ESC key
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                document.body.classList.remove('is-fullscreen');
+                document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
+            } else {
+                document.body.classList.add('is-fullscreen');
+                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
+            }
+        });
 
         function handleSurrender() { location.reload(); }
         function selectRole(role) {
