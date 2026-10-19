@@ -18,8 +18,8 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Darkened background overlay for balanced visibility */
-            background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.55)), 
+            /* Balanced darkened background overlay for perfect readability */
+            background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), 
                         url('/background.jpg') no-repeat center center fixed;
             background-size: cover;
             color: var(--text-color);
@@ -53,36 +53,35 @@
         .icon-4 { bottom: 10%; right: 7%; animation-delay: 4.5s; }
         .icon-5 { top: 50%; left: 3%; animation-delay: 2s; }
 
-        /* CIRCULAR EMBOSSED PROFILE BADGE ON FIRST SCREEN */
+        /* FULL BODY / TRANSPARENT PNG POP-UP AT RIGHT EDGE WITH SHADOW */
         .side-profile-container {
             position: fixed;
-            right: 30px;
-            bottom: 30px;
-            width: 220px;
-            height: 220px;
+            right: 0;
+            bottom: 0;
+            width: 320px;
+            height: 85vh;
             z-index: 5;
             pointer-events: none;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            border: 3.5px solid rgba(192, 132, 252, 0.8);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(168, 85, 247, 0.6);
+            align-items: flex-end;
+            justify-content: flex-end;
             overflow: hidden;
-            background: #0f172a;
             animation: profilePop 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
         .side-profile-img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top center;
+            height: auto;
+            max-height: 100%;
+            object-fit: contain;
+            object-position: bottom right;
+            /* Stunning shadow and glow to emphasize full body cutout */
+            filter: drop-shadow(-15px 0px 30px rgba(168, 85, 247, 0.5)) drop-shadow(-25px 10px 40px rgba(0, 0, 0, 0.9));
         }
 
         @keyframes profilePop {
-            0% { transform: scale(0.6); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: translateX(80px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
         }
 
         .container { 
@@ -165,7 +164,6 @@
         .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 10px; }
         .bar-score { font-weight: bold; width: 45px; text-align: right; font-size: 14px; color: #f3e8ff; text-shadow: 0 2px 4px rgba(0,0,0,0.9); }
 
-        /* QUESTION CARDS */
         .question-card { 
             background: rgba(15, 23, 42, 0.35); 
             border: 1.5px solid rgba(255, 255, 255, 0.3); 
@@ -183,7 +181,6 @@
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
         }
 
-        /* BLUE CHOICES WITH TRANSPARENT GLASS LOOK */
         .options label { 
             display: flex; 
             align-items: center; 
@@ -413,7 +410,7 @@
             .options label { font-size: 12px; padding: 8px; }
             #judge-welcome-msg { font-size: 28px; }
             .student-welcome-text { font-size: 24px; }
-            .side-profile-container { width: 120px; height: 120px; right: 15px; bottom: 15px; border-width: 2.5px; }
+            .side-profile-container { width: 180px; height: 50vh; }
         }
     </style>
 </head>
@@ -425,7 +422,7 @@
     <div class="law-bg-element icon-4">🔨</div>
     <div class="law-bg-element icon-5">🖋️</div>
 
-    <!-- Circular Headshot Badge on First Screen -->
+    <!-- Full Body Transparent PNG on First Screen with Glow Shadow -->
     <div class="side-profile-container" id="side-profile">
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
