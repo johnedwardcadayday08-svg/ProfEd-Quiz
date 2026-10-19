@@ -140,7 +140,6 @@
             filter: drop-shadow(-10px 5px 15px rgba(0, 0, 0, 0.7));
         }
 
-        /* QR CODE WRAPPER */
         .qr-code-wrapper {
             position: fixed;
             z-index: 10;
@@ -170,7 +169,6 @@
             border-radius: 8px;
         }
 
-        /* LAPTOP VIEW: Inbaba ken inikkatan ti sapol dagiti buttons */
         @media (min-width: 769px) {
             .qr-code-wrapper {
                 right: 35px;
@@ -178,7 +176,6 @@
             }
         }
 
-        /* MOBILE VIEW: Nababa, nairugi, ken nabbabassit iti pwesto ti puso */
         @media (max-width: 768px) {
             .side-profile-container { width: 160px; height: 35vh; }
             .qr-code-wrapper {
@@ -252,31 +249,188 @@
             margin-bottom: 0;
         }
 
-        .winner-modal-overlay {
+        /* AESTHETIC & CUTE CAMERA MODAL STYLING */
+        #camera-modal {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(14px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10004;
+            padding: 20px;
+        }
+
+        .camera-box {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+            border: 2.5px solid #c084fc;
+            border-radius: 30px;
+            padding: 28px 22px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 30px rgba(168, 85, 247, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-box::before {
+            content: '✨💖';
+            position: absolute;
+            top: 12px;
+            left: 18px;
+            font-size: 16px;
+        }
+        .camera-box::after {
+            content: '📸🌸';
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 16px;
+        }
+
+        #webcam-video, #webcam-canvas {
+            width: 100%;
+            max-width: 240px;
+            height: 180px;
+            border-radius: 20px;
+            border: 3px solid #f472b6;
+            object-fit: cover;
+            background: #000;
+            margin: 12px auto;
+            display: block;
+            box-shadow: 0 8px 20px rgba(244, 114, 182, 0.3);
+        }
+
+        #captured-preview {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3.5px solid #38bdf8;
+            margin: 12px auto;
+            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+        }
+
+        /* JUDGE CENTER SCREEN POPUP FOR SEQUENTIAL PHOTO DISPLAY (3 SECONDS) */
+        #judge-photo-popup {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(12px);
             display: none;
             justify-content: center;
             align-items: center;
+            z-index: 10006;
+            flex-direction: column;
+        }
+
+        .judge-popup-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99));
+            border: 3px solid #c084fc;
+            border-radius: 30px;
+            padding: 30px 40px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(168, 85, 247, 0.4);
+            animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .judge-popup-card img {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #38bdf8;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            margin: 15px 0;
+        }
+
+        /* JUDGE SCOREBOARD WITH PICTURES ALIGNED */
+        .bar-row { 
+            display: flex; 
+            align-items: center; 
+            margin: 12px 0; 
+            gap: 12px;
+        }
+        .attorney-avatar-mini {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #c084fc;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        /* AESTHETIC TIME'S UP BOXES WITH PICTURES */
+        .winner-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(14px);
+            display: none;
+            justify-content: center;
+            align-items: center;
             z-index: 10005;
-            padding: 20px;
+            padding: 15px;
             box-sizing: border-box;
+            overflow-y: auto;
         }
 
         .winner-modal-card {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
-            border: 2px solid #c084fc;
+            border: 2px solid rgba(192, 132, 252, 0.6);
             border-radius: 28px;
-            padding: 35px 30px;
-            max-width: 520px;
+            padding: 24px 20px;
+            max-width: 650px;
             width: 100%;
             text-align: center;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        .results-boxes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .result-box-card {
+            border-radius: 20px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+            backdrop-filter: blur(8px);
+        }
+
+        .result-box-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .result-box-innocent {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.15));
+            border: 2px solid #34d399;
+            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.25);
+        }
+
+        .result-box-failing {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(225, 29, 72, 0.1));
+            border: 1.5px solid rgba(244, 63, 94, 0.6);
+            padding: 12px 16px;
+            max-width: 90%;
+            margin: 0 auto;
         }
 
         .judge-speech-container {
@@ -397,8 +551,7 @@
         }
         
         .bar-chart-container { margin: 18px 0; background: rgba(15, 23, 42, 0.45); padding: 16px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
-        .bar-row { display: flex; align-items: center; margin: 12px 0; }
-        .bar-label { width: 100px; font-weight: bold; font-size: 14px; color: #f3e8ff; }
+        .bar-label { width: 90px; font-weight: bold; font-size: 13.5px; color: #f3e8ff; }
         .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 26px; border-radius: 9px; overflow: hidden; margin: 0 10px; }
         .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 9px; }
         .bar-score { font-weight: bold; width: 45px; text-align: right; font-size: 14px; color: #f3e8ff; }
@@ -462,20 +615,13 @@
         }
 
         #feedback-popup { 
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
+            position: fixed; top: 50%; left: 50%; 
             transform: translate(-50%, -50%) scale(0.8); 
-            padding: 20px 40px; 
-            border-radius: 20px; 
-            font-size: 26px; 
-            font-weight: 900; 
-            color: white; 
-            z-index: 10005; 
-            display: none; 
+            padding: 20px 40px; border-radius: 20px; 
+            font-size: 26px; font-weight: 900; color: white; 
+            z-index: 10005; display: none; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            text-align: center;
+            backdrop-filter: blur(10px); text-align: center;
             border: 2px solid rgba(255, 255, 255, 0.4);
             animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
@@ -524,7 +670,7 @@
 </head>
 <body>
 
-    <!-- TOP CONTROLS NGA MANGAYO TI ARROW TOGGLE BUTTON -->
+    <!-- TOP CONTROLS -->
     <div class="top-controls" id="top-controls-group">
         <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="I-hide/I-show dagiti buttons">▲</button>
         <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
@@ -541,24 +687,45 @@
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
 
-    <!-- QR CODE CONTAINER NGA NAKAPWESTO ITI NAKIDDAW NGA LUGAR -->
+    <!-- QR CODE CONTAINER -->
     <div class="qr-code-wrapper" id="qr-wrapper">
         <div id="qrcode"></div>
         <p>📱 SCAN TO JOIN</p>
     </div>
 
+    <!-- AESTHETIC & CUTE CAMERA CAPTURE MODAL -->
+    <div id="camera-modal">
+        <div class="camera-box">
+            <h3 style="color: #f472b6; margin: 0 0 4px 0; font-size: 19px;"> Say Hi! 👋💖</h3>
+            <p style="font-size: 12.5px; color: #e2e8f0; margin: 0 0 10px 0;">Smile for the court camera! ✨📸</p>
+            <video id="webcam-video" autoplay playsinline></video>
+            <canvas id="webcam-canvas" class="hidden"></canvas>
+            <img id="captured-preview" class="hidden" />
+            <div id="camera-controls" style="margin-top:10px;">
+                <button class="btn" style="padding:10px 22px; font-size:14px;" onclick="capturePhoto()">Capture Photo 📷</button>
+            </div>
+            <div id="join-now-container" class="hidden" style="margin-top:10px;">
+                <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); width:100%; padding:12px;" onclick="confirmJoinNow()">Join Now 🚀✨</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JUDGE CENTER SCREEN POPUP FOR SEQUENTIAL PHOTO DISPLAY (3 SECONDS) -->
+    <div id="judge-photo-popup">
+        <div class="judge-popup-card">
+            <h3 id="judge-popup-title" style="color: #38bdf8; font-size: 22px; margin: 0;"></h3>
+            <img id="judge-popup-img" src="" alt="Counsel Photo" />
+            <p style="color: #f3e8ff; font-size: 16px; font-weight: bold; margin: 0;">Joined the courtroom proceedings! ✨</p>
+        </div>
+    </div>
+
+    <!-- AESTHETIC TIME'S UP MODAL WITH PICTURES -->
     <div class="winner-modal-overlay" id="winner-modal">
         <div class="winner-modal-card">
-            <div style="font-size: 50px; margin-bottom: 4px;">🏆⚖️</div>
-            <h2 id="winner-title" style="color: #f472b6; font-size: 26px; margin: 10px 0;"></h2>
-            <div style="background: rgba(168, 85, 247, 0.2); border: 1.5px solid rgba(168, 85, 247, 0.5); padding: 16px; border-radius: 16px; margin: 16px 0;">
-                <p style="font-size: 18px; font-weight: 800; color: #ffffff; margin: 0 0 10px 0;">
-                    👏 Give 5 claps for that group and say "magaling, magaling!" 🌟
-                </p>
-                <p id="winner-innocent-text" style="font-size: 24px; font-weight: 900; color: #6ee7b7; margin: 0; line-height: 1.25;">
-                </p>
-            </div>
-            <button class="btn" style="width: 100%; margin-top: 8px; font-size: 15px; padding: 11px;" onclick="closeWinnerModal()">Close / View Review & Results</button>
+            <div style="font-size: 32px; margin-bottom: 2px;">⚖️✨ Court Verdict Results ✨⚖️</div>
+            <h2 style="color: #d8b4fe; font-size: 18px; margin: 4px 0 12px 0;">Final Performance Review</h2>
+            <div class="results-boxes-container" id="attorneys-results-list"></div>
+            <button class="btn" style="width: 100%; margin-top: 10px; font-size: 15px; padding: 11px;" onclick="closeWinnerModal()">Close / View Review & Results</button>
         </div>
     </div>
 
@@ -567,7 +734,7 @@
         <div class="suspect-sidebar-card">
             <div style="font-size: 18px;">👤</div>
             <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11px;">Suspect A</h4>
-            <p style="font-size: 9.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Denied accessible training ramps (R.A. 7277)</p>
+            <p style="font-size: 9.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Denied accessible training ramps (R.A. 7277)[cite: 1, 2]</p>
         </div>
         <div class="suspect-sidebar-card">
             <div style="font-size: 18px;">🧑‍💼</div>
@@ -577,7 +744,7 @@
         <div class="suspect-sidebar-card">
             <div style="font-size: 18px;">🕵️‍♂️</div>
             <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11px;">Suspect C</h4>
-            <p style="font-size: 9.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Respected ancestral domains of IPs</p>
+            <p style="font-size: 9.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Respected ancestral domains of IPs[cite: 1, 2]</p>
         </div>
     </div>
 
@@ -648,27 +815,27 @@
             <div id="review-section">
                 <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px;">📜 Court Review: Detailed Explanations</h3>
                 <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q1: Magna Carta for Disabled Persons</p>
+                    <p style="font-weight: bold; color: #38bdf8;">Q1: Magna Carta for Disabled Persons[cite: 1, 2]</p>
                     <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ay naglalayong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan[cite: 1, 2].</p>
                 </div>
                 <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q2: Protection Against Child Abuse</p>
+                    <p style="font-weight: bold; color: #38bdf8;">Q2: Protection Against Child Abuse[cite: 1, 2]</p>
                     <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata[cite: 1, 2].</p>
                 </div>
                 <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q3: Indigenous Peoples Rights Act (IPRA)</p>
+                    <p style="font-weight: bold; color: #38bdf8;">Q3: Indigenous Peoples Rights Act (IPRA)[cite: 1, 2]</p>
                     <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 8371</b> ay kinikilala, pinoprotektahan, at itinataguyod ang mga karapatan ng mga katutubong pamayanan / katutubong mamamayan[cite: 1, 2].</p>
                 </div>
                 <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q4: State Protection to Quality Education</p>
+                    <p style="font-weight: bold; color: #38bdf8;">Q4: State Protection to Quality Education[cite: 1]</p>
                     <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>1987 Philippine Constitution</b> ang nag-uutos sa Estado na protektahan at itaguyod ang karapatan ng lahat ng mamamayan sa de-kalidad na edukasyon[cite: 1].</p>
                 </div>
                 <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q5: Rehabilitation of Disabled Persons</p>
+                    <p style="font-weight: bold; color: #38bdf8;">Q5: Rehabilitation of Disabled Persons[cite: 1, 2]</p>
                     <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ang tuwirang nagtatakda ng mga programa para sa rehabilitasyon at integrasyon ng mga may kapansanan sa lipunan[cite: 1, 2].</p>
                 </div>
                 <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q6: Philippine Teachers Professionalization Act</p>
+                    <p style="font-weight: bold; color: #38bdf8;">Q6: Philippine Teachers Professionalization Act[cite: 1, 2]</p>
                     <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7836</b> ang nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET) at pagpapapropesyonal ng pagtuturo[cite: 1, 2].</p>
                 </div>
             </div>
@@ -685,7 +852,7 @@
 
             <div id="quiz-questions">
                 <div class="question-card" id="card-q1">
-                    <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?</p>
+                    <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?[cite: 1, 2]</p>
                     <div class="options">
                         <label id="lbl-q1-RA7277"><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
                         <label id="lbl-q1-RA7610"><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
@@ -696,12 +863,12 @@
                         <label id="lbl-q1-RA7836"><input type="radio" name="q1" value="RA7836" onchange="submitAns('q1', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
                     </div>
                     <div class="explanation-box" id="exp-q1">
-                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7277</b> ay kilala bilang "Magna Carta for Disabled Persons"[cite: 1, 2]. Layunin nitong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan upang ganap silang maisama sa mainstream ng lipunan.
+                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7277</b> ay kilala bilang "Magna Carta for Disabled Persons"[cite: 1, 2]. Layunin nitong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan upang ganap silang maisama sa mainstream ng lipunan[cite: 1, 2].
                     </div>
                 </div>
 
                 <div class="question-card" id="card-q2">
-                    <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation, and discrimination?</p>
+                    <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation, and discrimination?[cite: 1, 2]</p>
                     <div class="options">
                         <label id="lbl-q2-RA7277"><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
                         <label id="lbl-q2-RA7610"><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
@@ -717,7 +884,7 @@
                 </div>
 
                 <div class="question-card" id="card-q3">
-                    <p><b>Q3:</b> What law recognizes, protects, and promotes the rights of Indigenous Cultural Communities / Indigenous Peoples (IPRA)?</p>
+                    <p><b>Q3:</b> What law recognizes, protects, and promotes the rights of Indigenous Cultural Communities / Indigenous Peoples (IPRA)?[cite: 1, 2]</p>
                     <div class="options">
                         <label id="lbl-q3-RA7277"><input type="radio" name="q3" value="RA7277" onchange="submitAns('q3', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
                         <label id="lbl-q3-RA7610"><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
@@ -733,7 +900,7 @@
                 </div>
 
                 <div class="question-card" id="card-q4">
-                    <p><b>Q4:</b> Which fundamental law of the land guarantees state protection and promotion of quality education at all levels?</p>
+                    <p><b>Q4:</b> Which fundamental law of the land guarantees state protection and promotion of quality education at all levels?[cite: 1]</p>
                     <div class="options">
                         <label id="lbl-q4-RA7277"><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
                         <label id="lbl-q4-RA7610"><input type="radio" name="q4" value="RA7610" onchange="submitAns('q4', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
@@ -749,7 +916,7 @@
                 </div>
 
                 <div class="question-card" id="card-q5">
-                    <p><b>Q5:</b> Which act mandates the rehabilitation, self-development, and self-reliance of disabled persons and their integration into mainstream society?</p>
+                    <p><b>Q5:</b> Which act mandates the rehabilitation, self-development, and self-reliance of disabled persons and their integration into mainstream society?[cite: 1, 2]</p>
                     <div class="options">
                         <label id="lbl-q5-RA7277"><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
                         <label id="lbl-q5-RA7610"><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
@@ -765,7 +932,7 @@
                 </div>
 
                 <div class="question-card" id="card-q6">
-                    <p><b>Q6:</b> Which law professionalizes the teaching practice and prescribes the licensure examination for teachers in the Philippines?</p>
+                    <p><b>Q6:</b> Which law professionalizes the teaching practice and prescribes the licensure examination for teachers in the Philippines?[cite: 1, 2]</p>
                     <div class="options">
                         <label id="lbl-q6-RA7277"><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
                         <label id="lbl-q6-RA7610"><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
@@ -793,9 +960,21 @@
         let myGroup = null;
         let answeredQuestions = {};
         let finalScoreValue = 0;
-        let latestSortedGroups = [];
+        let latestGroupScores = {
+            'Attorney 1': 0,
+            'Attorney 2': 0,
+            'Attorney 3': 0,
+            'Attorney 4': 0
+        };
+        let attorneyPhotos = {
+            'Attorney 1': '',
+            'Attorney 2': '',
+            'Attorney 3': '',
+            'Attorney 4': ''
+        };
+        let capturedDataUrl = '';
+        let mediaStream = null;
 
-        // GENERATE DYNAMIC AESTHETIC QR CODE ITI CORRECT LINK
         window.addEventListener('DOMContentLoaded', () => {
             new QRCode(document.getElementById("qrcode"), {
                 text: "https://profed-quiz-y6ly.onrender.com",
@@ -807,7 +986,6 @@
             });
         });
 
-        // TOGGLE TOP CONTROLS (FULLSCREEN, SURRENDER, & ARROW HIDE/SHOW)
         function toggleTopControls() {
             const arrowBtn = document.getElementById('toggle-arrow-btn');
             const fsBtn = document.getElementById('fs-btn');
@@ -886,9 +1064,50 @@
             }
         }
 
-        function selectGroup(groupName) {
+        async function selectGroup(groupName) {
             myGroup = groupName;
+            document.getElementById('camera-modal').style.display = 'flex';
             
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                document.getElementById('webcam-video').srcObject = mediaStream;
+            } catch (err) {
+                console.log("Camera access error:", err);
+                alert("Hindi ma-access ang camera. Mangyaring payagan ang camera permissions.");
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('webcam-video');
+            const canvas = document.getElementById('webcam-canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth || 280;
+            canvas.height = video.videoHeight || 210;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            capturedDataUrl = canvas.toDataURL('image/png');
+            
+            video.style.display = 'none';
+            canvas.style.display = 'none';
+            
+            const preview = document.getElementById('captured-preview');
+            preview.src = capturedDataUrl;
+            preview.classList.remove('hidden');
+
+            document.getElementById('camera-controls').classList.add('hidden');
+            document.getElementById('join-now-container').classList.remove('hidden');
+
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        function confirmJoinNow() {
+            document.getElementById('camera-modal').style.display = 'none';
+
+            socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
+
             const studentWelcome = document.getElementById('student-welcome-overlay');
             studentWelcome.style.display = 'flex';
 
@@ -899,7 +1118,7 @@
                 document.getElementById('qr-wrapper').style.display = 'none';
                 document.getElementById('left-sidebar').style.display = 'none';
                 document.getElementById('student-view').classList.remove('hidden');
-                document.getElementById('group-title').innerText = `Dashboard: ${groupName}`;
+                document.getElementById('group-title').innerText = `Dashboard: ${myGroup}`;
                 document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
             }, 1800);
         }
@@ -934,13 +1153,18 @@
             }, 1500);
         });
 
-        socket.on('updateState', ({ groupScores }) => {
-            latestSortedGroups = Object.entries(groupScores).sort((a, b) => b[1] - a[1]);
+        socket.on('updateState', ({ groupScores, photos }) => {
+            latestGroupScores = groupScores;
+            if (photos) attorneyPhotos = photos;
+
+            const sortedGroups = Object.entries(groupScores).sort((a, b) => b[1] - a[1]);
             let chartHTML = '';
-            latestSortedGroups.forEach(([group, score]) => {
+            sortedGroups.forEach(([group, score]) => {
                 let percentage = (score / 6) * 100;
+                let photoSrc = attorneyPhotos[group] || '/logo.png';
                 chartHTML += `
                     <div class="bar-row">
+                        <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini" />
                         <div class="bar-label">${group}</div>
                         <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
                         <div class="bar-score">${score}/6</div>
@@ -956,6 +1180,27 @@
             }
         });
 
+        socket.on('showJudgePopupQueue', (queue) => {
+            playPopupQueue(queue, 0);
+        });
+
+        function playPopupQueue(queue, index) {
+            if (index >= queue.length) return;
+            const item = queue[index];
+
+            const popup = document.getElementById('judge-photo-popup');
+            document.getElementById('judge-popup-title').innerText = `${item.groupName} Connected! ⚖️`;
+            document.getElementById('judge-popup-img').src = item.photo || '/logo.png';
+            popup.style.display = 'flex';
+
+            setTimeout(() => {
+                popup.style.display = 'none';
+                setTimeout(() => {
+                    playPopupQueue(queue, index + 1);
+                }, 400);
+            }, 3000);
+        }
+
         socket.on('timerUpdate', (timer) => {
             let mins = Math.floor(timer / 60).toString().padStart(2, '0');
             let secs = (timer % 60).toString().padStart(2, '0');
@@ -966,19 +1211,42 @@
 
         socket.on('timeUp', () => {
             document.querySelectorAll('input[type="radio"]').forEach(input => input.disabled = true);
-            
             document.querySelectorAll('.explanation-box').forEach(box => box.style.display = "block");
 
-            if (latestSortedGroups && latestSortedGroups.length > 0) {
-                let topGroup = latestSortedGroups[0][0];
-                let topScore = latestSortedGroups[0][1];
-                document.getElementById('winner-title').innerText = `👑 Top Innocent Counsel: ${topGroup} (${topScore} points)`;
-                document.getElementById('winner-innocent-text').innerText = `CONGRATULATIONS ${topGroup.toUpperCase()} ARE INNOCENT! ✨`;
-            } else {
-                document.getElementById('winner-title').innerText = `👑 Time is up!`;
-                document.getElementById('winner-innocent-text').innerText = `CONGRATULATIONS THIS GROUP ARE INNOCENT! ✨`;
-            }
+            const attorneysListContainer = document.getElementById('attorneys-results-list');
+            let resultsHTML = '';
 
+            const attorneyNames = ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'];
+
+            attorneyNames.forEach(attorney => {
+                const score = latestGroupScores[attorney] || 0;
+                const photoSrc = attorneyPhotos[attorney] || '/logo.png';
+                
+                if (score >= 5) {
+                    resultsHTML += `
+                        <div class="result-box-card result-box-innocent">
+                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
+                            <div>
+                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0; font-weight: 800;">✨👑 ${attorney} — ${score} / 6 Points</h4>
+                                <p style="color: #ecfdf5; font-size: 13.5px; font-weight: 700; margin: 2px 0;">Case Closed 🎉👏 ${attorney} is innocent!</p>
+                                <p style="color: #a7f3d0; font-size: 12.5px; font-weight: 600; margin: 0;">Let's give them 5 claps, and say to them "ang galing galing!" 🌟💖</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultsHTML += `
+                        <div class="result-box-card result-box-failing">
+                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
+                            <div>
+                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0; font-weight: 700;">⚖️ ${attorney} — ${score} / 6 Points</h4>
+                                <p style="color: #fff1f2; font-size: 12px; font-weight: 600; margin: 0;">You belong to jail. ⛓️🥀</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            attorneysListContainer.innerHTML = resultsHTML;
             document.getElementById('winner-modal').style.display = 'flex';
         });
 

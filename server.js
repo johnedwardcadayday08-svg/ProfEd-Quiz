@@ -7,7 +7,6 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// I-serve ang mga static files (tulad ng index.html, background.jpg, logo.png, my-photo.png) mula sa root folder
 app.use(express.static(path.join(__dirname)));
 
 let groupScores = {
@@ -17,20 +16,62 @@ let groupScores = {
     'Attorney 4': 0
 };
 
-let timer = 30; // 30 seconds timer o depende sa gusto mo
+let attorneyPhotos = {
+    'Attorney 1': '',
+    'Attorney 2': '',
+    'Attorney 3': '',
+    'Attorney 4': ''
+};
+
+let judgePopupQueue = [];
+let isQueueRunning = false;
+
+let timer = 30;
 let timerInterval = null;
 let timerRunning = false;
 
 io.on('connection', (socket) => {
     console.log('Isang gumagamit o judge/counsel ay kumonekta.');
 
-    // Ipadala ang kasalukuyang estado ng laro sa bagong pasok na user
-    socket.emit('updateState', { groupScores, timer, timerRunning });
+    socket.emit('updateState', { groupScores, photos: attorneyPhotos, timer, timerRunning });
+    socket.emit('timerUpdate', timer);
 
-    // Pagsisimula ng Timer ng Judge
+    socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
+        if (groupName && photo) {
+            attorneyPhotos[groupName] = photo;
+            judgePopupQueue.push({ groupName, photo });
+            
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, timer, timerRunning });
+
+            if (!isQueueRunning) {
+                processPopupQueue();
+            }
+        }
+    });
+
+    function processPopupQueue() {
+        if (judgePopupQueue.length === 0) {
+            isQueueRunning = false;
+            return;
+        }
+        isQueueRunning = true;
+        
+        const currentBatch = [...judgePopupQueue];
+        judgePopupQueue = [];
+
+        io.emit('showJudgePopupQueue', currentBatch);
+
+        const totalDuration = currentBatch.length * 3400;
+        setTimeout(() => {
+            processPopupQueue();
+        }, totalDuration);
+    }
+
     socket.on('startTimer', () => {
         if (!timerRunning) {
             timerRunning = true;
+            if (timerInterval) clearInterval(timerInterval);
+            
             timerInterval = setInterval(() => {
                 if (timer > 0) {
                     timer--;
@@ -44,27 +85,28 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Pag-reset ng Laro
     socket.on('resetGame', () => {
         clearInterval(timerInterval);
         timerRunning = false;
         timer = 30;
         Object.keys(groupScores).forEach(group => {
             groupScores[group] = 0;
+            attorneyPhotos[group] = '';
         });
+        judgePopupQueue = [];
+        isQueueRunning = false;
         io.emit('resetState');
+        io.emit('timerUpdate', timer);
     });
 
-    // Pagtanggap at pag-check ng sagot ng mga Attorneys (Q1 hanggang Q6)
     socket.on('submitAnswer', ({ groupName, questionId, answer }) => {
-        // Mga tamang sagot batay sa iyong 6 na katanungan
         let correctAnswers = {
-            q1: 'RA7277',  // Magna Carta for Disabled Persons
-            q2: 'RA7610',  // Special Protection Against Child Abuse
-            q3: 'RA8371',  // Indigenous Peoples Rights Act (IPRA)
-            q4: 'CONST',   // 1987 Philippine Constitution
-            q5: 'RA7277',  // Rehabilitation of Disabled Persons
-            q6: 'RA7836'   // Philippine Teachers Professionalization Act
+            q1: 'RA7277',
+            q2: 'RA7610',
+            q3: 'RA8371',
+            q4: 'CONST',
+            q5: 'RA7277',
+            q6: 'RA7836'
         };
 
         let isCorrect = (correctAnswers[questionId] === answer);
@@ -74,11 +116,8 @@ io.on('connection', (socket) => {
             }
         }
 
-        // Ipadala ang feedback kung tama o mali ang sinagot ng partikular na attorney
         socket.emit('answerFeedback', { questionId, isCorrect });
-
-        // I-update ang live scoreboard sa lahat ng screen
-        io.emit('updateState', { groupScores, timer, timerRunning });
+        io.emit('updateState', { groupScores, photos: attorneyPhotos, timer, timerRunning });
     });
 
     socket.on('disconnect', () => {
