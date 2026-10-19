@@ -145,6 +145,63 @@
             transition: background 0.3s ease;
         }
 
+        /* ANIMATED FIRST-SCREEN BUTTONS */
+        @keyframes buttonPulseAnim {
+            0% { transform: scale(1); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); }
+            50% { transform: scale(1.03); box-shadow: 0 6px 20px rgba(168, 85, 247, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); }
+        }
+
+        @keyframes groupButtonPulseAnim {
+            0% { transform: scale(1); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
+            50% { transform: scale(1.03); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
+        }
+
+        .animated-main-btn {
+            animation: buttonPulseAnim 2.5s ease-in-out infinite;
+        }
+
+        .animated-group-btn {
+            animation: groupButtonPulseAnim 2.5s ease-in-out infinite;
+            animation-delay: 0.5s;
+        }
+
+        /* SUSPECTS CONTAINER STYLES */
+        .suspects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .suspect-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .suspect-card:hover {
+            border-color: #c084fc;
+            background: rgba(30, 41, 59, 0.85);
+            transform: translateY(-3px);
+        }
+
+        .suspect-card.selected {
+            border-color: #f43f5e;
+            background: rgba(244, 63, 94, 0.2);
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+        }
+
+        .suspect-avatar {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
         /* JUDGE EJ'S CHAMBERS SPEECH CONTAINER */
         .judge-speech-container {
             position: relative;
@@ -186,7 +243,6 @@
             font-size: 15px;
         }
 
-        /* TYPING CURSOR BLINK EFFECT */
         .typing-cursor {
             display: inline-block;
             background-color: #f472b6;
@@ -504,6 +560,7 @@
         @media (max-width: 600px) {
             body { padding: 5px; }
             .container { padding: 14px; border-radius: 16px; margin: 10px auto; }
+            .suspects-grid { grid-template-columns: 1fr; }
             .judge-speech-container { margin: 10px; padding: 12px; gap: 10px; }
             .judge-speech-avatar { font-size: 24px; padding: 8px; }
             .judge-speech-text { font-size: 12.5px; }
@@ -578,6 +635,8 @@
 
     <!-- MAIN APP CONTAINER -->
     <div class="container" id="main-container">
+        
+        <!-- ROLE SELECT VIEW WITH ANIMATED BUTTONS -->
         <div id="role-select">
             <div class="app-logo-container">
                 <img src="/logo.png" alt="Teacher Education Program Logo" class="app-logo">
@@ -585,15 +644,16 @@
             <h1>⚖️ PROFED 5 GROUP 2 QUICK ACTIVITY 📜</h1>
             <p>Select your mode to begin:</p>
             <br>
-            <button class="btn" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
+            <button class="btn animated-main-btn" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             <br><br>
             <h3>Join as:</h3>
-            <button class="btn group-btn" onclick="selectGroup('Attorney 1')">Attorney 1</button>
-            <button class="btn group-btn" onclick="selectGroup('Attorney 2')">Attorney 2</button>
-            <button class="btn group-btn" onclick="selectGroup('Attorney 3')">Attorney 3</button>
-            <button class="btn group-btn" onclick="selectGroup('Attorney 4')">Attorney 4</button>
+            <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 1')">Attorney 1</button>
+            <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 2')">Attorney 2</button>
+            <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 3')">Attorney 3</button>
+            <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 4')">Attorney 4</button>
         </div>
 
+        <!-- TEACHER / JUDGE VIEW -->
         <div id="teacher-view" class="hidden">
             <h1>⚖️ Judge Real-Time Monitor ⚖️</h1>
             <div class="header-bar">
@@ -655,118 +715,154 @@
             </div>
         </div>
 
+        <!-- STUDENT / SUSPECTS & QUIZ VIEW -->
         <div id="student-view" class="hidden">
-            <h1 id="group-title">Counsel Dashboard</h1>
-            <div class="header-bar">
-                <span id="student-timer">Time Left: 00:30</span>
-                <span id="group-score-display">Score: 0 / 6</span>
-            </div>
-
-            <div id="rating-banner"></div>
-
-            <div id="quiz-questions">
-                <div class="question-card" id="card-q1">
-                    <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q1" value="RA9155" onchange="submitAns('q1', 'RA9155')"> D) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q1" value="RA10533" onchange="submitAns('q1', 'RA10533')"> E) Republic Act No. 10533 (Enhanced Basic Education Act)</label>
-                        <label><input type="radio" name="q1" value="RA7836" onchange="submitAns('q1', 'RA7836')"> F) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
-                        <label><input type="radio" name="q1" value="CONST" onchange="submitAns('q1', 'CONST')"> G) The 1987 Philippine Constitution</label>
+            
+            <!-- STEP 1: 3 SUSPECTS INVESTIGATION PANEL -->
+            <div id="suspects-investigation-panel">
+                <h2>🔍 Judge Ej's Preliminary Investigation: 3 Suspects</h2>
+                <p style="text-align: center; color: #e2e8f0; font-size: 14.5px;">
+                    Judge Ej presents 3 suspects involved in statutory violations. Review their profiles and identify the primary violator to unlock the Counsel Quiz Dashboard!
+                </p>
+                
+                <div class="suspects-grid">
+                    <div class="suspect-card" onclick="selectSuspect(1)" id="suspect-1">
+                        <div class="suspect-avatar">👤</div>
+                        <h3>Suspect A</h3>
+                        <p style="font-size: 13px; color: #cbd5e1;">Denied accessible training ramps and employment opportunities for persons with disabilities.</p>
                     </div>
-                    <div class="explanation hidden" id="exp-q1">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
-                        <b>Explanation:</b> R.A. 7277 guarantees full integration, equal opportunities, and rehabilitation for persons with disabilities into mainstream society.
+                    <div class="suspect-card" onclick="selectSuspect(2)" id="suspect-2">
+                        <div class="suspect-avatar">🧑‍💼</div>
+                        <h3>Suspect B</h3>
+                        <p style="font-size: 13px; color: #cbd5e1;">Strictly complied with all professional teacher code of ethics and ethical governance standards.</p>
                     </div>
-                </div>
-
-                <div class="question-card" id="card-q2">
-                    <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation and discrimination?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q2" value="RA9262" onchange="submitAns('q2', 'RA9262')"> D) Republic Act No. 9262 (Anti-Violence Against Women and Their Children Act)</label>
-                        <label><input type="radio" name="q2" value="RA7610X" onchange="submitAns('q2', 'RA7610X')"> E) Republic Act No. 7610 (Child Abuse Prevention Framework)</label>
-                        <label><input type="radio" name="q2" value="RA10627" onchange="submitAns('q2', 'RA10627')"> F) Republic Act No. 10627 (Anti-Bullying Act)</label>
-                        <label><input type="radio" name="q2" value="CONST" onchange="submitAns('q2', 'CONST')"> G) The 1987 Philippine Constitution</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q2">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
-                        <b>Explanation:</b> R.A. 7610 institutes strong statutory protections against child abuse, exploitation, discrimination, and severe cruelty.
+                    <div class="suspect-card" onclick="selectSuspect(3)" id="suspect-3">
+                        <div class="suspect-avatar">🕵️‍♂️</div>
+                        <h3>Suspect C</h3>
+                        <p style="font-size: 13px; color: #cbd5e1;">Respected ancestral domains and supported cultural rights preservation for indigenous communities.</p>
                     </div>
                 </div>
 
-                <div class="question-card" id="card-q3">
-                    <p><b>Q3:</b> Which law is recognized as the Indigenous Peoples' Rights Act (IPRA)?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> A) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q3" value="RA8371" onchange="submitAns('q3', 'RA8371')"> B) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q3" value="RA6713" onchange="submitAns('q3', 'RA6713')"> C) Republic Act No. 6713 (Code of Conduct and Ethical Standards for Public Officials)</label>
-                        <label><input type="radio" name="q3" value="RA7722" onchange="submitAns('q3', 'RA7722')"> D) Republic Act No. 7722 (Higher Education Act)</label>
-                        <label><input type="radio" name="q3" value="RA9155" onchange="submitAns('q3', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q3" value="RA8545" onchange="submitAns('q3', 'RA8545')"> F) Republic Act No. 8545 (Expanded Government Assistance to Students)</label>
-                        <label><input type="radio" name="q3" value="CONST" onchange="submitAns('q3', 'CONST')"> G) The 1987 Philippine Constitution</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q3">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 8371</span>
-                        <b>Explanation:</b> R.A. 8371 preserves ancestral domains, cultural integrity, and self-delineation rights for indigenous communities.
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q4">
-                    <p><b>Q4:</b> What supreme law of the Philippines serves as the fundamental framework for all civil rights and state policies?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q4" value="CONST" onchange="submitAns('q4', 'CONST')"> B) The 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q4" value="RA8371" onchange="submitAns('q4', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q4" value="RA9147" onchange="submitAns('q4', 'RA9147')"> D) Wildlife Resources Conservation and Protection Act</label>
-                        <label><input type="radio" name="q4" value="BIA" onchange="submitAns('q4', 'BIA')"> E) Biak-na-Bato Constitution</label>
-                        <label><input type="radio" name="q4" value="MALOLOS" onchange="submitAns('q4', 'MALOLOS')"> F) The 1899 Malolos Constitution</label>
-                        <label><input type="radio" name="q4" value="CIVILCODE" onchange="submitAns('q4', 'CIVILCODE')"> G) The Civil Code of the Philippines</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q4">
-                        <span class="correct-ans-tag">✔ Correct Answer: The 1987 Philippine Constitution</span>
-                        <b>Explanation:</b> The 1987 Constitution is the supreme law of the land from which all government authority and citizen rights originate.
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q5">
-                    <p><b>Q5:</b> Which statutory framework specifically mandates equal opportunity for employment and training for persons with disabilities?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q5" value="CONST" onchange="submitAns('q5', 'CONST')"> C) The 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q5" value="RA10533" onchange="submitAns('q5', 'RA10533')"> D) Republic Act No. 10533 (K to 12 Law)</label>
-                        <label><input type="radio" name="q5" value="RA7796" onchange="submitAns('q5', 'RA7796')"> E) Republic Act No. 7796 (TESDA Act)</label>
-                        <label><input type="radio" name="q5" value="RA7836" onchange="submitAns('q5', 'RA7836')"> F) Republic Act No. 7836 (Teachers Professionalization Act)</label>
-                        <label><input type="radio" name="q5" value="RA10931" onchange="submitAns('q5', 'RA10931')"> G) Universal Access to Quality Tertiary Education Act</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q5">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
-                        <b>Explanation:</b> Section 5 of R.A. 7277 mandates that no person with a disability shall be denied access to suitable employment or training.
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q6">
-                    <p><b>Q6:</b> Which specific legislation penalizes child trafficking and protects children in especially difficult circumstances?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q6" value="RA8371" onchange="submitAns('q6', 'RA8371')"> A) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> C) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q6" value="RA9208" onchange="submitAns('q6', 'RA9208')"> D) Republic Act No. 9208 (Anti-Trafficking in Persons Act)</label>
-                        <label><input type="radio" name="q6" value="RA10630" onchange="submitAns('q6', 'RA10630')"> E) Republic Act No. 10630 (Juvenile Justice and Welfare Act)</label>
-                        <label><input type="radio" name="q6" value="RA9344" onchange="submitAns('q6', 'RA9344')"> F) Republic Act No. 9344 (Juvenile Justice Act)</label>
-                        <label><input type="radio" name="q6" value="RA7610B" onchange="submitAns('q6', 'RA7610B')"> G) Republic Act No. 7610 (Article VI Penal Provisions)</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q6">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
-                        <b>Explanation:</b> Article VI of R.A. 7610 specifically penalizes child prostitution, illegal recruitment, and child trafficking with maximum imprisonment penalties.
-                    </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="verifySuspectVerdict()">⚖️ Submit Verdict & Unlock Quiz</button>
                 </div>
             </div>
+
+            <!-- STEP 2: ACTUAL QUIZ DASHBOARD (HIDDEN UNTIL SUSPECT IS SOLVED) -->
+            <div id="actual-quiz-section" class="hidden">
+                <h1 id="group-title">Counsel Dashboard</h1>
+                <div class="header-bar">
+                    <span id="student-timer">Time Left: 00:30</span>
+                    <span id="group-score-display">Score: 0 / 6</span>
+                </div>
+
+                <div id="rating-banner"></div>
+
+                <div id="quiz-questions">
+                    <div class="question-card" id="card-q1">
+                        <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                            <label><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                            <label><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                            <label><input type="radio" name="q1" value="RA9155" onchange="submitAns('q1', 'RA9155')"> D) Republic Act No. 9155 (Governance of Basic Education Act)</label>
+                            <label><input type="radio" name="q1" value="RA10533" onchange="submitAns('q1', 'RA10533')"> E) Republic Act No. 10533 (Enhanced Basic Education Act)</label>
+                            <label><input type="radio" name="q1" value="RA7836" onchange="submitAns('q1', 'RA7836')"> F) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
+                            <label><input type="radio" name="q1" value="CONST" onchange="submitAns('q1', 'CONST')"> G) The 1987 Philippine Constitution</label>
+                        </div>
+                        <div class="explanation hidden" id="exp-q1">
+                            <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
+                            <b>Explanation:</b> R.A. 7277 guarantees full integration, equal opportunities, and rehabilitation for persons with disabilities into mainstream society.
+                        </div>
+                    </div>
+
+                    <div class="question-card" id="card-q2">
+                        <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation and discrimination?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                            <label><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                            <label><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                            <label><input type="radio" name="q2" value="RA9262" onchange="submitAns('q2', 'RA9262')"> D) Republic Act No. 9262 (Anti-Violence Against Women and Their Children Act)</label>
+                            <label><input type="radio" name="q2" value="RA7610X" onchange="submitAns('q2', 'RA7610X')"> E) Republic Act No. 7610 (Child Abuse Prevention Framework)</label>
+                            <label><input type="radio" name="q2" value="RA10627" onchange="submitAns('q2', 'RA10627')"> F) Republic Act No. 10627 (Anti-Bullying Act)</label>
+                            <label><input type="radio" name="q2" value="CONST" onchange="submitAns('q2', 'CONST')"> G) The 1987 Philippine Constitution</label>
+                        </div>
+                        <div class="explanation hidden" id="exp-q2">
+                            <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
+                            <b>Explanation:</b> R.A. 7610 institutes strong statutory protections against child abuse, exploitation, discrimination, and severe cruelty.
+                        </div>
+                    </div>
+
+                    <div class="question-card" id="card-q3">
+                        <p><b>Q3:</b> Which law is recognized as the Indigenous Peoples' Rights Act (IPRA)?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> A) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                            <label><input type="radio" name="q3" value="RA8371" onchange="submitAns('q3', 'RA8371')"> B) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                            <label><input type="radio" name="q3" value="RA6713" onchange="submitAns('q3', 'RA6713')"> C) Republic Act No. 6713 (Code of Conduct and Ethical Standards for Public Officials)</label>
+                            <label><input type="radio" name="q3" value="RA7722" onchange="submitAns('q3', 'RA7722')"> D) Republic Act No. 7722 (Higher Education Act)</label>
+                            <label><input type="radio" name="q3" value="RA9155" onchange="submitAns('q3', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
+                            <label><input type="radio" name="q3" value="RA8545" onchange="submitAns('q3', 'RA8545')"> F) Republic Act No. 8545 (Expanded Government Assistance to Students)</label>
+                            <label><input type="radio" name="q3" value="CONST" onchange="submitAns('q3', 'CONST')"> G) The 1987 Philippine Constitution</label>
+                        </div>
+                        <div class="explanation hidden" id="exp-q3">
+                            <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 8371</span>
+                            <b>Explanation:</b> R.A. 8371 preserves ancestral domains, cultural integrity, and self-delineation rights for indigenous communities.
+                        </div>
+                    </div>
+
+                    <div class="question-card" id="card-q4">
+                        <p><b>Q4:</b> What supreme law of the Philippines serves as the fundamental framework for all civil rights and state policies?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                            <label><input type="radio" name="q4" value="CONST" onchange="submitAns('q4', 'CONST')"> B) The 1987 Philippine Constitution</label>
+                            <label><input type="radio" name="q4" value="RA8371" onchange="submitAns('q4', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                            <label><input type="radio" name="q4" value="RA9147" onchange="submitAns('q4', 'RA9147')"> D) Wildlife Resources Conservation and Protection Act</label>
+                            <label><input type="radio" name="q4" value="BIA" onchange="submitAns('q4', 'BIA')"> E) Biak-na-Bato Constitution</label>
+                            <label><input type="radio" name="q4" value="MALOLOS" onchange="submitAns('q4', 'MALOLOS')"> F) The 1899 Malolos Constitution</label>
+                            <label><input type="radio" name="q4" value="CIVILCODE" onchange="submitAns('q4', 'CIVILCODE')"> G) The Civil Code of the Philippines</label>
+                        </div>
+                        <div class="explanation hidden" id="exp-q4">
+                            <span class="correct-ans-tag">✔ Correct Answer: The 1987 Philippine Constitution</span>
+                            <b>Explanation:</b> The 1987 Constitution is the supreme law of the land from which all government authority and citizen rights originate.
+                        </div>
+                    </div>
+
+                    <div class="question-card" id="card-q5">
+                        <p><b>Q5:</b> Which statutory framework specifically mandates equal opportunity for employment and training for persons with disabilities?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                            <label><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                            <label><input type="radio" name="q5" value="CONST" onchange="submitAns('q5', 'CONST')"> C) The 1987 Philippine Constitution</label>
+                            <label><input type="radio" name="q5" value="RA10533" onchange="submitAns('q5', 'RA10533')"> D) Republic Act No. 10533 (K to 12 Law)</label>
+                            <label><input type="radio" name="q5" value="RA7796" onchange="submitAns('q5', 'RA7796')"> E) Republic Act No. 7796 (TESDA Act)</label>
+                            <label><input type="radio" name="q5" value="RA7836" onchange="submitAns('q5', 'RA7836')"> F) Republic Act No. 7836 (Teachers Professionalization Act)</label>
+                            <label><input type="radio" name="q5" value="RA10931" onchange="submitAns('q5', 'RA10931')"> G) Universal Access to Quality Tertiary Education Act</label>
+                        </div>
+                        <div class="explanation hidden" id="exp-q5">
+                            <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
+                            <b>Explanation:</b> Section 5 of R.A. 7277 mandates that no person with a disability shall be denied access to suitable employment or training.
+                        </div>
+                    </div>
+
+                    <div class="question-card" id="card-q6">
+                        <p><b>Q6:</b> Which specific legislation penalizes child trafficking and protects children in especially difficult circumstances?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q6" value="RA8371" onchange="submitAns('q6', 'RA8371')"> A) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                            <label><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                            <label><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> C) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                            <label><input type="radio" name="q6" value="RA9208" onchange="submitAns('q6', 'RA9208')"> D) Republic Act No. 9208 (Anti-Trafficking in Persons Act)</label>
+                            <label><input type="radio" name="q6" value="RA10630" onchange="submitAns('q6', 'RA10630')"> E) Republic Act No. 10630 (Juvenile Justice and Welfare Act)</label>
+                            <label><input type="radio" name="q6" value="RA9344" onchange="submitAns('q6', 'RA9344')"> F) Republic Act No. 9344 (Juvenile Justice Act)</label>
+                            <label><input type="radio" name="q6" value="RA7610B" onchange="submitAns('q6', 'RA7610B')"> G) Republic Act No. 7610 (Article VI Penal Provisions)</label>
+                        </div>
+                        <div class="explanation hidden" id="exp-q6">
+                            <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
+                            <b>Explanation:</b> Article VI of R.A. 7610 specifically penalizes child prostitution, illegal recruitment, and child trafficking with maximum imprisonment penalties.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -782,12 +878,34 @@
         let answeredQuestions = {};
         let finalScoreValue = 0;
         let totalAnsweredCount = 0;
+        let selectedSuspectId = null;
+
+        // SUSPECT SELECTION LOGIC
+        function selectSuspect(id) {
+            document.querySelectorAll('.suspect-card').forEach(card => card.classList.remove('selected'));
+            document.getElementById(`suspect-${id}`).classList.add('selected');
+            selectedSuspectId = id;
+        }
+
+        function verifySuspectVerdict() {
+            if (!selectedSuspectId) {
+                alert("Please select a suspect first before submitting your verdict!");
+                return;
+            }
+            if (selectedSuspectId === 1) {
+                // Correct suspect
+                document.getElementById('suspects-investigation-panel').classList.add('hidden');
+                document.getElementById('actual-quiz-section').classList.remove('hidden');
+            } else {
+                alert("Incorrect suspect! Review the case details carefully. (Hint: Look for the violation of R.A. 7277 / PWD rights).");
+            }
+        }
 
         // JUDGE EJ REPEATING TYPEWRITER EFFECT
         const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, we have an urgent pending case on our docket regarding the protection of marginalized sectors and children\'s rights under our special statutes. Prepare your arguments and statutes meticulously—this session is now officially in session!"';
         
         let charIndex = 0;
-        const typingSpeed = 35; // Milliseconds per character
+        const typingSpeed = 35;
 
         function typeWriter() {
             const target = document.getElementById('typewriter-text');
@@ -796,7 +914,6 @@
                 charIndex++;
                 setTimeout(typeWriter, typingSpeed);
             } else {
-                // Remove cursor temporarily when done, wait 3 seconds, then restart
                 target.innerHTML = judgeMessage;
                 setTimeout(() => {
                     charIndex = 0;
@@ -805,7 +922,6 @@
             }
         }
 
-        // Start typewriter on load
         window.onload = () => {
             typeWriter();
         };
