@@ -151,16 +151,17 @@
         .animated-main-btn { animation: buttonPulseAnim 2.5s ease-in-out infinite; }
         .animated-group-btn { animation: groupButtonPulseAnim 2.5s ease-in-out infinite; animation-delay: 0.5s; }
 
+        /* MAS MANIPIS NA LAPAD AT MAS MAHABA PABABA PARA HINDI LUMAPIT SA IBANG BOX */
         .left-suspects-sidebar {
             position: fixed;
-            left: 20px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            width: 215px;
+            width: 185px;
             background: rgba(15, 23, 42, 0.65);
             border: 1.5px solid rgba(168, 85, 247, 0.4);
             border-radius: 20px;
-            padding: 14px 10px;
+            padding: 14px 8px;
             z-index: 10;
             backdrop-filter: blur(8px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -170,9 +171,13 @@
             background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
-            padding: 10px 8px;
-            margin-bottom: 10px;
+            padding: 12px 6px;
+            margin-bottom: 12px;
             text-align: center;
+        }
+
+        .suspect-sidebar-card:last-child {
+            margin-bottom: 0;
         }
 
         .winner-modal-overlay {
@@ -247,11 +252,22 @@
         h2 { font-size: 20px; color: #e9d5ff; text-align: center; }
         .hidden { display: none !important; }
         
+        #role-select {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+
         .btn { 
             background: linear-gradient(135deg, #a855f7, #9333ea); 
             color: white; border: none; padding: 12px 24px; font-size: 16px; 
-            border-radius: 14px; cursor: pointer; font-weight: bold; margin: 8px; 
+            border-radius: 14px; cursor: pointer; font-weight: bold; margin: 8px auto; 
             box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5);
+            display: inline-block;
         }
         .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); }
         .group-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
@@ -278,7 +294,7 @@
         .options label { 
             display: flex; align-items: center; padding: 10px 14px; margin: 7px 0; 
             background: rgba(14, 116, 144, 0.25); border: 1px solid rgba(56, 189, 248, 0.45); 
-            border-radius: 12px; cursor: pointer; font-size: 14px; color: #ffffff; font-weight: 600; 
+            border-radius: 12px; cursor: pointer; font-size: 13.5px; color: #ffffff; font-weight: 600; 
         }
         .options label input { margin-right: 12px; transform: scale(1.25); accent-color: #38bdf8; }
         
@@ -305,12 +321,21 @@
 
         .modal-card {
             background: rgba(30, 41, 59, 0.95); border: 1.5px solid rgba(255, 255, 255, 0.25);
-            border-radius: 24px; padding: 30px 25px; max-width: 380px; width: 100%; text-align: center;
+            border-radius: 24px; padding: 35px 30px; max-width: 420px; width: 100%; text-align: center;
+            margin: auto; box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
         .modal-input {
-            width: 100%; padding: 14px 16px; margin: 18px 0; background: rgba(255, 255, 255, 0.18);
-            border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 14px; color: #ffffff; font-size: 18px; text-align: center; outline: none;
+            width: 100%; max-width: 320px; padding: 14px 16px; margin: 18px auto; 
+            background: rgba(255, 255, 255, 0.18);
+            border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 14px; color: #ffffff; 
+            font-size: 18px; text-align: center; outline: none; display: block; box-sizing: border-box;
+        }
+
+        .modal-input:focus {
+            border-color: #c084fc;
+            box-shadow: 0 0 10px rgba(192, 132, 252, 0.5);
         }
 
         #judge-welcome-overlay, #student-welcome-overlay {
@@ -368,22 +393,23 @@
         </div>
     </div>
 
+    <!-- MAS MANIPIS AT MAS MAHABA PABABA NA SUSPECTS SIDEBAR -->
     <div class="left-suspects-sidebar" id="left-sidebar">
-        <p style="font-size: 12px; color: #cbd5e1; margin: 0 0 8px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
+        <p style="font-size: 11px; color: #cbd5e1; margin: 0 0 8px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 20px;">👤</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11.5px;">Suspect A</h4>
-            <p style="font-size: 10px; color: #94a3b8; margin: 0;">Denied accessible training ramps for PWDs (R.A. 7277)</p>
+            <div style="font-size: 18px;">👤</div>
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11px;">Suspect A</h4>
+            <p style="font-size: 9.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Denied accessible training ramps for PWDs (R.A. 7277)</p>
         </div>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 20px;">🧑‍💼</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11.5px;">Suspect B</h4>
-            <p style="font-size: 10px; color: #94a3b8; margin: 0;">Complied with teacher professional code of ethics</p>
+            <div style="font-size: 18px;">🧑‍💼</div>
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11px;">Suspect B</h4>
+            <p style="font-size: 9.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Complied with teacher professional code of ethics</p>
         </div>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 20px;">🕵️‍♂️</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11.5px;">Suspect C</h4>
-            <p style="font-size: 10px; color: #94a3b8; margin: 0;">Respected ancestral domains of indigenous communities</p>
+            <div style="font-size: 18px;">🕵️‍♂️</div>
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11px;">Suspect C</h4>
+            <p style="font-size: 9.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Respected ancestral domains of indigenous communities</p>
         </div>
     </div>
 
@@ -394,9 +420,9 @@
             <h3>⚖️ Judge Access</h3>
             <p style="font-size:14px; color:#e2e8f0; margin-top:5px;">Please enter the password to proceed:</p>
             <input type="password" id="judge-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="handleKeyPress(event)" autocomplete="off" />
-            <div style="display:flex; gap:12px; justify-content:center;">
-                <button class="btn" style="background:var(--danger);" onclick="closePasswordModal()">Cancel</button>
-                <button class="btn" onclick="verifyJudgePassword()">Submit</button>
+            <div style="display:flex; gap:12px; justify-content:center; width: 100%; margin-top: 10px;">
+                <button class="btn" style="background:var(--danger); width: 45%; margin:0;" onclick="closePasswordModal()">Cancel</button>
+                <button class="btn" style="width: 45%; margin:0;" onclick="verifyJudgePassword()">Submit</button>
             </div>
         </div>
     </div>
@@ -432,11 +458,11 @@
             <button class="btn animated-main-btn" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             <br><br>
             <h3 style="text-align:center;">Join as:</h3>
-            <div style="text-align:center;">
-                <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 1')">Attorney 1</button>
-                <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 2')">Attorney 2</button>
-                <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 3')">Attorney 3</button>
-                <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 4')">Attorney 4</button>
+            <div style="text-align:center; display: flex; flex-direction: column; align-items: center; width: 100%;">
+                <button class="btn group-btn animated-group-btn" style="width: 220px;" onclick="selectGroup('Attorney 1')">Attorney 1</button>
+                <button class="btn group-btn animated-group-btn" style="width: 220px;" onclick="selectGroup('Attorney 2')">Attorney 2</button>
+                <button class="btn group-btn animated-group-btn" style="width: 220px;" onclick="selectGroup('Attorney 3')">Attorney 3</button>
+                <button class="btn group-btn animated-group-btn" style="width: 220px;" onclick="selectGroup('Attorney 4')">Attorney 4</button>
             </div>
         </div>
 
@@ -480,7 +506,6 @@
                         <label><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371</label>
                     </div>
                 </div>
-                <!-- Maaari mong idagdag ang Q3 hanggang Q6 kung kinakailangan -->
             </div>
         </div>
     </div>
@@ -605,7 +630,6 @@
             document.getElementById('student-timer').innerText = timeStr;
         });
 
-        // Ito ang magti-trigger ng pop-up sa lahat ng screen pagkaubos ng oras
         socket.on('timeUp', () => {
             document.querySelectorAll('input[type="radio"]').forEach(input => input.disabled = true);
             
