@@ -464,7 +464,7 @@
 
         @keyframes titleFloatGlow {
             0% { transform: translateY(0px); text-shadow: 0 0 10px rgba(244, 114, 182, 0.7); }
-            50% { transform: translateY(-3px); text-shadow: 0 0 22px rgba(244, 114, 182, 1), 0 0 30px rgba(56, 189, 248, 0.8); }
+            50% { transform: translateY(-3px); text-shadow: 0 0 22px rgba(244, 114, 182, 1), 0 0 38px rgba(56, 189, 248, 0.8); }
             100% { transform: translateY(0px); text-shadow: 0 0 10px rgba(244, 114, 182, 0.7); }
         }
 
@@ -955,12 +955,12 @@
 
         /* WAITING BANNER STYLE */
         #waiting-banner {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(244, 114, 182, 0.3));
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(244, 114, 182, 0.35));
             border: 2px dashed #f472b6;
             border-radius: 16px;
-            padding: 14px 20px;
+            padding: 16px 20px;
             text-align: center;
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 800;
             color: #f3e8ff;
             margin-bottom: 18px;
@@ -1414,6 +1414,7 @@
         const socket = io();
         let myGroup = null;
         let isJudgeRole = false;
+        let isGameStarted = false;
         let answeredQuestions = {};
         let latestGroupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
@@ -1582,6 +1583,14 @@
                 document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
                 
                 document.getElementById('floating-timer-badge').style.display = 'flex';
+
+                // SIGURADUHING NAKA-LOCK AT NAKALITAW ANG WAITING BANNER PAGKAPASOK NG PARTICIPANT
+                if (!isGameStarted) {
+                    const quizQuestionsEl = document.getElementById('quiz-questions');
+                    const waitingBannerEl = document.getElementById('waiting-banner');
+                    if (quizQuestionsEl) quizQuestionsEl.classList.add('quiz-locked');
+                    if (waitingBannerEl) waitingBannerEl.style.display = 'block';
+                }
             }, 1800);
         }
 
@@ -1694,6 +1703,7 @@
         }
 
         socket.on('timerUpdate', (timer) => {
+            isGameStarted = true;
             let mins = Math.floor(timer / 60).toString().padStart(2, '0');
             let secs = (timer % 60).toString().padStart(2, '0');
             let timeStr = `${mins}:${secs}`;
@@ -1703,6 +1713,7 @@
             document.getElementById('student-timer').innerText = fullTimeStr;
             document.getElementById('floating-timer-text').innerText = timeStr;
 
+            // PININDOT NA NG JUDGE ANG START BUTTON: MAWAWALA ANG BANNER AT MA-A-UNLOCK ANG MGA TANONG
             const quizQuestionsEl = document.getElementById('quiz-questions');
             const waitingBannerEl = document.getElementById('waiting-banner');
 
