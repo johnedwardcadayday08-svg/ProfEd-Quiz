@@ -2,8 +2,10 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
+const path = require('path');
 
-app.use(express.static('public')); 
+// Binabasa nito ang mga static files kahit nasa root folder man o public folder ang index.html at mga images mo
+app.use(express.static(path.join(__dirname))); 
 
 let timer = 60;
 let timerInterval = null;
