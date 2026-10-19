@@ -13,7 +13,7 @@
             --success: #10b981;
             --danger: #f43f5e;
             --card-bg-transparent: rgba(15, 23, 42, 0.4);
-            --card-bg-solid: rgba(15, 23, 42, 0.85); 
+            --card-bg-solid: rgba(15, 23, 42, 0.82); 
             --text-color: #ffffff;
         }
         
@@ -24,16 +24,47 @@
             background-size: cover;
             color: var(--text-color);
             margin: 0;
-            padding: 8px;
-            height: 100vh;
-            max-height: 100vh;
+            padding: 12px;
+            min-height: 100vh;
             box-sizing: border-box;
             position: relative;
-            overflow: hidden; /* WALANG SCROLL BUNGKAS SA BUONG SCREEN */
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             transition: box-shadow 0.5s ease-in-out;
+        }
+
+        /* KAPAG NAKA-FULLSCREEN NA: Dito lang magaganap ang pag-extend pababa nang walang scroll */
+        body.is-fullscreen {
+            overflow: hidden !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            padding: 6px 12px !important;
+        }
+
+        body.is-fullscreen .container {
+            max-width: 1480px !important;
+            margin-top: 2px !important;
+            margin-bottom: 4px !important;
+            padding-top: 16px !important;
+            padding-bottom: 16px !important;
+            height: calc(100vh - 88px) !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
+        body.is-fullscreen .attorney-buttons-container .group-btn {
+            padding: 18px 16px !important;
+            font-size: 16.5px !important;
+            font-weight: 800 !important;
+        }
+
+        body.is-fullscreen #role-select {
+            justify-content: space-around;
+            height: 100%;
         }
 
         .urgent-warning-glow {
@@ -43,11 +74,11 @@
 
         .top-controls {
             position: fixed;
-            top: 10px;
-            right: 18px;
+            top: 15px;
+            right: 22px;
             z-index: 10005;
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             transition: transform 0.3s ease;
         }
@@ -56,14 +87,14 @@
             background: rgba(168, 85, 247, 0.85);
             color: #f3e8ff;
             border: 1.5px solid rgba(255, 255, 255, 0.35);
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: bold;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(8px);
@@ -74,8 +105,8 @@
             background: linear-gradient(135deg, rgba(168, 85, 247, 0.85), rgba(124, 58, 237, 0.85));
             color: #f3e8ff;
             border: 1.5px solid rgba(255, 255, 255, 0.35);
-            padding: 6px 14px;
-            font-size: 12.5px;
+            padding: 8px 16px;
+            font-size: 13px;
             font-weight: 700;
             letter-spacing: 0.4px;
             border-radius: 20px;
@@ -100,7 +131,7 @@
         /* LAW ICONS */
         .law-bg-element {
             position: fixed;
-            font-size: 35px;
+            font-size: 40px;
             opacity: 0.85;
             user-select: none;
             pointer-events: none;
@@ -111,7 +142,7 @@
 
         @keyframes iconFloatGlow {
             0% { transform: translateY(0px) rotate(0deg) scale(1); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.7)); }
-            50% { transform: translateY(-12px) rotate(8deg) scale(1.1); filter: drop-shadow(0 0 20px rgba(244, 114, 182, 1)); }
+            50% { transform: translateY(-15px) rotate(8deg) scale(1.12); filter: drop-shadow(0 0 22px rgba(244, 114, 182, 1)) drop-shadow(0 0 35px rgba(56, 189, 248, 0.9)); }
             100% { transform: translateY(0px) rotate(0deg) scale(1); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.7)); }
         }
 
@@ -134,8 +165,8 @@
             position: fixed;
             right: 0;
             bottom: 0;
-            width: 240px;
-            height: 55vh;
+            width: 270px;
+            height: 62vh;
             z-index: 5;
             pointer-events: none;
             display: flex;
@@ -158,8 +189,8 @@
             z-index: 10;
             background: rgba(30, 41, 59, 0.75);
             border: 2px solid rgba(192, 132, 252, 0.6);
-            padding: 6px;
-            border-radius: 14px;
+            padding: 8px;
+            border-radius: 16px;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             display: flex;
@@ -169,88 +200,65 @@
         }
 
         .qr-code-wrapper p {
-            margin: 2px 0 0 0;
-            font-size: 9.5px;
+            margin: 3px 0 0 0;
+            font-size: 10px;
             font-weight: bold;
             color: #f3e8ff;
+            letter-spacing: 0.5px;
         }
 
         #qrcode {
-            padding: 4px;
+            padding: 5px;
             background: #ffffff;
-            border-radius: 6px;
+            border-radius: 8px;
         }
 
         @media (min-width: 769px) {
             .qr-code-wrapper {
-                right: 30px;
-                bottom: 52vh;
+                right: 35px;
+                bottom: 58vh;
             }
         }
 
         @media (max-width: 768px) {
-            .side-profile-container { width: 140px; height: 30vh; }
+            .side-profile-container { width: 160px; height: 35vh; }
             .qr-code-wrapper {
                 position: relative;
-                margin: 5px auto;
+                margin: 10px auto 5px auto;
                 width: fit-content;
                 right: auto;
                 bottom: auto;
-                transform: scale(0.8);
+                transform: scale(0.85);
             }
         }
 
-        /* NORMAL CONTAINER */
+        /* EXACT ORIGINAL NORMAL CONTAINER (HINDI NABAGO) */
         .container { 
             position: relative;
             z-index: 3;
             max-width: 950px; 
-            margin: 4px auto; 
+            margin: 10px auto; 
             background: var(--card-bg-transparent); 
-            padding: 16px 28px; 
-            border-radius: 22px; 
+            padding: 24px 34px; 
+            border-radius: 24px; 
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); 
             backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
             transition: all 0.3s ease;
         }
 
-        /* FULLSCREEN EXPANSION (Saktong-sakto sa screen, walang cutouts, walang scroll) */
-        body.is-fullscreen .container {
-            max-width: 1450px !important;
-            margin: 2px auto !important;
-            padding: 14px 32px !important;
-            height: calc(100vh - 78px) !important;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-sizing: border-box;
-        }
-
-        body.is-fullscreen .attorney-buttons-container .group-btn {
-            padding: 16px 14px !important;
-            font-size: 16px !important;
-            font-weight: 800 !important;
-        }
-
-        body.is-fullscreen #role-select {
-            justify-content: space-evenly;
-            height: 100%;
-            padding: 0 !important;
-        }
-
         @media (min-width: 1024px) {
             .container {
-                max-width: 1500px;
-                margin-left: 35px;
-                margin-right: 35px;
+                max-width: 1550px;
+                margin-left: 40px;
+                margin-right: 40px;
             }
         }
 
         .judge-main-layout {
             display: grid;
             grid-template-columns: 1.15fr 0.85fr;
-            gap: 15px;
+            gap: 20px;
             align-items: stretch;
             width: 100%;
         }
@@ -264,15 +272,15 @@
         .judge-left-box {
             background: rgba(15, 23, 42, 0.5);
             border: 1.5px solid rgba(168, 85, 247, 0.45);
-            border-radius: 16px;
-            padding: 15px;
+            border-radius: 18px;
+            padding: 20px;
         }
 
         .judge-right-box {
             background: rgba(15, 23, 42, 0.7);
             border: 2px solid rgba(192, 132, 252, 0.5);
-            border-radius: 16px;
-            padding: 15px;
+            border-radius: 18px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -284,9 +292,9 @@
             justify-content: space-around;
             align-items: flex-end;
             width: 100%;
-            height: 240px;
-            margin-top: 10px;
-            gap: 10px;
+            height: 280px;
+            margin-top: 15px;
+            gap: 12px;
         }
 
         .podium-col {
@@ -300,13 +308,13 @@
 
         .rank-bar-track {
             width: 100%;
-            max-width: 48px;
+            max-width: 52px;
             background: rgba(255, 255, 255, 0.15);
-            border-radius: 8px 8px 0 0;
+            border-radius: 10px 10px 0 0;
             display: flex;
             align-items: flex-end;
             overflow: hidden;
-            height: 140px;
+            height: 170px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
@@ -315,18 +323,18 @@
             background: linear-gradient(180deg, #c084fc, #7c3aed);
             height: 0%;
             transition: height 0.5s ease-in-out;
-            border-radius: 8px 8px 0 0;
+            border-radius: 10px 10px 0 0;
         }
 
         .glowing-frame {
-            width: 55px;
-            height: 55px;
+            width: 62px;
+            height: 62px;
             border-radius: 50%;
-            padding: 2.5px;
+            padding: 3px;
             background: linear-gradient(135deg, #f472b6, #38bdf8, #a855f7);
-            box-shadow: 0 0 15px rgba(192, 132, 252, 0.8);
+            box-shadow: 0 0 18px rgba(192, 132, 252, 0.8);
             animation: glowMove 3s ease-in-out infinite;
-            margin-top: 8px;
+            margin-top: 10px;
             flex-shrink: 0;
         }
 
@@ -339,85 +347,100 @@
         }
 
         @keyframes glowMove {
-            0% { transform: translateY(0px) scale(1); box-shadow: 0 0 10px rgba(168, 85, 247, 0.6); }
-            50% { transform: translateY(-4px) scale(1.03); box-shadow: 0 0 20px rgba(56, 189, 248, 0.9); }
-            100% { transform: translateY(0px) scale(1); box-shadow: 0 0 10px rgba(168, 85, 247, 0.6); }
+            0% { transform: translateY(0px) scale(1); box-shadow: 0 0 12px rgba(168, 85, 247, 0.6); }
+            50% { transform: translateY(-5px) scale(1.04); box-shadow: 0 0 22px rgba(56, 189, 248, 0.9); }
+            100% { transform: translateY(0px) scale(1); box-shadow: 0 0 12px rgba(168, 85, 247, 0.6); }
         }
 
         .animated-rank-title {
-            font-size: 15px;
+            font-size: 17px;
             font-weight: 900;
             color: #f472b6;
-            text-shadow: 0 0 10px rgba(244, 114, 182, 0.8);
+            text-shadow: 0 0 12px rgba(244, 114, 182, 0.8), 0 0 20px rgba(192, 132, 252, 0.6);
             animation: titleFloatGlow 3s ease-in-out infinite;
             text-align: center;
         }
 
         .animated-rank-subtitle {
-            font-size: 11px;
+            font-size: 12px;
             color: #e2e8f0;
-            text-shadow: 0 0 6px rgba(56, 189, 248, 0.7);
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+            animation: textSubtleWave 3.5s ease-in-out infinite;
             text-align: center;
-            margin: 2px 0 8px 0;
+            margin: 3px 0 10px 0;
         }
 
         .animated-attorney-label {
-            font-size: 11.5px;
+            font-size: 12px;
             font-weight: 800;
-            margin-top: 4px;
+            margin-top: 5px;
             color: #f3e8ff;
-            text-shadow: 0 0 8px rgba(192, 132, 252, 0.8);
+            text-shadow: 0 0 10px rgba(192, 132, 252, 0.8);
+            animation: labelPulseGlow 2.5s ease-in-out infinite;
         }
 
         @keyframes titleFloatGlow {
+            0% { transform: translateY(0px); text-shadow: 0 0 10px rgba(244, 114, 182, 0.7); }
+            50% { transform: translateY(-3px); text-shadow: 0 0 22px rgba(244, 114, 182, 1), 0 0 30px rgba(56, 189, 248, 0.8); }
+            100% { transform: translateY(0px); text-shadow: 0 0 10px rgba(244, 114, 182, 0.7); }
+        }
+
+        @keyframes textSubtleWave {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-2px); }
             100% { transform: translateY(0px); }
         }
 
+        @keyframes labelPulseGlow {
+            0% { text-shadow: 0 0 6px rgba(192, 132, 252, 0.6); }
+            50% { text-shadow: 0 0 16px rgba(56, 189, 248, 1), 0 0 22px rgba(168, 85, 247, 0.9); }
+            100% { text-shadow: 0 0 6px rgba(192, 132, 252, 0.6); }
+        }
+
         .rank-label-badge {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 800;
             color: #ffffff;
             background: linear-gradient(135deg, #a855f7, #7c3aed);
-            padding: 1px 6px;
-            border-radius: 8px;
-            margin-bottom: 4px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
         }
 
         /* LOGO & TITLE */
         .app-logo {
-            width: 72px;
-            height: 72px;
+            width: 85px;
+            height: 85px;
             object-fit: cover;
             border-radius: 50%;
-            border: 2.5px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 18px rgba(168, 85, 247, 0.8);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 22px rgba(168, 85, 247, 0.8), 0 0 40px rgba(56, 189, 248, 0.5);
             animation: logoBreath 3s ease-in-out infinite;
         }
 
         @keyframes logoBreath {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
+            0% { transform: scale(1) translateY(0px); box-shadow: 0 0 18px rgba(168, 85, 247, 0.7); }
+            50% { transform: scale(1.04) translateY(-4px); box-shadow: 0 0 32px rgba(244, 114, 182, 0.9), 0 0 45px rgba(56, 189, 248, 0.7); }
+            100% { transform: scale(1) translateY(0px); box-shadow: 0 0 18px rgba(168, 85, 247, 0.7); }
         }
 
         .animated-header-title {
             font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
-            font-size: 21px;
-            letter-spacing: 1px;
+            font-size: 24px;
+            letter-spacing: 1.2px;
             color: #fdf4ff;
             text-align: center;
             font-weight: 900;
-            margin: 6px 0 4px 0;
-            text-shadow: 0 0 15px rgba(168, 85, 247, 0.9), 0 0 25px rgba(244, 114, 182, 0.7);
+            margin: 10px 0 6px 0;
+            text-shadow: 0 0 18px rgba(168, 85, 247, 0.9), 0 0 30px rgba(244, 114, 182, 0.7);
             animation: titleGlowMove 3.5s ease-in-out infinite;
         }
 
         @keyframes titleGlowMove {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-2px); }
-            100% { transform: translateY(0px); }
+            0% { transform: translateY(0px); text-shadow: 0 0 12px rgba(168, 85, 247, 0.7); }
+            50% { transform: translateY(-3px); text-shadow: 0 0 24px rgba(244, 114, 182, 1), 0 0 38px rgba(56, 189, 248, 0.9); }
+            100% { transform: translateY(0px); text-shadow: 0 0 12px rgba(168, 85, 247, 0.7); }
         }
 
         @keyframes buttonPulseAnim {
@@ -438,25 +461,25 @@
         /* SUSPECTS SIDEBAR */
         .left-suspects-sidebar {
             position: fixed;
-            left: 12px;
+            left: 14px;
             top: 36%;
             transform: translateY(-50%);
-            width: 165px;
+            width: 175px;
             background: rgba(15, 23, 42, 0.75);
             border: 1.5px solid rgba(168, 85, 247, 0.5);
-            border-radius: 14px;
-            padding: 8px 5px;
+            border-radius: 16px;
+            padding: 10px 6px;
             z-index: 10;
             backdrop-filter: blur(8px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
         }
 
         .suspect-sidebar-card {
             background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            padding: 5px 4px;
-            margin-bottom: 5px;
+            border-radius: 10px;
+            padding: 7px 5px;
+            margin-bottom: 7px;
             text-align: center;
         }
 
@@ -470,39 +493,40 @@
             justify-content: center;
             align-items: center;
             z-index: 10004;
-            padding: 15px;
+            padding: 20px;
         }
 
         .camera-box {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
             border: 2.5px solid #c084fc;
-            border-radius: 26px;
-            padding: 24px 20px;
-            max-width: 360px;
+            border-radius: 30px;
+            padding: 28px 22px;
+            max-width: 380px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 30px rgba(168, 85, 247, 0.3);
+            position: relative;
         }
 
         #webcam-video, #webcam-canvas {
             width: 100%;
-            max-width: 220px;
-            height: 160px;
-            border-radius: 16px;
+            max-width: 240px;
+            height: 180px;
+            border-radius: 20px;
             border: 3px solid #f472b6;
             object-fit: cover;
             background: #000;
-            margin: 10px auto;
+            margin: 12px auto;
             display: block;
         }
 
         #captured-preview {
-            width: 120px;
-            height: 120px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
             object-fit: cover;
             border: 3.5px solid #38bdf8;
-            margin: 10px auto;
+            margin: 12px auto;
         }
 
         #judge-photo-popup {
@@ -515,15 +539,17 @@
             justify-content: center;
             align-items: center;
             z-index: 999999;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         .judge-popup-card {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99));
             border: 3px solid #c084fc;
-            border-radius: 26px;
-            padding: 30px 45px;
+            border-radius: 30px;
+            padding: 35px 50px;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(168, 85, 247, 0.5);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -532,23 +558,24 @@
         }
 
         .judge-popup-card img {
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid #38bdf8;
-            margin: 12px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            margin: 15px 0;
         }
 
         .bar-row { 
             display: flex; 
             align-items: center; 
-            margin: 8px 0; 
-            gap: 8px;
+            margin: 10px 0; 
+            gap: 10px;
         }
         .attorney-avatar-mini {
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #c084fc;
@@ -572,36 +599,36 @@
         .winner-modal-card {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
             border: 2px solid rgba(192, 132, 252, 0.6);
-            border-radius: 26px;
-            padding: 22px 18px;
-            max-width: 620px;
+            border-radius: 28px;
+            padding: 24px 20px;
+            max-width: 650px;
             width: 100%;
             text-align: center;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
-            max-height: 90vh;
+            max-height: 92vh;
             overflow-y: auto;
         }
 
         .results-boxes-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin: 14px 0;
+            gap: 12px;
+            margin: 16px 0;
         }
 
         .result-box-card {
-            border-radius: 16px;
-            padding: 14px 16px;
+            border-radius: 20px;
+            padding: 16px 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             text-align: left;
             backdrop-filter: blur(8px);
         }
 
         .result-box-img {
-            width: 52px;
-            height: 52px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #fff;
@@ -616,17 +643,17 @@
         .result-box-failing {
             background: linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(225, 29, 72, 0.1));
             border: 1.5px solid rgba(244, 63, 94, 0.6);
-            padding: 10px 14px;
+            padding: 12px 16px;
             max-width: 90%;
             margin: 0 auto;
         }
 
         #review-section {
-            margin-top: 15px; 
+            margin-top: 25px; 
             background: rgba(15, 23, 42, 0.85);
             border: 2px solid rgba(168, 85, 247, 0.6); 
-            padding: 18px;
-            border-radius: 18px; 
+            padding: 25px;
+            border-radius: 22px; 
             display: none;
             width: 100%;
             box-sizing: border-box;
@@ -635,55 +662,54 @@
 
         .horizontal-explanations-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 12px;
-            margin-top: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin-top: 15px;
         }
 
         .explanation-card-item {
             background: rgba(30, 41, 59, 0.6);
             border: 1.5px solid rgba(56, 189, 248, 0.4);
-            border-radius: 12px;
-            padding: 12px;
+            border-radius: 14px;
+            padding: 14px;
             text-align: left;
         }
 
-        /* JUDGE EJ CHAMBERS SPEECH CONTAINER */
+        /* JUDGE EJ CHAMBERS MESSAGE BOX */
         .judge-speech-container {
             position: relative;
             z-index: 3;
             max-width: 820px;
-            margin: 0 auto 4px auto;
-            background: rgba(15, 23, 42, 0.7);
+            margin: 0 auto 12px auto;
+            background: rgba(15, 23, 42, 0.65);
             border: 1.5px solid rgba(168, 85, 247, 0.5);
-            padding: 8px 16px;
-            border-radius: 14px;
+            padding: 12px 20px;
+            border-radius: 16px;
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-sizing: border-box;
+            gap: 15px;
         }
 
         .judge-speech-avatar {
-            font-size: 26px;
+            font-size: 30px;
             background: rgba(168, 85, 247, 0.2);
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 50%;
             border: 1px solid rgba(168, 85, 247, 0.5);
             flex-shrink: 0;
         }
 
         .judge-speech-text {
-            font-size: 13px;
+            font-size: 14px;
             color: #f3e8ff;
-            line-height: 1.35;
+            line-height: 1.45;
             margin: 0;
         }
 
-        h2 { font-size: 17px; color: #e9d5ff; text-align: center; }
-        h3 { font-size: 14px; margin: 6px 0; }
-        p { font-size: 13px; margin: 6px 0; }
+        h2 { font-size: 19px; color: #e9d5ff; text-align: center; }
+        h3 { font-size: 15px; margin: 8px 0; }
+        p { font-size: 14px; margin: 8px 0; }
         .hidden { display: none !important; }
         
         #role-select {
@@ -692,14 +718,14 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 2px 0;
+            padding: 8px 0;
             width: 100%;
         }
 
         .btn { 
             background: linear-gradient(135deg, #a855f7, #9333ea); 
-            color: white; border: none; padding: 10px 22px; font-size: 14px; 
-            border-radius: 12px; cursor: pointer; font-weight: bold; margin: 6px auto; 
+            color: white; border: none; padding: 12px 24px; font-size: 15px; 
+            border-radius: 14px; cursor: pointer; font-weight: bold; margin: 8px auto; 
             box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
             display: inline-block;
         }
@@ -711,28 +737,28 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            gap: 8px;
+            gap: 10px;
         }
 
         .attorney-buttons-container .group-btn {
             width: 100%;
-            max-width: 280px;
+            max-width: 300px;
             margin: 0;
-            padding: 10px 14px;
+            padding: 11px 16px;
         }
 
         @media (min-width: 768px) {
             .attorney-buttons-container {
                 flex-direction: row;
                 justify-content: center;
-                gap: 8px;
+                gap: 10px;
             }
             .attorney-buttons-container .group-btn {
                 width: auto;
                 flex: 1;
                 max-width: none;
-                padding: 10px 8px;
-                font-size: 13.5px;
+                padding: 12px 10px;
+                font-size: 14px;
             }
         }
 
@@ -742,62 +768,62 @@
             align-items: center; 
             background: rgba(15, 23, 42, 0.45); 
             border: 1px solid rgba(255, 255, 255, 0.35);
-            padding: 10px 16px; 
-            border-radius: 14px; 
-            margin-bottom: 12px; 
+            padding: 12px 18px; 
+            border-radius: 16px; 
+            margin-bottom: 15px; 
             font-weight: bold; 
-            font-size: 15px; 
+            font-size: 16px; 
             color: #f3e8ff;
         }
 
-        .bar-chart-container { margin: 8px 0; background: rgba(15, 23, 42, 0.45); padding: 10px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.25); }
-        .bar-label { width: 80px; font-weight: bold; font-size: 12px; color: #f3e8ff; }
-        .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 22px; border-radius: 8px; overflow: hidden; margin: 0 6px; }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 8px; }
-        .bar-score { font-weight: bold; width: 35px; text-align: right; font-size: 13px; color: #f3e8ff; }
+        .bar-chart-container { margin: 10px 0; background: rgba(15, 23, 42, 0.45); padding: 12px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
+        .bar-label { width: 85px; font-weight: bold; font-size: 13px; color: #f3e8ff; }
+        .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 24px; border-radius: 9px; overflow: hidden; margin: 0 8px; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 9px; }
+        .bar-score { font-weight: bold; width: 40px; text-align: right; font-size: 13.5px; color: #f3e8ff; }
 
         .question-card { 
             background: rgba(15, 23, 42, 0.35); border: 1.5px solid rgba(255, 255, 255, 0.3); 
-            padding: 14px; border-radius: 14px; margin-bottom: 12px;
+            padding: 18px; border-radius: 16px; margin-bottom: 16px;
         }
 
         .options {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
         }
 
         .options label { 
-            display: flex; align-items: center; padding: 7px 10px; 
+            display: flex; align-items: center; padding: 8px 12px; 
             background: rgba(14, 116, 144, 0.25); border: 1px solid rgba(56, 189, 248, 0.45); 
-            border-radius: 8px; cursor: pointer; font-size: 12.5px; color: #ffffff; font-weight: 600; 
+            border-radius: 10px; cursor: pointer; font-size: 13px; color: #ffffff; font-weight: 600; 
         }
-        .options label input { margin-right: 8px; transform: scale(1.1); accent-color: #38bdf8; flex-shrink: 0; }
+        .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
 
         .option-correct {
             background: rgba(16, 185, 129, 0.45) !important;
             border-color: #10b981 !important;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
         }
         .option-wrong {
             background: rgba(244, 63, 94, 0.45) !important;
             border-color: #f43f5e !important;
-            box-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
         }
 
         .explanation-box {
-            margin-top: 10px; padding: 10px 12px;
+            margin-top: 12px; padding: 12px 14px;
             background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4);
-            border-left: 4px solid var(--success); border-radius: 8px;
-            font-size: 12px; color: #ecfdf5; display: none;
+            border-left: 4px solid var(--success); border-radius: 10px;
+            font-size: 13px; color: #ecfdf5; display: none;
         }
 
         #floating-timer-badge {
             position: fixed;
-            top: 12px;
-            left: 18px;
-            width: 44px;
-            height: 44px;
+            top: 15px;
+            left: 22px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: #10b981;
             color: #ffffff;
@@ -806,7 +832,7 @@
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 10.5px;
+            font-size: 11px;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
             z-index: 10006;
             border: 1.5px solid rgba(255, 255, 255, 0.35);
@@ -821,14 +847,14 @@
         }
         @keyframes pulseTimer {
             0% { transform: scale(1); }
-            100% { transform: scale(1.08); }
+            100% { transform: scale(1.1); }
         }
 
         #feedback-popup { 
             position: fixed; top: 50%; left: 50%; 
             transform: translate(-50%, -50%) scale(0.8); 
-            padding: 18px 36px; border-radius: 18px; 
-            font-size: 24px; font-weight: 900; color: white; 
+            padding: 20px 40px; border-radius: 20px; 
+            font-size: 26px; font-weight: 900; color: white; 
             z-index: 10005; display: none; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.7);
             backdrop-filter: blur(10px); text-align: center;
@@ -847,29 +873,29 @@
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px);
-            display: none; justify-content: center; align-items: center; z-index: 9999; padding: 15px;
+            display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
         }
 
         .modal-card {
             background: rgba(30, 41, 59, 0.95); border: 1.5px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px; padding: 26px 22px; max-width: 380px; width: 100%; text-align: center;
+            border-radius: 22px; padding: 30px 25px; max-width: 400px; width: 100%; text-align: center;
         }
 
         .modal-input {
-            width: 100%; max-width: 280px; padding: 10px 14px; margin: 14px auto; 
+            width: 100%; max-width: 300px; padding: 12px 16px; margin: 16px auto; 
             background: rgba(255, 255, 255, 0.18);
-            border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 12px; color: #ffffff; 
-            font-size: 16px; text-align: center; outline: none; display: block;
+            border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 13px; color: #ffffff; 
+            font-size: 17px; text-align: center; outline: none; display: block;
         }
 
         #judge-welcome-overlay, #student-welcome-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.9);
             display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10001; backdrop-filter: blur(10px);
         }
-        #judge-welcome-msg { font-size: 32px; font-weight: bold; color: #f472b6; text-align: center; }
-        .student-welcome-logo { width: 95px; height: 95px; border-radius: 50%; border: 3px solid #f472b6; object-fit: cover; margin-bottom: 15px; }
-        .student-welcome-text { font-size: 28px; font-weight: bold; color: #f3e8ff; margin: 0; }
-        .student-welcome-sub { font-size: 17px; color: #f472b6; margin-top: 8px; font-weight: bold; }
+        #judge-welcome-msg { font-size: 35px; font-weight: bold; color: #f472b6; text-align: center; }
+        .student-welcome-logo { width: 105px; height: 105px; border-radius: 50%; border: 3px solid #f472b6; object-fit: cover; margin-bottom: 18px; }
+        .student-welcome-text { font-size: 32px; font-weight: bold; color: #f3e8ff; margin: 0; }
+        .student-welcome-sub { font-size: 19px; color: #f472b6; margin-top: 10px; font-weight: bold; }
 
         @media (max-width: 768px) {
             .left-suspects-sidebar { display: none !important; }
@@ -919,16 +945,16 @@
     <!-- CAMERA CAPTURE MODAL -->
     <div id="camera-modal">
         <div class="camera-box">
-            <h3 style="color: #f472b6; margin: 0 0 4px 0; font-size: 18px;"> Say Hi! 👋💖</h3>
-            <p style="font-size: 12px; color: #e2e8f0; margin: 0 0 8px 0;">Smile for the court camera! ✨📸</p>
+            <h3 style="color: #f472b6; margin: 0 0 4px 0; font-size: 19px;"> Say Hi! 👋💖</h3>
+            <p style="font-size: 12.5px; color: #e2e8f0; margin: 0 0 10px 0;">Smile for the court camera! ✨📸</p>
             <video id="webcam-video" autoplay playsinline></video>
             <canvas id="webcam-canvas" class="hidden"></canvas>
             <img id="captured-preview" class="hidden" />
-            <div id="camera-controls" style="margin-top:8px;">
-                <button class="btn" style="padding:8px 20px; font-size:13.5px;" onclick="capturePhoto()">Capture Photo 📷</button>
+            <div id="camera-controls" style="margin-top:10px;">
+                <button class="btn" style="padding:10px 22px; font-size:14px;" onclick="capturePhoto()">Capture Photo 📷</button>
             </div>
-            <div id="join-now-container" class="hidden" style="margin-top:8px;">
-                <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); width:100%; padding:10px;" onclick="confirmJoinNow()">Join Now 🚀✨</button>
+            <div id="join-now-container" class="hidden" style="margin-top:10px;">
+                <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); width:100%; padding:12px;" onclick="confirmJoinNow()">Join Now 🚀✨</button>
             </div>
         </div>
     </div>
@@ -936,38 +962,38 @@
     <!-- EXCLUSIVE JUDGE-ONLY CENTER POPUP -->
     <div id="judge-photo-popup">
         <div class="judge-popup-card">
-            <h3 id="judge-popup-title" style="color: #38bdf8; font-size: 22px; font-weight: 800; margin: 0 0 8px 0;"></h3>
+            <h3 id="judge-popup-title" style="color: #38bdf8; font-size: 24px; font-weight: 800; margin: 0 0 10px 0;"></h3>
             <img id="judge-popup-img" src="" alt="Counsel Photo" />
-            <p style="color: #f3e8ff; font-size: 15px; font-weight: bold; margin: 8px 0 0 0;">Joined the courtroom proceedings! ✨</p>
+            <p style="color: #f3e8ff; font-size: 16px; font-weight: bold; margin: 10px 0 0 0;">Joined the courtroom proceedings! ✨</p>
         </div>
     </div>
 
     <!-- AESTHETIC TIME'S UP MODAL -->
     <div class="winner-modal-overlay" id="winner-modal">
         <div class="winner-modal-card">
-            <div style="font-size: 28px; margin-bottom: 2px;">⚖️✨ Court Verdict Results ✨⚖️</div>
-            <h2 style="color: #d8b4fe; font-size: 16px; margin: 2px 0 10px 0;">Final Performance Review</h2>
+            <div style="font-size: 32px; margin-bottom: 2px;">⚖️✨ Court Verdict Results ✨⚖️</div>
+            <h2 style="color: #d8b4fe; font-size: 18px; margin: 4px 0 12px 0;">Final Performance Review</h2>
             <div class="results-boxes-container" id="attorneys-results-list"></div>
-            <button class="btn" style="width: 100%; margin-top: 8px; font-size: 14px; padding: 10px;" onclick="closeWinnerModal()">Close / View Full Screen Explanations</button>
+            <button class="btn" style="width: 100%; margin-top: 10px; font-size: 15px; padding: 11px;" onclick="closeWinnerModal()">Close / View Full Screen Explanations</button>
         </div>
     </div>
 
     <div class="left-suspects-sidebar" id="left-sidebar">
-        <p style="font-size: 10px; color: #cbd5e1; margin: 0 0 4px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
+        <p style="font-size: 10.5px; color: #cbd5e1; margin: 0 0 6px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 13px;">👤</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 9.5px;">Suspect A</h4>
-            <p style="font-size: 8px; color: #94a3b8; margin: 0; line-height: 1.1;">Denied accessible ramps (R.A. 7277)[cite: 1, 2]</p>
+            <div style="font-size: 15px;">👤</div>
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect A</h4>
+            <p style="font-size: 8.5px; color: #94a3b8; margin: 0; line-height: 1.2;">Denied accessible training ramps (R.A. 7277)[cite: 1, 2]</p>
         </div>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 13px;">🧑‍💼</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 9.5px;">Suspect B</h4>
-            <p style="font-size: 8px; color: #94a3b8; margin: 0; line-height: 1.1;">Complied with teacher ethics</p>
+            <div style="font-size: 15px;">🧑‍💼</div>
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect B</h4>
+            <p style="font-size: 8.5px; color: #94a3b8; margin: 0; line-height: 1.2;">Complied with teacher code of ethics</p>
         </div>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 13px;">🕵️‍♂️</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 9.5px;">Suspect C</h4>
-            <p style="font-size: 8px; color: #94a3b8; margin: 0; line-height: 1.1;">Respected IP ancestral domains[cite: 1, 2]</p>
+            <div style="font-size: 15px;">🕵️‍♂️</div>
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect C</h4>
+            <p style="font-size: 8.5px; color: #94a3b8; margin: 0; line-height: 1.2;">Respected ancestral domains of IPs[cite: 1, 2]</p>
         </div>
     </div>
 
@@ -976,20 +1002,20 @@
     <div class="modal-overlay" id="password-modal">
         <div class="modal-card">
             <h3>⚖️ Judge Access</h3>
-            <p style="font-size:13.5px; color:#e2e8f0; margin-top:4px;">Please enter the password to proceed:</p>
+            <p style="font-size:14px; color:#e2e8f0; margin-top:5px;">Please enter the password to proceed:</p>
             <input type="password" id="judge-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="handleKeyPress(event)" autocomplete="off" />
-            <div style="display:flex; gap:10px; justify-content:center; width: 100%; margin-top: 8px;">
-                <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:8px;" onclick="closePasswordModal()">Cancel</button>
-                <button class="btn" style="width: 45%; margin:0; padding:8px;" onclick="verifyJudgePassword()">Submit</button>
+            <div style="display:flex; gap:12px; justify-content:center; width: 100%; margin-top: 10px;">
+                <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closePasswordModal()">Cancel</button>
+                <button class="btn" style="width: 45%; margin:0; padding:10px;" onclick="verifyJudgePassword()">Submit</button>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="warning-modal">
         <div class="modal-card" style="border-color: var(--danger);">
-            <h3 style="color: #f87171; font-size: 17px;">🚫 ACCESS DENIED</h3>
-            <p style="font-size:14px; font-weight:bold; color:#fca5a5; margin: 12px 0;">You are a criminal trying to steal someone's private property!</p>
-            <button class="btn" style="background:var(--danger); padding:8px 18px;" onclick="closeWarningModal()">Dismiss</button>
+            <h3 style="color: #f87171; font-size: 18px;">🚫 ACCESS DENIED</h3>
+            <p style="font-size:14.5px; font-weight:bold; color:#fca5a5; margin: 15px 0;">You are a criminal trying to steal someone's private property!</p>
+            <button class="btn" style="background:var(--danger); padding:10px 20px;" onclick="closeWarningModal()">Dismiss</button>
         </div>
     </div>
 
@@ -1007,13 +1033,13 @@
 
     <div class="container" id="main-container">
         <div id="role-select">
-            <div style="text-align:center; margin-bottom: 4px;">
+            <div style="text-align:center; margin-bottom: 6px;">
                 <img src="/logo.png" alt="Logo" class="app-logo">
             </div>
             <h1 class="animated-header-title">⚖️ PROFED 5 GROUP 2 QUICK ACTIVITY 📜</h1>
-            <p style="text-align:center; margin: 4px 0 10px 0; font-size: 14px; color: #e9d5ff;">Select your mode to begin:</p>
-            <button class="btn animated-main-btn" style="padding: 10px 24px; margin-bottom: 10px; font-size: 14.5px;" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
-            <h3 style="text-align:center; margin-bottom: 6px; color: #f472b6; font-size: 15px;">Join as:</h3>
+            <p style="text-align:center; margin: 6px 0 14px 0; font-size: 14.5px; color: #e9d5ff;">Select your mode to begin:</p>
+            <button class="btn animated-main-btn" style="padding: 12px 26px; margin-bottom: 15px; font-size: 15.5px;" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
+            <h3 style="text-align:center; margin-bottom: 8px; color: #f472b6; font-size: 16px;">Join as:</h3>
             <div class="attorney-buttons-container">
                 <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 1')">Attorney 1</button>
                 <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 2')">Attorney 2</button>
@@ -1023,19 +1049,19 @@
         </div>
 
         <div id="teacher-view" class="hidden">
-            <h1 class="animated-header-title" style="margin-top: 0; margin-bottom: 10px;">⚖️ Judge Real-Time Monitor ⚖️</h1>
+            <h1 class="animated-header-title" style="margin-top: 0; margin-bottom: 12px;">⚖️ Judge Real-Time Monitor ⚖️</h1>
             
             <div class="judge-main-layout">
                 <div class="judge-left-box">
                     <div class="header-bar">
                         <span id="teacher-timer">Time Left: 01:00</span>
                         <div>
-                            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="startTimer()">Start Quiz</button>
-                            <button class="btn" style="background:var(--danger); padding: 6px 12px; font-size: 12px;" onclick="resetGame()">Reset Game</button>
+                            <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
+                            <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
                         </div>
                     </div>
 
-                    <h3 style="margin: 4px 0 8px 0; color: #e9d5ff; font-size: 14.5px;">Live Scoreboard (Highest to Lowest)</h3>
+                    <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard (Highest to Lowest)</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
                 </div>
 
@@ -1051,32 +1077,32 @@
 
             <!-- HORIZONTAL FULLSCREEN EXPLANATIONS AFTER QUIZ -->
             <div id="review-section">
-                <h3 style="color: #c084fc; text-align: center; margin-bottom: 12px; font-size: 18px; font-weight: 800;">📜 Court Review: Detailed Explanations & Final Scores</h3>
+                <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px; font-size: 20px; font-weight: 800;">📜 Court Review: Detailed Explanations & Final Scores</h3>
                 
                 <div class="horizontal-explanations-grid">
                     <div class="explanation-card-item">
                         <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q1: Magna Carta for Disabled Persons[cite: 1, 2]</p>
-                        <p style="font-size: 12px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 6px; border-radius: 6px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ay naglalayong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan[cite: 1, 2].</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ay naglalayong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan[cite: 1, 2].</p>
                     </div>
                     <div class="explanation-card-item">
                         <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q2: Protection Against Child Abuse[cite: 1, 2]</p>
-                        <p style="font-size: 12px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 6px; border-radius: 6px; border-left: 3px solid #10b981;"><b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata[cite: 1, 2].</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata[cite: 1, 2].</p>
                     </div>
                     <div class="explanation-card-item">
                         <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q3: Indigenous Peoples Rights Act (IPRA)[cite: 1, 2]</p>
-                        <p style="font-size: 12px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 6px; border-radius: 6px; border-left: 3px solid #10b981;"><b>Republic Act No. 8371</b> ay kinikilala, pinoprotektahan, at itinataguyod ang mga karapatan ng mga katutubong pamayanan / katutubong mamamayan[cite: 1, 2].</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 8371</b> ay kinikilala, pinoprotektahan, at itinataguyod ang mga karapatan ng mga katutubong pamayanan / katutubong mamamayan[cite: 1, 2].</p>
                     </div>
                     <div class="explanation-card-item">
                         <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q4: State Protection to Quality Education[cite: 1]</p>
-                        <p style="font-size: 12px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 6px; border-radius: 6px; border-left: 3px solid #10b981;"><b>1987 Philippine Constitution</b> ang nag-uutos sa Estado na protektahan at itaguyod ang karapatan ng lahat ng mamamayan sa de-kalidad na edukasyon[cite: 1].</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>1987 Philippine Constitution</b> ang nag-uutos sa Estado na protektahan at itaguyod ang karapatan ng lahat ng mamamayan sa de-kalidad na edukasyon[cite: 1].</p>
                     </div>
                     <div class="explanation-card-item">
                         <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q5: Rehabilitation of Disabled Persons[cite: 1, 2]</p>
-                        <p style="font-size: 12px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 6px; border-radius: 6px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ang tuwirang nagtatakda ng mga programa para sa rehabilitasyon at integrasyon ng mga may kapansanan sa lipunan[cite: 1, 2].</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ang tuwirang nagtatakda ng mga programa para sa rehabilitasyon at integrasyon ng mga may kapansanan sa lipunan[cite: 1, 2].</p>
                     </div>
                     <div class="explanation-card-item">
                         <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q6: Philippine Teachers Professionalization Act[cite: 1, 2]</p>
-                        <p style="font-size: 12px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 6px; border-radius: 6px; border-left: 3px solid #10b981;"><b>Republic Act No. 7836</b> ang nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET) at pagpapapropesyonal ng pagtuturo[cite: 1, 2].</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7836</b> ang nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET) at pagpapapropesyonal ng pagtuturo[cite: 1, 2].</p>
                     </div>
                 </div>
             </div>
@@ -1208,8 +1234,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             new QRCode(document.getElementById("qrcode"), {
                 text: "https://profed-quiz-y6ly.onrender.com",
-                width: 70,
-                height: 70,
+                width: 75,
+                height: 75,
                 colorDark: "#6b21a8",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
@@ -1503,17 +1529,17 @@
                         <div class="result-box-card result-box-innocent">
                             <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
                             <div>
-                                <h4 style="color: #6ee7b7; font-size: 16px; margin: 0 0 3px 0;">✨👑 ${attorney} — ${score} / 6 Points</h4>
-                                <p style="color: #ecfdf5; font-size: 13px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
+                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / 6 Points</h4>
+                                <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
                             </div>
                         </div>`;
                 } else {
                     resultsHTML += `
                         <div class="result-box-card result-box-failing">
-                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 45px; height: 45px;" />
+                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
                             <div>
-                                <h4 style="color: #fda4af; font-size: 13.5px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / 6 Points</h4>
-                                <p style="color: #fff1f2; font-size: 11.5px; margin: 0;">You belong to jail. ⛓️🥀</p>
+                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / 6 Points</h4>
+                                <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
                             </div>
                         </div>`;
                 }
