@@ -6,7 +6,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static('public')); // O kung saan man nakalagay ang iyong frontend files
+// Binago natin ito para basahin ang kasalukuyang folder nang direkta
+app.use(express.static(__dirname));
 
 let timer = 30; // 30 seconds o depende sa gusto mong oras
 let timerInterval = null;
@@ -20,7 +21,6 @@ let groupScores = {
 };
 
 io.on('connection', (socket) => {
-    // Ipadala ang kasalukuyang state sa bagong pasok na user
     socket.emit('updateState', { groupScores, timer, timerRunning });
 
     socket.on('startTimer', () => {
@@ -35,14 +35,13 @@ io.on('connection', (socket) => {
                 } else {
                     timerRunning = false;
                     clearInterval(timerInterval);
-                    io.emit('timeUp'); // Awtomatikong magti-trigger sa lahat ng screen
+                    io.emit('timeUp');
                 }
             }, 1000);
         }
     });
 
     socket.on('submitAnswer', ({ groupName, questionId, answer }) => {
-        // Dito mo ilalagay ang checking kung tama ang sagot (Halimbawa: Q1 = RA7277)
         let correctAnswers = {
             q1: 'RA7277',
             q2: 'RA7610',
