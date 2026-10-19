@@ -28,6 +28,9 @@
             box-sizing: border-box;
             position: relative;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         /* AESTHETIC TOP-RIGHT CONTROLS CONTAINER */
@@ -94,8 +97,8 @@
 
         .icon-1 { top: 8%; left: 5%; animation-delay: 0s; }
         .icon-2 { top: 25%; right: 6%; animation-delay: 1.5s; }
-        .icon-3 { bottom: 18%; left: 8%; animation-delay: 3s; }
-        .icon-4 { bottom: 10%; right: 7%; animation-delay: 4.5s; }
+        .icon-3 { bottom: 25%; left: 8%; animation-delay: 3s; }
+        .icon-4 { bottom: 22%; right: 7%; animation-delay: 4.5s; }
         .icon-5 { top: 50%; left: 3%; animation-delay: 2s; }
 
         .side-profile-container {
@@ -131,7 +134,7 @@
             position: relative;
             z-index: 3;
             max-width: 900px; 
-            margin: 0 auto; 
+            margin: 20px auto; 
             background: var(--card-bg-transparent); 
             padding: 25px; 
             border-radius: 24px; 
@@ -140,6 +143,47 @@
             -webkit-backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
             transition: background 0.3s ease;
+        }
+
+        /* JUDGE EJ'S CHAMBERS SPEECH CONTAINER (BOTTOM LAPTOP SPACE) */
+        .judge-speech-container {
+            position: relative;
+            z-index: 3;
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1.5px solid rgba(168, 85, 247, 0.5);
+            padding: 16px 22px;
+            border-radius: 18px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(168, 85, 247, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .judge-speech-avatar {
+            font-size: 32px;
+            background: rgba(168, 85, 247, 0.2);
+            padding: 10px;
+            border-radius: 50%;
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .judge-speech-text {
+            font-size: 14.5px;
+            color: #f3e8ff;
+            line-height: 1.5;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+            margin: 0;
+        }
+
+        .judge-speech-text strong {
+            color: #f472b6;
+            font-size: 15px;
         }
 
         .app-logo-container {
@@ -443,7 +487,10 @@
 
         @media (max-width: 600px) {
             body { padding: 5px; }
-            .container { padding: 14px; border-radius: 16px; }
+            .container { padding: 14px; border-radius: 16px; margin: 10px auto; }
+            .judge-speech-container { margin: 10px; padding: 12px; gap: 10px; }
+            .judge-speech-avatar { font-size: 24px; padding: 8px; }
+            .judge-speech-text { font-size: 12.5px; }
             h1 { font-size: 18px; }
             h2 { font-size: 15px; }
             .header-bar { font-size: 14px; padding: 10px; flex-direction: column; gap: 8px; text-align: center; }
@@ -513,6 +560,7 @@
         </div>
     </div>
 
+    <!-- MAIN APP CONTAINER -->
     <div class="container" id="main-container">
         <div id="role-select">
             <div class="app-logo-container">
@@ -704,6 +752,14 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- JUDGE EJ'S CHAMBERS SPEECH BOX (BOTTOM LAPTOP SPACE) -->
+    <div class="judge-speech-container" id="judge-speech-box">
+        <div class="judge-speech-avatar">👨‍⚖️</div>
+        <p class="judge-speech-text">
+            <strong>Judge Ej's Chambers:</strong> "Order in the court! Counsel, we have an urgent pending case on our docket regarding the protection of marginalized sectors and children's rights under our special statutes. Prepare your arguments and statutes meticulously—this session is now officially in session!"
+        </p>
     </div>
 
     <script>
