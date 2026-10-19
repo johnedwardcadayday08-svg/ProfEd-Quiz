@@ -271,10 +271,10 @@
         .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); }
         .group-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
 
-        /* ATTORNEY BUTTONS CONTAINER: Mobile (Column), Laptop (ISANG LINYA HORIZONTAL) */
+        /* Attorney 1-4 buttons: Nakatayo sa mobile, Isang linya horizontal sa laptop */
         .attorney-buttons-container {
             display: flex;
-            flex-direction: column; /* Nakatayo sa cellphone */
+            flex-direction: column;
             align-items: center;
             width: 100%;
             gap: 10px;
@@ -286,10 +286,9 @@
             margin: 0;
         }
 
-        /* Kapag Laptop/Desktop na (Screen width 768px pataas): MAGKAKATABI SA IISANG LNYA ANG 1-4 */
         @media (min-width: 768px) {
             .attorney-buttons-container {
-                flex-direction: row; /* Pahalang / Horizontal */
+                flex-direction: row;
                 justify-content: center;
                 gap: 8px;
             }
@@ -406,7 +405,6 @@
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
 
-    <!-- WINNER POPUP MODAL PARA SA LAHAT NG PARTICIPANTS -->
     <div class="winner-modal-overlay" id="winner-modal">
         <div class="winner-modal-card">
             <div style="font-size: 55px; margin-bottom: 5px;">🏆⚖️</div>
@@ -416,7 +414,6 @@
                     👏 Give 5 claps for that group and say "magaling, magaling!" 🌟
                 </p>
                 <p id="winner-innocent-text" style="font-size: 27px; font-weight: 900; color: #6ee7b7; margin: 0; line-height: 1.3;">
-                    <!-- Awtomatikong magpapakita rito ang pangalan ng grupo na inosente -->
                 </p>
             </div>
             <button class="btn" style="width: 100%; margin-top: 10px; font-size: 16px; padding: 12px;" onclick="closeWinnerModal()">Close / View Results</button>
@@ -487,7 +484,6 @@
             <button class="btn animated-main-btn" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             <br><br>
             <h3 style="text-align:center;">Join as:</h3>
-            <!-- ATTORNEY BUTTONS NA NAKALINYA NANG PAHALANG SA LAPTOP AT NAKATAYO SA CELLPHONE -->
             <div class="attorney-buttons-container">
                 <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 1')">Attorney 1</button>
                 <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 2')">Attorney 2</button>
@@ -534,6 +530,38 @@
                         <label><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277</label>
                         <label><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610</label>
                         <label><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371</label>
+                    </div>
+                </div>
+                <div class="question-card" id="card-q3">
+                    <p><b>Q3:</b> What law recognizes, protects, and promotes the rights of Indigenous Cultural Communities / Indigenous Peoples (IPRA)?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="RA7277" onchange="submitAns('q3', 'RA7277')"> A) Republic Act No. 7277</label>
+                        <label><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> B) Republic Act No. 7610</label>
+                        <label><input type="radio" name="q3" value="RA8371" onchange="submitAns('q3', 'RA8371')"> C) Republic Act No. 8371</label>
+                    </div>
+                </div>
+                <div class="question-card" id="card-q4">
+                    <p><b>Q4:</b> Which fundamental law of the land guarantees state protection and promotion of quality education?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> A) Republic Act No. 7277</label>
+                        <label><input type="radio" name="q4" value="CONST" onchange="submitAns('q4', 'CONST')"> B) 1987 Philippine Constitution</label>
+                        <label><input type="radio" name="q4" value="RA8371" onchange="submitAns('q4', 'RA8371')"> C) Republic Act No. 8371</label>
+                    </div>
+                </div>
+                <div class="question-card" id="card-q5">
+                    <p><b>Q5:</b> Which act mandates the rehabilitation, self-development, and self-reliance of disabled persons?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> A) Republic Act No. 7277</label>
+                        <label><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> B) Republic Act No. 7610</label>
+                        <label><input type="radio" name="q5" value="RA8371" onchange="submitAns('q5', 'RA8371')"> C) Republic Act No. 8371</label>
+                    </div>
+                </div>
+                <div class="question-card" id="card-q6">
+                    <p><b>Q6:</b> Which law provides special protection against child abuse, exploitation, and discrimination?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> A) Republic Act No. 7277</label>
+                        <label><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> B) Republic Act No. 7610</label>
+                        <label><input type="radio" name="q6" value="RA8371" onchange="submitAns('q6', 'RA8371')"> C) Republic Act No. 8371</label>
                     </div>
                 </div>
             </div>
