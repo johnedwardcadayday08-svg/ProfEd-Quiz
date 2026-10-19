@@ -35,26 +35,26 @@
             transition: box-shadow 0.5s ease-in-out;
         }
 
-        /* KAPAG NAKA-FULLSCREEN NA: Pinahintulutan ang scrolling sa loob para hindi ma-trap ang mga tanong */
+        /* KAPAG NAKA-FULLSCREEN NA: Dito lang i-e-expand at papayagan ang scrolling nang hindi ginagalaw ang default layout */
         body.is-fullscreen {
             overflow: hidden !important;
             height: 100vh !important;
             max-height: 100vh !important;
-            padding: 8px 12px !important;
+            padding: 6px 12px !important;
         }
 
         body.is-fullscreen .container {
             max-width: 1480px !important;
-            margin-top: 4px !important;
-            margin-bottom: 10px !important;
-            padding-top: 18px !important;
-            padding-bottom: 18px !important;
-            height: calc(100vh - 98px) !important;
+            margin-top: 2px !important;
+            margin-bottom: 4px !important;
+            padding-top: 16px !important;
+            padding-bottom: 16px !important;
+            height: calc(100vh - 88px) !important;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             box-sizing: border-box;
-            overflow-y: auto !important; /* Dito inayos para lumitaw ang scrollbar kapag naka-Fullscreen */
+            overflow-y: auto !important; /* Dito lang inilagay ang scrolling para sa Fullscreen */
         }
 
         body.is-fullscreen .attorney-buttons-container .group-btn {
@@ -129,7 +129,7 @@
             background: linear-gradient(135deg, rgba(244, 63, 94, 0.85), rgba(225, 29, 72, 0.85));
         }
 
-        /* MARAMING LAW ICONS NA MAY GLOWING EFFECTS NA GUMAGALAW SA SCREEN */
+        /* LAW ICONS */
         .law-bg-element {
             position: fixed;
             font-size: 36px;
@@ -724,21 +724,20 @@
             text-align: left;
         }
 
-        /* JUDGE EJ CHAMBERS MESSAGE BOX */
+        /* JUDGE EJ CHAMBERS MESSAGE BOX (Ibinalik sa dating eksaktong posisyon at sukat sa normal page) */
         .judge-speech-container {
             position: relative;
             z-index: 3;
             max-width: 820px;
-            margin: 12px auto 14px auto;
-            background: rgba(15, 23, 42, 0.68);
-            border: 1.5px solid rgba(168, 85, 247, 0.55);
-            padding: 14px 22px;
+            margin: 0 auto 12px auto;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1.5px solid rgba(168, 85, 247, 0.5);
+            padding: 12px 20px;
             border-radius: 16px;
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             gap: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
 
         .judge-speech-avatar {
@@ -793,7 +792,7 @@
             width: 100%;
             max-width: 300px;
             margin: 0;
-            padding: 12px 16px;
+            padding: 11px 16px;
             color: #ffffff;
             font-weight: bold;
             border: none;
@@ -805,14 +804,14 @@
             .attorney-buttons-container {
                 flex-direction: row;
                 justify-content: center;
-                gap: 12px;
+                gap: 10px;
             }
             .attorney-buttons-container .group-btn {
                 width: auto;
                 flex: 1;
                 max-width: none;
-                padding: 13px 12px;
-                font-size: 14.5px;
+                padding: 12px 10px;
+                font-size: 14px;
             }
         }
 
@@ -836,6 +835,7 @@
         .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 9px; }
         .bar-score { font-weight: bold; width: 40px; text-align: right; font-size: 13.5px; color: #f3e8ff; }
 
+        /* ORIHINAL NA LAKI AT LAYOUT NG QUESTION CARDS */
         .question-card { 
             background: rgba(15, 23, 42, 0.35); border: 1.5px solid rgba(255, 255, 255, 0.3); 
             padding: 18px; border-radius: 16px; margin-bottom: 16px;
