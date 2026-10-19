@@ -96,7 +96,7 @@
             background: linear-gradient(135deg, rgba(244, 63, 94, 0.85), rgba(225, 29, 72, 0.85));
         }
 
-        /* GLOWING AND MOVING LAW ICONS FOR FIRST SCREEN */
+        /* MARAMING LAW ICONS NA MAY GLOWING AT MOVING EFFECTS */
         .law-bg-element {
             position: fixed;
             font-size: 42px;
@@ -114,14 +114,18 @@
             100% { transform: translateY(0px) rotate(0deg) scale(1); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.7)); }
         }
 
-        .icon-1 { top: 12%; left: 6%; animation-delay: 0s; }
-        .icon-2 { top: 18%; right: 7%; animation-delay: 1s; }
-        .icon-3 { bottom: 32%; left: 7%; animation-delay: 2s; }
-        .icon-4 { bottom: 28%; right: 6%; animation-delay: 3s; }
-        .icon-5 { top: 52%; left: 4%; animation-delay: 1.5s; }
-        .icon-6 { top: 70%; right: 14%; animation-delay: 2.5s; }
-        .icon-7 { top: 8%; left: 22%; animation-delay: 0.5s; }
-        .icon-8 { bottom: 10%; left: 40%; animation-delay: 3.5s; }
+        .icon-1 { top: 10%; left: 4%; animation-delay: 0s; }
+        .icon-2 { top: 15%; right: 5%; animation-delay: 1s; }
+        .icon-3 { bottom: 28%; left: 5%; animation-delay: 2s; }
+        .icon-4 { bottom: 22%; right: 4%; animation-delay: 3s; }
+        .icon-5 { top: 48%; left: 3%; animation-delay: 1.5s; }
+        .icon-6 { top: 65%; right: 10%; animation-delay: 2.5s; }
+        .icon-7 { top: 6%; left: 18%; animation-delay: 0.5s; }
+        .icon-8 { bottom: 8%; left: 38%; animation-delay: 3.5s; }
+        .icon-9 { top: 38%; right: 3%; animation-delay: 1.8s; }
+        .icon-10 { bottom: 12%; right: 28%; animation-delay: 4s; }
+        .icon-11 { top: 82%; left: 12%; animation-delay: 2.2s; }
+        .icon-12 { top: 28%; left: 12%; animation-delay: 0.8s; }
 
         .side-profile-container {
             position: fixed;
@@ -195,30 +199,30 @@
             }
         }
 
-        /* CONTAINER (LAPAD LANG ANG DINAGDAG, HUWAG VERTICAL) */
+        /* FIRST PAGE & MAIN CONTAINER (IN-EXPAND ANG BABA PARA WALANG BAKANTENG ESPASYO SA FULLSCREEN) */
         .container { 
             position: relative;
             z-index: 3;
             max-width: 950px; 
-            margin: 15px auto; 
+            margin: 15px auto 40px auto; 
             background: var(--card-bg-transparent); 
-            padding: 24px 34px; 
-            border-radius: 24px; 
+            padding: 28px 36px 50px 36px; 
+            border-radius: 26px; 
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); 
             backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
             transition: all 0.3s ease;
         }
 
+        /* PALAPAD SA KALIWA AT KANAN LANG SA JUDGE MONITOR VIEW */
         @media (min-width: 1024px) {
             .container {
-                max-width: 1380px;
-                margin-left: 110px;
-                margin-right: 110px;
+                max-width: 1550px;
+                margin-left: 40px;
+                margin-right: 40px;
             }
         }
 
-        /* JUDGE MONITOR LAYOUT */
         .judge-main-layout {
             display: grid;
             grid-template-columns: 1.15fr 0.85fr;
@@ -237,14 +241,14 @@
             background: rgba(15, 23, 42, 0.5);
             border: 1.5px solid rgba(168, 85, 247, 0.45);
             border-radius: 18px;
-            padding: 18px;
+            padding: 20px;
         }
 
         .judge-right-box {
             background: rgba(15, 23, 42, 0.7);
             border: 2px solid rgba(192, 132, 252, 0.5);
             border-radius: 18px;
-            padding: 18px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -256,9 +260,9 @@
             justify-content: space-around;
             align-items: flex-end;
             width: 100%;
-            height: 270px;
+            height: 280px;
             margin-top: 15px;
-            gap: 10px;
+            gap: 12px;
         }
 
         .podium-col {
@@ -272,13 +276,13 @@
 
         .rank-bar-track {
             width: 100%;
-            max-width: 48px;
+            max-width: 52px;
             background: rgba(255, 255, 255, 0.15);
             border-radius: 10px 10px 0 0;
             display: flex;
             align-items: flex-end;
             overflow: hidden;
-            height: 160px;
+            height: 170px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
@@ -291,8 +295,8 @@
         }
 
         .glowing-frame {
-            width: 60px;
-            height: 60px;
+            width: 62px;
+            height: 62px;
             border-radius: 50%;
             padding: 3px;
             background: linear-gradient(135deg, #f472b6, #38bdf8, #a855f7);
@@ -316,9 +320,8 @@
             100% { transform: translateY(0px) scale(1); box-shadow: 0 0 12px rgba(168, 85, 247, 0.6); }
         }
 
-        /* ANIMATED GLOWING & MOVING TEXT PARA SA RANK BARS */
         .animated-rank-title {
-            font-size: 16.5px;
+            font-size: 17px;
             font-weight: 900;
             color: #f472b6;
             text-shadow: 0 0 12px rgba(244, 114, 182, 0.8), 0 0 20px rgba(192, 132, 252, 0.6);
@@ -327,7 +330,7 @@
         }
 
         .animated-rank-subtitle {
-            font-size: 11.5px;
+            font-size: 12px;
             color: #e2e8f0;
             text-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
             animation: textSubtleWave 3.5s ease-in-out infinite;
@@ -336,7 +339,7 @@
         }
 
         .animated-attorney-label {
-            font-size: 11.5px;
+            font-size: 12px;
             font-weight: 800;
             margin-top: 5px;
             color: #f3e8ff;
@@ -373,7 +376,7 @@
             box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
         }
 
-        /* LOGO & TITLE ANIMATION AND GLOWING EFFECTS */
+        /* LOGO & TITLE ANIMATIONS */
         .app-logo {
             width: 85px;
             height: 85px;
@@ -421,7 +424,6 @@
         .animated-main-btn { animation: buttonPulseAnim 2.5s ease-in-out infinite; }
         .animated-group-btn { animation: groupButtonPulseAnim 2.5s ease-in-out infinite; animation-delay: 0.5s; }
 
-        /* ITAAS ANG 3 SUSPECTS BOX AT LIITAN NG KAUNTI PARA HINDI MATAKPAN ANG ATTORNEY 1 */
         .left-suspects-sidebar {
             position: fixed;
             left: 14px;
@@ -492,7 +494,6 @@
             margin: 12px auto;
         }
 
-        /* EKSAKTONG NAKAGITNA SA SCREEN NG JUDGE MONITOR */
         #judge-photo-popup {
             position: fixed !important;
             top: 0 !important; 
@@ -617,35 +618,32 @@
             margin: 0 auto;
         }
 
-        .judge-speech-container {
-            position: relative;
-            z-index: 3;
-            max-width: 820px;
-            margin: 0 auto 12px auto;
-            background: rgba(15, 23, 42, 0.65);
-            border: 1.5px solid rgba(168, 85, 247, 0.5);
-            padding: 12px 20px;
-            border-radius: 16px;
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        /* HORIZONTAL FULLSCREEN EXPLANATIONS CONTAINER AFTER QUIZ */
+        #review-section {
+            margin-top: 25px; 
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid rgba(168, 85, 247, 0.6); 
+            padding: 25px;
+            border-radius: 22px; 
+            display: none;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
 
-        .judge-speech-avatar {
-            font-size: 30px;
-            background: rgba(168, 85, 247, 0.2);
-            padding: 8px 12px;
-            border-radius: 50%;
-            border: 1px solid rgba(168, 85, 247, 0.5);
-            flex-shrink: 0;
+        .horizontal-explanations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin-top: 15px;
         }
 
-        .judge-speech-text {
-            font-size: 14px;
-            color: #f3e8ff;
-            line-height: 1.45;
-            margin: 0;
+        .explanation-card-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1.5px solid rgba(56, 189, 248, 0.4);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: left;
         }
 
         h2 { font-size: 19px; color: #e9d5ff; text-align: center; }
@@ -759,13 +757,6 @@
             font-size: 13px; color: #ecfdf5; display: none;
         }
 
-        #review-section {
-            margin-top: 15px; background: rgba(15, 23, 42, 0.6);
-            border: 1.5px solid rgba(168, 85, 247, 0.4); padding: 15px;
-            border-radius: 18px; display: none;
-        }
-
-        /* CIRCULAR TIMER AT TOP-LEFT ALIGNED WITH CONTROL BUTTONS */
         #floating-timer-badge {
             position: fixed;
             top: 15px;
@@ -864,7 +855,7 @@
         <span id="floating-timer-text">01:00</span>
     </div>
 
-    <!-- GLOWING AND MOVING LAW ICONS FOR FIRST SCREEN -->
+    <!-- GLOWING AT MOVING LAW ICONS PARA SA UNANG PAGE -->
     <div class="law-bg-element icon-1">⚖️</div>
     <div class="law-bg-element icon-2">📜</div>
     <div class="law-bg-element icon-3">🏛️</div>
@@ -873,6 +864,10 @@
     <div class="law-bg-element icon-6">💼</div>
     <div class="law-bg-element icon-7">🎓</div>
     <div class="law-bg-element icon-8">🚨</div>
+    <div class="law-bg-element icon-9">📖</div>
+    <div class="law-bg-element icon-10">🏛️</div>
+    <div class="law-bg-element icon-11">⚖️</div>
+    <div class="law-bg-element icon-12">📜</div>
 
     <div class="side-profile-container" id="side-profile">
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
@@ -916,7 +911,7 @@
             <div style="font-size: 32px; margin-bottom: 2px;">⚖️✨ Court Verdict Results ✨⚖️</div>
             <h2 style="color: #d8b4fe; font-size: 18px; margin: 4px 0 12px 0;">Final Performance Review</h2>
             <div class="results-boxes-container" id="attorneys-results-list"></div>
-            <button class="btn" style="width: 100%; margin-top: 10px; font-size: 15px; padding: 11px;" onclick="closeWinnerModal()">Close / View Review & Results</button>
+            <button class="btn" style="width: 100%; margin-top: 10px; font-size: 15px; padding: 11px;" onclick="closeWinnerModal()">Close / View Full Screen Explanations</button>
         </div>
     </div>
 
@@ -1005,34 +1000,6 @@
 
                     <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard (Highest to Lowest)</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
-
-                    <div id="review-section">
-                        <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px; font-size: 16px;">📜 Court Review: Detailed Explanations</h3>
-                        <div style="margin-bottom: 12px;">
-                            <p style="font-weight: bold; color: #38bdf8;">Q1: Magna Carta for Disabled Persons[cite: 1, 2]</p>
-                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ay naglalayong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan[cite: 1, 2].</p>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <p style="font-weight: bold; color: #38bdf8;">Q2: Protection Against Child Abuse[cite: 1, 2]</p>
-                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata[cite: 1, 2].</p>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <p style="font-weight: bold; color: #38bdf8;">Q3: Indigenous Peoples Rights Act (IPRA)[cite: 1, 2]</p>
-                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 8371</b> ay kinikilala, pinoprotektahan, at itinataguyod ang mga karapatan ng mga katutubong pamayanan / katutubong mamamayan[cite: 1, 2].</p>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <p style="font-weight: bold; color: #38bdf8;">Q4: State Protection to Quality Education[cite: 1]</p>
-                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>1987 Philippine Constitution</b> ang nag-uutos sa Estado na protektahan at itaguyod ang karapatan ng lahat ng mamamayan sa de-kalidad na edukasyon[cite: 1].</p>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <p style="font-weight: bold; color: #38bdf8;">Q5: Rehabilitation of Disabled Persons[cite: 1, 2]</p>
-                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ang tuwirang nagtatakda ng mga programa para sa rehabilitasyon at integrasyon ng mga may kapansanan sa lipunan[cite: 1, 2].</p>
-                        </div>
-                        <div style="margin-bottom: 12px;">
-                            <p style="font-weight: bold; color: #38bdf8;">Q6: Philippine Teachers Professionalization Act[cite: 1, 2]</p>
-                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7836</b> ang nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET) at pagpapapropesyonal ng pagtuturo[cite: 1, 2].</p>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="judge-right-box">
@@ -1041,6 +1008,38 @@
                     
                     <div class="podium-area" id="podium-display">
                         <!-- Dynamic Podium Render -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- HORIZONTAL FULLSCREEN EXPLANATION & PARTICIPANTS RANKING AFTER QUIZ -->
+            <div id="review-section">
+                <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px; font-size: 20px; font-weight: 800;">📜 Court Review: Detailed Explanations & Final Scores</h3>
+                
+                <div class="horizontal-explanations-grid">
+                    <div class="explanation-card-item">
+                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q1: Magna Carta for Disabled Persons[cite: 1, 2]</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ay naglalayong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan[cite: 1, 2].</p>
+                    </div>
+                    <div class="explanation-card-item">
+                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q2: Protection Against Child Abuse[cite: 1, 2]</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata[cite: 1, 2].</p>
+                    </div>
+                    <div class="explanation-card-item">
+                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q3: Indigenous Peoples Rights Act (IPRA)[cite: 1, 2]</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 8371</b> ay kinikilala, pinoprotektahan, at itinataguyod ang mga karapatan ng mga katutubong pamayanan / katutubong mamamayan[cite: 1, 2].</p>
+                    </div>
+                    <div class="explanation-card-item">
+                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q4: State Protection to Quality Education[cite: 1]</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>1987 Philippine Constitution</b> ang nag-uutos sa Estado na protektahan at itaguyod ang karapatan ng lahat ng mamamayan sa de-kalidad na edukasyon[cite: 1].</p>
+                    </div>
+                    <div class="explanation-card-item">
+                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q5: Rehabilitation of Disabled Persons[cite: 1, 2]</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ang tuwirang nagtatakda ng mga programa para sa rehabilitasyon at integrasyon ng mga may kapansanan sa lipunan[cite: 1, 2].</p>
+                    </div>
+                    <div class="explanation-card-item">
+                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q6: Philippine Teachers Professionalization Act[cite: 1, 2]</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7836</b> ang nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET) at pagpapapropesyonal ng pagtuturo[cite: 1, 2].</p>
                     </div>
                 </div>
             </div>
@@ -1153,11 +1152,6 @@
         </div>
     </div>
 
-    <div class="judge-speech-container" id="judge-speech-box">
-        <div class="judge-speech-avatar">👨‍⚖️</div>
-        <p class="judge-speech-text" id="typewriter-text"></p>
-    </div>
-
     <script>
         const socket = io();
         let myGroup = null;
@@ -1194,21 +1188,6 @@
                 arrowBtn.innerText = '▼';
             }
         }
-
-        const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, review your statutes carefully before time runs out!"';
-        let charIndex = 0;
-
-        function typeWriter() {
-            const target = document.getElementById('typewriter-text');
-            if (charIndex < judgeMessage.length) {
-                target.innerHTML = judgeMessage.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
-                charIndex++;
-                setTimeout(typeWriter, 35);
-            } else {
-                target.innerHTML = judgeMessage;
-            }
-        }
-        window.onload = () => typeWriter();
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
@@ -1465,6 +1444,10 @@
             });
             attorneysListContainer.innerHTML = resultsHTML;
             document.getElementById('winner-modal').style.display = 'flex';
+            
+            // AUTOMATICALLY SHOW HORIZONTAL REVIEW EXPLANATIONS AFTER TIME IS UP
+            const reviewSec = document.getElementById('review-section');
+            if (reviewSec) reviewSec.style.display = "block";
         });
 
         socket.on('resetState', () => { location.reload(); });
