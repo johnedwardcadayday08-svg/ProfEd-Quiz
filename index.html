@@ -30,6 +30,52 @@
             overflow-x: hidden;
         }
 
+        /* AESTHETIC TOP-RIGHT CONTROLS CONTAINER */
+        .top-controls {
+            position: fixed;
+            top: 18px;
+            right: 22px;
+            z-index: 10005;
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.85), rgba(124, 58, 237, 0.85));
+            color: #f3e8ff;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            padding: 9px 18px;
+            font-size: 13.5px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 15px rgba(168, 85, 247, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45), 0 0 22px rgba(192, 132, 252, 0.6);
+            color: #ffffff;
+        }
+
+        .surrender-btn {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.85), rgba(225, 29, 72, 0.85));
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 15px rgba(244, 63, 94, 0.4);
+        }
+
+        .surrender-btn:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45), 0 0 22px rgba(244, 63, 94, 0.7);
+        }
+
         .law-bg-element {
             position: fixed;
             font-size: 45px;
@@ -52,7 +98,6 @@
         .icon-4 { bottom: 10%; right: 7%; animation-delay: 4.5s; }
         .icon-5 { top: 50%; left: 3%; animation-delay: 2s; }
 
-        /* CLEAN RESPONSIVE PHOTO CUTOUT WITH SOFT NATURAL SHADOW */
         .side-profile-container {
             position: fixed;
             right: 0;
@@ -74,7 +119,6 @@
             max-height: 100%;
             object-fit: contain;
             object-position: bottom right;
-            /* Inalis ang purple glow; pinalitan ng natural black depth shadow */
             filter: drop-shadow(-10px 5px 15px rgba(0, 0, 0, 0.7));
         }
 
@@ -397,7 +441,6 @@
             100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.8) rotate(360deg); }
         }
 
-        /* MOBILE DISPLAY OPTIMIZATION */
         @media (max-width: 600px) {
             body { padding: 5px; }
             .container { padding: 14px; border-radius: 16px; }
@@ -410,17 +453,19 @@
             .options label { font-size: 12px; padding: 8px; }
             #judge-welcome-msg { font-size: 28px; }
             .student-welcome-text { font-size: 24px; }
-            
-            /* Clean Mobile Photo Sizing Without Any Purple Box Overlay */
-            .side-profile-container { 
-                width: 160px; 
-                height: 38vh; 
-                opacity: 0.9;
-            }
+            .side-profile-container { width: 160px; height: 38vh; opacity: 0.9; }
+            .control-btn { padding: 6px 12px; font-size: 11px; }
+            .top-controls { top: 12px; right: 12px; gap: 6px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- AESTHETIC CONTROL BUTTONS -->
+    <div class="top-controls">
+        <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+        <button class="control-btn surrender-btn" onclick="handleSurrender()">🏳️ Surrender</button>
+    </div>
 
     <div class="law-bg-element icon-1">⚖️</div>
     <div class="law-bg-element icon-2">📜</div>
@@ -428,14 +473,12 @@
     <div class="law-bg-element icon-4">🔨</div>
     <div class="law-bg-element icon-5">🖋️</div>
 
-    <!-- Clean Transparent Photo at Bottom Right Corner -->
     <div class="side-profile-container" id="side-profile">
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
 
     <div id="feedback-popup"></div>
 
-    <!-- Centered Glassmorphism Password Modal -->
     <div class="modal-overlay" id="password-modal">
         <div class="modal-card">
             <h3>⚖️ Judge Access</h3>
@@ -448,7 +491,6 @@
         </div>
     </div>
 
-    <!-- Centered Warning Modal -->
     <div class="modal-overlay" id="warning-modal">
         <div class="modal-card" style="border-color: var(--danger);">
             <h3 style="color: #f87171;">🚫 ACCESS DENIED</h3>
@@ -459,12 +501,10 @@
         </div>
     </div>
 
-    <!-- Celebration Animation Overlay -->
     <div id="judge-welcome-overlay">
         <div id="judge-welcome-msg">💖 Welcome my judge 🎆</div>
     </div>
 
-    <!-- Student Welcome Overlay -->
     <div id="student-welcome-overlay">
         <div class="student-welcome-card">
             <img src="/logo.png" alt="MCC Logo" class="student-welcome-logo">
@@ -474,7 +514,6 @@
     </div>
 
     <div class="container" id="main-container">
-        <!-- ROLE SELECTION -->
         <div id="role-select">
             <div class="app-logo-container">
                 <img src="/logo.png" alt="Teacher Education Program Logo" class="app-logo">
@@ -491,7 +530,6 @@
             <button class="btn group-btn" onclick="selectGroup('Attorney 4')">Attorney 4</button>
         </div>
 
-        <!-- TEACHER (JUDGE) VIEW -->
         <div id="teacher-view" class="hidden">
             <h1>⚖️ Judge Real-Time Monitor ⚖️</h1>
             <div class="header-bar">
@@ -553,7 +591,6 @@
             </div>
         </div>
 
-        <!-- STUDENT (ATTORNEY) VIEW -->
         <div id="student-view" class="hidden">
             <h1 id="group-title">Counsel Dashboard</h1>
             <div class="header-bar">
@@ -564,7 +601,6 @@
             <div id="rating-banner"></div>
 
             <div id="quiz-questions">
-                <!-- Q1: Choices A to G -->
                 <div class="question-card" id="card-q1">
                     <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?</p>
                     <div class="options">
@@ -582,7 +618,6 @@
                     </div>
                 </div>
 
-                <!-- Q2: Choices A to G -->
                 <div class="question-card" id="card-q2">
                     <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation and discrimination?</p>
                     <div class="options">
@@ -600,7 +635,6 @@
                     </div>
                 </div>
 
-                <!-- Q3: Choices A to G -->
                 <div class="question-card" id="card-q3">
                     <p><b>Q3:</b> Which law is recognized as the Indigenous Peoples' Rights Act (IPRA)?</p>
                     <div class="options">
@@ -618,7 +652,6 @@
                     </div>
                 </div>
 
-                <!-- Q4: Choices A to G -->
                 <div class="question-card" id="card-q4">
                     <p><b>Q4:</b> What supreme law of the Philippines serves as the fundamental framework for all civil rights and state policies?</p>
                     <div class="options">
@@ -636,7 +669,6 @@
                     </div>
                 </div>
 
-                <!-- Q5: Choices A to G -->
                 <div class="question-card" id="card-q5">
                     <p><b>Q5:</b> Which statutory framework specifically mandates equal opportunity for employment and training for persons with disabilities?</p>
                     <div class="options">
@@ -654,7 +686,6 @@
                     </div>
                 </div>
 
-                <!-- Q6: Choices A to G -->
                 <div class="question-card" id="card-q6">
                     <p><b>Q6:</b> Which specific legislation penalizes child trafficking and protects children in especially difficult circumstances?</p>
                     <div class="options">
@@ -681,6 +712,35 @@
         let answeredQuestions = {};
         let finalScoreValue = 0;
         let totalAnsweredCount = 0;
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert("Error attempting to enable full-screen mode: " + err.message);
+                });
+                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
+            }
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
+            } else {
+                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
+            }
+        });
+
+        function handleSurrender() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(err => console.log(err));
+            }
+            location.reload();
+        }
 
         function selectRole(role) {
             if (role === 'teacher') {
