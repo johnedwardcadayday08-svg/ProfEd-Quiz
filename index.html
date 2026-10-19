@@ -35,34 +35,26 @@
             transition: box-shadow 0.5s ease-in-out;
         }
 
-        /* KAPAG NAKA-FULLSCREEN LAMANG: Lalawak nang husto, maliit ang gilid, at invisible ang scrollbar */
+        /* KAPAG NAKA-FULLSCREEN NA: Pinayagan ang scrolling sa loob nang hindi binabago ang lapad at mga button */
         body.is-fullscreen {
             overflow: hidden !important;
             height: 100vh !important;
             max-height: 100vh !important;
-            padding: 6px !important;
+            padding: 8px 12px !important;
         }
 
         body.is-fullscreen .container {
-            max-width: 99vw !important;
-            width: 99vw !important;
-            margin: 0 auto !important;
-            padding-top: 14px !important;
-            padding-bottom: 14px !important;
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-            height: calc(100vh - 20px) !important;
+            max-width: 1550px !important;
+            width: 96% !important;
+            margin-top: 5px !important;
+            margin-bottom: 5px !important;
+            padding-top: 24px !important;
+            padding-bottom: 24px !important;
+            padding-left: 40px !important;
+            padding-right: 40px !important;
+            height: calc(100vh - 90px) !important;
             box-sizing: border-box;
-            overflow-y: auto !important;
-            scrollbar-width: none !important; /* Invisible scrollbar sa Firefox */
-            -ms-overflow-style: none !important; /* Invisible scrollbar sa IE/Edge */
-        }
-
-        /* Invisible scrollbar sa Chrome, Safari, at Opera kapag Fullscreen */
-        body.is-fullscreen .container::-webkit-scrollbar {
-            display: none !important;
-            width: 0px !important;
-            background: transparent !important;
+            overflow-y: auto !important; /* Inayos ang scrolling kapag naka-Fullscreen */
         }
 
         .urgent-warning-glow {
@@ -240,7 +232,6 @@
             }
         }
 
-        /* ORIHINAL NA ITSURA KAPAG HINDI NAKA-FULLSCREEN */
         .container { 
             position: relative;
             z-index: 3;
@@ -257,9 +248,9 @@
 
         @media (min-width: 1024px) {
             .container {
-                max-width: 950px;
-                margin-left: auto;
-                margin-right: auto;
+                max-width: 1550px;
+                margin-left: 40px;
+                margin-right: 40px;
             }
         }
 
