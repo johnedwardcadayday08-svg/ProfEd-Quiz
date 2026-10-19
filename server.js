@@ -26,7 +26,8 @@ let attorneyPhotos = {
 let judgePopupQueue = [];
 let isQueueRunning = false;
 
-let timer = 30;
+// NAKA-SET NA SA 1 MINUTO (60 SECONDS) ANG TIMER
+let timer = 60;
 let timerInterval = null;
 let timerRunning = false;
 
@@ -86,7 +87,7 @@ io.on('connection', (socket) => {
     socket.on('resetGame', () => {
         clearInterval(timerInterval);
         timerRunning = false;
-        timer = 30;
+        timer = 60;
         Object.keys(groupScores).forEach(group => {
             groupScores[group] = 0;
             attorneyPhotos[group] = '';
@@ -98,11 +99,19 @@ io.on('connection', (socket) => {
     });
 
     socket.on('submitAnswer', ({ groupName, questionId, answer }) => {
-        let correctAnswers = { q1: 'RA7277', q2: 'RA7610', q3: 'RA8371', q4: 'CONST', q5: 'RA7277', q6: 'RA7836' };
-        if (correctAnswers[questionId] === answer && groupScores[groupName] !== undefined) {
+        let correctAnswers = {
+            q1: 'RA7277',
+            q2: 'RA7610',
+            q3: 'RA8371',
+            q4: 'CONST',
+            q5: 'RA7277',
+            q6: 'RA7836'
+        };
+        let isCorrect = (correctAnswers[questionId] === answer);
+        if (isCorrect && groupScores[groupName] !== undefined) {
             groupScores[groupName]++;
         }
-        socket.emit('answerFeedback', { questionId, isCorrect: correctAnswers[questionId] === answer });
+        socket.emit('answerFeedback', { questionId, isCorrect, answer });
         io.emit('updateState', { groupScores, photos: attorneyPhotos, timer, timerRunning });
     });
 });

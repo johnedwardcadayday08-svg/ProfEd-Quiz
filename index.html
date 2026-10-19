@@ -32,6 +32,13 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: box-shadow 0.5s ease-in-out;
+        }
+
+        /* RED GLOWING EFFECT KAPAG 15 SECONDS NA LANG */
+        .urgent-warning-glow {
+            box-shadow: inset 0 0 50px rgba(244, 63, 94, 0.9), 0 0 30px rgba(244, 63, 94, 0.8);
+            border: 3px solid #f43f5e !important;
         }
 
         .top-controls {
@@ -197,7 +204,6 @@
             border: 1.5px solid rgba(255, 255, 255, 0.25);
         }
 
-        /* 2-COLUMN LAYOUT PARA SA JUDGE SCREEN (KALIWA AT KANAN) */
         .judge-main-layout {
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
@@ -268,7 +274,6 @@
             border-radius: 10px 10px 0 0;
         }
 
-        /* GUMAGALAW NA GLOWING EFFECT SA CIRCLE FRAME NG MGA LITRATO */
         .glowing-frame {
             width: 58px;
             height: 58px;
@@ -390,7 +395,6 @@
             margin: 12px auto;
         }
 
-        /* EXCLUSIVE JUDGE-ONLY CENTER POPUP (NA NAKAGITNA SA SCREEN NG JUDGE) */
         #judge-photo-popup {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -628,11 +632,28 @@
             padding: 18px; border-radius: 16px; margin-bottom: 16px;
         }
 
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
         .options label { 
             display: flex; align-items: center; padding: 8px 12px; 
             background: rgba(14, 116, 144, 0.25); border: 1px solid rgba(56, 189, 248, 0.45); 
             border-radius: 10px; cursor: pointer; font-size: 13px; color: #ffffff; font-weight: 600; 
-            margin-bottom: 6px;
+        }
+        .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
+
+        .option-correct {
+            background: rgba(16, 185, 129, 0.45) !important;
+            border-color: #10b981 !important;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+        }
+        .option-wrong {
+            background: rgba(244, 63, 94, 0.45) !important;
+            border-color: #f43f5e !important;
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
         }
 
         .explanation-box {
@@ -647,6 +668,26 @@
             border: 1.5px solid rgba(168, 85, 247, 0.4); padding: 15px;
             border-radius: 18px; display: none;
         }
+
+        #feedback-popup { 
+            position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%) scale(0.8); 
+            padding: 20px 40px; border-radius: 20px; 
+            font-size: 26px; font-weight: 900; color: white; 
+            z-index: 10005; display: none; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px); text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popupScale {
+            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .feedback-correct { background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95)); }
+        .feedback-wrong { background: linear-gradient(135deg, rgba(244, 63, 94, 0.95), rgba(225, 29, 72, 0.95)); }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -814,12 +855,10 @@
         <div id="teacher-view" class="hidden">
             <h1 style="margin-top: 0;">⚖️ Judge Real-Time Monitor ⚖️</h1>
             
-            <!-- 2-COLUMN LAYOUT PARA SA KALIWA AT KANAN NG JUDGE SCREEN -->
             <div class="judge-main-layout">
-                <!-- KALIWANG BOX: CONTROLS AT SCOREBOARD -->
                 <div class="judge-left-box">
                     <div class="header-bar">
-                        <span id="teacher-timer">Time Left: 00:30</span>
+                        <span id="teacher-timer">Time Left: 01:00</span>
                         <div>
                             <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
                             <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
@@ -830,14 +869,34 @@
                     <div class="bar-chart-container" id="bar-chart"></div>
 
                     <div id="review-section">
-                        <h3 style="color: #c084fc; text-align: center; margin-bottom: 10px;">📜 Court Review: Explanations</h3>
-                        <div style="font-size: 12.5px; line-height: 1.4; color: #ecfdf5;">
-                            <b>Q1-Q6 Overview:</b> Detailed legal references for Magna Carta, IPRA, and Professional Ethics[cite: 1, 2].
+                        <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px;">📜 Court Review: Detailed Explanations</h3>
+                        <div style="margin-bottom: 12px;">
+                            <p style="font-weight: bold; color: #38bdf8;">Q1: Magna Carta for Disabled Persons[cite: 1, 2]</p>
+                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ay naglalayong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan[cite: 1, 2].</p>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <p style="font-weight: bold; color: #38bdf8;">Q2: Protection Against Child Abuse[cite: 1, 2]</p>
+                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata[cite: 1, 2].</p>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <p style="font-weight: bold; color: #38bdf8;">Q3: Indigenous Peoples Rights Act (IPRA)[cite: 1, 2]</p>
+                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 8371</b> ay kinikilala, pinoprotektahan, at itinataguyod ang mga karapatan ng mga katutubong pamayanan / katutubong mamamayan[cite: 1, 2].</p>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <p style="font-weight: bold; color: #38bdf8;">Q4: State Protection to Quality Education[cite: 1]</p>
+                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>1987 Philippine Constitution</b> ang nag-uutos sa Estado na protektahan at itaguyod ang karapatan ng lahat ng mamamayan sa de-kalidad na edukasyon[cite: 1].</p>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <p style="font-weight: bold; color: #38bdf8;">Q5: Rehabilitation of Disabled Persons[cite: 1, 2]</p>
+                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ang tuwirang nagtatakda ng mga programa para sa rehabilitasyon at integrasyon ng mga may kapansanan sa lipunan[cite: 1, 2].</p>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <p style="font-weight: bold; color: #38bdf8;">Q6: Philippine Teachers Professionalization Act[cite: 1, 2]</p>
+                            <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7836</b> ang nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET) at pagpapapropesyonal ng pagtuturo[cite: 1, 2].</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- KANANG BOX: PODIUM RANKING AT MGA LITRATO NA MAY GLOWING EFFECT SA BABA NG RANK BARS -->
                 <div class="judge-right-box">
                     <h3 style="margin: 0; color: #f472b6; font-size: 16px; text-align: center;">👑 Live Podium & Group Showcase 🏛️</h3>
                     <p style="font-size: 11px; color: #cbd5e1; margin: 4px 0 10px 0; text-align: center;">Top Standings & Glowing Avatars</p>
@@ -852,19 +911,110 @@
         <div id="student-view" class="hidden">
             <h1 id="group-title">Counsel Dashboard</h1>
             <div class="header-bar">
-                <span id="student-timer">Time Left: 00:30</span>
+                <span id="student-timer">Time Left: 01:00</span>
                 <span id="group-score-display">Score: 0 / 6</span>
             </div>
 
             <div id="quiz-questions">
+                <!-- Q1 -->
                 <div class="question-card" id="card-q1">
                     <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?[cite: 1, 2]</p>
                     <div class="options">
                         <label id="lbl-q1-RA7277"><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
                         <label id="lbl-q1-RA7610"><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
+                        <label id="lbl-q1-RA8371"><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
+                        <label id="lbl-q1-CONST"><input type="radio" name="q1" value="CONST" onchange="submitAns('q1', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
+                        <label id="lbl-q1-RA9155"><input type="radio" name="q1" value="RA9155" onchange="submitAns('q1', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
+                        <label id="lbl-q1-RA10533"><input type="radio" name="q1" value="RA10533" onchange="submitAns('q1', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
+                        <label id="lbl-q1-RA7836"><input type="radio" name="q1" value="RA7836" onchange="submitAns('q1', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
                     </div>
                     <div class="explanation-box" id="exp-q1">
                         <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7277</b> ay kilala bilang "Magna Carta for Disabled Persons"[cite: 1, 2].
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="question-card" id="card-q2">
+                    <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation, and discrimination?[cite: 1, 2]</p>
+                    <div class="options">
+                        <label id="lbl-q2-RA7277"><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
+                        <label id="lbl-q2-RA7610"><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
+                        <label id="lbl-q2-RA8371"><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
+                        <label id="lbl-q2-CONST"><input type="radio" name="q2" value="CONST" onchange="submitAns('q2', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
+                        <label id="lbl-q2-RA9155"><input type="radio" name="q2" value="RA9155" onchange="submitAns('q2', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
+                        <label id="lbl-q2-RA10533"><input type="radio" name="q2" value="RA10533" onchange="submitAns('q2', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
+                        <label id="lbl-q2-RA7836"><input type="radio" name="q2" value="RA7836" onchange="submitAns('q2', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
+                    </div>
+                    <div class="explanation-box" id="exp-q2">
+                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata[cite: 1, 2].
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="question-card" id="card-q3">
+                    <p><b>Q3:</b> What law recognizes, protects, and promotes the rights of Indigenous Cultural Communities / Indigenous Peoples (IPRA)?[cite: 1, 2]</p>
+                    <div class="options">
+                        <label id="lbl-q3-RA7277"><input type="radio" name="q3" value="RA7277" onchange="submitAns('q3', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
+                        <label id="lbl-q3-RA7610"><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
+                        <label id="lbl-q3-RA8371"><input type="radio" name="q3" value="RA8371" onchange="submitAns('q3', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
+                        <label id="lbl-q3-CONST"><input type="radio" name="q3" value="CONST" onchange="submitAns('q3', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
+                        <label id="lbl-q3-RA9155"><input type="radio" name="q3" value="RA9155" onchange="submitAns('q3', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
+                        <label id="lbl-q3-RA10533"><input type="radio" name="q3" value="RA10533" onchange="submitAns('q3', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
+                        <label id="lbl-q3-RA7836"><input type="radio" name="q3" value="RA7836" onchange="submitAns('q3', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
+                    </div>
+                    <div class="explanation-box" id="exp-q3">
+                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 8371</b> o kilala rin bilang Indigenous Peoples Rights Act (IPRA) ng 1997 ay naglalayong kilalanin at protektahan ang mga karapatan ng mga katutubong pamayanan[cite: 1, 2].
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="question-card" id="card-q4">
+                    <p><b>Q4:</b> Which fundamental law of the land guarantees state protection and promotion of quality education at all levels?[cite: 1]</p>
+                    <div class="options">
+                        <label id="lbl-q4-RA7277"><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
+                        <label id="lbl-q4-RA7610"><input type="radio" name="q4" value="RA7610" onchange="submitAns('q4', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
+                        <label id="lbl-q4-RA8371"><input type="radio" name="q4" value="RA8371" onchange="submitAns('q4', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
+                        <label id="lbl-q4-CONST"><input type="radio" name="q4" value="CONST" onchange="submitAns('q4', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
+                        <label id="lbl-q4-RA9155"><input type="radio" name="q4" value="RA9155" onchange="submitAns('q4', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
+                        <label id="lbl-q4-RA10533"><input type="radio" name="q4" value="RA10533" onchange="submitAns('q4', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
+                        <label id="lbl-q4-RA7836"><input type="radio" name="q4" value="RA7836" onchange="submitAns('q4', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
+                    </div>
+                    <div class="explanation-box" id="exp-q4">
+                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>1987 Philippine Constitution</b> (Saligang Batas) ang pinakamataas na batas ng bansa na nag-uutos sa Estado na protektahan at itaguyod ang de-kalidad na edukasyon[cite: 1].
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="question-card" id="card-q5">
+                    <p><b>Q5:</b> Which act mandates the rehabilitation, self-development, and self-reliance of disabled persons and their integration into mainstream society?[cite: 1, 2]</p>
+                    <div class="options">
+                        <label id="lbl-q5-RA7277"><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
+                        <label id="lbl-q5-RA7610"><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
+                        <label id="lbl-q5-RA8371"><input type="radio" name="q5" value="RA8371" onchange="submitAns('q5', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
+                        <label id="lbl-q5-CONST"><input type="radio" name="q5" value="CONST" onchange="submitAns('q5', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
+                        <label id="lbl-q5-RA9155"><input type="radio" name="q5" value="RA9155" onchange="submitAns('q5', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
+                        <label id="lbl-q5-RA10533"><input type="radio" name="q5" value="RA10533" onchange="submitAns('q5', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
+                        <label id="lbl-q5-RA7836"><input type="radio" name="q5" value="RA7836" onchange="submitAns('q5', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
+                    </div>
+                    <div class="explanation-box" id="exp-q5">
+                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7277</b> ay tuwirang nagtatakda ng mga programa para sa rehabilitasyon at pagpapalakas ng sariling kakayahan ng mga may kapansanan[cite: 1, 2].
+                    </div>
+                </div>
+
+                <!-- Q6 -->
+                <div class="question-card" id="card-q6">
+                    <p><b>Q6:</b> Which law professionalizes the teaching practice and prescribes the licensure examination for teachers in the Philippines?[cite: 1, 2]</p>
+                    <div class="options">
+                        <label id="lbl-q6-RA7277"><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
+                        <label id="lbl-q6-RA7610"><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
+                        <label id="lbl-q6-RA8371"><input type="radio" name="q6" value="RA8371" onchange="submitAns('q6', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
+                        <label id="lbl-q6-CONST"><input type="radio" name="q6" value="CONST" onchange="submitAns('q6', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
+                        <label id="lbl-q6-RA9155"><input type="radio" name="q6" value="RA9155" onchange="submitAns('q6', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
+                        <label id="lbl-q6-RA10533"><input type="radio" name="q6" value="RA10533" onchange="submitAns('q6', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
+                        <label id="lbl-q6-RA7836"><input type="radio" name="q6" value="RA7836" onchange="submitAns('q6', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
+                    </div>
+                    <div class="explanation-box" id="exp-q6">
+                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7836</b> (Philippine Teachers Professionalization Act of 1994) ang batas na nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET)[cite: 1, 2].
                     </div>
                 </div>
             </div>
@@ -1042,13 +1192,28 @@
             if (expBox) expBox.style.display = "block";
         }
 
+        socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
+            const popup = document.getElementById('feedback-popup');
+            if (popup) {
+                popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
+                popup.innerHTML = isCorrect ? "✔ CORRECT!" : "✖ INCORRECT!";
+                popup.style.display = "block";
+                setTimeout(() => { popup.style.display = "none"; }, 1500);
+            }
+            if (questionId && answer) {
+                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
+                if (targetLabel) {
+                    targetLabel.classList.add(isCorrect ? "option-correct" : "option-wrong");
+                }
+            }
+        });
+
         socket.on('updateState', ({ groupScores, photos }) => {
             latestGroupScores = groupScores;
             if (photos) attorneyPhotos = photos;
 
             const sortedGroups = Object.entries(groupScores).sort((a, b) => b[1] - a[1]);
             
-            // Render Left Horizontal Scoreboard
             let chartHTML = '';
             sortedGroups.forEach(([group, score]) => {
                 let percentage = (score / 6) * 100;
@@ -1065,7 +1230,6 @@
             const barChart = document.getElementById('bar-chart');
             if (barChart) barChart.innerHTML = chartHTML;
 
-            // Render Right Vertical Podium Rank Bars na may glowing frame sa baba
             let podiumHTML = '';
             sortedGroups.forEach(([group, score], idx) => {
                 let heightPercent = Math.max((score / 6) * 100, 8);
@@ -1091,7 +1255,6 @@
             }
         });
 
-        // POP-UP EXKLUSIBO LAMANG SA JUDGE SCREEN AT NAKAGITNA SA EKRANO
         socket.on('showJudgePopupQueue', (queue) => {
             if (isJudgeRole) {
                 playPopupQueue(queue, 0);
@@ -1113,16 +1276,26 @@
             }, 3000);
         }
 
+        // TIMER AT RED GLOWING EFFECT KAPAG 15 SECONDS NA LANG
         socket.on('timerUpdate', (timer) => {
             let mins = Math.floor(timer / 60).toString().padStart(2, '0');
             let secs = (timer % 60).toString().padStart(2, '0');
             let timeStr = `Time Left: ${mins}:${secs}`;
             document.getElementById('teacher-timer').innerText = timeStr;
             document.getElementById('student-timer').innerText = timeStr;
+
+            if (timer <= 15 && timer > 0) {
+                document.body.classList.add('urgent-warning-glow');
+            } else {
+                document.body.classList.remove('urgent-warning-glow');
+            }
         });
 
         socket.on('timeUp', () => {
+            document.body.classList.remove('urgent-warning-glow');
             document.querySelectorAll('input[type="radio"]').forEach(input => input.disabled = true);
+            document.querySelectorAll('.explanation-box').forEach(box => box.style.display = "block");
+
             const attorneysListContainer = document.getElementById('attorneys-results-list');
             let resultsHTML = '';
             ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
