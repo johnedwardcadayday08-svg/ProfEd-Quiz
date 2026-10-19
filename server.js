@@ -6,18 +6,17 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Pinapahintulot ang server na basahin ang background.jpg at iba pang static files
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-let timer = 30; // 30 Seconds Timer
+let timer = 30;
 let timerInterval = null;
 let timerRunning = false;
-let groupScores = { "Group 1": 0, "Group 2": 0, "Group 3": 0, "Group 4": 0 };
-let groupAnswers = { "Group 1": {}, "Group 2": {}, "Group 3": {}, "Group 4": {} };
+let groupScores = { "Attorney 1": 0, "Attorney 2": 0, "Attorney 3": 0, "Attorney 4": 0 };
+let groupAnswers = { "Attorney 1": {}, "Attorney 2": {}, "Attorney 3": {}, "Attorney 4": {} };
 
 const correctAnswers = {
     q1: "RA7277",
@@ -73,8 +72,8 @@ io.on('connection', (socket) => {
         timerInterval = null;
         timer = 30;
         timerRunning = false;
-        groupScores = { "Group 1": 0, "Group 2": 0, "Group 3": 0, "Group 4": 0 };
-        groupAnswers = { "Group 1": {}, "Group 2": {}, "Group 3": {}, "Group 4": {} };
+        groupScores = { "Attorney 1": 0, "Attorney 2": 0, "Attorney 3": 0, "Attorney 4": 0 };
+        groupAnswers = { "Attorney 1": {}, "Attorney 2": {}, "Attorney 3": {}, "Attorney 4": {} };
         io.emit('resetState', { groupScores, timer });
     });
 });

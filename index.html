@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚖️ Philippine Laws Group Quiz 📜</title>
+    <title>PROFED 5 GROUP 2 QUICK ACTIVITY</title>
     <script src="/socket.io/socket.io.js"></script>
     <style>
         :root {
@@ -11,13 +11,14 @@
             --primary-hover: #7c3aed;
             --success: #10b981;
             --danger: #f43f5e;
-            --card-bg: rgba(15, 23, 42, 0.65); 
+            --card-bg-transparent: rgba(15, 23, 42, 0.35); 
+            --card-bg-solid: rgba(15, 23, 42, 0.75); 
             --text-color: #ffffff;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.5)), 
+            background: linear-gradient(rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.3)), 
                         url('/background.jpg') no-repeat center center fixed;
             background-size: cover;
             color: var(--text-color);
@@ -56,13 +57,14 @@
             z-index: 1;
             max-width: 900px; 
             margin: 0 auto; 
-            background: var(--card-bg); 
+            background: var(--card-bg-transparent); 
             padding: 25px; 
             border-radius: 24px; 
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
+            transition: background 0.3s ease;
         }
 
         h1 { font-size: 26px; color: #f3e8ff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
@@ -105,7 +107,7 @@
         
         .bar-chart-container { margin: 20px 0; background: rgba(0, 0, 0, 0.25); padding: 18px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.15); }
         .bar-row { display: flex; align-items: center; margin: 12px 0; }
-        .bar-label { width: 90px; font-weight: bold; font-size: 14px; color: #f3e8ff; }
+        .bar-label { width: 100px; font-weight: bold; font-size: 14px; color: #f3e8ff; }
         .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.2); height: 28px; border-radius: 10px; overflow: hidden; margin: 0 10px; position: relative; }
         .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 10px; }
         .bar-score { font-weight: bold; width: 45px; text-align: right; font-size: 14px; color: #f3e8ff; }
@@ -174,11 +176,11 @@
         @media (max-width: 600px) {
             body { padding: 5px; }
             .container { padding: 14px; border-radius: 16px; }
-            h1 { font-size: 20px; }
-            h2 { font-size: 16px; }
+            h1 { font-size: 18px; }
+            h2 { font-size: 15px; }
             .header-bar { font-size: 14px; padding: 10px; flex-direction: column; gap: 8px; text-align: center; }
             .btn { width: 100%; margin: 4px 0; padding: 10px; font-size: 15px; }
-            .bar-label { width: 70px; font-size: 12px; }
+            .bar-label { width: 80px; font-size: 12px; }
             .bar-score { font-size: 12px; }
             .options label { font-size: 13px; padding: 10px; }
         }
@@ -194,24 +196,24 @@
 
     <div id="feedback-popup"></div>
 
-    <div class="container">
+    <div class="container" id="main-container">
         <!-- ROLE SELECTION -->
         <div id="role-select">
-            <h1>⚖️ Philippine Laws Group Quiz 📜</h1>
+            <h1>⚖️ PROFED 5 GROUP 2 QUICK ACTIVITY 📜</h1>
             <p>Select your mode to begin:</p>
             <br>
-            <button class="btn" onclick="selectRole('teacher')">📺 Teacher Big Screen Monitor</button>
+            <button class="btn" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             <br><br>
-            <h3>Join as Group:</h3>
-            <button class="btn group-btn" onclick="selectGroup('Group 1')">Group 1</button>
-            <button class="btn group-btn" onclick="selectGroup('Group 2')">Group 2</button>
-            <button class="btn group-btn" onclick="selectGroup('Group 3')">Group 3</button>
-            <button class="btn group-btn" onclick="selectGroup('Group 4')">Group 4</button>
+            <h3>Join as:</h3>
+            <button class="btn group-btn" onclick="selectGroup('Attorney 1')">Attorney 1</button>
+            <button class="btn group-btn" onclick="selectGroup('Attorney 2')">Attorney 2</button>
+            <button class="btn group-btn" onclick="selectGroup('Attorney 3')">Attorney 3</button>
+            <button class="btn group-btn" onclick="selectGroup('Attorney 4')">Attorney 4</button>
         </div>
 
-        <!-- TEACHER VIEW -->
+        <!-- TEACHER (JUDGE) VIEW -->
         <div id="teacher-view" class="hidden">
-            <h1>⚖️ Teacher Real-Time Monitor ⚖️</h1>
+            <h1>⚖️ Judge Real-Time Monitor ⚖️</h1>
             <div class="header-bar">
                 <span id="teacher-timer">Time Left: 00:30</span>
                 <div>
@@ -271,9 +273,9 @@
             </div>
         </div>
 
-        <!-- STUDENT VIEW -->
+        <!-- STUDENT (ATTORNEY) VIEW -->
         <div id="student-view" class="hidden">
-            <h1 id="group-title">Group Dashboard</h1>
+            <h1 id="group-title">Counsel Dashboard</h1>
             <div class="header-bar">
                 <span id="student-timer">Time Left: 00:30</span>
                 <span id="group-score-display">Score: 0 / 6</span>
@@ -373,6 +375,7 @@
             if (role === 'teacher') {
                 document.getElementById('role-select').classList.add('hidden');
                 document.getElementById('teacher-view').classList.remove('hidden');
+                document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
             }
         }
 
@@ -381,6 +384,7 @@
             document.getElementById('role-select').classList.add('hidden');
             document.getElementById('student-view').classList.remove('hidden');
             document.getElementById('group-title').innerText = `Dashboard: ${groupName}`;
+            document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
         }
 
         function startTimer() {
