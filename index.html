@@ -62,13 +62,15 @@
             transform: scale(1.12);
         }
 
-        /* FULLSCREEN MODE: IBABA AT PATANGKARIN ANG ATTORNEY BUTTONS PERO HINDI TAKIP NG SUSPECT BOX */
+        /* FULLSCREEN MODE ADJUSTMENTS: INIBABA PA AT PINATANGKAD ANG ATTORNEY BUTTONS */
         body.is-fullscreen .attorney-buttons-container {
-            margin-top: 22px !important;
+            margin-top: 35px !important;
+            gap: 20px !important;
         }
         body.is-fullscreen .attorney-buttons-container .group-btn {
-            padding: 20px 14px !important;
-            font-size: 17px !important;
+            padding: 26px 16px !important; /* Matangkad na laki ng button */
+            font-size: 18px !important; /* Mas malaking font */
+            border-radius: 18px !important;
         }
 
         .urgent-warning-glow {
@@ -728,7 +730,6 @@
             text-align: left;
         }
 
-        /* NORMAL MODE: ITINAAS ANG JUDGE CHAMBERS MESSAGE PERO MAY SPACING PADIN SA TAAS NG MALAKING BOX PARA BUO AT KITA LAHAT */
         .judge-speech-container {
             position: relative;
             z-index: 3;
