@@ -53,7 +53,6 @@
             padding: 10px !important;
         }
 
-        /* FULLSCREEN: OCCUPY BUONG SCREEN MAY MALIIT NA SPACE LANG SA 4 SIDES */
         body.is-fullscreen .container {
             max-width: 98vw !important;
             width: 98vw !important;
@@ -64,20 +63,17 @@
             overflow-y: auto !important;
         }
 
-        /* FULLSCREEN MODE: INUSOG ANG 3 SUSPECTS BOX PALAYO SA EDGE HANGGANG SA TINUKOY NA LINYA */
         body.is-fullscreen .left-suspects-sidebar {
             left: 42px !important;
             top: 38% !important;
         }
 
-        /* FULLSCREEN MODE: INUSOG ANG QR CODE PALAYO SA KANANG GILID */
         body.is-fullscreen .qr-code-wrapper {
             right: 65px !important;
             bottom: 60vh !important;
             transform: scale(1.12);
         }
 
-        /* FULLSCREEN MODE: INIBABA PA NG KUNTI ANG MGA ATTORNEY BUTTONS */
         body.is-fullscreen .attorney-buttons-container {
             margin-top: 60px !important;
             margin-bottom: 15px !important;
@@ -94,7 +90,6 @@
             min-height: 100px !important;
         }
 
-        /* FULLSCREEN MODE SA JUDGE MONITOR: I-OCCUPY ANG BUONG BABA NG DALAWANG BOX */
         body.is-fullscreen #teacher-view {
             display: flex;
             flex-direction: column;
@@ -400,12 +395,19 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        /* LIVE PODIUM GRADIENT & GLOWING EFFECT DEPENDING ON SCORE */
+        @keyframes podiumGlowAnim {
+            0% { filter: drop-shadow(0 0 6px currentColor); }
+            50% { filter: drop-shadow(0 0 16px currentColor); }
+            100% { filter: drop-shadow(0 0 6px currentColor); }
+        }
+
         .rank-bar-fill {
             width: 100%;
-            background: linear-gradient(180deg, #c084fc, #7c3aed);
             height: 0%;
             transition: height 0.5s ease-in-out;
             border-radius: 10px 10px 0 0;
+            animation: podiumGlowAnim 2.5s ease-in-out infinite;
         }
 
         .glowing-frame {
@@ -738,7 +740,6 @@
             margin: 16px 0;
         }
 
-        /* NAG GOGLOW AT NAG MOMOVE NA VERDICT RESULT BOXES */
         @keyframes resultBoxFloatGlowGreen {
             0% { transform: translateY(0px) scale(1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(16, 185, 129, 0.4); }
             50% { transform: translateY(-4px) scale(1.015); box-shadow: 0 0 30px rgba(16, 185, 129, 0.95), inset 0 0 20px rgba(16, 185, 129, 0.7); }
@@ -942,6 +943,13 @@
             border-radius: 10px; cursor: pointer; font-size: 13px; color: #ffffff; font-weight: 600; 
         }
         .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
+
+        /* LOCKED STATE STYLES */
+        .quiz-locked .options label {
+            opacity: 0.55;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
         .option-correct {
             background: rgba(16, 185, 129, 0.45) !important;
@@ -1268,7 +1276,7 @@
                 <span id="group-score-display">Score: 0 / 6</span>
             </div>
 
-            <div id="quiz-questions">
+            <div id="quiz-questions" class="quiz-locked">
                 <div class="question-card" id="card-q1">
                     <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?[cite: 1, 2]</p>
                     <div class="options">
@@ -1602,11 +1610,25 @@
             sortedGroups.forEach(([group, score], idx) => {
                 let heightPercent = Math.max((score / 6) * 100, 8);
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
+                
+                // MGA KULAY NG GRADIENT AT GLOW DEPENDING SA SCORE
+                let gradientBg = '';
+                if (score >= 5) {
+                    // Score 5 & 6: Purple to Yellow to Green
+                    gradientBg = 'linear-gradient(to top, #7c3aed, #ca8a04, #10b981)';
+                } else if (score >= 3) {
+                    // Score 3 & 4: Purple to Yellow
+                    gradientBg = 'linear-gradient(to top, #7c3aed, #eab308)';
+                } else {
+                    // Score 1 & 2: Purple gradient
+                    gradientBg = 'linear-gradient(to top, #7c3aed, #c084fc)';
+                }
+
                 podiumHTML += `
                     <div class="podium-col">
                         <div class="rank-label-badge">Top ${idx + 1}</div>
                         <div class="rank-bar-track">
-                            <div class="rank-bar-fill" style="height: ${heightPercent}%"></div>
+                            <div class="rank-bar-fill" style="height: ${heightPercent}%; background: ${gradientBg};"></div>
                         </div>
                         <div class="glowing-frame">
                             <img src="${photoSrc}" alt="${group}" />
@@ -1653,6 +1675,12 @@
             document.getElementById('teacher-timer').innerText = fullTimeStr;
             document.getElementById('student-timer').innerText = fullTimeStr;
             document.getElementById('floating-timer-text').innerText = timeStr;
+
+            // KAPAG NAG-START NA ANG TIMER (PININOT NA NI JUDGE ANG START QUIZ), TANGGALIN ANG LOCK SA QUIZ
+            const quizQuestionsEl = document.getElementById('quiz-questions');
+            if (quizQuestionsEl && quizQuestionsEl.classList.contains('quiz-locked')) {
+                quizQuestionsEl.classList.remove('quiz-locked');
+            }
 
             const floatBadge = document.getElementById('floating-timer-badge');
             if (timer <= 15 && timer > 0) {
