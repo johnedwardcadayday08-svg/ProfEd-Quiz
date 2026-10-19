@@ -173,6 +173,73 @@
         .feedback-correct { background-color: var(--success); }
         .feedback-wrong { background-color: var(--danger); }
 
+        /* PERFECTLY CENTERED CUSTOM GLASS MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-card {
+            background: rgba(30, 41, 59, 0.88);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            border-radius: 24px;
+            padding: 30px 25px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            animation: modalPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: auto;
+        }
+
+        @keyframes modalPopIn {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-card h3 {
+            margin-top: 0;
+            color: #f3e8ff;
+            font-size: 22px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 14px 16px;
+            margin: 18px 0;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 16px;
+            text-align: center;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .modal-input:focus {
+            border-color: #c084fc;
+            box-shadow: 0 0 12px rgba(192, 132, 252, 0.5);
+        }
+
+        .modal-btn-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
         /* Judge Welcome Overlay with Fireworks & Hearts */
         #judge-welcome-overlay {
             position: fixed;
@@ -185,7 +252,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 10000;
             backdrop-filter: blur(10px);
             pointer-events: none;
         }
@@ -239,6 +306,30 @@
     <div class="law-bg-element icon-5">🖋️</div>
 
     <div id="feedback-popup"></div>
+
+    <!-- Centered Glassmorphism Password Modal -->
+    <div class="modal-overlay" id="password-modal">
+        <div class="modal-card">
+            <h3>⚖️ Judge Access</h3>
+            <p style="font-size:14px; color:#e2e8f0; margin-top:5px;">Please enter the password to proceed:</p>
+            <input type="password" id="judge-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="handleKeyPress(event)" />
+            <div class="modal-btn-container">
+                <button class="btn" style="background:var(--danger);" onclick="closePasswordModal()">Cancel</button>
+                <button class="btn" onclick="verifyJudgePassword()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Centered Warning Modal -->
+    <div class="modal-overlay" id="warning-modal">
+        <div class="modal-card" style="border-color: var(--danger);">
+            <h3 style="color: #f87171;">🚫 ACCESS DENIED</h3>
+            <p style="font-size:15px; font-weight:bold; color:#fca5a5; margin: 18px 0; line-height:1.4;">
+                You are a criminal trying to steal someone's private property!
+            </p>
+            <button class="btn" style="background:var(--danger);" onclick="closeWarningModal()">Dismiss</button>
+        </div>
+    </div>
 
     <!-- Celebration Animation Overlay -->
     <div id="judge-welcome-overlay">
@@ -422,15 +513,39 @@
 
         function selectRole(role) {
             if (role === 'teacher') {
-                const pass = prompt("Enter Judge Access Password:");
-                if (pass === "Quiz") {
-                    triggerJudgeWelcome();
-                    document.getElementById('role-select').classList.add('hidden');
-                    document.getElementById('teacher-view').classList.remove('hidden');
-                    document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
-                } else if (pass !== null) {
-                    alert("You are a criminal trying to steal someone's private property!");
-                }
+                document.getElementById('judge-pass-input').value = '';
+                document.getElementById('password-modal').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('judge-pass-input').focus();
+                }, 100);
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                verifyJudgePassword();
+            }
+        }
+
+        function closePasswordModal() {
+            document.getElementById('password-modal').style.display = 'none';
+        }
+
+        function closeWarningModal() {
+            document.getElementById('warning-modal').style.display = 'none';
+        }
+
+        function verifyJudgePassword() {
+            const pass = document.getElementById('judge-pass-input').value;
+            closePasswordModal();
+
+            if (pass === "Quiz") {
+                triggerJudgeWelcome();
+                document.getElementById('role-select').classList.add('hidden');
+                document.getElementById('teacher-view').classList.remove('hidden');
+                document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
+            } else {
+                document.getElementById('warning-modal').style.display = 'flex';
             }
         }
 
