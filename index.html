@@ -35,42 +35,55 @@
             transition: box-shadow 0.5s ease-in-out;
         }
 
+        /* ITAGO ANG SCROLLBAR PARA MALINIS TIGNAN */
+        ::-webkit-scrollbar {
+            display: none !important;
+            width: 0px !important;
+            height: 0px !important;
+        }
+        * {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+        }
+
         body.is-fullscreen {
             overflow: hidden !important;
             height: 100vh !important;
             max-height: 100vh !important;
-            padding: 8px 12px !important;
+            padding: 10px !important;
         }
 
+        /* FULLSCREEN: OCCUPY BUONG SCREEN MAY MALIIT NA SPACE LANG SA 4 SIDES */
         body.is-fullscreen .container {
-            max-width: 1550px !important;
-            width: 96% !important;
-            margin-top: 5px !important;
-            margin-bottom: 5px !important;
-            padding-top: 24px !important;
-            padding-bottom: 24px !important;
-            padding-left: 40px !important;
-            padding-right: 40px !important;
-            height: calc(100vh - 90px) !important;
+            max-width: 98vw !important;
+            width: 98vw !important;
+            margin: 5px auto !important;
+            padding: 20px 25px !important;
+            height: calc(100vh - 20px) !important;
             box-sizing: border-box;
             overflow-y: auto !important;
         }
 
         body.is-fullscreen .qr-code-wrapper {
-            right: 40px !important;
+            right: 30px !important;
             bottom: 60vh !important;
             transform: scale(1.12);
         }
 
-        /* FULLSCREEN MODE ADJUSTMENTS: INIBABA PA AT PINATANGKAD ANG ATTORNEY BUTTONS */
+        /* FULLSCREEN MODE: MAS MATANGKAD NA ATTORNEY BUTTONS PARANG BAR GRAPH PERO HINDI DIDIKIT SA SUSPECT BOX */
         body.is-fullscreen .attorney-buttons-container {
-            margin-top: 35px !important;
-            gap: 20px !important;
+            margin-top: 30px !important;
+            gap: 18px !important;
         }
         body.is-fullscreen .attorney-buttons-container .group-btn {
-            padding: 26px 16px !important; /* Matangkad na laki ng button */
-            font-size: 18px !important; /* Mas malaking font */
-            border-radius: 18px !important;
+            padding: 38px 16px !important; /* Mataas na bar style */
+            font-size: 19px !important;
+            font-weight: 800 !important;
+            border-radius: 20px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 110px !important;
         }
 
         .urgent-warning-glow {
