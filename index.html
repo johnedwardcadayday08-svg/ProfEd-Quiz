@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROFED 5 GROUP 2 QUICK ACTIVITY</title>
     <script src="/socket.io/socket.io.js"></script>
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --primary: #8b5cf6;
@@ -113,6 +115,57 @@
             object-fit: contain;
             object-position: bottom right;
             filter: drop-shadow(-10px 5px 15px rgba(0, 0, 0, 0.7));
+        }
+
+        /* AESTHETIC QR CODE BOX STYLING */
+        .qr-code-wrapper {
+            position: fixed;
+            z-index: 10;
+            background: rgba(30, 41, 59, 0.75);
+            border: 2px solid rgba(192, 132, 252, 0.6);
+            padding: 10px;
+            border-radius: 18px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .qr-code-wrapper p {
+            margin: 4px 0 0 0;
+            font-size: 11px;
+            font-weight: bold;
+            color: #f3e8ff;
+            letter-spacing: 0.5px;
+        }
+
+        #qrcode {
+            padding: 6px;
+            background: #ffffff;
+            border-radius: 10px;
+        }
+
+        /* LAPTOP VIEW POSITIONING FOR QR CODE */
+        @media (min-width: 769px) {
+            .qr-code-wrapper {
+                right: 35px;
+                bottom: 63vh;
+            }
+        }
+
+        /* MOBILE VIEW POSITIONING (CENTER AT HEART SPOT) */
+        @media (max-width: 768px) {
+            .side-profile-container { width: 160px; height: 35vh; }
+            .qr-code-wrapper {
+                position: relative;
+                margin: 15px auto 10px auto;
+                width: fit-content;
+                right: auto;
+                bottom: auto;
+            }
         }
 
         @keyframes profilePop {
@@ -343,8 +396,21 @@
             display: flex; align-items: center; padding: 8px 12px; 
             background: rgba(14, 116, 144, 0.25); border: 1px solid rgba(56, 189, 248, 0.45); 
             border-radius: 10px; cursor: pointer; font-size: 13px; color: #ffffff; font-weight: 600; 
+            transition: all 0.3s ease;
         }
         .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
+
+        /* ANSWER HIGHLIGHTING STYLES (RED / GREEN) */
+        .option-correct {
+            background: rgba(16, 185, 129, 0.45) !important;
+            border-color: #10b981 !important;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+        }
+        .option-wrong {
+            background: rgba(244, 63, 94, 0.45) !important;
+            border-color: #f43f5e !important;
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+        }
 
         .explanation-box {
             margin-top: 12px;
@@ -373,9 +439,33 @@
             padding: 16px; border-radius: 16px; margin-bottom: 20px; font-size: 19px; font-weight: bold; color: #ffffff; display: none;
         }
 
-        #feedback-popup { position: fixed; top: 18px; right: 18px; padding: 14px 22px; border-radius: 13px; font-size: 17px; font-weight: bold; color: white; z-index: 1000; display: none; }
-        .feedback-correct { background-color: var(--success); }
-        .feedback-wrong { background-color: var(--danger); }
+        /* CENTER SCREEN FEEDBACK POPUP */
+        #feedback-popup { 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0.8); 
+            padding: 20px 40px; 
+            border-radius: 20px; 
+            font-size: 26px; 
+            font-weight: 900; 
+            color: white; 
+            z-index: 10005; 
+            display: none; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popupScale {
+            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .feedback-correct { background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95)); }
+        .feedback-wrong { background: linear-gradient(135deg, rgba(244, 63, 94, 0.95), rgba(225, 29, 72, 0.95)); }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -408,7 +498,6 @@
 
         @media (max-width: 768px) {
             .left-suspects-sidebar { display: none !important; }
-            .side-profile-container { width: 160px; height: 35vh; }
         }
     </style>
 </head>
@@ -425,8 +514,15 @@
     <div class="law-bg-element icon-4">🔨</div>
     <div class="law-bg-element icon-5">🖋️</div>
 
+    <!-- SIDE PROFILE PICTURE -->
     <div class="side-profile-container" id="side-profile">
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
+    </div>
+
+    <!-- AESTHETIC QR CODE BOX -->
+    <div class="qr-code-wrapper" id="qr-wrapper">
+        <div id="qrcode"></div>
+        <p>📱 SCAN TO JOIN</p>
     </div>
 
     <div class="winner-modal-overlay" id="winner-modal">
@@ -463,6 +559,7 @@
         </div>
     </div>
 
+    <!-- CENTER SCREEN POPUP -->
     <div id="feedback-popup"></div>
 
     <div class="modal-overlay" id="password-modal">
@@ -485,12 +582,10 @@
         </div>
     </div>
 
-    <!-- WELCOME JUDGE OVERLAY NA MAY FIREWORKS AT HEARTS -->
     <div id="judge-welcome-overlay">
         <div id="judge-welcome-msg">🎆💖 Welcome my judge 💖🎆</div>
     </div>
 
-    <!-- WELCOME FUTURE EDUCATORS OVERLAY NA MAY LOGO, FIREWORKS, AT HEARTS -->
     <div id="student-welcome-overlay">
         <div style="text-align:center;">
             <img src="/logo.png" alt="MCC Logo" class="student-welcome-logo">
@@ -571,88 +666,93 @@
                 <div class="question-card" id="card-q1">
                     <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?</p>
                     <div class="options">
-                        <label><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
-                        <label><input type="radio" name="q1" value="CONST" onchange="submitAns('q1', 'CONST')"> D) 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q1" value="RA9155" onchange="submitAns('q1', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q1" value="RA10533" onchange="submitAns('q1', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
-                        <label><input type="radio" name="q1" value="RA7836" onchange="submitAns('q1', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
+                        <label id="lbl-q1-RA7277"><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label id="lbl-q1-RA7610"><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label id="lbl-q1-RA8371"><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
+                        <label id="lbl-q1-CONST"><input type="radio" name="q1" value="CONST" onchange="submitAns('q1', 'CONST')"> D) 1987 Philippine Constitution</label>
+                        <label id="lbl-q1-RA9155"><input type="radio" name="q1" value="RA9155" onchange="submitAns('q1', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
+                        <label id="lbl-q1-RA10533"><input type="radio" name="q1" value="RA10533" onchange="submitAns('q1', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
+                        <label id="lbl-q1-RA7836"><input type="radio" name="q1" value="RA7836" onchange="submitAns('q1', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
                     </div>
                     <div class="explanation-box" id="exp-q1">
                         <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7277</b> ay kilala bilang "Magna Carta for Disabled Persons". Layunin nitong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan upang ganap silang maisama sa mainstream ng lipunan.
                     </div>
                 </div>
+
                 <div class="question-card" id="card-q2">
                     <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation, and discrimination?</p>
                     <div class="options">
-                        <label><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
-                        <label><input type="radio" name="q2" value="CONST" onchange="submitAns('q2', 'CONST')"> D) 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q2" value="RA9155" onchange="submitAns('q2', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q2" value="RA10533" onchange="submitAns('q2', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
-                        <label><input type="radio" name="q2" value="RA7836" onchange="submitAns('q2', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
+                        <label id="lbl-q2-RA7277"><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label id="lbl-q2-RA7610"><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label id="lbl-q2-RA8371"><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
+                        <label id="lbl-q2-CONST"><input type="radio" name="q2" value="CONST" onchange="submitAns('q2', 'CONST')"> D) 1987 Philippine Constitution</label>
+                        <label id="lbl-q2-RA9155"><input type="radio" name="q2" value="RA9155" onchange="submitAns('q2', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
+                        <label id="lbl-q2-RA10533"><input type="radio" name="q2" value="RA10533" onchange="submitAns('q2', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
+                        <label id="lbl-q2-RA7836"><input type="radio" name="q2" value="RA7836" onchange="submitAns('q2', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
                     </div>
                     <div class="explanation-box" id="exp-q2">
                         <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata (Special Protection Against Child Abuse, Exploitation and Discrimination Act).
                     </div>
                 </div>
+
                 <div class="question-card" id="card-q3">
                     <p><b>Q3:</b> What law recognizes, protects, and promotes the rights of Indigenous Cultural Communities / Indigenous Peoples (IPRA)?</p>
                     <div class="options">
-                        <label><input type="radio" name="q3" value="RA7277" onchange="submitAns('q3', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q3" value="RA8371" onchange="submitAns('q3', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
-                        <label><input type="radio" name="q3" value="CONST" onchange="submitAns('q3', 'CONST')"> D) 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q3" value="RA9155" onchange="submitAns('q3', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q3" value="RA10533" onchange="submitAns('q3', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
-                        <label><input type="radio" name="q3" value="RA7836" onchange="submitAns('q3', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
+                        <label id="lbl-q3-RA7277"><input type="radio" name="q3" value="RA7277" onchange="submitAns('q3', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label id="lbl-q3-RA7610"><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label id="lbl-q3-RA8371"><input type="radio" name="q3" value="RA8371" onchange="submitAns('q3', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
+                        <label id="lbl-q3-CONST"><input type="radio" name="q3" value="CONST" onchange="submitAns('q3', 'CONST')"> D) 1987 Philippine Constitution</label>
+                        <label id="lbl-q3-RA9155"><input type="radio" name="q3" value="RA9155" onchange="submitAns('q3', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
+                        <label id="lbl-q3-RA10533"><input type="radio" name="q3" value="RA10533" onchange="submitAns('q3', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
+                        <label id="lbl-q3-RA7836"><input type="radio" name="q3" value="RA7836" onchange="submitAns('q3', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
                     </div>
                     <div class="explanation-box" id="exp-q3">
                         <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 8371</b> o kilala rin bilang Indigenous Peoples Rights Act (IPRA) ng 1997 ay naglalayong kilalanin at protektahan ang mga karapatan ng mga katutubong pamayanan at katutubong mamamayan.
                     </div>
                 </div>
+
                 <div class="question-card" id="card-q4">
                     <p><b>Q4:</b> Which fundamental law of the land guarantees state protection and promotion of quality education at all levels?</p>
                     <div class="options">
-                        <label><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q4" value="RA7610" onchange="submitAns('q4', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q4" value="RA8371" onchange="submitAns('q4', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
-                        <label><input type="radio" name="q4" value="CONST" onchange="submitAns('q4', 'CONST')"> D) 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q4" value="RA9155" onchange="submitAns('q4', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q4" value="RA10533" onchange="submitAns('q4', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
-                        <label><input type="radio" name="q4" value="RA7836" onchange="submitAns('q4', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
+                        <label id="lbl-q4-RA7277"><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label id="lbl-q4-RA7610"><input type="radio" name="q4" value="RA7610" onchange="submitAns('q4', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label id="lbl-q4-RA8371"><input type="radio" name="q4" value="RA8371" onchange="submitAns('q4', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
+                        <label id="lbl-q4-CONST"><input type="radio" name="q4" value="CONST" onchange="submitAns('q4', 'CONST')"> D) 1987 Philippine Constitution</label>
+                        <label id="lbl-q4-RA9155"><input type="radio" name="q4" value="RA9155" onchange="submitAns('q4', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
+                        <label id="lbl-q4-RA10533"><input type="radio" name="q4" value="RA10533" onchange="submitAns('q4', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
+                        <label id="lbl-q4-RA7836"><input type="radio" name="q4" value="RA7836" onchange="submitAns('q4', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
                     </div>
                     <div class="explanation-box" id="exp-q4">
                         <b>🔍 Detalyadong Paliwanag:</b> Ang <b>1987 Philippine Constitution</b> (Saligang Batas) ang pinakamataas na batas ng bansa na nag-uutos sa Estado na protektahan at itaguyod ang karapatan ng lahat ng mamamayan sa de-kalidad na edukasyon.
                     </div>
                 </div>
+
                 <div class="question-card" id="card-q5">
                     <p><b>Q5:</b> Which act mandates the rehabilitation, self-development, and self-reliance of disabled persons and their integration into mainstream society?</p>
                     <div class="options">
-                        <label><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q5" value="RA8371" onchange="submitAns('q5', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
-                        <label><input type="radio" name="q5" value="CONST" onchange="submitAns('q5', 'CONST')"> D) 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q5" value="RA9155" onchange="submitAns('q5', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q5" value="RA10533" onchange="submitAns('q5', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
-                        <label><input type="radio" name="q5" value="RA7836" onchange="submitAns('q5', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
+                        <label id="lbl-q5-RA7277"><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label id="lbl-q5-RA7610"><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label id="lbl-q5-RA8371"><input type="radio" name="q5" value="RA8371" onchange="submitAns('q5', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
+                        <label id="lbl-q5-CONST"><input type="radio" name="q5" value="CONST" onchange="submitAns('q5', 'CONST')"> D) 1987 Philippine Constitution</label>
+                        <label id="lbl-q5-RA9155"><input type="radio" name="q5" value="RA9155" onchange="submitAns('q5', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
+                        <label id="lbl-q5-RA10533"><input type="radio" name="q5" value="RA10533" onchange="submitAns('q5', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
+                        <label id="lbl-q5-RA7836"><input type="radio" name="q5" value="RA7836" onchange="submitAns('q5', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
                     </div>
                     <div class="explanation-box" id="exp-q5">
                         <b>🔍 Detalyadong Paliwanag:</b> Katulad sa unang tanong, ang <b>Republic Act No. 7277</b> ay tuwirang nagtatakda ng mga programa para sa rehabilitasyon at pagpapalakas ng sariling kakayahan ng mga may kapansanan.
                     </div>
                 </div>
+
                 <div class="question-card" id="card-q6">
                     <p><b>Q6:</b> Which law professionalizes the teaching practice and prescribes the licensure examination for teachers in the Philippines?</p>
                     <div class="options">
-                        <label><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q6" value="RA8371" onchange="submitAns('q6', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
-                        <label><input type="radio" name="q6" value="CONST" onchange="submitAns('q6', 'CONST')"> D) 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q6" value="RA9155" onchange="submitAns('q6', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q6" value="RA10533" onchange="submitAns('q6', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
-                        <label><input type="radio" name="q6" value="RA7836" onchange="submitAns('q6', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
+                        <label id="lbl-q6-RA7277"><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label id="lbl-q6-RA7610"><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label id="lbl-q6-RA8371"><input type="radio" name="q6" value="RA8371" onchange="submitAns('q6', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)</label>
+                        <label id="lbl-q6-CONST"><input type="radio" name="q6" value="CONST" onchange="submitAns('q6', 'CONST')"> D) 1987 Philippine Constitution</label>
+                        <label id="lbl-q6-RA9155"><input type="radio" name="q6" value="RA9155" onchange="submitAns('q6', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
+                        <label id="lbl-q6-RA10533"><input type="radio" name="q6" value="RA10533" onchange="submitAns('q6', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)</label>
+                        <label id="lbl-q6-RA7836"><input type="radio" name="q6" value="RA7836" onchange="submitAns('q6', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
                     </div>
                     <div class="explanation-box" id="exp-q6">
                         <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7836</b> (Philippine Teachers Professionalization Act of 1994) ang batas na nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET) at pagpapapropesyonal ng pagtuturo.
@@ -673,6 +773,18 @@
         let answeredQuestions = {};
         let finalScoreValue = 0;
         let latestSortedGroups = [];
+
+        // GENERATE DYNAMIC AESTHETIC QR CODE
+        window.addEventListener('DOMContentLoaded', () => {
+            new QRCode(document.getElementById("qrcode"), {
+                text: "https://profed-quiz-2-pluk.onrender.com",
+                width: 95,
+                height: 95,
+                colorDark: "#6b21a8",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        });
 
         const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, review your statutes carefully before time runs out!"';
         let charIndex = 0;
@@ -719,7 +831,6 @@
             const pass = document.getElementById('judge-pass-input').value;
             closePasswordModal();
             if (pass === "Quiz") {
-                // Ipakita ang Welcome Judge overlay na may fireworks at hearts
                 const judgeWelcome = document.getElementById('judge-welcome-overlay');
                 judgeWelcome.style.display = 'flex';
 
@@ -727,6 +838,7 @@
                     judgeWelcome.style.display = 'none';
                     document.getElementById('role-select').classList.add('hidden');
                     document.getElementById('side-profile').style.display = 'none';
+                    document.getElementById('qr-wrapper').style.display = 'none';
                     document.getElementById('left-sidebar').style.display = 'none';
                     document.getElementById('teacher-view').classList.remove('hidden');
                     document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
@@ -739,7 +851,6 @@
         function selectGroup(groupName) {
             myGroup = groupName;
             
-            // Ipakita ang Welcome Future Educators overlay na may logo at fireworks/hearts effect
             const studentWelcome = document.getElementById('student-welcome-overlay');
             studentWelcome.style.display = 'flex';
 
@@ -747,6 +858,7 @@
                 studentWelcome.style.display = 'none';
                 document.getElementById('role-select').classList.add('hidden');
                 document.getElementById('side-profile').style.display = 'none';
+                document.getElementById('qr-wrapper').style.display = 'none';
                 document.getElementById('left-sidebar').style.display = 'none';
                 document.getElementById('student-view').classList.remove('hidden');
                 document.getElementById('group-title').innerText = `Dashboard: ${groupName}`;
@@ -766,12 +878,25 @@
             if (expBox) expBox.style.display = "block";
         }
 
-        socket.on('answerFeedback', ({ isCorrect, questionId }) => {
+        // CENTER SCREEN POPUP AT COLOR HIGHLIGHTING SA NASAGUTAN
+        socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
             const popup = document.getElementById('feedback-popup');
             popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-            popup.innerHTML = isCorrect ? "✔ Correct!" : "✖ Incorrect!";
+            popup.innerHTML = isCorrect ? "✔ CORRECT!" : "✖ INCORRECT!";
             popup.style.display = "block";
-            setTimeout(() => popup.style.display = "none", 1800);
+
+            // Highlight the selected option (Green if correct, Red if wrong)
+            if (questionId && answer) {
+                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
+                if (targetLabel) {
+                    targetLabel.classList.add(isCorrect ? "option-correct" : "option-wrong");
+                }
+            }
+
+            // Pop-up disappears after 1.5 seconds
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 1500);
         });
 
         socket.on('updateState', ({ groupScores }) => {
