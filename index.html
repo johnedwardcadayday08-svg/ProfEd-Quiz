@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚖️ Philippine Laws Group Quiz 📜</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --success: #10b981;
+            --danger: #f43f5e;
+            --card-bg: rgba(15, 23, 42, 0.65); 
+            --text-color: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.5)), 
+                        url('/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            min-height: 100vh;
+            box-sizing: border-box;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .law-bg-element {
+            position: fixed;
+            font-size: 45px;
+            opacity: 0.3;
+            user-select: none;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .icon-1 { top: 8%; left: 5%; animation-delay: 0s; }
+        .icon-2 { top: 25%; right: 6%; animation-delay: 1.5s; }
+        .icon-3 { bottom: 18%; left: 8%; animation-delay: 3s; }
+        .icon-4 { bottom: 10%; right: 7%; animation-delay: 4.5s; }
+        .icon-5 { top: 50%; left: 3%; animation-delay: 2s; }
+
+        .container { 
+            position: relative;
+            z-index: 1;
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            padding: 25px; 
+            border-radius: 24px; 
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+        }
+
+        h1 { font-size: 26px; color: #f3e8ff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        h2 { font-size: 20px; color: #e9d5ff; }
+        h1, h2 { text-align: center; }
+        .hidden { display: none !important; }
+        
+        #role-select { text-align: center; padding: 20px 0; }
+        
+        .btn { 
+            background: linear-gradient(135deg, #a855f7, #9333ea); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            font-size: 16px; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin: 8px; 
+            transition: all 0.25s ease; 
+            box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
+        }
+        .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); transform: translateY(-2px); }
+        .group-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4); }
+        .group-btn:hover { background: linear-gradient(135deg, #0284c7, #0369a1); }
+
+        .header-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(255, 255, 255, 0.15); 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 14px 20px; 
+            border-radius: 16px; 
+            margin-bottom: 20px; 
+            font-weight: bold; 
+            font-size: 18px; 
+            color: #f3e8ff;
+        }
+        
+        .bar-chart-container { margin: 20px 0; background: rgba(0, 0, 0, 0.25); padding: 18px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.15); }
+        .bar-row { display: flex; align-items: center; margin: 12px 0; }
+        .bar-label { width: 90px; font-weight: bold; font-size: 14px; color: #f3e8ff; }
+        .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.2); height: 28px; border-radius: 10px; overflow: hidden; margin: 0 10px; position: relative; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 10px; }
+        .bar-score { font-weight: bold; width: 45px; text-align: right; font-size: 14px; color: #f3e8ff; }
+
+        .question-card { 
+            background: rgba(255, 255, 255, 0.12); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            padding: 20px; 
+            border-radius: 18px; 
+            margin-bottom: 16px; 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        
+        .options label { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 16px; 
+            margin: 8px 0; 
+            background: rgba(255, 255, 255, 0.18); 
+            border: 1px solid rgba(255, 255, 255, 0.25); 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            color: #ffffff;
+            transition: all 0.2s ease; 
+        }
+        .options label input { margin-right: 12px; transform: scale(1.25); flex-shrink: 0; accent-color: #c084fc; }
+        .options label:hover { background: rgba(255, 255, 255, 0.35); border-color: #c084fc; }
+        
+        .explanation { 
+            margin-top: 14px; 
+            padding: 14px 16px; 
+            background: rgba(16, 185, 129, 0.25); 
+            border-left: 5px solid var(--success); 
+            font-size: 13.5px; 
+            color: #ecfdf5; 
+            border-radius: 0 12px 12px 0; 
+        }
+        .correct-ans-tag {
+            font-weight: bold;
+            color: #6ee7b7;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        #rating-banner {
+            text-align: center;
+            background: rgba(168, 85, 247, 0.3);
+            border: 2px dashed #c084fc;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 22px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            display: none;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        #feedback-popup { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 14px; font-size: 18px; font-weight: bold; color: white; z-index: 1000; box-shadow: 0 6px 20px rgba(0,0,0,0.3); display: none; }
+        .feedback-correct { background-color: var(--success); }
+        .feedback-wrong { background-color: var(--danger); }
+
+        @media (max-width: 600px) {
+            body { padding: 5px; }
+            .container { padding: 14px; border-radius: 16px; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 16px; }
+            .header-bar { font-size: 14px; padding: 10px; flex-direction: column; gap: 8px; text-align: center; }
+            .btn { width: 100%; margin: 4px 0; padding: 10px; font-size: 15px; }
+            .bar-label { width: 70px; font-size: 12px; }
+            .bar-score { font-size: 12px; }
+            .options label { font-size: 13px; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="law-bg-element icon-1">⚖️</div>
+    <div class="law-bg-element icon-2">📜</div>
+    <div class="law-bg-element icon-3">🏛️</div>
+    <div class="law-bg-element icon-4">🔨</div>
+    <div class="law-bg-element icon-5">🖋️</div>
+
+    <div id="feedback-popup"></div>
+
+    <div class="container">
+        <!-- ROLE SELECTION -->
+        <div id="role-select">
+            <h1>⚖️ Philippine Laws Group Quiz 📜</h1>
+            <p>Select your mode to begin:</p>
+            <br>
+            <button class="btn" onclick="selectRole('teacher')">📺 Teacher Big Screen Monitor</button>
+            <br><br>
+            <h3>Join as Group:</h3>
+            <button class="btn group-btn" onclick="selectGroup('Group 1')">Group 1</button>
+            <button class="btn group-btn" onclick="selectGroup('Group 2')">Group 2</button>
+            <button class="btn group-btn" onclick="selectGroup('Group 3')">Group 3</button>
+            <button class="btn group-btn" onclick="selectGroup('Group 4')">Group 4</button>
+        </div>
+
+        <!-- TEACHER VIEW -->
+        <div id="teacher-view" class="hidden">
+            <h1>⚖️ Teacher Real-Time Monitor ⚖️</h1>
+            <div class="header-bar">
+                <span id="teacher-timer">Time Left: 00:30</span>
+                <div>
+                    <button class="btn" onclick="startTimer()">Start Quiz</button>
+                    <button class="btn" style="background:var(--danger)" onclick="resetGame()">Reset Game</button>
+                </div>
+            </div>
+
+            <h3>Live Scoreboard (Highest to Lowest)</h3>
+            <div class="bar-chart-container" id="bar-chart"></div>
+            
+            <hr style="margin: 30px 0; border:0; border-top:1.5px solid rgba(255,255,255,0.2);">
+            <h2>Answer Key & Independent Explanations</h2>
+            <div id="teacher-answer-key">
+                <div class="question-card">
+                    <p><b>Q1:</b> Magna Carta for Disabled Persons</p>
+                    <div class="explanation">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
+                        <b>Explanation:</b> R.A. 7277 guarantees full integration, equal opportunities, and rehabilitation for persons with disabilities into mainstream society.
+                    </div>
+                </div>
+                <div class="question-card">
+                    <p><b>Q2:</b> Protection Against Child Abuse</p>
+                    <div class="explanation">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
+                        <b>Explanation:</b> R.A. 7610 institutes strong statutory protections against child abuse, exploitation, discrimination, and severe cruelty.
+                    </div>
+                </div>
+                <div class="question-card">
+                    <p><b>Q3:</b> Indigenous Peoples' Rights Act (IPRA)</p>
+                    <div class="explanation">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 8371</span>
+                        <b>Explanation:</b> R.A. 8371 preserves ancestral domains, cultural integrity, and self-delineation rights for indigenous communities.
+                    </div>
+                </div>
+                <div class="question-card">
+                    <p><b>Q4:</b> Fundamental Supreme Law</p>
+                    <div class="explanation">
+                        <span class="correct-ans-tag">✔ Correct Answer: The 1987 Philippine Constitution</span>
+                        <b>Explanation:</b> The 1987 Constitution is the supreme law of the land from which all government authority and citizen rights originate.
+                    </div>
+                </div>
+                <div class="question-card">
+                    <p><b>Q5:</b> Equal Opportunity for Employment and Training</p>
+                    <div class="explanation">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
+                        <b>Explanation:</b> Section 5 of R.A. 7277 mandates that no person with a disability shall be denied access to suitable employment or training.
+                    </div>
+                </div>
+                <div class="question-card">
+                    <p><b>Q6:</b> Penalizes Child Trafficking</p>
+                    <div class="explanation">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
+                        <b>Explanation:</b> Article VI of R.A. 7610 specifically penalizes child prostitution, illegal recruitment, and child trafficking with maximum imprisonment penalties.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STUDENT VIEW -->
+        <div id="student-view" class="hidden">
+            <h1 id="group-title">Group Dashboard</h1>
+            <div class="header-bar">
+                <span id="student-timer">Time Left: 00:30</span>
+                <span id="group-score-display">Score: 0 / 6</span>
+            </div>
+
+            <div id="rating-banner"></div>
+
+            <div id="quiz-questions">
+                <div class="question-card" id="card-q1">
+                    <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                    </div>
+                    <div class="explanation hidden" id="exp-q1">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
+                        <b>Explanation:</b> R.A. 7277 guarantees full integration, equal opportunities, and rehabilitation for persons with disabilities into mainstream society.
+                    </div>
+                </div>
+
+                <div class="question-card" id="card-q2">
+                    <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation and discrimination?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                    </div>
+                    <div class="explanation hidden" id="exp-q2">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
+                        <b>Explanation:</b> R.A. 7610 institutes strong statutory protections against child abuse, exploitation, discrimination, and severe cruelty.
+                    </div>
+                </div>
+
+                <div class="question-card" id="card-q3">
+                    <p><b>Q3:</b> Which law is recognized as the Indigenous Peoples' Rights Act (IPRA)?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label><input type="radio" name="q3" value="RA8371" onchange="submitAns('q3', 'RA8371')"> Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                        <label><input type="radio" name="q3" value="CONST" onchange="submitAns('q3', 'CONST')"> 1987 Philippine Constitution</label>
+                    </div>
+                    <div class="explanation hidden" id="exp-q3">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 8371</span>
+                        <b>Explanation:</b> R.A. 8371 preserves ancestral domains, cultural integrity, and self-delineation rights for indigenous communities.
+                    </div>
+                </div>
+
+                <div class="question-card" id="card-q4">
+                    <p><b>Q4:</b> What supreme law of the Philippines serves as the fundamental framework for all civil rights and state policies?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label><input type="radio" name="q4" value="CONST" onchange="submitAns('q4', 'CONST')"> The 1987 Philippine Constitution</label>
+                        <label><input type="radio" name="q4" value="RA8371" onchange="submitAns('q4', 'RA8371')"> Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                    </div>
+                    <div class="explanation hidden" id="exp-q4">
+                        <span class="correct-ans-tag">✔ Correct Answer: The 1987 Philippine Constitution</span>
+                        <b>Explanation:</b> The 1987 Constitution is the supreme law of the land from which all government authority and citizen rights originate.
+                    </div>
+                </div>
+
+                <div class="question-card" id="card-q5">
+                    <p><b>Q5:</b> Which statutory framework specifically mandates equal opportunity for employment and training for persons with disabilities?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                        <label><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label><input type="radio" name="q5" value="CONST" onchange="submitAns('q5', 'CONST')"> 1987 Philippine Constitution</label>
+                    </div>
+                    <div class="explanation hidden" id="exp-q5">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
+                        <b>Explanation:</b> Section 5 of R.A. 7277 mandates that no person with a disability shall be denied access to suitable employment or training.
+                    </div>
+                </div>
+
+                <div class="question-card" id="card-q6">
+                    <p><b>Q6:</b> Which specific legislation penalizes child trafficking and protects children in especially difficult circumstances?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q6" value="RA8371" onchange="submitAns('q6', 'RA8371')"> Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
+                        <label><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
+                        <label><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
+                    </div>
+                    <div class="explanation hidden" id="exp-q6">
+                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
+                        <b>Explanation:</b> Article VI of R.A. 7610 specifically penalizes child prostitution, illegal recruitment, and child trafficking with maximum imprisonment penalties.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        let myGroup = null;
+        let answeredQuestions = {};
+        let finalScoreValue = 0;
+
+        function selectRole(role) {
+            if (role === 'teacher') {
+                document.getElementById('role-select').classList.add('hidden');
+                document.getElementById('teacher-view').classList.remove('hidden');
+            }
+        }
+
+        function selectGroup(groupName) {
+            myGroup = groupName;
+            document.getElementById('role-select').classList.add('hidden');
+            document.getElementById('student-view').classList.remove('hidden');
+            document.getElementById('group-title').innerText = `Dashboard: ${groupName}`;
+        }
+
+        function startTimer() {
+            socket.emit('startTimer');
+        }
+
+        function resetGame() {
+            socket.emit('resetGame');
+        }
+
+        function submitAns(questionId, answer) {
+            if (!myGroup) return;
+            if (answeredQuestions[questionId]) return;
+
+            answeredQuestions[questionId] = true;
+            const card = document.getElementById(`card-${questionId}`);
+            if (card) {
+                card.querySelectorAll('input').forEach(input => {
+                    input.disabled = true;
+                });
+                card.style.opacity = "0.75";
+            }
+
+            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer });
+        }
+
+        socket.on('answerFeedback', ({ questionId, isCorrect }) => {
+            const popup = document.getElementById('feedback-popup');
+            if (isCorrect) {
+                popup.className = "feedback-correct";
+                popup.innerHTML = "✔ Correct!";
+            } else {
+                popup.className = "feedback-wrong";
+                popup.innerHTML = "✖ Incorrect!";
+            }
+            popup.style.display = "block";
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 1800);
+        });
+
+        socket.on('timerStarted', ({ timer, timerRunning }) => {
+            let mins = Math.floor(timer / 60).toString().padStart(2, '0');
+            let secs = (timer % 60).toString().padStart(2, '0');
+            let timeStr = `Time Left: ${mins}:${secs}`;
+            document.getElementById('teacher-timer').innerText = timeStr;
+            document.getElementById('student-timer').innerText = timeStr;
+        });
+
+        socket.on('updateState', ({ groupScores, timer, timerRunning }) => {
+            let mins = Math.floor(timer / 60).toString().padStart(2, '0');
+            let secs = (timer % 60).toString().padStart(2, '0');
+            let timeStr = `Time Left: ${mins}:${secs}`;
+            document.getElementById('teacher-timer').innerText = timeStr;
+            document.getElementById('student-timer').innerText = timeStr;
+
+            const sortedGroups = Object.entries(groupScores).sort((a, b) => b[1] - a[1]);
+            let chartHTML = '';
+            sortedGroups.forEach(([group, score]) => {
+                let percentage = (score / 6) * 100;
+                chartHTML += `
+                    <div class="bar-row">
+                        <div class="bar-label">${group}</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="bar-score">${score}/6</div>
+                    </div>
+                `;
+            });
+            document.getElementById('bar-chart').innerHTML = chartHTML;
+
+            if (myGroup && groupScores[myGroup] !== undefined) {
+                finalScoreValue = groupScores[myGroup];
+                document.getElementById('group-score-display').innerText = `Score: ${finalScoreValue} / 6`;
+            }
+
+            if (timer <= 0) {
+                document.querySelectorAll('input').forEach(input => input.disabled = true);
+                revealExplanationsAndRating();
+            }
+        });
+
+        socket.on('timerUpdate', (timer) => {
+            let mins = Math.floor(timer / 60).toString().padStart(2, '0');
+            let secs = (timer % 60).toString().padStart(2, '0');
+            let timeStr = `Time Left: ${mins}:${secs}`;
+            document.getElementById('teacher-timer').innerText = timeStr;
+            document.getElementById('student-timer').innerText = timeStr;
+        });
+
+        socket.on('timeUp', () => {
+            document.querySelectorAll('input').forEach(input => input.disabled = true);
+            revealExplanationsAndRating();
+        });
+
+        function revealExplanationsAndRating() {
+            for (let i = 1; i <= 6; i++) {
+                const expBox = document.getElementById(`exp-q${i}`);
+                if (expBox) {
+                    expBox.classList.remove('hidden');
+                }
+            }
+
+            const banner = document.getElementById('rating-banner');
+            let remark = "";
+            let emoji = "";
+
+            if (finalScoreValue === 6) {
+                remark = "🌟 EXCELLENT! Perfect Score! Outstanding knowledge of Philippine Laws!";
+                emoji = "🏆";
+            } else if (finalScoreValue >= 5) {
+                remark = "👏 VERY GOOD! Great job mastering the legal provisions!";
+                emoji = "🎉";
+            } else if (finalScoreValue >= 3) {
+                remark = "👍 GOOD EFFORT! Solid understanding, keep it up!";
+                emoji = "💡";
+            } else if (finalScoreValue >= 1) {
+                remark = "📌 FAIR! Room for improvement. Review the laws carefully!";
+                emoji = "📖";
+            } else {
+                remark = "💪 KEEP PRACTICING! Don't give up, try again on the next round!";
+                emoji = "⚡";
+            }
+
+            banner.innerHTML = `${emoji} Score: ${finalScoreValue}/6 — ${remark}`;
+            banner.style.display = "block";
+        }
+
+        socket.on('resetState', () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>
