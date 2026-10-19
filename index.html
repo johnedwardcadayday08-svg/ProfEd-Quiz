@@ -173,6 +173,49 @@
         .feedback-correct { background-color: var(--success); }
         .feedback-wrong { background-color: var(--danger); }
 
+        /* Judge Welcome Overlay with Fireworks & Hearts */
+        #judge-welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+            pointer-events: none;
+        }
+
+        #judge-welcome-msg {
+            font-size: 38px;
+            font-weight: bold;
+            color: #f472b6;
+            text-shadow: 0 0 20px #ec4899, 0 0 40px #a855f7;
+            text-align: center;
+            animation: pulseText 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseText {
+            0% { transform: scale(0.95); }
+            100% { transform: scale(1.08); }
+        }
+
+        .celebration-item {
+            position: absolute;
+            user-select: none;
+            animation: popUp 2.5s ease-out forwards;
+        }
+
+        @keyframes popUp {
+            0% { opacity: 1; transform: translate(0, 0) scale(0.5) rotate(0deg); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.8) rotate(360deg); }
+        }
+
         @media (max-width: 600px) {
             body { padding: 5px; }
             .container { padding: 14px; border-radius: 16px; }
@@ -183,6 +226,7 @@
             .bar-label { width: 80px; font-size: 12px; }
             .bar-score { font-size: 12px; }
             .options label { font-size: 13px; padding: 10px; }
+            #judge-welcome-msg { font-size: 28px; }
         }
     </style>
 </head>
@@ -195,6 +239,11 @@
     <div class="law-bg-element icon-5">🖋️</div>
 
     <div id="feedback-popup"></div>
+
+    <!-- Celebration Animation Overlay -->
+    <div id="judge-welcome-overlay">
+        <div id="judge-welcome-msg">💖 Welcome my judge 🎆</div>
+    </div>
 
     <div class="container" id="main-container">
         <!-- ROLE SELECTION -->
@@ -373,10 +422,46 @@
 
         function selectRole(role) {
             if (role === 'teacher') {
-                document.getElementById('role-select').classList.add('hidden');
-                document.getElementById('teacher-view').classList.remove('hidden');
-                document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
+                const pass = prompt("Enter Judge Access Password:");
+                if (pass === "Quiz") {
+                    triggerJudgeWelcome();
+                    document.getElementById('role-select').classList.add('hidden');
+                    document.getElementById('teacher-view').classList.remove('hidden');
+                    document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
+                } else if (pass !== null) {
+                    alert("You are a criminal trying to steal someone's private property!");
+                }
             }
+        }
+
+        function triggerJudgeWelcome() {
+            const overlay = document.getElementById('judge-welcome-overlay');
+            overlay.style.display = 'flex';
+
+            const symbols = ['💖', '💕', '💗', '🎆', '✨', '💖', '🎉', '💖'];
+            for (let i = 0; i < 35; i++) {
+                const elem = document.createElement('div');
+                elem.className = 'celebration-item';
+                elem.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 150 + Math.random() * 300;
+                const dx = Math.cos(angle) * dist + 'px';
+                const dy = Math.sin(angle) * dist + 'px';
+
+                elem.style.setProperty('--dx', dx);
+                elem.style.setProperty('--dy', dy);
+                elem.style.fontSize = (20 + Math.random() * 30) + 'px';
+                elem.style.left = '50%';
+                elem.style.top = '50%';
+
+                overlay.appendChild(elem);
+            }
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                overlay.querySelectorAll('.celebration-item').forEach(e => e.remove());
+            }, 2500);
         }
 
         function selectGroup(groupName) {
