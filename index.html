@@ -56,15 +56,23 @@
             overflow-y: auto !important;
         }
 
+        /* KAPAG NAKA-FULLSCREEN: Itinaas at pinalaki nang kaunti ang QR code */
+        body.is-fullscreen .qr-code-wrapper {
+            right: 40px !important;
+            bottom: 60vh !important;
+            transform: scale(1.12);
+        }
+
         .urgent-warning-glow {
             box-shadow: inset 0 0 50px rgba(244, 63, 94, 0.9), 0 0 30px rgba(244, 63, 94, 0.8);
             border: 3px solid #f43f5e !important;
         }
 
+        /* INIBABA NG KAUNTI ANG TOP CONTROLS AT KAPANTAY ANG TIMER */
         .top-controls {
             position: fixed;
-            top: 15px;
-            right: 22px;
+            top: 22px;
+            right: 25px;
             z-index: 10005;
             display: flex;
             gap: 10px;
@@ -215,7 +223,7 @@
         @media (min-width: 769px) {
             .qr-code-wrapper {
                 right: 35px;
-                bottom: 58vh;
+                bottom: 55vh;
             }
         }
 
@@ -446,11 +454,13 @@
             100% { transform: scale(1); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); }
         }
 
+        /* PINALAKI ANG JUDGE BIG SCREEN MONITOR BUTTON NANG MAGANDA TINGNAN */
         .animated-main-btn { 
             animation: buttonPulseAnim 2.5s ease-in-out infinite; 
-            padding: 14px 30px !important; 
-            font-size: 16.5px !important;
-            border-radius: 16px !important;
+            padding: 16px 36px !important; 
+            font-size: 18px !important;
+            border-radius: 18px !important;
+            letter-spacing: 0.5px;
         }
 
         .attorney-btn-1 {
@@ -712,15 +722,15 @@
             text-align: left;
         }
 
-        /* JUDGE EJ CHAMBERS MESSAGE BOX */
+        /* JUDGE EJ CHAMBERS MESSAGE BOX: Inibaba ng kaunti para may space sa taas at baba */
         .judge-speech-container {
             position: relative;
             z-index: 3;
             max-width: 820px;
-            margin: 0 auto 12px auto;
+            margin: 18px auto 18px auto;
             background: rgba(15, 23, 42, 0.65);
             border: 1.5px solid rgba(168, 85, 247, 0.5);
-            padding: 12px 20px;
+            padding: 10px 18px;
             border-radius: 16px;
             backdrop-filter: blur(8px);
             display: flex;
@@ -729,18 +739,19 @@
         }
 
         .judge-speech-avatar {
-            font-size: 30px;
+            font-size: 28px;
             background: rgba(168, 85, 247, 0.2);
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 50%;
             border: 1px solid rgba(168, 85, 247, 0.5);
             flex-shrink: 0;
         }
 
+        /* PINALIIT NG KUNTI ANG JUDGE MESSAGE SA FIRST PAGE (NORMAL MODE) PARA BUO AT WALANG SCROLL */
         .judge-speech-text {
-            font-size: 14px;
+            font-size: 13px;
             color: #f3e8ff;
-            line-height: 1.45;
+            line-height: 1.4;
             margin: 0;
         }
 
@@ -755,7 +766,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 8px 0;
+            padding: 4px 0;
             width: 100%;
         }
 
@@ -768,21 +779,23 @@
         }
         .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); }
 
+        /* INIBABA AT PINALAKI NG BAHAGYA ANG ATTORNEY BUTTONS NANG NAKA-HORIZONTAL ONE LINE AT HINDI NAGKAKADIKIT */
         .attorney-buttons-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
             gap: 12px;
+            margin-top: 12px;
         }
 
         .attorney-buttons-container .group-btn {
             width: 100%;
             max-width: 320px;
             margin: 0;
-            padding: 14px 18px;
+            padding: 16px 20px;
             color: #ffffff;
-            font-size: 15.5px;
+            font-size: 16.5px;
             font-weight: bold;
             border: none;
             border-radius: 16px;
@@ -793,14 +806,15 @@
             .attorney-buttons-container {
                 flex-direction: row;
                 justify-content: center;
-                gap: 14px;
+                gap: 16px;
             }
             .attorney-buttons-container .group-btn {
                 width: auto;
                 flex: 1;
-                max-width: none;
-                padding: 15px 14px;
-                font-size: 15.5px;
+                max-width: 210px;
+                padding: 17px 12px;
+                font-size: 16px;
+                white-space: nowrap;
             }
         }
 
@@ -860,10 +874,11 @@
             font-size: 13px; color: #ecfdf5; display: none;
         }
 
+        /* KAPANTAY NG TOP CONTROLS ANG FLOATING TIMER BADGE */
         #floating-timer-badge {
             position: fixed;
-            top: 15px;
-            left: 22px;
+            top: 22px;
+            left: 25px;
             width: 48px;
             height: 48px;
             border-radius: 50%;
@@ -1085,13 +1100,13 @@
 
     <div class="container" id="main-container">
         <div id="role-select">
-            <div style="text-align:center; margin-bottom: 6px;">
+            <div style="text-align:center; margin-bottom: 4px;">
                 <img src="/logo.png" alt="Logo" class="app-logo">
             </div>
             <h1 class="animated-header-title">⚖️ PROFED 5 GROUP 2 QUICK ACTIVITY 📜</h1>
-            <p style="text-align:center; margin: 6px 0 14px 0; font-size: 14.5px; color: #e9d5ff;">Select your mode to begin:</p>
-            <button class="btn animated-main-btn" style="margin-bottom: 18px;" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
-            <h3 style="text-align:center; margin-bottom: 8px; color: #f472b6; font-size: 16px;">Join as:</h3>
+            <p style="text-align:center; margin: 4px 0 10px 0; font-size: 14px; color: #e9d5ff;">Select your mode to begin:</p>
+            <button class="btn animated-main-btn" style="margin-bottom: 12px;" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
+            <h3 style="text-align:center; margin-bottom: 6px; color: #f472b6; font-size: 15px;">Join as:</h3>
             <div class="attorney-buttons-container">
                 <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
                 <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
