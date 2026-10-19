@@ -359,7 +359,6 @@
             display: none;
         }
 
-        /* REVIEW SECTION SA TEACHER VIEW */
         #review-section {
             margin-top: 25px;
             background: rgba(15, 23, 42, 0.6);
@@ -490,10 +489,11 @@
         <div id="judge-welcome-msg">💖 Welcome my judge 🎆</div>
     </div>
 
+    <!-- IBINALIK ANG WELCOME OVERLAY NA MAY LOGO, FIREWORKS, AT HEARTS -->
     <div id="student-welcome-overlay">
         <div style="text-align:center;">
             <img src="/logo.png" alt="MCC Logo" class="student-welcome-logo">
-            <h2 class="student-welcome-text">🌟 Welcome Future Educators! 📚</h2>
+            <h2 class="student-welcome-text">🎆✨ Welcome Future Educators! 💖📚</h2>
             <div class="student-welcome-sub">Preparing for excellence in Values Education... ✨</div>
         </div>
     </div>
@@ -528,7 +528,6 @@
             <h3>Live Scoreboard (Highest to Lowest)</h3>
             <div class="bar-chart-container" id="bar-chart"></div>
 
-            <!-- DETAILED REVIEW SECTION PARA SA JUDGE SCREEN PAGKATAPOS NG ORAS -->
             <div id="review-section">
                 <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px;">📜 Court Review: Detailed Explanations</h3>
                 <div style="margin-bottom: 15px;">
@@ -711,7 +710,6 @@
         function closeWarningModal() { document.getElementById('warning-modal').style.display = 'none'; }
         function closeWinnerModal() { 
             document.getElementById('winner-modal').style.display = 'none'; 
-            // Kapag clinose ang modal sa teacher screen, ipapakita ang review section sa ibaba ng scoreboard
             const reviewSec = document.getElementById('review-section');
             if (reviewSec) reviewSec.style.display = "block";
         }
@@ -732,12 +730,20 @@
 
         function selectGroup(groupName) {
             myGroup = groupName;
-            document.getElementById('role-select').classList.add('hidden');
-            document.getElementById('side-profile').style.display = 'none';
-            document.getElementById('left-sidebar').style.display = 'none';
-            document.getElementById('student-view').classList.remove('hidden');
-            document.getElementById('group-title').innerText = `Dashboard: ${groupName}`;
-            document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
+            
+            // Ipakita ang welcome overlay na may logo at fireworks/hearts effect sa sandaling mapindot ang Attorney 1-4
+            const welcomeOverlay = document.getElementById('student-welcome-overlay');
+            welcomeOverlay.style.display = 'flex';
+
+            setTimeout(() => {
+                welcomeOverlay.style.display = 'none';
+                document.getElementById('role-select').classList.add('hidden');
+                document.getElementById('side-profile').style.display = 'none';
+                document.getElementById('left-sidebar').style.display = 'none';
+                document.getElementById('student-view').classList.remove('hidden');
+                document.getElementById('group-title').innerText = `Dashboard: ${groupName}`;
+                document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
+            }, 1800); // 1.8 seconds bago mag-transition papunta sa dashboard
         }
 
         function startTimer() { socket.emit('startTimer'); }
