@@ -35,26 +35,34 @@
             transition: box-shadow 0.5s ease-in-out;
         }
 
-        /* KAPAG NAKA-FULLSCREEN NA: Halos Fullscreen ang laki at pinayagan ang scrolling sa loob */
+        /* KAPAG NAKA-FULLSCREEN LAMANG: Lalawak nang husto, maliit ang gilid, at invisible ang scrollbar */
         body.is-fullscreen {
             overflow: hidden !important;
             height: 100vh !important;
             max-height: 100vh !important;
-            padding: 8px 12px !important;
+            padding: 6px !important;
         }
 
         body.is-fullscreen .container {
-            max-width: 1550px !important;
-            width: 96% !important;
-            margin-top: 5px !important;
-            margin-bottom: 5px !important;
-            padding-top: 24px !important;
-            padding-bottom: 24px !important;
-            padding-left: 40px !important;
-            padding-right: 40px !important;
-            height: calc(100vh - 90px) !important;
+            max-width: 99vw !important;
+            width: 99vw !important;
+            margin: 0 auto !important;
+            padding-top: 14px !important;
+            padding-bottom: 14px !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            height: calc(100vh - 20px) !important;
             box-sizing: border-box;
-            overflow-y: auto !important; /* Dito na inilagay ang scrolling nang hindi binabago ang orihinal na lapad/laki */
+            overflow-y: auto !important;
+            scrollbar-width: none !important; /* Invisible scrollbar sa Firefox */
+            -ms-overflow-style: none !important; /* Invisible scrollbar sa IE/Edge */
+        }
+
+        /* Invisible scrollbar sa Chrome, Safari, at Opera kapag Fullscreen */
+        body.is-fullscreen .container::-webkit-scrollbar {
+            display: none !important;
+            width: 0px !important;
+            background: transparent !important;
         }
 
         .urgent-warning-glow {
@@ -232,7 +240,7 @@
             }
         }
 
-        /* ORIHINAL NA CONTAINER SIZE AT LAPAD (HALOS FULLSCREEN ANG LAPAD SA MALALAKING SCREEN) */
+        /* ORIHINAL NA ITSURA KAPAG HINDI NAKA-FULLSCREEN */
         .container { 
             position: relative;
             z-index: 3;
@@ -249,9 +257,9 @@
 
         @media (min-width: 1024px) {
             .container {
-                max-width: 1550px;
-                margin-left: 40px;
-                margin-right: 40px;
+                max-width: 950px;
+                margin-left: auto;
+                margin-right: auto;
             }
         }
 
@@ -775,18 +783,19 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            gap: 10px;
+            gap: 12px;
         }
 
         .attorney-buttons-container .group-btn {
             width: 100%;
-            max-width: 300px;
+            max-width: 320px;
             margin: 0;
-            padding: 11px 16px;
+            padding: 14px 18px;
             color: #ffffff;
+            font-size: 15.5px;
             font-weight: bold;
             border: none;
-            border-radius: 14px;
+            border-radius: 16px;
             cursor: pointer;
         }
 
@@ -794,14 +803,14 @@
             .attorney-buttons-container {
                 flex-direction: row;
                 justify-content: center;
-                gap: 10px;
+                gap: 14px;
             }
             .attorney-buttons-container .group-btn {
                 width: auto;
                 flex: 1;
                 max-width: none;
-                padding: 12px 10px;
-                font-size: 14px;
+                padding: 15px 14px;
+                font-size: 15.5px;
             }
         }
 
