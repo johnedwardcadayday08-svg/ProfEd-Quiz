@@ -197,8 +197,8 @@
             border: 1.5px solid rgba(255, 255, 255, 0.25);
         }
 
-        /* DUAL COLUMN LAYOUT PARA SA JUDGE SCREEN */
-        .judge-dashboard-grid {
+        /* 2-COLUMN LAYOUT PARA SA JUDGE SCREEN (KALIWA AT KANAN) */
+        .judge-main-layout {
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
             gap: 20px;
@@ -206,25 +206,22 @@
         }
 
         @media (max-width: 900px) {
-            .judge-dashboard-grid {
+            .judge-main-layout {
                 grid-template-columns: 1fr;
             }
         }
 
-        .judge-left-panel {
-            background: rgba(15, 23, 42, 0.55);
+        .judge-left-box {
+            background: rgba(15, 23, 42, 0.45);
             border: 1.5px solid rgba(168, 85, 247, 0.4);
-            border-radius: 20px;
+            border-radius: 18px;
             padding: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
         }
 
-        .judge-right-panel {
+        .judge-right-box {
             background: rgba(15, 23, 42, 0.65);
             border: 2px solid rgba(192, 132, 252, 0.5);
-            border-radius: 20px;
+            border-radius: 18px;
             padding: 18px;
             display: flex;
             flex-direction: column;
@@ -232,17 +229,17 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
 
-        .podium-container {
+        .podium-area {
             display: flex;
             justify-content: space-around;
             align-items: flex-end;
             width: 100%;
-            height: 280px;
+            height: 270px;
             margin-top: 15px;
             gap: 10px;
         }
 
-        .podium-column {
+        .podium-col {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -251,40 +248,40 @@
             justify-content: flex-end;
         }
 
-        .podium-bar-track {
+        .rank-bar-track {
             width: 100%;
-            max-width: 48px;
+            max-width: 45px;
             background: rgba(255, 255, 255, 0.15);
-            border-radius: 12px 12px 0 0;
+            border-radius: 10px 10px 0 0;
             display: flex;
             align-items: flex-end;
             overflow: hidden;
-            height: 180px;
+            height: 160px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .podium-bar-fill {
+        .rank-bar-fill {
             width: 100%;
             background: linear-gradient(180deg, #c084fc, #7c3aed);
             height: 0%;
-            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 12px 12px 0 0;
+            transition: height 0.5s ease-in-out;
+            border-radius: 10px 10px 0 0;
         }
 
-        /* GLOWING AND FLOATING CIRCLE FRAME PARA SA ATTRIBUTES */
-        .glowing-avatar-frame {
-            width: 62px;
-            height: 62px;
+        /* GUMAGALAW NA GLOWING EFFECT SA CIRCLE FRAME NG MGA LITRATO */
+        .glowing-frame {
+            width: 58px;
+            height: 58px;
             border-radius: 50%;
             padding: 3px;
             background: linear-gradient(135deg, #f472b6, #38bdf8, #a855f7);
             box-shadow: 0 0 18px rgba(192, 132, 252, 0.8);
-            animation: pulseGlow 3s ease-in-out infinite;
+            animation: glowMove 3s ease-in-out infinite;
             margin-top: 10px;
             flex-shrink: 0;
         }
 
-        .glowing-avatar-frame img {
+        .glowing-frame img {
             width: 100%;
             height: 100%;
             border-radius: 50%;
@@ -292,13 +289,13 @@
             background: #1e293b;
         }
 
-        @keyframes pulseGlow {
+        @keyframes glowMove {
             0% { transform: translateY(0px) scale(1); box-shadow: 0 0 12px rgba(168, 85, 247, 0.6); }
-            50% { transform: translateY(-6px) scale(1.05); box-shadow: 0 0 22px rgba(56, 189, 248, 0.9); }
+            50% { transform: translateY(-5px) scale(1.04); box-shadow: 0 0 22px rgba(56, 189, 248, 0.9); }
             100% { transform: translateY(0px) scale(1); box-shadow: 0 0 12px rgba(168, 85, 247, 0.6); }
         }
 
-        .podium-rank-badge {
+        .rank-label-badge {
             font-size: 11px;
             font-weight: 800;
             color: #f3e8ff;
@@ -308,7 +305,45 @@
             margin-bottom: 6px;
         }
 
-        /* CAMERA MODAL */
+        @keyframes buttonPulseAnim {
+            0% { transform: scale(1); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); }
+            50% { transform: scale(1.02); box-shadow: 0 6px 18px rgba(168, 85, 247, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); }
+        }
+
+        @keyframes groupButtonPulseAnim {
+            0% { transform: scale(1); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
+            50% { transform: scale(1.02); box-shadow: 0 6px 18px rgba(56, 189, 248, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
+        }
+
+        .animated-main-btn { animation: buttonPulseAnim 2.5s ease-in-out infinite; }
+        .animated-group-btn { animation: groupButtonPulseAnim 2.5s ease-in-out infinite; animation-delay: 0.5s; }
+
+        .left-suspects-sidebar {
+            position: fixed;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 200px;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1.5px solid rgba(168, 85, 247, 0.4);
+            border-radius: 18px;
+            padding: 12px 8px;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+        }
+
+        .suspect-sidebar-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 10px 6px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
         #camera-modal {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -330,7 +365,7 @@
             max-width: 380px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 30px rgba(168, 85, 247, 0.3);
             position: relative;
         }
 
@@ -355,11 +390,11 @@
             margin: 12px auto;
         }
 
-        /* EXCLUSIVE JUDGE-ONLY CENTER POPUP */
+        /* EXCLUSIVE JUDGE-ONLY CENTER POPUP (NA NAKAGITNA SA SCREEN NG JUDGE) */
         #judge-photo-popup {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(12px);
             display: none;
             justify-content: center;
@@ -375,7 +410,7 @@
             padding: 35px 50px;
             text-align: center;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(168, 85, 247, 0.5);
-            animation: popupScale 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -383,8 +418,8 @@
         }
 
         .judge-popup-card img {
-            width: 165px;
-            height: 165px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid #38bdf8;
@@ -399,8 +434,8 @@
             gap: 10px;
         }
         .attorney-avatar-mini {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #c084fc;
@@ -582,12 +617,6 @@
             color: #f3e8ff;
         }
 
-        .header-bar div {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
         .bar-chart-container { margin: 10px 0; background: rgba(15, 23, 42, 0.45); padding: 12px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
         .bar-label { width: 85px; font-weight: bold; font-size: 13px; color: #f3e8ff; }
         .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 24px; border-radius: 9px; overflow: hidden; margin: 0 8px; }
@@ -655,7 +684,7 @@
 
     <!-- TOP CONTROLS -->
     <div class="top-controls" id="top-controls-group">
-        <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="Toggle Buttons">▲</button>
+        <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="Toggle">▲</button>
         <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
         <button class="control-btn surrender-btn" id="surrender-btn" onclick="handleSurrender()">🏳️ Surrender</button>
     </div>
@@ -670,7 +699,7 @@
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
 
-    <!-- QR CODE -->
+    <!-- QR CODE CONTAINER -->
     <div class="qr-code-wrapper" id="qr-wrapper">
         <div id="qrcode"></div>
         <p>📱 SCAN TO JOIN</p>
@@ -785,9 +814,10 @@
         <div id="teacher-view" class="hidden">
             <h1 style="margin-top: 0;">⚖️ Judge Real-Time Monitor ⚖️</h1>
             
-            <div class="judge-dashboard-grid">
-                <!-- KALIWANG BOX (CONTROLS & SCOREBOARD) -->
-                <div class="judge-left-panel">
+            <!-- 2-COLUMN LAYOUT PARA SA KALIWA AT KANAN NG JUDGE SCREEN -->
+            <div class="judge-main-layout">
+                <!-- KALIWANG BOX: CONTROLS AT SCOREBOARD -->
+                <div class="judge-left-box">
                     <div class="header-bar">
                         <span id="teacher-timer">Time Left: 00:30</span>
                         <div>
@@ -807,12 +837,12 @@
                     </div>
                 </div>
 
-                <!-- KANANG BOX (PODIUM RANKING WITH GLOWING CIRCLE FRAMES) -->
-                <div class="judge-right-panel">
-                    <h3 style="margin: 0; color: #f472b6; font-size: 17px; text-align: center;">👑 Live Podium & Group Showcase 🏛️</h3>
-                    <p style="font-size: 11.5px; color: #cbd5e1; margin: 4px 0 10px 0; text-align: center;">Dynamic Standings & Participant Avatars</p>
+                <!-- KANANG BOX: PODIUM RANKING AT MGA LITRATO NA MAY GLOWING EFFECT SA BABA NG RANK BARS -->
+                <div class="judge-right-box">
+                    <h3 style="margin: 0; color: #f472b6; font-size: 16px; text-align: center;">👑 Live Podium & Group Showcase 🏛️</h3>
+                    <p style="font-size: 11px; color: #cbd5e1; margin: 4px 0 10px 0; text-align: center;">Top Standings & Glowing Avatars</p>
                     
-                    <div class="podium-container" id="podium-display">
+                    <div class="podium-area" id="podium-display">
                         <!-- Dynamic Podium Render -->
                     </div>
                 </div>
@@ -832,22 +862,9 @@
                     <div class="options">
                         <label id="lbl-q1-RA7277"><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
                         <label id="lbl-q1-RA7610"><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
-                        <label id="lbl-q1-RA8371"><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
-                        <label id="lbl-q1-CONST"><input type="radio" name="q1" value="CONST" onchange="submitAns('q1', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
                     </div>
                     <div class="explanation-box" id="exp-q1">
                         <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7277</b> ay kilala bilang "Magna Carta for Disabled Persons"[cite: 1, 2].
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q2">
-                    <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation, and discrimination?[cite: 1, 2]</p>
-                    <div class="options">
-                        <label id="lbl-q2-RA7277"><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277[cite: 1, 2]</label>
-                        <label id="lbl-q2-RA7610"><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610[cite: 1, 2]</label>
-                    </div>
-                    <div class="explanation-box" id="exp-q2">
-                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7610</b> ay para sa Child Protection[cite: 1, 2].
                     </div>
                 </div>
             </div>
@@ -881,30 +898,44 @@
         });
 
         function toggleTopControls() {
+            const arrowBtn = document.getElementById('toggle-arrow-btn');
             const fsBtn = document.getElementById('fs-btn');
             const surrenderBtn = document.getElementById('surrender-btn');
-            const arrowBtn = document.getElementById('toggle-arrow-btn');
+
             if (fsBtn.style.display === 'none') {
-                fsBtn.style.display = 'flex'; surrenderBtn.style.display = 'flex'; arrowBtn.innerText = '▲';
+                fsBtn.style.display = 'flex';
+                surrenderBtn.style.display = 'flex';
+                arrowBtn.innerText = '▲';
             } else {
-                fsBtn.style.display = 'none'; surrenderBtn.style.display = 'none'; arrowBtn.innerText = '▼';
+                fsBtn.style.display = 'none';
+                surrenderBtn.style.display = 'none';
+                arrowBtn.innerText = '▼';
             }
         }
 
         const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, review your statutes carefully before time runs out!"';
         let charIndex = 0;
+
         function typeWriter() {
             const target = document.getElementById('typewriter-text');
             if (charIndex < judgeMessage.length) {
                 target.innerHTML = judgeMessage.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
-                charIndex++; setTimeout(typeWriter, 35);
-            } else { target.innerHTML = judgeMessage; }
+                charIndex++;
+                setTimeout(typeWriter, 35);
+            } else {
+                target.innerHTML = judgeMessage;
+            }
         }
         window.onload = () => typeWriter();
 
         function toggleFullScreen() {
-            if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
-            else { if (document.exitFullscreen) document.exitFullscreen(); }
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
+            }
         }
 
         function handleSurrender() { location.reload(); }
@@ -940,7 +971,9 @@
                     document.getElementById('teacher-view').classList.remove('hidden');
                     document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
                 }, 1800);
-            } else { document.getElementById('warning-modal').style.display = 'flex'; }
+            } else {
+                document.getElementById('warning-modal').style.display = 'flex';
+            }
         }
 
         async function selectGroup(groupName) {
@@ -949,23 +982,34 @@
             try {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                 document.getElementById('webcam-video').srcObject = mediaStream;
-            } catch (err) { alert("Camera access permission required."); }
+            } catch (err) {
+                alert("Hindi ma-access ang camera.");
+            }
         }
 
         function capturePhoto() {
             const video = document.getElementById('webcam-video');
             const canvas = document.getElementById('webcam-canvas');
             const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth || 280; canvas.height = video.videoHeight || 210;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            capturedDataUrl = canvas.toDataURL('image/png');
             
-            video.style.display = 'none'; canvas.style.display = 'none';
+            canvas.width = video.videoWidth || 280;
+            canvas.height = video.videoHeight || 210;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            capturedDataUrl = canvas.toDataURL('image/png');
+            video.style.display = 'none';
+            canvas.style.display = 'none';
+            
             const preview = document.getElementById('captured-preview');
-            preview.src = capturedDataUrl; preview.classList.remove('hidden');
+            preview.src = capturedDataUrl;
+            preview.classList.remove('hidden');
+
             document.getElementById('camera-controls').classList.add('hidden');
             document.getElementById('join-now-container').classList.remove('hidden');
-            if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
         }
 
         function confirmJoinNow() {
@@ -1004,6 +1048,7 @@
 
             const sortedGroups = Object.entries(groupScores).sort((a, b) => b[1] - a[1]);
             
+            // Render Left Horizontal Scoreboard
             let chartHTML = '';
             sortedGroups.forEach(([group, score]) => {
                 let percentage = (score / 6) * 100;
@@ -1020,17 +1065,18 @@
             const barChart = document.getElementById('bar-chart');
             if (barChart) barChart.innerHTML = chartHTML;
 
+            // Render Right Vertical Podium Rank Bars na may glowing frame sa baba
             let podiumHTML = '';
             sortedGroups.forEach(([group, score], idx) => {
                 let heightPercent = Math.max((score / 6) * 100, 8);
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 podiumHTML += `
-                    <div class="podium-column">
-                        <div class="podium-rank-badge">Top ${idx + 1}</div>
-                        <div class="podium-bar-track">
-                            <div class="podium-bar-fill" style="height: ${heightPercent}%"></div>
+                    <div class="podium-col">
+                        <div class="rank-label-badge">Top ${idx + 1}</div>
+                        <div class="rank-bar-track">
+                            <div class="rank-bar-fill" style="height: ${heightPercent}%"></div>
                         </div>
-                        <div class="glowing-avatar-frame">
+                        <div class="glowing-frame">
                             <img src="${photoSrc}" alt="${group}" />
                         </div>
                         <div style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #f3e8ff;">${group}</div>
@@ -1045,7 +1091,7 @@
             }
         });
 
-        // POP-UP EXKLUSIBO LAMANG SA JUDGE SCREEN (CENTERED)
+        // POP-UP EXKLUSIBO LAMANG SA JUDGE SCREEN AT NAKAGITNA SA EKRANO
         socket.on('showJudgePopupQueue', (queue) => {
             if (isJudgeRole) {
                 playPopupQueue(queue, 0);
