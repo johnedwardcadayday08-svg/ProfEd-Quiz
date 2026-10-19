@@ -943,14 +943,35 @@
         }
         .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
 
-        /* STRICT LOCKED STATE: NAKA-DISABLE AT HINDI CLICKABLE HANGGA'T HINDI PA PINIPINDOT ANG START QUIZ NG JUDGE */
-        .quiz-locked .options label {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
+        /* STRICT LOCKED STATE: PINAPATAY ANG LAHAT NG CLICK EVENTS AT GINAGAWANG HINDI CLICKABLE */
+        .quiz-locked {
+            pointer-events: none !important;
+            user-select: none !important;
         }
-        .quiz-locked .options input {
-            pointer-events: none;
+        .quiz-locked .options label {
+            opacity: 0.4;
+            cursor: not-allowed !important;
+        }
+
+        /* WAITING BANNER STYLE */
+        #waiting-banner {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(244, 114, 182, 0.3));
+            border: 2px dashed #f472b6;
+            border-radius: 16px;
+            padding: 14px 20px;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 800;
+            color: #f3e8ff;
+            margin-bottom: 18px;
+            box-shadow: 0 0 18px rgba(244, 114, 182, 0.4);
+            animation: bannerGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes bannerGlow {
+            0% { box-shadow: 0 0 10px rgba(244, 114, 182, 0.3); transform: scale(1); }
+            50% { box-shadow: 0 0 25px rgba(244, 114, 182, 0.8); transform: scale(1.01); }
+            100% { box-shadow: 0 0 10px rgba(244, 114, 182, 0.3); transform: scale(1); }
         }
 
         .option-correct {
@@ -1278,6 +1299,11 @@
                 <span id="group-score-display">Score: 0 / 6</span>
             </div>
 
+            <!-- WAITING BANNER FOR PARTICIPANTS -->
+            <div id="waiting-banner">
+                Wait till the judge open the court! ✨🔒
+            </div>
+
             <div id="quiz-questions" class="quiz-locked">
                 <div class="question-card" id="card-q1">
                     <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?[cite: 1, 2]</p>
@@ -1563,7 +1589,6 @@
         function resetGame() { socket.emit('resetGame'); }
 
         function submitAns(questionId, answer) {
-            // HINDI MAKAKASAGOT KUNG NAKA-LOCK PA ANG QUIZ
             const quizQuestionsEl = document.getElementById('quiz-questions');
             if (quizQuestionsEl && quizQuestionsEl.classList.contains('quiz-locked')) return;
 
@@ -1678,10 +1703,14 @@
             document.getElementById('student-timer').innerText = fullTimeStr;
             document.getElementById('floating-timer-text').innerText = timeStr;
 
-            // KAPAG NAG-START NA ANG TIMER (PININOT NA NI JUDGE ANG START QUIZ), TANGGALIN ANG LOCK SA QUIZ
             const quizQuestionsEl = document.getElementById('quiz-questions');
+            const waitingBannerEl = document.getElementById('waiting-banner');
+
             if (quizQuestionsEl && quizQuestionsEl.classList.contains('quiz-locked')) {
                 quizQuestionsEl.classList.remove('quiz-locked');
+            }
+            if (waitingBannerEl) {
+                waitingBannerEl.style.display = 'none';
             }
 
             const floatBadge = document.getElementById('floating-timer-badge');
