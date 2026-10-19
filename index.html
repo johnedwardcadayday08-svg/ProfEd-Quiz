@@ -96,7 +96,7 @@
             background: linear-gradient(135deg, rgba(244, 63, 94, 0.85), rgba(225, 29, 72, 0.85));
         }
 
-        /* NAPAKARAMING LAW ICONS NA MAY DYNAMIC GLOWING AT MOVING EFFECTS */
+        /* LAW ICONS */
         .law-bg-element {
             position: fixed;
             font-size: 40px;
@@ -201,22 +201,52 @@
             }
         }
 
-        /* FIRST PAGE MAIN CONTAINER (EXPANDED LOWER PART HALOS DIKIT SA JUDGE CHAMBERS) */
+        /* NORMAL CONTAINER (HINDI NABABAGO KAPAG HINDI NAKA-FULLSCREEN) */
         .container { 
             position: relative;
             z-index: 3;
             max-width: 950px; 
-            margin: 10px auto 12px auto; 
+            margin: 10px auto; 
             background: var(--card-bg-transparent); 
-            padding: 28px 36px 65px 36px; 
-            border-radius: 26px; 
+            padding: 24px 34px; 
+            border-radius: 24px; 
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); 
             backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
             transition: all 0.3s ease;
         }
 
-        /* PALAPAD SA KALIWA AT KANAN LANG SA JUDGE MONITOR VIEW */
+        /* FULLSCREEN EXPANSION CONFIGURATION (KAPAG NAKA-FULLSCREEN LANG) */
+        :fullscreen .container,
+        :-webkit-full-screen .container,
+        :-moz-full-screen .container,
+        :-ms-fullscreen .container {
+            max-width: 1450px !important;
+            margin-top: 5px !important;
+            margin-bottom: 5px !important;
+            padding-top: 22px !important;
+            padding-bottom: 22px !important;
+            height: calc(100vh - 85px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        :fullscreen .attorney-buttons-container .group-btn,
+        :-webkit-full-screen .attorney-buttons-container .group-btn,
+        :-moz-full-screen .attorney-buttons-container .group-btn {
+            padding: 18px 14px !important;
+            font-size: 16px !important;
+            font-weight: 800 !important;
+        }
+
+        :fullscreen #role-select,
+        :-webkit-full-screen #role-select,
+        :-moz-full-screen #role-select {
+            justify-content: space-around;
+            height: 100%;
+        }
+
         @media (min-width: 1024px) {
             .container {
                 max-width: 1550px;
@@ -378,7 +408,7 @@
             box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
         }
 
-        /* LOGO & TITLE ANIMATIONS */
+        /* LOGO & AESTHETIC TITLE FONT */
         .app-logo {
             width: 85px;
             height: 85px;
@@ -396,18 +426,20 @@
         }
 
         .animated-header-title {
-            font-size: 22px;
-            color: #f3e8ff;
+            font-family: 'Cinzel', 'Georgia', 'Times New Roman', serif;
+            font-size: 24px;
+            letter-spacing: 1.2px;
+            color: #fdf4ff;
             text-align: center;
             font-weight: 900;
-            margin: 10px 0 5px 0;
-            text-shadow: 0 0 15px rgba(168, 85, 247, 0.8), 0 0 25px rgba(124, 58, 237, 0.6);
+            margin: 10px 0 6px 0;
+            text-shadow: 0 0 18px rgba(168, 85, 247, 0.9), 0 0 30px rgba(244, 114, 182, 0.7);
             animation: titleGlowMove 3.5s ease-in-out infinite;
         }
 
         @keyframes titleGlowMove {
             0% { transform: translateY(0px); text-shadow: 0 0 12px rgba(168, 85, 247, 0.7); }
-            50% { transform: translateY(-3px); text-shadow: 0 0 22px rgba(244, 114, 182, 0.9), 0 0 35px rgba(56, 189, 248, 0.8); }
+            50% { transform: translateY(-3px); text-shadow: 0 0 24px rgba(244, 114, 182, 1), 0 0 38px rgba(56, 189, 248, 0.9); }
             100% { transform: translateY(0px); text-shadow: 0 0 12px rgba(168, 85, 247, 0.7); }
         }
 
@@ -426,6 +458,7 @@
         .animated-main-btn { animation: buttonPulseAnim 2.5s ease-in-out infinite; }
         .animated-group-btn { animation: groupButtonPulseAnim 2.5s ease-in-out infinite; animation-delay: 0.5s; }
 
+        /* SUSPECTS SIDEBAR (HINDI NAGTATAKIP SA ATTORNEY 1) */
         .left-suspects-sidebar {
             position: fixed;
             left: 14px;
@@ -620,7 +653,6 @@
             margin: 0 auto;
         }
 
-        /* HORIZONTAL FULLSCREEN EXPLANATIONS CONTAINER AFTER QUIZ */
         #review-section {
             margin-top: 25px; 
             background: rgba(15, 23, 42, 0.85);
@@ -648,7 +680,6 @@
             text-align: left;
         }
 
-        /* JUDGE EJ CHAMBERS SPEECH CONTAINER */
         .judge-speech-container {
             position: relative;
             z-index: 3;
@@ -889,7 +920,7 @@
         <span id="floating-timer-text">01:00</span>
     </div>
 
-    <!-- NAPAKARAMING GLOWING AT MOVING LAW ICONS -->
+    <!-- LAW ICONS -->
     <div class="law-bg-element icon-1">⚖️</div>
     <div class="law-bg-element icon-2">📜</div>
     <div class="law-bg-element icon-3">🏛️</div>
@@ -1048,7 +1079,7 @@
                 </div>
             </div>
 
-            <!-- HORIZONTAL FULLSCREEN EXPLANATION & PARTICIPANTS RANKING AFTER QUIZ -->
+            <!-- HORIZONTAL FULLSCREEN EXPLANATIONS AFTER QUIZ -->
             <div id="review-section">
                 <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px; font-size: 20px; font-weight: 800;">📜 Court Review: Detailed Explanations & Final Scores</h3>
                 
@@ -1188,7 +1219,7 @@
         </div>
     </div>
 
-    <!-- JUDGE EJ CHAMBERS MESSAGE BOX (PINAKITA ULIT SA UNANG PAHINA) -->
+    <!-- JUDGE EJ CHAMBERS MESSAGE BOX -->
     <div class="judge-speech-container" id="judge-speech-box">
         <div class="judge-speech-avatar">👨‍⚖️</div>
         <p class="judge-speech-text" id="typewriter-text"></p>
@@ -1286,10 +1317,7 @@
                     document.getElementById('side-profile').style.display = 'none';
                     document.getElementById('qr-wrapper').style.display = 'none';
                     document.getElementById('left-sidebar').style.display = 'none';
-                    
-                    // ITAGO ANG SPEECH BOX AT MAIN CONTAINER SA JUDGE MONITOR VIEW
                     document.getElementById('judge-speech-box').style.display = 'none';
-                    
                     document.getElementById('teacher-view').classList.remove('hidden');
                     document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
                 }, 1800);
@@ -1347,10 +1375,7 @@
                 document.getElementById('side-profile').style.display = 'none';
                 document.getElementById('qr-wrapper').style.display = 'none';
                 document.getElementById('left-sidebar').style.display = 'none';
-                
-                // ITAGO DIN ANG SPEECH BOX SA STUDENT DASHBOARD
                 document.getElementById('judge-speech-box').style.display = 'none';
-                
                 document.getElementById('student-view').classList.remove('hidden');
                 document.getElementById('group-title').innerText = `Dashboard: ${myGroup}`;
                 document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
@@ -1510,7 +1535,6 @@
             attorneysListContainer.innerHTML = resultsHTML;
             document.getElementById('winner-modal').style.display = 'flex';
             
-            // KUSANG LALABAS ANG HORIZONTAL REVIEW EXPLANATIONS SA MONITOR NG JUDGE
             const reviewSec = document.getElementById('review-section');
             if (reviewSec) reviewSec.style.display = "block";
         });
