@@ -70,20 +70,67 @@
             transform: scale(1.12);
         }
 
-        /* FULLSCREEN MODE: MAS MATANGKAD NA ATTORNEY BUTTONS PARANG BAR GRAPH PERO HINDI DIDIKIT SA SUSPECT BOX */
+        /* FULLSCREEN MODE: ATTORNEY BUTTONS NA MAY PANTAY NA ESPASYO MULA SA 3 SUSPECT BOX AT LOWER EDGE */
         body.is-fullscreen .attorney-buttons-container {
-            margin-top: 30px !important;
+            margin-top: 45px !important;
+            margin-bottom: 10px !important;
             gap: 18px !important;
         }
         body.is-fullscreen .attorney-buttons-container .group-btn {
-            padding: 38px 16px !important; /* Mataas na bar style */
+            padding: 34px 16px !important;
             font-size: 19px !important;
             font-weight: 800 !important;
             border-radius: 20px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            min-height: 110px !important;
+            min-height: 100px !important;
+        }
+
+        /* FULLSCREEN MODE SA JUDGE MONITOR: I-OCCUPY ANG BUONG BABA NG DALAWANG BOX */
+        body.is-fullscreen #teacher-view {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 85px);
+            box-sizing: border-box;
+        }
+
+        body.is-fullscreen .judge-main-layout {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 20px;
+            flex: 1;
+            align-items: stretch;
+            margin-bottom: 10px;
+        }
+
+        body.is-fullscreen .judge-left-box,
+        body.is-fullscreen .judge-right-box {
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            box-sizing: border-box !important;
+        }
+
+        body.is-fullscreen .bar-chart-container {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-around !important;
+            margin: 10px 0 0 0 !important;
+            padding: 16px !important;
+        }
+
+        body.is-fullscreen .podium-area {
+            flex: 1 !important;
+            height: auto !important;
+            align-items: flex-end !important;
+            margin-top: auto !important;
+            margin-bottom: 5px !important;
+        }
+
+        body.is-fullscreen .rank-bar-track {
+            height: 220px !important; /* Pinalaki para sakupin ang malaking space sa baba */
         }
 
         .urgent-warning-glow {
