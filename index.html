@@ -35,7 +35,6 @@
             transition: box-shadow 0.5s ease-in-out;
         }
 
-        /* RED GLOWING EFFECT KAPAG 15 SECONDS NA LANG */
         .urgent-warning-glow {
             box-shadow: inset 0 0 50px rgba(244, 63, 94, 0.9), 0 0 30px rgba(244, 63, 94, 0.8);
             border: 3px solid #f43f5e !important;
@@ -191,14 +190,15 @@
             }
         }
 
+        /* PALAKI PA NANG KAUNTI ANG MAIN BOX (CONTAINER) NANG MAY MAGANDANG ESPASYO */
         .container { 
             position: relative;
             z-index: 3;
-            max-width: 1100px; 
+            max-width: 1180px; 
             margin: 15px auto; 
             background: var(--card-bg-transparent); 
-            padding: 22px 28px; 
-            border-radius: 22px; 
+            padding: 28px 36px; 
+            border-radius: 24px; 
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); 
             backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
@@ -395,9 +395,13 @@
             margin: 12px auto;
         }
 
+        /* EXACT CENTER NG SCREEN PARA SA JUDGE POP-UP */
         #judge-photo-popup {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
             background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(12px);
             display: none;
@@ -669,6 +673,38 @@
             border-radius: 18px; display: none;
         }
 
+        /* FLOATING CIRCULAR TIMER SA KALIWANG BAHAGI HABANG NAG-I-SCROLL */
+        #floating-timer-badge {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: #10b981;
+            color: #ffffff;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 13px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            z-index: 10003;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            transition: background 0.3s ease, transform 0.3s ease;
+            text-align: center;
+            line-height: 1.1;
+        }
+        #floating-timer-badge.urgent-red {
+            background: #f43f5e !important;
+            animation: pulseTimer 1s infinite alternate;
+        }
+        @keyframes pulseTimer {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
         #feedback-popup { 
             position: fixed; top: 50%; left: 50%; 
             transform: translate(-50%, -50%) scale(0.8); 
@@ -744,6 +780,12 @@
     <div class="qr-code-wrapper" id="qr-wrapper">
         <div id="qrcode"></div>
         <p>📱 SCAN TO JOIN</p>
+    </div>
+
+    <!-- FLOATING CIRCULAR TIMER (GREEN / RED KUNG 15 SECS) -->
+    <div id="floating-timer-badge">
+        <span style="font-size: 9px; opacity: 0.9;">TIME</span>
+        <span id="floating-timer-text">01:00</span>
     </div>
 
     <!-- CAMERA CAPTURE MODAL -->
@@ -916,7 +958,6 @@
             </div>
 
             <div id="quiz-questions">
-                <!-- Q1 -->
                 <div class="question-card" id="card-q1">
                     <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?[cite: 1, 2]</p>
                     <div class="options">
@@ -933,7 +974,6 @@
                     </div>
                 </div>
 
-                <!-- Q2 -->
                 <div class="question-card" id="card-q2">
                     <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation, and discrimination?[cite: 1, 2]</p>
                     <div class="options">
@@ -950,7 +990,6 @@
                     </div>
                 </div>
 
-                <!-- Q3 -->
                 <div class="question-card" id="card-q3">
                     <p><b>Q3:</b> What law recognizes, protects, and promotes the rights of Indigenous Cultural Communities / Indigenous Peoples (IPRA)?[cite: 1, 2]</p>
                     <div class="options">
@@ -967,7 +1006,6 @@
                     </div>
                 </div>
 
-                <!-- Q4 -->
                 <div class="question-card" id="card-q4">
                     <p><b>Q4:</b> Which fundamental law of the land guarantees state protection and promotion of quality education at all levels?[cite: 1]</p>
                     <div class="options">
@@ -984,7 +1022,6 @@
                     </div>
                 </div>
 
-                <!-- Q5 -->
                 <div class="question-card" id="card-q5">
                     <p><b>Q5:</b> Which act mandates the rehabilitation, self-development, and self-reliance of disabled persons and their integration into mainstream society?[cite: 1, 2]</p>
                     <div class="options">
@@ -1001,7 +1038,6 @@
                     </div>
                 </div>
 
-                <!-- Q6 -->
                 <div class="question-card" id="card-q6">
                     <p><b>Q6:</b> Which law professionalizes the teaching practice and prescribes the licensure examination for teachers in the Philippines?[cite: 1, 2]</p>
                     <div class="options">
@@ -1178,6 +1214,9 @@
                 document.getElementById('student-view').classList.remove('hidden');
                 document.getElementById('group-title').innerText = `Dashboard: ${myGroup}`;
                 document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
+                
+                // IPAPAKITA ANG FLOATING CIRCULAR TIMER SA PARTICIPANTS KAPAG NASA DASHBOARD NA
+                document.getElementById('floating-timer-badge').style.display = 'flex';
             }, 1800);
         }
 
@@ -1276,23 +1315,31 @@
             }, 3000);
         }
 
-        // TIMER AT RED GLOWING EFFECT KAPAG 15 SECONDS NA LANG
         socket.on('timerUpdate', (timer) => {
             let mins = Math.floor(timer / 60).toString().padStart(2, '0');
             let secs = (timer % 60).toString().padStart(2, '0');
-            let timeStr = `Time Left: ${mins}:${secs}`;
-            document.getElementById('teacher-timer').innerText = timeStr;
-            document.getElementById('student-timer').innerText = timeStr;
+            let timeStr = `${mins}:${secs}`;
+            let fullTimeStr = `Time Left: ${mins}:${secs}`;
+            
+            document.getElementById('teacher-timer').innerText = fullTimeStr;
+            document.getElementById('student-timer').innerText = fullTimeStr;
+            document.getElementById('floating-timer-text').innerText = timeStr;
 
+            const floatBadge = document.getElementById('floating-timer-badge');
             if (timer <= 15 && timer > 0) {
                 document.body.classList.add('urgent-warning-glow');
+                if (floatBadge) floatBadge.classList.add('urgent-red');
             } else {
                 document.body.classList.remove('urgent-warning-glow');
+                if (floatBadge) floatBadge.classList.remove('urgent-red');
             }
         });
 
         socket.on('timeUp', () => {
             document.body.classList.remove('urgent-warning-glow');
+            const floatBadge = document.getElementById('floating-timer-badge');
+            if (floatBadge) floatBadge.classList.remove('urgent-red');
+
             document.querySelectorAll('input[type="radio"]').forEach(input => input.disabled = true);
             document.querySelectorAll('.explanation-box').forEach(box => box.style.display = "block");
 

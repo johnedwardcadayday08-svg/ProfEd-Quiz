@@ -26,7 +26,6 @@ let attorneyPhotos = {
 let judgePopupQueue = [];
 let isQueueRunning = false;
 
-// NAKA-SET NA SA 1 MINUTO (60 SECONDS) ANG TIMER
 let timer = 60;
 let timerInterval = null;
 let timerRunning = false;
