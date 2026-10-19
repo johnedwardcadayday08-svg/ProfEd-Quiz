@@ -190,11 +190,11 @@
             }
         }
 
-        /* PALAKI PA NANG KAUNTI ANG MAIN BOX (CONTAINER) NANG MAY MAGANDANG ESPASYO */
+        /* PINAKAMALAKING BOX NA INEXPAND HANGGANG SA GUSTONG HANGGANAN SA LAPTOP VIEW LANG */
         .container { 
             position: relative;
             z-index: 3;
-            max-width: 1180px; 
+            max-width: 950px; 
             margin: 15px auto; 
             background: var(--card-bg-transparent); 
             padding: 28px 36px; 
@@ -202,6 +202,15 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); 
             backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1280px;
+                margin-left: 215px;
+                margin-right: 175px;
+            }
         }
 
         .judge-main-layout {
@@ -395,7 +404,7 @@
             margin: 12px auto;
         }
 
-        /* EXACT CENTER NG SCREEN PARA SA JUDGE POP-UP */
+        /* GANAP NA NAKAGITNA SA SCREEN NG JUDGE */
         #judge-photo-popup {
             position: fixed;
             top: 0; 
@@ -407,7 +416,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 10006;
+            z-index: 99999;
             flex-direction: column;
         }
 
@@ -673,13 +682,13 @@
             border-radius: 18px; display: none;
         }
 
-        /* FLOATING CIRCULAR TIMER SA KALIWANG BAHAGI HABANG NAG-I-SCROLL */
+        /* CIRCULAR TIMER NAKAPWESTO SA KALIWANG TAAS, KAPANTAY NG MGA BUTTON SA KANAN */
         #floating-timer-badge {
             position: fixed;
-            left: 20px;
-            bottom: 20px;
-            width: 65px;
-            height: 65px;
+            top: 15px;
+            left: 22px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: #10b981;
             color: #ffffff;
@@ -688,10 +697,11 @@
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 13px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-            z-index: 10003;
-            border: 3px solid rgba(255, 255, 255, 0.8);
+            font-size: 11px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+            z-index: 10006;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(8px);
             transition: background 0.3s ease, transform 0.3s ease;
             text-align: center;
             line-height: 1.1;
@@ -766,6 +776,11 @@
         <button class="control-btn surrender-btn" id="surrender-btn" onclick="handleSurrender()">🏳️ Surrender</button>
     </div>
 
+    <!-- CIRCULAR TIMER SA KALIWANG TAAS (KAPANTAY NG MGA TOP CONTROLS SA KANAN) -->
+    <div id="floating-timer-badge">
+        <span id="floating-timer-text">01:00</span>
+    </div>
+
     <div class="law-bg-element icon-1">⚖️</div>
     <div class="law-bg-element icon-2">📜</div>
     <div class="law-bg-element icon-3">🏛️</div>
@@ -780,12 +795,6 @@
     <div class="qr-code-wrapper" id="qr-wrapper">
         <div id="qrcode"></div>
         <p>📱 SCAN TO JOIN</p>
-    </div>
-
-    <!-- FLOATING CIRCULAR TIMER (GREEN / RED KUNG 15 SECS) -->
-    <div id="floating-timer-badge">
-        <span style="font-size: 9px; opacity: 0.9;">TIME</span>
-        <span id="floating-timer-text">01:00</span>
     </div>
 
     <!-- CAMERA CAPTURE MODAL -->
@@ -1215,7 +1224,7 @@
                 document.getElementById('group-title').innerText = `Dashboard: ${myGroup}`;
                 document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
                 
-                // IPAPAKITA ANG FLOATING CIRCULAR TIMER SA PARTICIPANTS KAPAG NASA DASHBOARD NA
+                // IPAKITA ANG CIRCULAR TIMER SA KALIWANG TAAS NG PARTICIPANT SCREEN
                 document.getElementById('floating-timer-badge').style.display = 'flex';
             }, 1800);
         }
