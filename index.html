@@ -45,10 +45,6 @@
             transition: transform 0.3s ease;
         }
 
-        .top-controls.hidden-controls {
-            transform: translateY(-120%);
-        }
-
         .toggle-controls-btn {
             background: rgba(168, 85, 247, 0.85);
             color: #f3e8ff;
@@ -188,15 +184,10 @@
             }
         }
 
-        @keyframes profilePop {
-            0% { transform: translateY(40px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
         .container { 
             position: relative;
             z-index: 3;
-            max-width: 820px; 
+            max-width: 1100px; 
             margin: 15px auto; 
             background: var(--card-bg-transparent); 
             padding: 22px 28px; 
@@ -206,50 +197,118 @@
             border: 1.5px solid rgba(255, 255, 255, 0.25);
         }
 
-        @keyframes buttonPulseAnim {
-            0% { transform: scale(1); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); }
-            50% { transform: scale(1.02); box-shadow: 0 6px 18px rgba(168, 85, 247, 0.8); }
-            100% { transform: scale(1); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); }
+        /* DUAL COLUMN LAYOUT PARA SA JUDGE SCREEN */
+        .judge-dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            align-items: stretch;
         }
 
-        @keyframes groupButtonPulseAnim {
-            0% { transform: scale(1); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
-            50% { transform: scale(1.02); box-shadow: 0 6px 18px rgba(56, 189, 248, 0.8); }
-            100% { transform: scale(1); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
+        @media (max-width: 900px) {
+            .judge-dashboard-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .animated-main-btn { animation: buttonPulseAnim 2.5s ease-in-out infinite; }
-        .animated-group-btn { animation: groupButtonPulseAnim 2.5s ease-in-out infinite; animation-delay: 0.5s; }
-
-        .left-suspects-sidebar {
-            position: fixed;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 200px;
-            background: rgba(15, 23, 42, 0.65);
+        .judge-left-panel {
+            background: rgba(15, 23, 42, 0.55);
             border: 1.5px solid rgba(168, 85, 247, 0.4);
-            border-radius: 18px;
-            padding: 12px 8px;
-            z-index: 10;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .suspect-sidebar-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 10px 6px;
-            margin-bottom: 10px;
-            text-align: center;
+        .judge-right-panel {
+            background: rgba(15, 23, 42, 0.65);
+            border: 2px solid rgba(192, 132, 252, 0.5);
+            border-radius: 20px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
 
-        .suspect-sidebar-card:last-child {
-            margin-bottom: 0;
+        .podium-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            width: 100%;
+            height: 280px;
+            margin-top: 15px;
+            gap: 10px;
         }
 
-        /* AESTHETIC & CUTE CAMERA MODAL STYLING */
+        .podium-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .podium-bar-track {
+            width: 100%;
+            max-width: 48px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+            height: 180px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .podium-bar-fill {
+            width: 100%;
+            background: linear-gradient(180deg, #c084fc, #7c3aed);
+            height: 0%;
+            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px 12px 0 0;
+        }
+
+        /* GLOWING AND FLOATING CIRCLE FRAME PARA SA ATTRIBUTES */
+        .glowing-avatar-frame {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, #f472b6, #38bdf8, #a855f7);
+            box-shadow: 0 0 18px rgba(192, 132, 252, 0.8);
+            animation: pulseGlow 3s ease-in-out infinite;
+            margin-top: 10px;
+            flex-shrink: 0;
+        }
+
+        .glowing-avatar-frame img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #1e293b;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: translateY(0px) scale(1); box-shadow: 0 0 12px rgba(168, 85, 247, 0.6); }
+            50% { transform: translateY(-6px) scale(1.05); box-shadow: 0 0 22px rgba(56, 189, 248, 0.9); }
+            100% { transform: translateY(0px) scale(1); box-shadow: 0 0 12px rgba(168, 85, 247, 0.6); }
+        }
+
+        .podium-rank-badge {
+            font-size: 11px;
+            font-weight: 800;
+            color: #f3e8ff;
+            background: rgba(168, 85, 247, 0.6);
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+        }
+
+        /* CAMERA MODAL */
         #camera-modal {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -271,24 +330,8 @@
             max-width: 380px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 30px rgba(168, 85, 247, 0.3);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
             position: relative;
-            overflow: hidden;
-        }
-
-        .camera-box::before {
-            content: '✨💖';
-            position: absolute;
-            top: 12px;
-            left: 18px;
-            font-size: 16px;
-        }
-        .camera-box::after {
-            content: '📸🌸';
-            position: absolute;
-            top: 12px;
-            right: 18px;
-            font-size: 16px;
         }
 
         #webcam-video, #webcam-canvas {
@@ -301,7 +344,6 @@
             background: #000;
             margin: 12px auto;
             display: block;
-            box-shadow: 0 8px 20px rgba(244, 114, 182, 0.3);
         }
 
         #captured-preview {
@@ -311,14 +353,13 @@
             object-fit: cover;
             border: 3.5px solid #38bdf8;
             margin: 12px auto;
-            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
         }
 
-        /* PERFECTLY CENTERED JUDGE CENTER SCREEN POPUP */
+        /* EXCLUSIVE JUDGE-ONLY CENTER POPUP */
         #judge-photo-popup {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.88);
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(12px);
             display: none;
             justify-content: center;
@@ -333,8 +374,8 @@
             border-radius: 30px;
             padding: 35px 50px;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(168, 85, 247, 0.4);
-            animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(168, 85, 247, 0.5);
+            animation: popupScale 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -342,8 +383,8 @@
         }
 
         .judge-popup-card img {
-            width: 160px;
-            height: 160px;
+            width: 165px;
+            height: 165px;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid #38bdf8;
@@ -351,24 +392,21 @@
             margin: 15px 0;
         }
 
-        /* JUDGE SCOREBOARD WITH PICTURES ALIGNED */
         .bar-row { 
             display: flex; 
             align-items: center; 
-            margin: 12px 0; 
-            gap: 12px;
+            margin: 10px 0; 
+            gap: 10px;
         }
         .attorney-avatar-mini {
-            width: 45px;
-            height: 45px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #c084fc;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
 
-        /* AESTHETIC TIME'S UP BOXES WITH PICTURES */
         .winner-modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -420,13 +458,11 @@
             object-fit: cover;
             border: 2px solid #fff;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .result-box-innocent {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.15));
             border: 2px solid #34d399;
-            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.25);
         }
 
         .result-box-failing {
@@ -447,7 +483,6 @@
             padding: 12px 20px;
             border-radius: 16px;
             backdrop-filter: blur(8px);
-            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             gap: 15px;
@@ -475,7 +510,6 @@
             object-fit: cover;
             border-radius: 50%;
             border: 2.5px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
         }
 
         h1 { font-size: 22px; color: #f3e8ff; text-align: center; font-weight: 800; margin: 10px 0; }
@@ -502,7 +536,7 @@
             display: inline-block;
         }
         .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); }
-        .group-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4); }
+        .group-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); }
 
         .attorney-buttons-container {
             display: flex;
@@ -540,103 +574,50 @@
             align-items: center; 
             background: rgba(15, 23, 42, 0.45); 
             border: 1px solid rgba(255, 255, 255, 0.35);
-            padding: 14px 22px; 
+            padding: 12px 18px; 
             border-radius: 16px; 
-            margin-bottom: 20px; 
+            margin-bottom: 15px; 
             font-weight: bold; 
-            font-size: 17px; 
+            font-size: 16px; 
             color: #f3e8ff;
         }
 
         .header-bar div {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
         }
         
-        .bar-chart-container { margin: 18px 0; background: rgba(15, 23, 42, 0.45); padding: 16px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
-        .bar-label { width: 90px; font-weight: bold; font-size: 13.5px; color: #f3e8ff; }
-        .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 26px; border-radius: 9px; overflow: hidden; margin: 0 10px; }
+        .bar-chart-container { margin: 10px 0; background: rgba(15, 23, 42, 0.45); padding: 12px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
+        .bar-label { width: 85px; font-weight: bold; font-size: 13px; color: #f3e8ff; }
+        .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 24px; border-radius: 9px; overflow: hidden; margin: 0 8px; }
         .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 9px; }
-        .bar-score { font-weight: bold; width: 45px; text-align: right; font-size: 14px; color: #f3e8ff; }
+        .bar-score { font-weight: bold; width: 40px; text-align: right; font-size: 13.5px; color: #f3e8ff; }
 
         .question-card { 
             background: rgba(15, 23, 42, 0.35); border: 1.5px solid rgba(255, 255, 255, 0.3); 
             padding: 18px; border-radius: 16px; margin-bottom: 16px;
-        }
-        .question-card p { font-size: 15px; color: #ffffff; margin-top: 0; }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
         }
 
         .options label { 
             display: flex; align-items: center; padding: 8px 12px; 
             background: rgba(14, 116, 144, 0.25); border: 1px solid rgba(56, 189, 248, 0.45); 
             border-radius: 10px; cursor: pointer; font-size: 13px; color: #ffffff; font-weight: 600; 
-            transition: all 0.3s ease;
-        }
-        .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
-
-        .option-correct {
-            background: rgba(16, 185, 129, 0.45) !important;
-            border-color: #10b981 !important;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
-        }
-        .option-wrong {
-            background: rgba(244, 63, 94, 0.45) !important;
-            border-color: #f43f5e !important;
-            box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+            margin-bottom: 6px;
         }
 
         .explanation-box {
-            margin-top: 12px;
-            padding: 12px 14px;
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            border-left: 4px solid var(--success);
-            border-radius: 10px;
-            font-size: 13px;
-            color: #ecfdf5;
-            line-height: 1.4;
-            display: none;
+            margin-top: 12px; padding: 12px 14px;
+            background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4);
+            border-left: 4px solid var(--success); border-radius: 10px;
+            font-size: 13px; color: #ecfdf5; display: none;
         }
 
         #review-section {
-            margin-top: 25px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1.5px solid rgba(168, 85, 247, 0.4);
-            padding: 20px;
-            border-radius: 18px;
-            display: none;
+            margin-top: 15px; background: rgba(15, 23, 42, 0.6);
+            border: 1.5px solid rgba(168, 85, 247, 0.4); padding: 15px;
+            border-radius: 18px; display: none;
         }
-
-        #rating-banner {
-            text-align: center; background: rgba(168, 85, 247, 0.35); border: 2px dashed #c084fc;
-            padding: 16px; border-radius: 16px; margin-bottom: 20px; font-size: 19px; font-weight: bold; color: #ffffff; display: none;
-        }
-
-        #feedback-popup { 
-            position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%) scale(0.8); 
-            padding: 20px 40px; border-radius: 20px; 
-            font-size: 26px; font-weight: 900; color: white; 
-            z-index: 10005; display: none; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px); text-align: center;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes popupScale {
-            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
-        .feedback-correct { background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95)); }
-        .feedback-wrong { background: linear-gradient(135deg, rgba(244, 63, 94, 0.95), rgba(225, 29, 72, 0.95)); }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -647,15 +628,13 @@
         .modal-card {
             background: rgba(30, 41, 59, 0.95); border: 1.5px solid rgba(255, 255, 255, 0.25);
             border-radius: 22px; padding: 30px 25px; max-width: 400px; width: 100%; text-align: center;
-            margin: auto; box-sizing: border-box;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
         .modal-input {
             width: 100%; max-width: 300px; padding: 12px 16px; margin: 16px auto; 
             background: rgba(255, 255, 255, 0.18);
             border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 13px; color: #ffffff; 
-            font-size: 17px; text-align: center; outline: none; display: block; box-sizing: border-box;
+            font-size: 17px; text-align: center; outline: none; display: block;
         }
 
         #judge-welcome-overlay, #student-welcome-overlay {
@@ -676,7 +655,7 @@
 
     <!-- TOP CONTROLS -->
     <div class="top-controls" id="top-controls-group">
-        <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="I-hide/I-show dagiti buttons">▲</button>
+        <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="Toggle Buttons">▲</button>
         <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
         <button class="control-btn surrender-btn" id="surrender-btn" onclick="handleSurrender()">🏳️ Surrender</button>
     </div>
@@ -691,13 +670,13 @@
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
 
-    <!-- QR CODE CONTAINER -->
+    <!-- QR CODE -->
     <div class="qr-code-wrapper" id="qr-wrapper">
         <div id="qrcode"></div>
         <p>📱 SCAN TO JOIN</p>
     </div>
 
-    <!-- AESTHETIC & CUTE CAMERA CAPTURE MODAL -->
+    <!-- CAMERA CAPTURE MODAL -->
     <div id="camera-modal">
         <div class="camera-box">
             <h3 style="color: #f472b6; margin: 0 0 4px 0; font-size: 19px;"> Say Hi! 👋💖</h3>
@@ -714,7 +693,7 @@
         </div>
     </div>
 
-    <!-- JUDGE CENTER SCREEN POPUP (PERFECTLY CENTERED WITH CORRECT GRAMMAR) -->
+    <!-- EXCLUSIVE JUDGE-ONLY CENTER POPUP -->
     <div id="judge-photo-popup">
         <div class="judge-popup-card">
             <h3 id="judge-popup-title" style="color: #38bdf8; font-size: 24px; font-weight: 800; margin: 0 0 10px 0;"></h3>
@@ -723,7 +702,7 @@
         </div>
     </div>
 
-    <!-- AESTHETIC TIME'S UP MODAL WITH PICTURES -->
+    <!-- AESTHETIC TIME'S UP MODAL -->
     <div class="winner-modal-overlay" id="winner-modal">
         <div class="winner-modal-card">
             <div style="font-size: 32px; margin-bottom: 2px;">⚖️✨ Court Verdict Results ✨⚖️</div>
@@ -804,43 +783,38 @@
         </div>
 
         <div id="teacher-view" class="hidden">
-            <h1>⚖️ Judge Real-Time Monitor ⚖️</h1>
-            <div class="header-bar">
-                <span id="teacher-timer">Time Left: 00:30</span>
-                <div>
-                    <button class="btn" style="padding: 10px 16px;" onclick="startTimer()">Start Quiz</button>
-                    <button class="btn" style="background:var(--danger); padding: 10px 16px;" onclick="resetGame()">Reset Game</button>
-                </div>
-            </div>
+            <h1 style="margin-top: 0;">⚖️ Judge Real-Time Monitor ⚖️</h1>
+            
+            <div class="judge-dashboard-grid">
+                <!-- KALIWANG BOX (CONTROLS & SCOREBOARD) -->
+                <div class="judge-left-panel">
+                    <div class="header-bar">
+                        <span id="teacher-timer">Time Left: 00:30</span>
+                        <div>
+                            <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
+                            <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
+                        </div>
+                    </div>
 
-            <h3>Live Scoreboard (Highest to Lowest)</h3>
-            <div class="bar-chart-container" id="bar-chart"></div>
+                    <h3 style="margin: 5px 0 10px 0; color: #e9d5ff;">Live Scoreboard (Highest to Lowest)</h3>
+                    <div class="bar-chart-container" id="bar-chart"></div>
 
-            <div id="review-section">
-                <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px;">📜 Court Review: Detailed Explanations</h3>
-                <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q1: Magna Carta for Disabled Persons[cite: 1, 2]</p>
-                    <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ay naglalayong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan[cite: 1, 2].</p>
+                    <div id="review-section">
+                        <h3 style="color: #c084fc; text-align: center; margin-bottom: 10px;">📜 Court Review: Explanations</h3>
+                        <div style="font-size: 12.5px; line-height: 1.4; color: #ecfdf5;">
+                            <b>Q1-Q6 Overview:</b> Detailed legal references for Magna Carta, IPRA, and Professional Ethics[cite: 1, 2].
+                        </div>
+                    </div>
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q2: Protection Against Child Abuse[cite: 1, 2]</p>
-                    <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata[cite: 1, 2].</p>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q3: Indigenous Peoples Rights Act (IPRA)[cite: 1, 2]</p>
-                    <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 8371</b> ay kinikilala, pinoprotektahan, at itinataguyod ang mga karapatan ng mga katutubong pamayanan / katutubong mamamayan[cite: 1, 2].</p>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q4: State Protection to Quality Education[cite: 1]</p>
-                    <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>1987 Philippine Constitution</b> ang nag-uutos sa Estado na protektahan at itaguyod ang karapatan ng lahat ng mamamayan sa de-kalidad na edukasyon[cite: 1].</p>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q5: Rehabilitation of Disabled Persons[cite: 1, 2]</p>
-                    <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ang tuwirang nagtatakda ng mga programa para sa rehabilitasyon at integrasyon ng mga may kapansanan sa lipunan[cite: 1, 2].</p>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; color: #38bdf8;">Q6: Philippine Teachers Professionalization Act[cite: 1, 2]</p>
-                    <p style="font-size: 13.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7836</b> ang nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET) at pagpapapropesyonal ng pagtuturo[cite: 1, 2].</p>
+
+                <!-- KANANG BOX (PODIUM RANKING WITH GLOWING CIRCLE FRAMES) -->
+                <div class="judge-right-panel">
+                    <h3 style="margin: 0; color: #f472b6; font-size: 17px; text-align: center;">👑 Live Podium & Group Showcase 🏛️</h3>
+                    <p style="font-size: 11.5px; color: #cbd5e1; margin: 4px 0 10px 0; text-align: center;">Dynamic Standings & Participant Avatars</p>
+                    
+                    <div class="podium-container" id="podium-display">
+                        <!-- Dynamic Podium Render -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -852,8 +826,6 @@
                 <span id="group-score-display">Score: 0 / 6</span>
             </div>
 
-            <div id="rating-banner"></div>
-
             <div id="quiz-questions">
                 <div class="question-card" id="card-q1">
                     <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?[cite: 1, 2]</p>
@@ -862,92 +834,20 @@
                         <label id="lbl-q1-RA7610"><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
                         <label id="lbl-q1-RA8371"><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
                         <label id="lbl-q1-CONST"><input type="radio" name="q1" value="CONST" onchange="submitAns('q1', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
-                        <label id="lbl-q1-RA9155"><input type="radio" name="q1" value="RA9155" onchange="submitAns('q1', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
-                        <label id="lbl-q1-RA10533"><input type="radio" name="q1" value="RA10533" onchange="submitAns('q1', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
-                        <label id="lbl-q1-RA7836"><input type="radio" name="q1" value="RA7836" onchange="submitAns('q1', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
                     </div>
                     <div class="explanation-box" id="exp-q1">
-                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7277</b> ay kilala bilang "Magna Carta for Disabled Persons"[cite: 1, 2]. Layunin nitong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan upang ganap silang maisama sa mainstream ng lipunan[cite: 1, 2].
+                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7277</b> ay kilala bilang "Magna Carta for Disabled Persons"[cite: 1, 2].
                     </div>
                 </div>
 
                 <div class="question-card" id="card-q2">
                     <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation, and discrimination?[cite: 1, 2]</p>
                     <div class="options">
-                        <label id="lbl-q2-RA7277"><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
-                        <label id="lbl-q2-RA7610"><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
-                        <label id="lbl-q2-RA8371"><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
-                        <label id="lbl-q2-CONST"><input type="radio" name="q2" value="CONST" onchange="submitAns('q2', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
-                        <label id="lbl-q2-RA9155"><input type="radio" name="q2" value="RA9155" onchange="submitAns('q2', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
-                        <label id="lbl-q2-RA10533"><input type="radio" name="q2" value="RA10533" onchange="submitAns('q2', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
-                        <label id="lbl-q2-RA7836"><input type="radio" name="q2" value="RA7836" onchange="submitAns('q2', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
+                        <label id="lbl-q2-RA7277"><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277[cite: 1, 2]</label>
+                        <label id="lbl-q2-RA7610"><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610[cite: 1, 2]</label>
                     </div>
                     <div class="explanation-box" id="exp-q2">
-                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7610</b> ay nagbibigay ng karagdagang proteksyon laban sa pang-aabuso, pagsasamantala, at diskriminasyon sa mga bata (Special Protection Against Child Abuse, Exploitation and Discrimination Act)[cite: 1, 2].
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q3">
-                    <p><b>Q3:</b> What law recognizes, protects, and promotes the rights of Indigenous Cultural Communities / Indigenous Peoples (IPRA)?[cite: 1, 2]</p>
-                    <div class="options">
-                        <label id="lbl-q3-RA7277"><input type="radio" name="q3" value="RA7277" onchange="submitAns('q3', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
-                        <label id="lbl-q3-RA7610"><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
-                        <label id="lbl-q3-RA8371"><input type="radio" name="q3" value="RA8371" onchange="submitAns('q3', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
-                        <label id="lbl-q3-CONST"><input type="radio" name="q3" value="CONST" onchange="submitAns('q3', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
-                        <label id="lbl-q3-RA9155"><input type="radio" name="q3" value="RA9155" onchange="submitAns('q3', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
-                        <label id="lbl-q3-RA10533"><input type="radio" name="q3" value="RA10533" onchange="submitAns('q3', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
-                        <label id="lbl-q3-RA7836"><input type="radio" name="q3" value="RA7836" onchange="submitAns('q3', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
-                    </div>
-                    <div class="explanation-box" id="exp-q3">
-                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 8371</b> o kilala rin bilang Indigenous Peoples Rights Act (IPRA) ng 1997 ay naglalayong kilalanin at protektahan ang mga karapatan ng mga katutubong pamayanan at katutubong mamamayan[cite: 1, 2].
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q4">
-                    <p><b>Q4:</b> Which fundamental law of the land guarantees state protection and promotion of quality education at all levels?[cite: 1]</p>
-                    <div class="options">
-                        <label id="lbl-q4-RA7277"><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
-                        <label id="lbl-q4-RA7610"><input type="radio" name="q4" value="RA7610" onchange="submitAns('q4', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
-                        <label id="lbl-q4-RA8371"><input type="radio" name="q4" value="RA8371" onchange="submitAns('q4', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
-                        <label id="lbl-q4-CONST"><input type="radio" name="q4" value="CONST" onchange="submitAns('q4', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
-                        <label id="lbl-q4-RA9155"><input type="radio" name="q4" value="RA9155" onchange="submitAns('q4', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
-                        <label id="lbl-q4-RA10533"><input type="radio" name="q4" value="RA10533" onchange="submitAns('q4', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
-                        <label id="lbl-q4-RA7836"><input type="radio" name="q4" value="RA7836" onchange="submitAns('q4', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
-                    </div>
-                    <div class="explanation-box" id="exp-q4">
-                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>1987 Philippine Constitution</b> (Saligang Batas) ang pinakamataas na batas ng bansa na nag-uutos sa Estado na protektahan at itaguyod ang karapatan ng lahat ng mamamayan sa de-kalidad na edukasyon[cite: 1].
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q5">
-                    <p><b>Q5:</b> Which act mandates the rehabilitation, self-development, and self-reliance of disabled persons and their integration into mainstream society?[cite: 1, 2]</p>
-                    <div class="options">
-                        <label id="lbl-q5-RA7277"><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
-                        <label id="lbl-q5-RA7610"><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
-                        <label id="lbl-q5-RA8371"><input type="radio" name="q5" value="RA8371" onchange="submitAns('q5', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
-                        <label id="lbl-q5-CONST"><input type="radio" name="q5" value="CONST" onchange="submitAns('q5', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
-                        <label id="lbl-q5-RA9155"><input type="radio" name="q5" value="RA9155" onchange="submitAns('q5', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
-                        <label id="lbl-q5-RA10533"><input type="radio" name="q5" value="RA10533" onchange="submitAns('q5', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
-                        <label id="lbl-q5-RA7836"><input type="radio" name="q5" value="RA7836" onchange="submitAns('q5', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
-                    </div>
-                    <div class="explanation-box" id="exp-q5">
-                        <b>🔍 Detalyadong Paliwanag:</b> Katulad sa unang tanong, ang <b>Republic Act No. 7277</b> ay tuwirang nagtatakda ng mga programa para sa rehabilitasyon at pagpapalakas ng sariling kakayahan ng mga may kapansanan[cite: 1, 2].
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q6">
-                    <p><b>Q6:</b> Which law professionalizes the teaching practice and prescribes the licensure examination for teachers in the Philippines?[cite: 1, 2]</p>
-                    <div class="options">
-                        <label id="lbl-q6-RA7277"><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)[cite: 1, 2]</label>
-                        <label id="lbl-q6-RA7610"><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)[cite: 1, 2]</label>
-                        <label id="lbl-q6-RA8371"><input type="radio" name="q6" value="RA8371" onchange="submitAns('q6', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples Rights Act)[cite: 1, 2]</label>
-                        <label id="lbl-q6-CONST"><input type="radio" name="q6" value="CONST" onchange="submitAns('q6', 'CONST')"> D) 1987 Philippine Constitution[cite: 1]</label>
-                        <label id="lbl-q6-RA9155"><input type="radio" name="q6" value="RA9155" onchange="submitAns('q6', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)[cite: 1]</label>
-                        <label id="lbl-q6-RA10533"><input type="radio" name="q6" value="RA10533" onchange="submitAns('q6', 'RA10533')"> F) Republic Act No. 10533 (Enhanced Basic Education Act / K to 12)[cite: 1]</label>
-                        <label id="lbl-q6-RA7836"><input type="radio" name="q6" value="RA7836" onchange="submitAns('q6', 'RA7836')"> G) Republic Act No. 7836 (Philippine Teachers Professionalization Act)[cite: 1, 2]</label>
-                    </div>
-                    <div class="explanation-box" id="exp-q6">
-                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7836</b> (Philippine Teachers Professionalization Act of 1994) ang batas na nagtatadhana sa pagsasagawa ng Licensure Examination for Teachers (LET) at pagpapapropesyonal ng pagtuturo[cite: 1, 2].
+                        <b>🔍 Detalyadong Paliwanag:</b> Ang <b>Republic Act No. 7610</b> ay para sa Child Protection[cite: 1, 2].
                     </div>
                 </div>
             </div>
@@ -962,20 +862,10 @@
     <script>
         const socket = io();
         let myGroup = null;
+        let isJudgeRole = false;
         let answeredQuestions = {};
-        let finalScoreValue = 0;
-        let latestGroupScores = {
-            'Attorney 1': 0,
-            'Attorney 2': 0,
-            'Attorney 3': 0,
-            'Attorney 4': 0
-        };
-        let attorneyPhotos = {
-            'Attorney 1': '',
-            'Attorney 2': '',
-            'Attorney 3': '',
-            'Attorney 4': ''
-        };
+        let latestGroupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
+        let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         let capturedDataUrl = '';
         let mediaStream = null;
 
@@ -991,44 +881,30 @@
         });
 
         function toggleTopControls() {
-            const arrowBtn = document.getElementById('toggle-arrow-btn');
             const fsBtn = document.getElementById('fs-btn');
             const surrenderBtn = document.getElementById('surrender-btn');
-
+            const arrowBtn = document.getElementById('toggle-arrow-btn');
             if (fsBtn.style.display === 'none') {
-                fsBtn.style.display = 'flex';
-                surrenderBtn.style.display = 'flex';
-                arrowBtn.innerText = '▲';
+                fsBtn.style.display = 'flex'; surrenderBtn.style.display = 'flex'; arrowBtn.innerText = '▲';
             } else {
-                fsBtn.style.display = 'none';
-                surrenderBtn.style.display = 'none';
-                arrowBtn.innerText = '▼';
+                fsBtn.style.display = 'none'; surrenderBtn.style.display = 'none'; arrowBtn.innerText = '▼';
             }
         }
 
         const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, review your statutes carefully before time runs out!"';
         let charIndex = 0;
-
         function typeWriter() {
             const target = document.getElementById('typewriter-text');
             if (charIndex < judgeMessage.length) {
                 target.innerHTML = judgeMessage.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
-                charIndex++;
-                setTimeout(typeWriter, 35);
-            } else {
-                target.innerHTML = judgeMessage;
-            }
+                charIndex++; setTimeout(typeWriter, 35);
+            } else { target.innerHTML = judgeMessage; }
         }
         window.onload = () => typeWriter();
 
         function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => console.log(err));
-                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
-            } else {
-                if (document.exitFullscreen) document.exitFullscreen();
-                document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
-            }
+            if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
+            else { if (document.exitFullscreen) document.exitFullscreen(); }
         }
 
         function handleSurrender() { location.reload(); }
@@ -1051,6 +927,7 @@
             const pass = document.getElementById('judge-pass-input').value;
             closePasswordModal();
             if (pass === "Quiz") {
+                isJudgeRole = true;
                 const judgeWelcome = document.getElementById('judge-welcome-overlay');
                 judgeWelcome.style.display = 'flex';
 
@@ -1063,53 +940,36 @@
                     document.getElementById('teacher-view').classList.remove('hidden');
                     document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
                 }, 1800);
-            } else {
-                document.getElementById('warning-modal').style.display = 'flex';
-            }
+            } else { document.getElementById('warning-modal').style.display = 'flex'; }
         }
 
         async function selectGroup(groupName) {
             myGroup = groupName;
             document.getElementById('camera-modal').style.display = 'flex';
-            
             try {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                 document.getElementById('webcam-video').srcObject = mediaStream;
-            } catch (err) {
-                console.log("Camera access error:", err);
-                alert("Hindi ma-access ang camera. Mangyaring payagan ang camera permissions.");
-            }
+            } catch (err) { alert("Camera access permission required."); }
         }
 
         function capturePhoto() {
             const video = document.getElementById('webcam-video');
             const canvas = document.getElementById('webcam-canvas');
             const context = canvas.getContext('2d');
-            
-            canvas.width = video.videoWidth || 280;
-            canvas.height = video.videoHeight || 210;
+            canvas.width = video.videoWidth || 280; canvas.height = video.videoHeight || 210;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
             capturedDataUrl = canvas.toDataURL('image/png');
             
-            video.style.display = 'none';
-            canvas.style.display = 'none';
-            
+            video.style.display = 'none'; canvas.style.display = 'none';
             const preview = document.getElementById('captured-preview');
-            preview.src = capturedDataUrl;
-            preview.classList.remove('hidden');
-
+            preview.src = capturedDataUrl; preview.classList.remove('hidden');
             document.getElementById('camera-controls').classList.add('hidden');
             document.getElementById('join-now-container').classList.remove('hidden');
-
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-            }
+            if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
         }
 
         function confirmJoinNow() {
             document.getElementById('camera-modal').style.display = 'none';
-
             socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
 
             const studentWelcome = document.getElementById('student-welcome-overlay');
@@ -1134,34 +994,16 @@
             if (!myGroup || answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
             socket.emit('submitAnswer', { groupName: myGroup, questionId, answer });
-            
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
         }
-
-        socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
-            const popup = document.getElementById('feedback-popup');
-            popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-            popup.innerHTML = isCorrect ? "✔ CORRECT!" : "✖ INCORRECT!";
-            popup.style.display = "block";
-
-            if (questionId && answer) {
-                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
-                if (targetLabel) {
-                    targetLabel.classList.add(isCorrect ? "option-correct" : "option-wrong");
-                }
-            }
-
-            setTimeout(() => {
-                popup.style.display = "none";
-            }, 1500);
-        });
 
         socket.on('updateState', ({ groupScores, photos }) => {
             latestGroupScores = groupScores;
             if (photos) attorneyPhotos = photos;
 
             const sortedGroups = Object.entries(groupScores).sort((a, b) => b[1] - a[1]);
+            
             let chartHTML = '';
             sortedGroups.forEach(([group, score]) => {
                 let percentage = (score / 6) * 100;
@@ -1178,14 +1020,36 @@
             const barChart = document.getElementById('bar-chart');
             if (barChart) barChart.innerHTML = chartHTML;
 
+            let podiumHTML = '';
+            sortedGroups.forEach(([group, score], idx) => {
+                let heightPercent = Math.max((score / 6) * 100, 8);
+                let photoSrc = attorneyPhotos[group] || '/logo.png';
+                podiumHTML += `
+                    <div class="podium-column">
+                        <div class="podium-rank-badge">Top ${idx + 1}</div>
+                        <div class="podium-bar-track">
+                            <div class="podium-bar-fill" style="height: ${heightPercent}%"></div>
+                        </div>
+                        <div class="glowing-avatar-frame">
+                            <img src="${photoSrc}" alt="${group}" />
+                        </div>
+                        <div style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #f3e8ff;">${group}</div>
+                    </div>
+                `;
+            });
+            const podiumDisplay = document.getElementById('podium-display');
+            if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
+
             if (myGroup && groupScores[myGroup] !== undefined) {
-                finalScoreValue = groupScores[myGroup];
-                document.getElementById('group-score-display').innerText = `Score: ${finalScoreValue} / 6`;
+                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / 6`;
             }
         });
 
+        // POP-UP EXKLUSIBO LAMANG SA JUDGE SCREEN (CENTERED)
         socket.on('showJudgePopupQueue', (queue) => {
-            playPopupQueue(queue, 0);
+            if (isJudgeRole) {
+                playPopupQueue(queue, 0);
+            }
         });
 
         function playPopupQueue(queue, index) {
@@ -1193,16 +1057,13 @@
             const item = queue[index];
 
             const popup = document.getElementById('judge-photo-popup');
-            // Tamang grammar gamit ang group name (e.g., Attorney 1 entered the court!)
             document.getElementById('judge-popup-title').innerText = `${item.groupName} entered the court! ⚖️`;
             document.getElementById('judge-popup-img').src = item.photo || '/logo.png';
             popup.style.display = 'flex';
 
             setTimeout(() => {
                 popup.style.display = 'none';
-                setTimeout(() => {
-                    playPopupQueue(queue, index + 1);
-                }, 400);
+                setTimeout(() => { playPopupQueue(queue, index + 1); }, 400);
             }, 3000);
         }
 
@@ -1216,41 +1077,31 @@
 
         socket.on('timeUp', () => {
             document.querySelectorAll('input[type="radio"]').forEach(input => input.disabled = true);
-            document.querySelectorAll('.explanation-box').forEach(box => box.style.display = "block");
-
             const attorneysListContainer = document.getElementById('attorneys-results-list');
             let resultsHTML = '';
-
-            const attorneyNames = ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'];
-
-            attorneyNames.forEach(attorney => {
+            ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
                 const score = latestGroupScores[attorney] || 0;
                 const photoSrc = attorneyPhotos[attorney] || '/logo.png';
-                
                 if (score >= 5) {
                     resultsHTML += `
                         <div class="result-box-card result-box-innocent">
                             <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
                             <div>
-                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0; font-weight: 800;">✨👑 ${attorney} — ${score} / 6 Points</h4>
-                                <p style="color: #ecfdf5; font-size: 13.5px; font-weight: 700; margin: 2px 0;">Case Closed 🎉👏 ${attorney} is innocent!</p>
-                                <p style="color: #a7f3d0; font-size: 12.5px; font-weight: 600; margin: 0;">Let's give them 5 claps, and say to them "ang galing galing!" 🌟💖</p>
+                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / 6 Points</h4>
+                                <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 } else {
                     resultsHTML += `
                         <div class="result-box-card result-box-failing">
                             <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
                             <div>
-                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0; font-weight: 700;">⚖️ ${attorney} — ${score} / 6 Points</h4>
-                                <p style="color: #fff1f2; font-size: 12px; font-weight: 600; margin: 0;">You belong to jail. ⛓️🥀</p>
+                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / 6 Points</h4>
+                                <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }
             });
-
             attorneysListContainer.innerHTML = resultsHTML;
             document.getElementById('winner-modal').style.display = 'flex';
         });

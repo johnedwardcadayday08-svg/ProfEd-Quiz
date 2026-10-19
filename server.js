@@ -31,8 +31,6 @@ let timerInterval = null;
 let timerRunning = false;
 
 io.on('connection', (socket) => {
-    console.log('Isang gumagamit o judge/counsel ay kumonekta.');
-
     socket.emit('updateState', { groupScores, photos: attorneyPhotos, timer, timerRunning });
     socket.emit('timerUpdate', timer);
 
@@ -100,32 +98,16 @@ io.on('connection', (socket) => {
     });
 
     socket.on('submitAnswer', ({ groupName, questionId, answer }) => {
-        let correctAnswers = {
-            q1: 'RA7277',
-            q2: 'RA7610',
-            q3: 'RA8371',
-            q4: 'CONST',
-            q5: 'RA7277',
-            q6: 'RA7836'
-        };
-
-        let isCorrect = (correctAnswers[questionId] === answer);
-        if (isCorrect) {
-            if (groupScores[groupName] !== undefined) {
-                groupScores[groupName]++;
-            }
+        let correctAnswers = { q1: 'RA7277', q2: 'RA7610', q3: 'RA8371', q4: 'CONST', q5: 'RA7277', q6: 'RA7836' };
+        if (correctAnswers[questionId] === answer && groupScores[groupName] !== undefined) {
+            groupScores[groupName]++;
         }
-
-        socket.emit('answerFeedback', { questionId, isCorrect });
+        socket.emit('answerFeedback', { questionId, isCorrect: correctAnswers[questionId] === answer });
         io.emit('updateState', { groupScores, photos: attorneyPhotos, timer, timerRunning });
-    });
-
-    socket.on('disconnect', () => {
-        console.log('Isang user ay nag-disconnect.');
     });
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Ang server ay tumatakbo sa http://localhost:${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
 });
