@@ -145,7 +145,7 @@
             transition: background 0.3s ease;
         }
 
-        /* JUDGE EJ'S CHAMBERS SPEECH CONTAINER (BOTTOM LAPTOP SPACE) */
+        /* JUDGE EJ'S CHAMBERS SPEECH CONTAINER */
         .judge-speech-container {
             position: relative;
             z-index: 3;
@@ -184,6 +184,22 @@
         .judge-speech-text strong {
             color: #f472b6;
             font-size: 15px;
+        }
+
+        /* TYPING CURSOR BLINK EFFECT */
+        .typing-cursor {
+            display: inline-block;
+            background-color: #f472b6;
+            width: 8px;
+            height: 15px;
+            margin-left: 3px;
+            vertical-align: middle;
+            animation: cursorBlink 0.8s infinite;
+        }
+
+        @keyframes cursorBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         .app-logo-container {
@@ -754,12 +770,10 @@
         </div>
     </div>
 
-    <!-- JUDGE EJ'S CHAMBERS SPEECH BOX (BOTTOM LAPTOP SPACE) -->
+    <!-- JUDGE EJ'S CHAMBERS TYPING SPEECH BOX -->
     <div class="judge-speech-container" id="judge-speech-box">
         <div class="judge-speech-avatar">👨‍⚖️</div>
-        <p class="judge-speech-text">
-            <strong>Judge Ej's Chambers:</strong> "Order in the court! Counsel, we have an urgent pending case on our docket regarding the protection of marginalized sectors and children's rights under our special statutes. Prepare your arguments and statutes meticulously—this session is now officially in session!"
-        </p>
+        <p class="judge-speech-text" id="typewriter-text"></p>
     </div>
 
     <script>
@@ -768,6 +782,33 @@
         let answeredQuestions = {};
         let finalScoreValue = 0;
         let totalAnsweredCount = 0;
+
+        // JUDGE EJ REPEATING TYPEWRITER EFFECT
+        const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, we have an urgent pending case on our docket regarding the protection of marginalized sectors and children\'s rights under our special statutes. Prepare your arguments and statutes meticulously—this session is now officially in session!"';
+        
+        let charIndex = 0;
+        const typingSpeed = 35; // Milliseconds per character
+
+        function typeWriter() {
+            const target = document.getElementById('typewriter-text');
+            if (charIndex < judgeMessage.length) {
+                target.innerHTML = judgeMessage.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
+                charIndex++;
+                setTimeout(typeWriter, typingSpeed);
+            } else {
+                // Remove cursor temporarily when done, wait 3 seconds, then restart
+                target.innerHTML = judgeMessage;
+                setTimeout(() => {
+                    charIndex = 0;
+                    typeWriter();
+                }, 3500);
+            }
+        }
+
+        // Start typewriter on load
+        window.onload = () => {
+            typeWriter();
+        };
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
