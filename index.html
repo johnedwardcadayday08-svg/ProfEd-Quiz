@@ -19,7 +19,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.3)), 
-                        url('/background.jpg') no-repeat center center fixed;
+                        url('/background.png') no-repeat center center fixed;
             background-size: cover;
             color: var(--text-color);
             margin: 0;
@@ -217,7 +217,7 @@
             font-size: 22px;
         }
 
-        /* Fixed input text typing issue & cursor selection */
+        /* Fixed input cursor focus for mobile */
         .modal-input {
             width: 100%;
             padding: 14px 16px;
@@ -521,11 +521,13 @@
             if (role === 'teacher') {
                 const passInput = document.getElementById('judge-pass-input');
                 passInput.value = '';
+                passInput.disabled = false;
                 document.getElementById('password-modal').style.display = 'flex';
+                
                 setTimeout(() => {
                     passInput.focus();
                     passInput.click();
-                }, 200);
+                }, 150);
             }
         }
 
@@ -610,7 +612,7 @@
             answeredQuestions[questionId] = true;
             const card = document.getElementById(`card-${questionId}`);
             if (card) {
-                card.querySelectorAll('input').forEach(input => {
+                card.querySelectorAll('input[type="radio"]').forEach(input => {
                     input.disabled = true;
                 });
                 card.style.opacity = "0.75";
@@ -671,7 +673,7 @@
             }
 
             if (timer <= 0) {
-                document.querySelectorAll('input').forEach(input => input.disabled = true);
+                disableQuizInputsOnly();
                 revealExplanationsAndRating();
             }
         });
@@ -685,9 +687,15 @@
         });
 
         socket.on('timeUp', () => {
-            document.querySelectorAll('input').forEach(input => input.disabled = true);
+            disableQuizInputsOnly();
             revealExplanationsAndRating();
         });
+
+        function disableQuizInputsOnly() {
+            document.querySelectorAll('#quiz-questions input[type="radio"]').forEach(input => {
+                input.disabled = true;
+            });
+        }
 
         function revealExplanationsAndRating() {
             for (let i = 1; i <= 6; i++) {
