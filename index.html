@@ -395,7 +395,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* LIVE PODIUM GRADIENT & GLOWING EFFECT DEPENDING ON SCORE */
         @keyframes podiumGlowAnim {
             0% { filter: drop-shadow(0 0 6px currentColor); }
             50% { filter: drop-shadow(0 0 16px currentColor); }
@@ -944,10 +943,13 @@
         }
         .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
 
-        /* LOCKED STATE STYLES */
+        /* STRICT LOCKED STATE: NAKA-DISABLE AT HINDI CLICKABLE HANGGA'T HINDI PA PINIPINDOT ANG START QUIZ NG JUDGE */
         .quiz-locked .options label {
-            opacity: 0.55;
+            opacity: 0.5;
             cursor: not-allowed;
+            pointer-events: none;
+        }
+        .quiz-locked .options input {
             pointer-events: none;
         }
 
@@ -1561,6 +1563,10 @@
         function resetGame() { socket.emit('resetGame'); }
 
         function submitAns(questionId, answer) {
+            // HINDI MAKAKASAGOT KUNG NAKA-LOCK PA ANG QUIZ
+            const quizQuestionsEl = document.getElementById('quiz-questions');
+            if (quizQuestionsEl && quizQuestionsEl.classList.contains('quiz-locked')) return;
+
             if (!myGroup || answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
             socket.emit('submitAnswer', { groupName: myGroup, questionId, answer });
@@ -1611,16 +1617,12 @@
                 let heightPercent = Math.max((score / 6) * 100, 8);
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 
-                // MGA KULAY NG GRADIENT AT GLOW DEPENDING SA SCORE
                 let gradientBg = '';
                 if (score >= 5) {
-                    // Score 5 & 6: Purple to Yellow to Green
                     gradientBg = 'linear-gradient(to top, #7c3aed, #ca8a04, #10b981)';
                 } else if (score >= 3) {
-                    // Score 3 & 4: Purple to Yellow
                     gradientBg = 'linear-gradient(to top, #7c3aed, #eab308)';
                 } else {
-                    // Score 1 & 2: Purple gradient
                     gradientBg = 'linear-gradient(to top, #7c3aed, #c084fc)';
                 }
 
