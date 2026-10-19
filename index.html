@@ -56,11 +56,19 @@
             overflow-y: auto !important;
         }
 
-        /* KAPAG NAKA-FULLSCREEN: Itinaas at pinalaki nang kaunti ang QR code */
         body.is-fullscreen .qr-code-wrapper {
             right: 40px !important;
             bottom: 60vh !important;
             transform: scale(1.12);
+        }
+
+        /* FULLSCREEN MODE: IBABA AT PATANGKARIN ANG ATTORNEY BUTTONS PERO HINDI TAKIP NG SUSPECT BOX */
+        body.is-fullscreen .attorney-buttons-container {
+            margin-top: 22px !important;
+        }
+        body.is-fullscreen .attorney-buttons-container .group-btn {
+            padding: 20px 14px !important;
+            font-size: 17px !important;
         }
 
         .urgent-warning-glow {
@@ -68,7 +76,6 @@
             border: 3px solid #f43f5e !important;
         }
 
-        /* INIBABA NG KAUNTI ANG TOP CONTROLS AT KAPANTAY ANG TIMER */
         .top-controls {
             position: fixed;
             top: 22px;
@@ -454,7 +461,6 @@
             100% { transform: scale(1); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); }
         }
 
-        /* PINALAKI ANG JUDGE BIG SCREEN MONITOR BUTTON NANG MAGANDA TINGNAN */
         .animated-main-btn { 
             animation: buttonPulseAnim 2.5s ease-in-out infinite; 
             padding: 16px 36px !important; 
@@ -722,15 +728,15 @@
             text-align: left;
         }
 
-        /* JUDGE EJ CHAMBERS MESSAGE BOX: Inibaba ng kaunti para may space sa taas at baba */
+        /* NORMAL MODE: ITINAAS ANG JUDGE CHAMBERS MESSAGE PERO MAY SPACING PADIN SA TAAS NG MALAKING BOX PARA BUO AT KITA LAHAT */
         .judge-speech-container {
             position: relative;
             z-index: 3;
             max-width: 820px;
-            margin: 18px auto 18px auto;
+            margin: 6px auto 10px auto;
             background: rgba(15, 23, 42, 0.65);
             border: 1.5px solid rgba(168, 85, 247, 0.5);
-            padding: 10px 18px;
+            padding: 8px 16px;
             border-radius: 16px;
             backdrop-filter: blur(8px);
             display: flex;
@@ -739,19 +745,18 @@
         }
 
         .judge-speech-avatar {
-            font-size: 28px;
+            font-size: 26px;
             background: rgba(168, 85, 247, 0.2);
-            padding: 6px 10px;
+            padding: 5px 9px;
             border-radius: 50%;
             border: 1px solid rgba(168, 85, 247, 0.5);
             flex-shrink: 0;
         }
 
-        /* PINALIIT NG KUNTI ANG JUDGE MESSAGE SA FIRST PAGE (NORMAL MODE) PARA BUO AT WALANG SCROLL */
         .judge-speech-text {
             font-size: 13px;
             color: #f3e8ff;
-            line-height: 1.4;
+            line-height: 1.35;
             margin: 0;
         }
 
@@ -779,14 +784,13 @@
         }
         .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); }
 
-        /* INIBABA AT PINALAKI NG BAHAGYA ANG ATTORNEY BUTTONS NANG NAKA-HORIZONTAL ONE LINE AT HINDI NAGKAKADIKIT */
         .attorney-buttons-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
             gap: 12px;
-            margin-top: 12px;
+            margin-top: 10px;
         }
 
         .attorney-buttons-container .group-btn {
@@ -874,7 +878,6 @@
             font-size: 13px; color: #ecfdf5; display: none;
         }
 
-        /* KAPANTAY NG TOP CONTROLS ANG FLOATING TIMER BADGE */
         #floating-timer-badge {
             position: fixed;
             top: 22px;
