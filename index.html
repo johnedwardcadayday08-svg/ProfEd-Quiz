@@ -126,7 +126,7 @@
         .container { 
             position: relative;
             z-index: 3;
-            max-width: 650px; 
+            max-width: 680px; 
             margin: 20px auto; 
             background: var(--card-bg-transparent); 
             padding: 25px; 
@@ -271,7 +271,7 @@
         .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); }
         .group-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
 
-        /* ATTORNEY BUTTONS CONTAINER: Mobile (Column), Laptop (Row/Magkakatabi) */
+        /* ATTORNEY BUTTONS CONTAINER: Mobile (Column), Laptop (ISANG LINYA HORIZONTAL) */
         .attorney-buttons-container {
             display: flex;
             flex-direction: column; /* Nakatayo sa cellphone */
@@ -286,17 +286,19 @@
             margin: 0;
         }
 
-        /* Kapag Laptop/Desktop na (Screen width 768px pataas): Magkakatabi na sila nang pahalang */
+        /* Kapag Laptop/Desktop na (Screen width 768px pataas): MAGKAKATABI SA IISANG LNYA ANG 1-4 */
         @media (min-width: 768px) {
             .attorney-buttons-container {
-                flex-direction: row; /* Magkakatabi sa laptop */
-                flex-wrap: wrap;
+                flex-direction: row; /* Pahalang / Horizontal */
                 justify-content: center;
-                gap: 12px;
+                gap: 8px;
             }
             .attorney-buttons-container .group-btn {
-                width: calc(50% - 12px);
-                max-width: 220px;
+                width: auto;
+                flex: 1;
+                max-width: none;
+                padding: 12px 10px;
+                font-size: 14px;
             }
         }
 
@@ -485,7 +487,7 @@
             <button class="btn animated-main-btn" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             <br><br>
             <h3 style="text-align:center;">Join as:</h3>
-            <!-- ATTORNEY BUTTONS NA NAKALINYA SA LAPTOP AT NAKATAYO SA CELLPHONE -->
+            <!-- ATTORNEY BUTTONS NA NAKALINYA NANG PAHALANG SA LAPTOP AT NAKATAYO SA CELLPHONE -->
             <div class="attorney-buttons-container">
                 <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 1')">Attorney 1</button>
                 <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 2')">Attorney 2</button>
