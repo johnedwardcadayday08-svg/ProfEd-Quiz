@@ -33,7 +33,6 @@
             justify-content: space-between;
         }
 
-        /* AESTHETIC TOP-RIGHT CONTROLS CONTAINER */
         .top-controls {
             position: fixed;
             top: 18px;
@@ -55,12 +54,10 @@
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 15px rgba(168, 85, 247, 0.4);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             align-items: center;
             gap: 6px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
         }
 
         .control-btn:hover {
@@ -73,10 +70,6 @@
         .surrender-btn {
             background: linear-gradient(135deg, rgba(244, 63, 94, 0.85), rgba(225, 29, 72, 0.85));
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 15px rgba(244, 63, 94, 0.4);
-        }
-
-        .surrender-btn:hover {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45), 0 0 22px rgba(244, 63, 94, 0.7);
         }
 
         .law-bg-element {
@@ -140,12 +133,9 @@
             border-radius: 24px; 
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4); 
             backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
-            transition: background 0.3s ease;
         }
 
-        /* ANIMATED FIRST-SCREEN BUTTONS */
         @keyframes buttonPulseAnim {
             0% { transform: scale(1); box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); }
             50% { transform: scale(1.03); box-shadow: 0 6px 20px rgba(168, 85, 247, 0.8); }
@@ -158,16 +148,9 @@
             100% { transform: scale(1); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
         }
 
-        .animated-main-btn {
-            animation: buttonPulseAnim 2.5s ease-in-out infinite;
-        }
+        .animated-main-btn { animation: buttonPulseAnim 2.5s ease-in-out infinite; }
+        .animated-group-btn { animation: groupButtonPulseAnim 2.5s ease-in-out infinite; animation-delay: 0.5s; }
 
-        .animated-group-btn {
-            animation: groupButtonPulseAnim 2.5s ease-in-out infinite;
-            animation-delay: 0.5s;
-        }
-
-        /* REFINED SLENDER LEFT-SIDE SUSPECTS PANEL FOR LAPTOP */
         .left-suspects-sidebar {
             position: fixed;
             left: 20px;
@@ -180,14 +163,7 @@
             padding: 14px 10px;
             z-index: 10;
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            animation: sidebarFadeIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes sidebarFadeIn {
-            0% { opacity: 0; transform: translateY(-40%) translateX(-30px); }
-            100% { opacity: 1; transform: translateY(-50%) translateX(0); }
         }
 
         .suspect-sidebar-card {
@@ -199,11 +175,6 @@
             text-align: center;
         }
 
-        .suspect-sidebar-card:last-child {
-            margin-bottom: 0;
-        }
-
-        /* WINNER MODAL STYLES */
         .winner-modal-overlay {
             position: fixed;
             top: 0;
@@ -212,7 +183,6 @@
             height: 100vh;
             background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -230,11 +200,8 @@
             width: 100%;
             text-align: center;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(168, 85, 247, 0.4);
-            animation: modalPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
         }
 
-        /* JUDGE EJ'S CHAMBERS SPEECH CONTAINER */
         .judge-speech-container {
             position: relative;
             z-index: 3;
@@ -245,8 +212,7 @@
             padding: 16px 22px;
             border-radius: 18px;
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(168, 85, 247, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             gap: 15px;
@@ -259,362 +225,117 @@
             border-radius: 50%;
             border: 1px solid rgba(168, 85, 247, 0.5);
             flex-shrink: 0;
-            text-align: center;
         }
 
         .judge-speech-text {
             font-size: 14.5px;
             color: #f3e8ff;
             line-height: 1.5;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
             margin: 0;
         }
 
-        .judge-speech-text strong {
-            color: #f472b6;
-            font-size: 15px;
-        }
-
-        .typing-cursor {
-            display: inline-block;
-            background-color: #f472b6;
-            width: 8px;
-            height: 15px;
-            margin-left: 3px;
-            vertical-align: middle;
-            animation: cursorBlink 0.8s infinite;
-        }
-
-        @keyframes cursorBlink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .app-logo-container {
-            text-align: center;
-            margin-bottom: 8px;
-        }
         .app-logo {
             width: 95px;
             height: 95px;
             object-fit: cover;
             border-radius: 50%;
             border: 2.5px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(168, 85, 247, 0.7);
-            animation: pulseLogo 3s ease-in-out infinite alternate;
-        }
-        @keyframes pulseLogo {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.06); }
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
         }
 
-        h1 { font-size: 24px; color: #f3e8ff; text-shadow: 0 2px 8px rgba(0,0,0,0.9); margin-top: 5px; font-weight: 800; }
-        h2 { font-size: 20px; color: #e9d5ff; text-shadow: 0 2px 6px rgba(0,0,0,0.8); }
-        h1, h2 { text-align: center; }
+        h1 { font-size: 24px; color: #f3e8ff; text-align: center; font-weight: 800; }
+        h2 { font-size: 20px; color: #e9d5ff; text-align: center; }
         .hidden { display: none !important; }
-        
-        #role-select { text-align: center; padding: 10px 0; }
         
         .btn { 
             background: linear-gradient(135deg, #a855f7, #9333ea); 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            font-size: 16px; 
-            border-radius: 14px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            margin: 8px; 
-            transition: all 0.25s ease; 
+            color: white; border: none; padding: 12px 24px; font-size: 16px; 
+            border-radius: 14px; cursor: pointer; font-weight: bold; margin: 8px; 
             box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5);
         }
-        .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); transform: translateY(-2px); }
+        .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); }
         .group-btn { background: linear-gradient(135deg, #38bdf8, #0284c7); box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5); }
-        .group-btn:hover { background: linear-gradient(135deg, #0284c7, #0369a1); }
 
         .header-bar { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: rgba(15, 23, 42, 0.45); 
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            padding: 14px 20px; 
-            border-radius: 16px; 
-            margin-bottom: 20px; 
-            font-weight: bold; 
-            font-size: 18px; 
-            color: #f3e8ff;
-            backdrop-filter: blur(4px);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(15, 23, 42, 0.45); border: 1px solid rgba(255, 255, 255, 0.35);
+            padding: 14px 20px; border-radius: 16px; margin-bottom: 20px; font-weight: bold; font-size: 18px; color: #f3e8ff;
         }
         
-        .bar-chart-container { margin: 20px 0; background: rgba(15, 23, 42, 0.45); padding: 18px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(4px); }
+        .bar-chart-container { margin: 20px 0; background: rgba(15, 23, 42, 0.45); padding: 18px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
         .bar-row { display: flex; align-items: center; margin: 12px 0; }
-        .bar-label { width: 100px; font-weight: bold; font-size: 14px; color: #f3e8ff; text-shadow: 0 2px 4px rgba(0,0,0,0.9); }
-        .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 28px; border-radius: 10px; overflow: hidden; margin: 0 10px; position: relative; }
+        .bar-label { width: 100px; font-weight: bold; font-size: 14px; color: #f3e8ff; }
+        .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 28px; border-radius: 10px; overflow: hidden; margin: 0 10px; }
         .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 10px; }
-        .bar-score { font-weight: bold; width: 45px; text-align: right; font-size: 14px; color: #f3e8ff; text-shadow: 0 2px 4px rgba(0,0,0,0.9); }
+        .bar-score { font-weight: bold; width: 45px; text-align: right; font-size: 14px; color: #f3e8ff; }
 
         .question-card { 
-            background: rgba(15, 23, 42, 0.35); 
-            border: 1.5px solid rgba(255, 255, 255, 0.3); 
-            padding: 20px; 
-            border-radius: 18px; 
-            margin-bottom: 20px; 
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            background: rgba(15, 23, 42, 0.35); border: 1.5px solid rgba(255, 255, 255, 0.3); 
+            padding: 20px; border-radius: 18px; margin-bottom: 20px;
         }
-        
-        .question-card p {
-            font-size: 16px;
-            color: #ffffff;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
-        }
+        .question-card p { font-size: 16px; color: #ffffff; }
 
         .options label { 
-            display: flex; 
-            align-items: center; 
-            padding: 10px 14px; 
-            margin: 7px 0; 
-            background: rgba(14, 116, 144, 0.25); 
-            border: 1px solid rgba(56, 189, 248, 0.45); 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            color: #ffffff;
-            font-weight: 600;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(2px);
-            transition: all 0.2s ease; 
+            display: flex; align-items: center; padding: 10px 14px; margin: 7px 0; 
+            background: rgba(14, 116, 144, 0.25); border: 1px solid rgba(56, 189, 248, 0.45); 
+            border-radius: 12px; cursor: pointer; font-size: 14px; color: #ffffff; font-weight: 600; 
         }
-        .options label input { margin-right: 12px; transform: scale(1.25); flex-shrink: 0; accent-color: #38bdf8; }
-        .options label:hover { background: rgba(56, 189, 248, 0.4); border-color: #38bdf8; transform: translateX(3px); }
+        .options label input { margin-right: 12px; transform: scale(1.25); accent-color: #38bdf8; }
         
         .explanation { 
-            margin-top: 14px; 
-            padding: 14px 16px; 
-            background: rgba(16, 185, 129, 0.25); 
-            border-left: 5px solid var(--success); 
-            font-size: 13.5px; 
-            color: #ecfdf5; 
-            border-radius: 0 12px 12px 0; 
-            backdrop-filter: blur(3px);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            margin-top: 14px; padding: 14px 16px; background: rgba(16, 185, 129, 0.25); 
+            border-left: 5px solid var(--success); font-size: 13.5px; color: #ecfdf5; border-radius: 0 12px 12px 0; 
         }
-        .correct-ans-tag {
-            font-weight: bold;
-            color: #6ee7b7;
-            margin-bottom: 4px;
-            display: block;
-        }
+        .correct-ans-tag { font-weight: bold; color: #6ee7b7; margin-bottom: 4px; display: block; }
 
         #rating-banner {
-            text-align: center;
-            background: rgba(168, 85, 247, 0.35);
-            border: 2px dashed #c084fc;
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 22px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #ffffff;
-            display: none;
-            backdrop-filter: blur(6px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            text-align: center; background: rgba(168, 85, 247, 0.35); border: 2px dashed #c084fc;
+            padding: 20px; border-radius: 16px; margin-bottom: 22px; font-size: 20px; font-weight: bold; color: #ffffff; display: none;
         }
 
-        #feedback-popup { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 14px; font-size: 18px; font-weight: bold; color: white; z-index: 1000; box-shadow: 0 6px 20px rgba(0,0,0,0.3); display: none; }
+        #feedback-popup { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 14px; font-size: 18px; font-weight: bold; color: white; z-index: 1000; display: none; }
         .feedback-correct { background-color: var(--success); }
         .feedback-wrong { background-color: var(--danger); }
 
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            padding: 20px;
-            box-sizing: border-box;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px);
+            display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
         }
 
         .modal-card {
-            background: rgba(30, 41, 59, 0.95);
-            border: 1.5px solid rgba(255, 255, 255, 0.25);
-            border-radius: 24px;
-            padding: 30px 25px;
-            max-width: 380px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            animation: modalPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin: auto;
-            position: relative;
-            z-index: 10000;
-        }
-
-        @keyframes modalPopIn {
-            from { opacity: 0; transform: scale(0.85); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .modal-card h3 {
-            margin-top: 0;
-            color: #f3e8ff;
-            font-size: 22px;
+            background: rgba(30, 41, 59, 0.95); border: 1.5px solid rgba(255, 255, 255, 0.25);
+            border-radius: 24px; padding: 30px 25px; max-width: 380px; width: 100%; text-align: center;
         }
 
         .modal-input {
-            width: 100%;
-            padding: 14px 16px;
-            margin: 18px 0;
-            background: rgba(255, 255, 255, 0.18) !important;
-            border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
-            border-radius: 14px;
-            color: #ffffff !important;
-            font-size: 18px !important;
-            text-align: center;
-            box-sizing: border-box;
-            outline: none;
-            user-select: auto !important;
-            -webkit-user-select: auto !important;
-            pointer-events: auto !important;
+            width: 100%; padding: 14px 16px; margin: 18px 0; background: rgba(255, 255, 255, 0.18);
+            border: 1.5px solid rgba(255, 255, 255, 0.4); border-radius: 14px; color: #ffffff; font-size: 18px; text-align: center; outline: none;
         }
 
-        .modal-input:focus {
-            border-color: #c084fc !important;
-            box-shadow: 0 0 12px rgba(192, 132, 252, 0.6);
+        #judge-welcome-overlay, #student-welcome-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.9);
+            display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10001; backdrop-filter: blur(10px);
         }
+        #judge-welcome-msg { font-size: 38px; font-weight: bold; color: #f472b6; text-align: center; }
+        .student-welcome-logo { width: 110px; height: 110px; border-radius: 50%; border: 3px solid #f472b6; object-fit: cover; margin-bottom: 20px; }
+        .student-welcome-text { font-size: 34px; font-weight: bold; color: #f3e8ff; margin: 0; }
+        .student-welcome-sub { font-size: 20px; color: #f472b6; margin-top: 10px; font-weight: bold; }
 
-        .modal-btn-container {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        #judge-welcome-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.85);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10001;
-            backdrop-filter: blur(10px);
-            pointer-events: none;
-        }
-
-        #judge-welcome-msg {
-            font-size: 38px;
-            font-weight: bold;
-            color: #f472b6;
-            text-shadow: 0 0 20px #ec4899, 0 0 40px #a855f7;
-            text-align: center;
-            animation: pulseText 1.5s ease-in-out infinite alternate;
-        }
-
-        #student-welcome-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.9);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10002;
-            backdrop-filter: blur(12px);
-            pointer-events: none;
-        }
-
-        .student-welcome-card {
-            text-align: center;
-            animation: modalPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            padding: 20px;
-        }
-
-        .student-welcome-logo {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            border: 3px solid #f472b6;
-            box-shadow: 0 0 30px #ec4899;
-            margin-bottom: 20px;
-            object-fit: cover;
-        }
-
-        .student-welcome-text {
-            font-size: 34px;
-            font-weight: bold;
-            color: #f3e8ff;
-            text-shadow: 0 0 20px #a855f7, 0 0 40px #c084fc;
-            margin: 0;
-        }
-
-        .student-welcome-sub {
-            font-size: 20px;
-            color: #f472b6;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        @keyframes pulseText {
-            0% { transform: scale(0.95); }
-            100% { transform: scale(1.08); }
-        }
-
-        .celebration-item {
-            position: absolute;
-            user-select: none;
-            animation: popUp 2.5s ease-out forwards;
-        }
-
+        .celebration-item { position: absolute; user-select: none; animation: popUp 2.5s ease-out forwards; }
         @keyframes popUp {
-            0% { opacity: 1; transform: translate(0, 0) scale(0.5) rotate(0deg); }
-            50% { opacity: 1; }
-            100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.8) rotate(360deg); }
+            0% { opacity: 1; transform: translate(0, 0) scale(0.5); }
+            100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.8); }
         }
 
-        /* MEDIA QUERY: HIDE LEFT SIDEBAR AUTOMATICALLY ON MOBILE/CELLPHONE SCREENS */
         @media (max-width: 768px) {
-            body { padding: 5px; }
-            .container { padding: 14px; border-radius: 16px; margin: 10px auto; max-width: 100%; }
             .left-suspects-sidebar { display: none !important; }
-            .judge-speech-container { margin: 10px auto; padding: 12px; gap: 10px; max-width: 100%; }
-            .judge-speech-avatar { font-size: 24px; padding: 8px; }
-            .judge-speech-text { font-size: 12.5px; }
-            h1 { font-size: 18px; }
-            h2 { font-size: 15px; }
-            .header-bar { font-size: 14px; padding: 10px; flex-direction: column; gap: 8px; text-align: center; }
-            .btn { width: 100%; margin: 4px 0; padding: 10px; font-size: 15px; }
-            .bar-label { width: 80px; font-size: 12px; }
-            .bar-score { font-size: 12px; }
-            .options label { font-size: 12px; padding: 8px; }
-            #judge-welcome-msg { font-size: 28px; }
-            .student-welcome-text { font-size: 24px; }
-            .side-profile-container { width: 160px; height: 38vh; opacity: 0.9; }
-            .control-btn { padding: 6px 12px; font-size: 11px; }
-            .top-controls { top: 12px; right: 12px; gap: 6px; }
+            .side-profile-container { width: 160px; height: 38vh; }
         }
     </style>
 </head>
 <body>
 
-    <!-- AESTHETIC CONTROL BUTTONS -->
     <div class="top-controls">
         <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
         <button class="control-btn surrender-btn" onclick="handleSurrender()">🏳️ Surrender</button>
@@ -630,40 +351,39 @@
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
 
-    <!-- WINNER POPUP MODAL FOR ALL PARTICIPANTS -->
+    <!-- WINNER POPUP MODAL PARA SA LAHAT NG PARTICIPANTS -->
     <div class="winner-modal-overlay" id="winner-modal">
         <div class="winner-modal-card">
             <div style="font-size: 55px; margin-bottom: 5px;">🏆⚖️</div>
             <h2 id="winner-title" style="color: #f472b6; font-size: 28px; margin: 10px 0;"></h2>
             <div style="background: rgba(168, 85, 247, 0.2); border: 1.5px solid rgba(168, 85, 247, 0.5); padding: 18px; border-radius: 18px; margin: 18px 0;">
-                <p style="font-size: 20px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin: 0 0 12px 0;">
+                <p style="font-size: 20px; font-weight: 800; color: #ffffff; margin: 0 0 12px 0;">
                     👏 Give 5 claps for that group and say "magaling, magaling!" 🌟
                 </p>
-                <p id="winner-innocent-text" style="font-size: 27px; font-weight: 900; color: #6ee7b7; text-shadow: 0 0 18px rgba(110, 231, 183, 0.7); margin: 0; line-height: 1.3;">
-                    <!-- Dito ilalagay ang dynamic group name kasama ang "are innocent!" -->
+                <p id="winner-innocent-text" style="font-size: 27px; font-weight: 900; color: #6ee7b7; margin: 0; line-height: 1.3;">
+                    <!-- Awtomatikong magpapakita rito ang pangalan ng grupo na inosente -->
                 </p>
             </div>
             <button class="btn" style="width: 100%; margin-top: 10px; font-size: 16px; padding: 12px;" onclick="closeWinnerModal()">Close / View Results</button>
         </div>
     </div>
 
-    <!-- REFINED SLENDER LEFT-SIDE SUSPECTS PANEL FOR LAPTOP -->
     <div class="left-suspects-sidebar" id="left-sidebar">
         <p style="font-size: 12px; color: #cbd5e1; margin: 0 0 8px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
         <div class="suspect-sidebar-card">
             <div style="font-size: 20px;">👤</div>
             <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11.5px;">Suspect A</h4>
-            <p style="font-size: 10px; color: #94a3b8; margin: 0; line-height: 1.25;">Denied accessible training ramps for PWDs (R.A. 7277)</p>
+            <p style="font-size: 10px; color: #94a3b8; margin: 0;">Denied accessible training ramps for PWDs (R.A. 7277)</p>
         </div>
         <div class="suspect-sidebar-card">
             <div style="font-size: 20px;">🧑‍💼</div>
             <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11.5px;">Suspect B</h4>
-            <p style="font-size: 10px; color: #94a3b8; margin: 0; line-height: 1.25;">Complied with teacher professional code of ethics</p>
+            <p style="font-size: 10px; color: #94a3b8; margin: 0;">Complied with teacher professional code of ethics</p>
         </div>
         <div class="suspect-sidebar-card">
             <div style="font-size: 20px;">🕵️‍♂️</div>
             <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11.5px;">Suspect C</h4>
-            <p style="font-size: 10px; color: #94a3b8; margin: 0; line-height: 1.25;">Respected ancestral domains of indigenous communities</p>
+            <p style="font-size: 10px; color: #94a3b8; margin: 0;">Respected ancestral domains of indigenous communities</p>
         </div>
     </div>
 
@@ -674,7 +394,7 @@
             <h3>⚖️ Judge Access</h3>
             <p style="font-size:14px; color:#e2e8f0; margin-top:5px;">Please enter the password to proceed:</p>
             <input type="password" id="judge-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="handleKeyPress(event)" autocomplete="off" />
-            <div class="modal-btn-container">
+            <div style="display:flex; gap:12px; justify-content:center;">
                 <button class="btn" style="background:var(--danger);" onclick="closePasswordModal()">Cancel</button>
                 <button class="btn" onclick="verifyJudgePassword()">Submit</button>
             </div>
@@ -684,9 +404,7 @@
     <div class="modal-overlay" id="warning-modal">
         <div class="modal-card" style="border-color: var(--danger);">
             <h3 style="color: #f87171;">🚫 ACCESS DENIED</h3>
-            <p style="font-size:15px; font-weight:bold; color:#fca5a5; margin: 18px 0; line-height:1.4;">
-                You are a criminal trying to steal someone's private property!
-            </p>
+            <p style="font-size:15px; font-weight:bold; color:#fca5a5; margin: 18px 0;">You are a criminal trying to steal someone's private property!</p>
             <button class="btn" style="background:var(--danger);" onclick="closeWarningModal()">Dismiss</button>
         </div>
     </div>
@@ -696,34 +414,32 @@
     </div>
 
     <div id="student-welcome-overlay">
-        <div class="student-welcome-card">
+        <div style="text-align:center;">
             <img src="/logo.png" alt="MCC Logo" class="student-welcome-logo">
             <h2 class="student-welcome-text">🌟 Welcome Future Educators! 📚</h2>
             <div class="student-welcome-sub">Preparing for excellence in Values Education... ✨</div>
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
     <div class="container" id="main-container">
-        
-        <!-- ROLE SELECT VIEW WITH ANIMATED BUTTONS -->
         <div id="role-select">
-            <div class="app-logo-container">
-                <img src="/logo.png" alt="Teacher Education Program Logo" class="app-logo">
+            <div style="text-align:center; margin-bottom: 8px;">
+                <img src="/logo.png" alt="Logo" class="app-logo">
             </div>
             <h1>⚖️ PROFED 5 GROUP 2 QUICK ACTIVITY 📜</h1>
-            <p>Select your mode to begin:</p>
+            <p style="text-align:center;">Select your mode to begin:</p>
             <br>
             <button class="btn animated-main-btn" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             <br><br>
-            <h3>Join as:</h3>
-            <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 1')">Attorney 1</button>
-            <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 2')">Attorney 2</button>
-            <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 3')">Attorney 3</button>
-            <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 4')">Attorney 4</button>
+            <h3 style="text-align:center;">Join as:</h3>
+            <div style="text-align:center;">
+                <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 1')">Attorney 1</button>
+                <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 2')">Attorney 2</button>
+                <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 3')">Attorney 3</button>
+                <button class="btn group-btn animated-group-btn" onclick="selectGroup('Attorney 4')">Attorney 4</button>
+            </div>
         </div>
 
-        <!-- TEACHER / JUDGE VIEW -->
         <div id="teacher-view" class="hidden">
             <h1>⚖️ Judge Real-Time Monitor ⚖️</h1>
             <div class="header-bar">
@@ -736,56 +452,8 @@
 
             <h3>Live Scoreboard (Highest to Lowest)</h3>
             <div class="bar-chart-container" id="bar-chart"></div>
-            
-            <hr style="margin: 30px 0; border:0; border-top:1.5px solid rgba(255,255,255,0.2);">
-            <h2>Answer Key & Independent Explanations</h2>
-            <div id="teacher-answer-key">
-                <div class="question-card">
-                    <p><b>Q1:</b> Magna Carta for Disabled Persons</p>
-                    <div class="explanation">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
-                        <b>Explanation:</b> R.A. 7277 guarantees full integration, equal opportunities, and rehabilitation for persons with disabilities into mainstream society.
-                    </div>
-                </div>
-                <div class="question-card">
-                    <p><b>Q2:</b> Protection Against Child Abuse</p>
-                    <div class="explanation">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
-                        <b>Explanation:</b> R.A. 7610 institutes strong statutory protections against child abuse, exploitation, discrimination, and severe cruelty.
-                    </div>
-                </div>
-                <div class="question-card">
-                    <p><b>Q3:</b> Indigenous Peoples' Rights Act (IPRA)</p>
-                    <div class="explanation">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 8371</span>
-                        <b>Explanation:</b> R.A. 8371 preserves ancestral domains, cultural integrity, and self-delineation rights for indigenous communities.
-                    </div>
-                </div>
-                <div class="question-card">
-                    <p><b>Q4:</b> Fundamental Supreme Law</p>
-                    <div class="explanation">
-                        <span class="correct-ans-tag">✔ Correct Answer: The 1987 Philippine Constitution</span>
-                        <b>Explanation:</b> The 1987 Constitution is the supreme law of the land from which all government authority and citizen rights originate.
-                    </div>
-                </div>
-                <div class="question-card">
-                    <p><b>Q5:</b> Equal Opportunity for Employment and Training</p>
-                    <div class="explanation">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
-                        <b>Explanation:</b> Section 5 of R.A. 7277 mandates that no person with a disability shall be denied access to suitable employment or training.
-                    </div>
-                </div>
-                <div class="question-card">
-                    <p><b>Q6:</b> Penalizes Child Trafficking</p>
-                    <div class="explanation">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
-                        <b>Explanation:</b> Article VI of R.A. 7610 specifically penalizes child prostitution, illegal recruitment, and child trafficking with maximum imprisonment penalties.
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <!-- STUDENT / QUIZ VIEW -->
         <div id="student-view" class="hidden">
             <h1 id="group-title">Counsel Dashboard</h1>
             <div class="header-bar">
@@ -799,109 +467,24 @@
                 <div class="question-card" id="card-q1">
                     <p><b>Q1:</b> Which law is known as the Magna Carta for Disabled Persons?</p>
                     <div class="options">
-                        <label><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q1" value="RA9155" onchange="submitAns('q1', 'RA9155')"> D) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q1" value="RA10533" onchange="submitAns('q1', 'RA10533')"> E) Republic Act No. 10533 (Enhanced Basic Education Act)</label>
-                        <label><input type="radio" name="q1" value="RA7836" onchange="submitAns('q1', 'RA7836')"> F) Republic Act No. 7836 (Philippine Teachers Professionalization Act)</label>
-                        <label><input type="radio" name="q1" value="CONST" onchange="submitAns('q1', 'CONST')"> G) The 1987 Philippine Constitution</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q1">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
-                        <b>Explanation:</b> R.A. 7277 guarantees full integration, equal opportunities, and rehabilitation for persons with disabilities into mainstream society.
+                        <label><input type="radio" name="q1" value="RA7277" onchange="submitAns('q1', 'RA7277')"> A) Republic Act No. 7277</label>
+                        <label><input type="radio" name="q1" value="RA7610" onchange="submitAns('q1', 'RA7610')"> B) Republic Act No. 7610</label>
+                        <label><input type="radio" name="q1" value="RA8371" onchange="submitAns('q1', 'RA8371')"> C) Republic Act No. 8371</label>
                     </div>
                 </div>
-
                 <div class="question-card" id="card-q2">
-                    <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse, exploitation and discrimination?</p>
+                    <p><b>Q2:</b> What law provides stronger deterrence and special protection against child abuse?</p>
                     <div class="options">
-                        <label><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q2" value="RA9262" onchange="submitAns('q2', 'RA9262')"> D) Republic Act No. 9262 (Anti-Violence Against Women and Their Children Act)</label>
-                        <label><input type="radio" name="q2" value="RA7610X" onchange="submitAns('q2', 'RA7610X')"> E) Republic Act No. 7610 (Child Abuse Prevention Framework)</label>
-                        <label><input type="radio" name="q2" value="RA10627" onchange="submitAns('q2', 'RA10627')"> F) Republic Act No. 10627 (Anti-Bullying Act)</label>
-                        <label><input type="radio" name="q2" value="CONST" onchange="submitAns('q2', 'CONST')"> G) The 1987 Philippine Constitution</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q2">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
-                        <b>Explanation:</b> R.A. 7610 institutes strong statutory protections against child abuse, exploitation, discrimination, and severe cruelty.
+                        <label><input type="radio" name="q2" value="RA7277" onchange="submitAns('q2', 'RA7277')"> A) Republic Act No. 7277</label>
+                        <label><input type="radio" name="q2" value="RA7610" onchange="submitAns('q2', 'RA7610')"> B) Republic Act No. 7610</label>
+                        <label><input type="radio" name="q2" value="RA8371" onchange="submitAns('q2', 'RA8371')"> C) Republic Act No. 8371</label>
                     </div>
                 </div>
-
-                <div class="question-card" id="card-q3">
-                    <p><b>Q3:</b> Which law is recognized as the Indigenous Peoples' Rights Act (IPRA)?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q3" value="RA7610" onchange="submitAns('q3', 'RA7610')"> A) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q3" value="RA8371" onchange="submitAns('q3', 'RA8371')"> B) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q3" value="RA6713" onchange="submitAns('q3', 'RA6713')"> C) Republic Act No. 6713 (Code of Conduct and Ethical Standards for Public Officials)</label>
-                        <label><input type="radio" name="q3" value="RA7722" onchange="submitAns('q3', 'RA7722')"> D) Republic Act No. 7722 (Higher Education Act)</label>
-                        <label><input type="radio" name="q3" value="RA9155" onchange="submitAns('q3', 'RA9155')"> E) Republic Act No. 9155 (Governance of Basic Education Act)</label>
-                        <label><input type="radio" name="q3" value="RA8545" onchange="submitAns('q3', 'RA8545')"> F) Republic Act No. 8545 (Expanded Government Assistance to Students)</label>
-                        <label><input type="radio" name="q3" value="CONST" onchange="submitAns('q3', 'CONST')"> G) The 1987 Philippine Constitution</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q3">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 8371</span>
-                        <b>Explanation:</b> R.A. 8371 preserves ancestral domains, cultural integrity, and self-delineation rights for indigenous communities.
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q4">
-                    <p><b>Q4:</b> What supreme law of the Philippines serves as the fundamental framework for all civil rights and state policies?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q4" value="RA7277" onchange="submitAns('q4', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q4" value="CONST" onchange="submitAns('q4', 'CONST')"> B) The 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q4" value="RA8371" onchange="submitAns('q4', 'RA8371')"> C) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q4" value="RA9147" onchange="submitAns('q4', 'RA9147')"> D) Wildlife Resources Conservation and Protection Act</label>
-                        <label><input type="radio" name="q4" value="BIA" onchange="submitAns('q4', 'BIA')"> E) Biak-na-Bato Constitution</label>
-                        <label><input type="radio" name="q4" value="MALOLOS" onchange="submitAns('q4', 'MALOLOS')"> F) The 1899 Malolos Constitution</label>
-                        <label><input type="radio" name="q4" value="CIVILCODE" onchange="submitAns('q4', 'CIVILCODE')"> G) The Civil Code of the Philippines</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q4">
-                        <span class="correct-ans-tag">✔ Correct Answer: The 1987 Philippine Constitution</span>
-                        <b>Explanation:</b> The 1987 Constitution is the supreme law of the land from which all government authority and citizen rights originate.
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q5">
-                    <p><b>Q5:</b> Which statutory framework specifically mandates equal opportunity for employment and training for persons with disabilities?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q5" value="RA7277" onchange="submitAns('q5', 'RA7277')"> A) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q5" value="RA7610" onchange="submitAns('q5', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q5" value="CONST" onchange="submitAns('q5', 'CONST')"> C) The 1987 Philippine Constitution</label>
-                        <label><input type="radio" name="q5" value="RA10533" onchange="submitAns('q5', 'RA10533')"> D) Republic Act No. 10533 (K to 12 Law)</label>
-                        <label><input type="radio" name="q5" value="RA7796" onchange="submitAns('q5', 'RA7796')"> E) Republic Act No. 7796 (TESDA Act)</label>
-                        <label><input type="radio" name="q5" value="RA7836" onchange="submitAns('q5', 'RA7836')"> F) Republic Act No. 7836 (Teachers Professionalization Act)</label>
-                        <label><input type="radio" name="q5" value="RA10931" onchange="submitAns('q5', 'RA10931')"> G) Universal Access to Quality Tertiary Education Act</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q5">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7277</span>
-                        <b>Explanation:</b> Section 5 of R.A. 7277 mandates that no person with a disability shall be denied access to suitable employment or training.
-                    </div>
-                </div>
-
-                <div class="question-card" id="card-q6">
-                    <p><b>Q6:</b> Which specific legislation penalizes child trafficking and protects children in especially difficult circumstances?</p>
-                    <div class="options">
-                        <label><input type="radio" name="q6" value="RA8371" onchange="submitAns('q6', 'RA8371')"> A) Republic Act No. 8371 (Indigenous Peoples' Rights Act)</label>
-                        <label><input type="radio" name="q6" value="RA7610" onchange="submitAns('q6', 'RA7610')"> B) Republic Act No. 7610 (Special Protection Against Child Abuse)</label>
-                        <label><input type="radio" name="q6" value="RA7277" onchange="submitAns('q6', 'RA7277')"> C) Republic Act No. 7277 (Magna Carta for Disabled Persons)</label>
-                        <label><input type="radio" name="q6" value="RA9208" onchange="submitAns('q6', 'RA9208')"> D) Republic Act No. 9208 (Anti-Trafficking in Persons Act)</label>
-                        <label><input type="radio" name="q6" value="RA10630" onchange="submitAns('q6', 'RA10630')"> E) Republic Act No. 10630 (Juvenile Justice and Welfare Act)</label>
-                        <label><input type="radio" name="q6" value="RA9344" onchange="submitAns('q6', 'RA9344')"> F) Republic Act No. 9344 (Juvenile Justice Act)</label>
-                        <label><input type="radio" name="q6" value="RA7610B" onchange="submitAns('q6', 'RA7610B')"> G) Republic Act No. 7610 (Article VI Penal Provisions)</label>
-                    </div>
-                    <div class="explanation hidden" id="exp-q6">
-                        <span class="correct-ans-tag">✔ Correct Answer: Republic Act No. 7610</span>
-                        <b>Explanation:</b> Article VI of R.A. 7610 specifically penalizes child prostitution, illegal recruitment, and child trafficking with maximum imprisonment penalties.
-                    </div>
-                </div>
+                <!-- Maaari mong idagdag ang Q3 hanggang Q6 kung kinakailangan -->
             </div>
         </div>
     </div>
 
-    <!-- JUDGE EJ'S CHAMBERS TYPING SPEECH BOX -->
     <div class="judge-speech-container" id="judge-speech-box">
         <div class="judge-speech-avatar">👨‍⚖️</div>
         <p class="judge-speech-text" id="typewriter-text"></p>
@@ -912,104 +495,52 @@
         let myGroup = null;
         let answeredQuestions = {};
         let finalScoreValue = 0;
-        let totalAnsweredCount = 0;
-        let winnerModalShown = false;
+        let latestSortedGroups = [];
 
-        // JUDGE EJ REPEATING TYPEWRITER EFFECT
-        const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, we have an urgent pending case on our docket regarding the protection of marginalized sectors and children\'s rights under our special statutes. Prepare your arguments and statutes meticulously—this session is now officially in session!"';
-        
+        const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, review your statutes carefully before time runs out!"';
         let charIndex = 0;
-        const typingSpeed = 35;
 
         function typeWriter() {
             const target = document.getElementById('typewriter-text');
             if (charIndex < judgeMessage.length) {
                 target.innerHTML = judgeMessage.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
                 charIndex++;
-                setTimeout(typeWriter, typingSpeed);
+                setTimeout(typeWriter, 35);
             } else {
                 target.innerHTML = judgeMessage;
-                setTimeout(() => {
-                    charIndex = 0;
-                    typeWriter();
-                }, 3500);
             }
         }
-
-        window.onload = () => {
-            typeWriter();
-        };
+        window.onload = () => typeWriter();
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    alert("Error attempting to enable full-screen mode: " + err.message);
-                });
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
                 document.getElementById('fs-btn').innerText = "⤓ Exit Full";
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
+                if (document.exitFullscreen) document.exitFullscreen();
                 document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
             }
         }
 
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
-            } else {
-                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
-            }
-        });
-
-        function handleSurrender() {
-            if (document.fullscreenElement) {
-                document.exitFullscreen().catch(err => console.log(err));
-            }
-            location.reload();
-        }
-
+        function handleSurrender() { location.reload(); }
         function selectRole(role) {
             if (role === 'teacher') {
-                const passInput = document.getElementById('judge-pass-input');
-                passInput.value = '';
-                passInput.disabled = false;
                 document.getElementById('password-modal').style.display = 'flex';
-                
-                setTimeout(() => {
-                    passInput.focus();
-                    passInput.click();
-                }, 150);
+                document.getElementById('judge-pass-input').focus();
             }
         }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                verifyJudgePassword();
-            }
-        }
-
-        function closePasswordModal() {
-            document.getElementById('password-modal').style.display = 'none';
-        }
-
-        function closeWarningModal() {
-            document.getElementById('warning-modal').style.display = 'none';
-        }
-
-        function closeWinnerModal() {
-            document.getElementById('winner-modal').style.display = 'none';
-        }
+        function handleKeyPress(event) { if (event.key === 'Enter') verifyJudgePassword(); }
+        function closePasswordModal() { document.getElementById('password-modal').style.display = 'none'; }
+        function closeWarningModal() { document.getElementById('warning-modal').style.display = 'none'; }
+        function closeWinnerModal() { document.getElementById('winner-modal').style.display = 'none'; }
 
         function verifyJudgePassword() {
             const pass = document.getElementById('judge-pass-input').value;
             closePasswordModal();
-
             if (pass === "Quiz") {
-                triggerJudgeWelcome();
                 document.getElementById('role-select').classList.add('hidden');
                 document.getElementById('side-profile').style.display = 'none';
-                document.getElementById('left-sidebar').style.display = 'none'; // Hide sidebar when entering teacher view
+                document.getElementById('left-sidebar').style.display = 'none';
                 document.getElementById('teacher-view').classList.remove('hidden');
                 document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
             } else {
@@ -1017,166 +548,52 @@
             }
         }
 
-        function triggerJudgeWelcome() {
-            const overlay = document.getElementById('judge-welcome-overlay');
-            overlay.style.display = 'flex';
-
-            const symbols = ['💖', '💕', '💗', '🎆', '✨', '💖', '🎉', '💖'];
-            for (let i = 0; i < 35; i++) {
-                const elem = document.createElement('div');
-                elem.className = 'celebration-item';
-                elem.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-                
-                const angle = Math.random() * Math.PI * 2;
-                const dist = 150 + Math.random() * 300;
-                const dx = Math.cos(angle) * dist + 'px';
-                const dy = Math.sin(angle) * dist + 'px';
-
-                elem.style.setProperty('--dx', dx);
-                elem.style.setProperty('--dy', dy);
-                elem.style.fontSize = (20 + Math.random() * 30) + 'px';
-                elem.style.left = '50%';
-                elem.style.top = '50%';
-
-                overlay.appendChild(elem);
-            }
-
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                overlay.querySelectorAll('.celebration-item').forEach(e => e.remove());
-            }, 2500);
-        }
-
         function selectGroup(groupName) {
             myGroup = groupName;
-            triggerStudentWelcome(() => {
-                document.getElementById('role-select').classList.add('hidden');
-                document.getElementById('side-profile').style.display = 'none'; 
-                document.getElementById('left-sidebar').style.display = 'none'; // Hide sidebar when entering student view
-                document.getElementById('student-view').classList.remove('hidden');
-                document.getElementById('group-title').innerText = `Dashboard: ${groupName}`;
-                document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
-            });
+            document.getElementById('role-select').classList.add('hidden');
+            document.getElementById('side-profile').style.display = 'none';
+            document.getElementById('left-sidebar').style.display = 'none';
+            document.getElementById('student-view').classList.remove('hidden');
+            document.getElementById('group-title').innerText = `Dashboard: ${groupName}`;
+            document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
         }
 
-        function triggerStudentWelcome(onComplete) {
-            const overlay = document.getElementById('student-welcome-overlay');
-            overlay.style.display = 'flex';
-
-            const symbols = ['📚', '🎓', '✨', '🎆', '🌟', '📖', '🎉', '⚖️'];
-            for (let i = 0; i < 40; i++) {
-                const elem = document.createElement('div');
-                elem.className = 'celebration-item';
-                elem.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-                
-                const angle = Math.random() * Math.PI * 2;
-                const dist = 120 + Math.random() * 320;
-                const dx = Math.cos(angle) * dist + 'px';
-                const dy = Math.sin(angle) * dist + 'px';
-
-                elem.style.setProperty('--dx', dx);
-                elem.style.setProperty('--dy', dy);
-                elem.style.fontSize = (22 + Math.random() * 28) + 'px';
-                elem.style.left = '50%';
-                elem.style.top = '50%';
-
-                overlay.appendChild(elem);
-            }
-
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                overlay.querySelectorAll('.celebration-item').forEach(e => e.remove());
-                if (onComplete) onComplete();
-            }, 2600);
-        }
-
-        function startTimer() {
-            socket.emit('startTimer');
-        }
-
-        function resetGame() {
-            socket.emit('resetGame');
-        }
+        function startTimer() { socket.emit('startTimer'); }
+        function resetGame() { socket.emit('resetGame'); }
 
         function submitAns(questionId, answer) {
-            if (!myGroup) return;
-            if (answeredQuestions[questionId]) return;
-
+            if (!myGroup || answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
-            totalAnsweredCount++;
-
-            const card = document.getElementById(`card-${questionId}`);
-            if (card) {
-                card.querySelectorAll('input[type="radio"]').forEach(input => {
-                    input.disabled = true;
-                });
-                card.style.opacity = "0.75";
-            }
-
             socket.emit('submitAnswer', { groupName: myGroup, questionId, answer });
-
-            if (totalAnsweredCount === 6) {
-                setTimeout(() => {
-                    revealExplanationsAndRating();
-                }, 600);
-            }
         }
 
-        socket.on('answerFeedback', ({ questionId, isCorrect }) => {
+        socket.on('answerFeedback', ({ isCorrect }) => {
             const popup = document.getElementById('feedback-popup');
-            if (isCorrect) {
-                popup.className = "feedback-correct";
-                popup.innerHTML = "✔ Correct!";
-            } else {
-                popup.className = "feedback-wrong";
-                popup.innerHTML = "✖ Incorrect!";
-            }
+            popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
+            popup.innerHTML = isCorrect ? "✔ Correct!" : "✖ Incorrect!";
             popup.style.display = "block";
-            setTimeout(() => {
-                popup.style.display = "none";
-            }, 1800);
+            setTimeout(() => popup.style.display = "none", 1800);
         });
 
-        socket.on('timerStarted', ({ timer, timerRunning }) => {
-            let mins = Math.floor(timer / 60).toString().padStart(2, '0');
-            let secs = (timer % 60).toString().padStart(2, '0');
-            let timeStr = `Time Left: ${mins}:${secs}`;
-            document.getElementById('teacher-timer').innerText = timeStr;
-            document.getElementById('student-timer').innerText = timeStr;
-        });
-
-        socket.on('updateState', ({ groupScores, timer, timerRunning }) => {
-            let mins = Math.floor(timer / 60).toString().padStart(2, '0');
-            let secs = (timer % 60).toString().padStart(2, '0');
-            let timeStr = `Time Left: ${mins}:${secs}`;
-            document.getElementById('teacher-timer').innerText = timeStr;
-            document.getElementById('student-timer').innerText = timeStr;
-
-            const sortedGroups = Object.entries(groupScores).sort((a, b) => b[1] - a[1]);
+        socket.on('updateState', ({ groupScores }) => {
+            latestSortedGroups = Object.entries(groupScores).sort((a, b) => b[1] - a[1]);
             let chartHTML = '';
-            sortedGroups.forEach(([group, score]) => {
+            latestSortedGroups.forEach(([group, score]) => {
                 let percentage = (score / 6) * 100;
                 chartHTML += `
                     <div class="bar-row">
                         <div class="bar-label">${group}</div>
-                        <div class="bar-track">
-                            <div class="bar-fill" style="width: ${percentage}%"></div>
-                        </div>
+                        <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
                         <div class="bar-score">${score}/6</div>
                     </div>
                 `;
             });
-            document.getElementById('bar-chart').innerHTML = chartHTML;
+            const barChart = document.getElementById('bar-chart');
+            if (barChart) barChart.innerHTML = chartHTML;
 
             if (myGroup && groupScores[myGroup] !== undefined) {
                 finalScoreValue = groupScores[myGroup];
                 document.getElementById('group-score-display').innerText = `Score: ${finalScoreValue} / 6`;
-            }
-
-            if (timer <= 0) {
-                disableQuizInputsOnly();
-                revealExplanationsAndRating();
-                triggerWinnerAnnouncement(sortedGroups);
             }
         });
 
@@ -1188,19 +605,14 @@
             document.getElementById('student-timer').innerText = timeStr;
         });
 
+        // Ito ang magti-trigger ng pop-up sa lahat ng screen pagkaubos ng oras
         socket.on('timeUp', () => {
-            disableQuizInputsOnly();
-            revealExplanationsAndRating();
-        });
-
-        function triggerWinnerAnnouncement(sortedGroups) {
-            if (winnerModalShown) return;
-            winnerModalShown = true;
-
-            if (sortedGroups && sortedGroups.length > 0) {
-                let topGroup = sortedGroups[0][0];
-                let topScore = sortedGroups[0][1];
-                document.getElementById('winner-title').innerText = `👑 Top Innocent Counsel: ${topGroup} (${topScore} / 6 points)`;
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.disabled = true);
+            
+            if (latestSortedGroups && latestSortedGroups.length > 0) {
+                let topGroup = latestSortedGroups[0][0];
+                let topScore = latestSortedGroups[0][1];
+                document.getElementById('winner-title').innerText = `👑 Top Innocent Counsel: ${topGroup} (${topScore} points)`;
                 document.getElementById('winner-innocent-text').innerText = `CONGRATULATIONS ${topGroup.toUpperCase()} ARE INNOCENT! ✨`;
             } else {
                 document.getElementById('winner-title').innerText = `👑 Time is up!`;
@@ -1208,50 +620,9 @@
             }
 
             document.getElementById('winner-modal').style.display = 'flex';
-        }
-
-        function disableQuizInputsOnly() {
-            document.querySelectorAll('#quiz-questions input[type="radio"]').forEach(input => {
-                input.disabled = true;
-            });
-        }
-
-        function revealExplanationsAndRating() {
-            for (let i = 1; i <= 6; i++) {
-                const expBox = document.getElementById(`exp-q${i}`);
-                if (expBox) {
-                    expBox.classList.remove('hidden');
-                }
-            }
-
-            const banner = document.getElementById('rating-banner');
-            let remark = "";
-            let emoji = "";
-
-            if (finalScoreValue === 6) {
-                remark = "🌟 EXCELLENT! Perfect Score! Outstanding knowledge of Philippine Laws!";
-                emoji = "🏆";
-            } else if (finalScoreValue >= 5) {
-                remark = "👏 VERY GOOD! Great job mastering the legal provisions!";
-                emoji = "🎉";
-            } else if (finalScoreValue >= 3) {
-                remark = "👍 GOOD EFFORT! Solid understanding, keep it up!";
-                emoji = "💡";
-            } else if (finalScoreValue >= 1) {
-                remark = "📌 FAIR! Room for improvement. Review the laws carefully!";
-                emoji = "📖";
-            } else {
-                remark = "💪 KEEP PRACTICING! Don't give up, try again on the next round!";
-                emoji = "⚡";
-            }
-
-            banner.innerHTML = `${emoji} Score: ${finalScoreValue}/6 — ${remark}`;
-            banner.style.display = "block";
-        }
-
-        socket.on('resetState', () => {
-            location.reload();
         });
+
+        socket.on('resetState', () => { location.reload(); });
     </script>
 </body>
 </html>
