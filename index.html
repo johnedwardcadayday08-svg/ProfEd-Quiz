@@ -192,7 +192,7 @@
         }
 
         .modal-card {
-            background: rgba(30, 41, 59, 0.88);
+            background: rgba(30, 41, 59, 0.95);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
             border-radius: 24px;
             padding: 30px 25px;
@@ -202,6 +202,8 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
             animation: modalPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             margin: auto;
+            position: relative;
+            z-index: 10000;
         }
 
         @keyframes modalPopIn {
@@ -215,23 +217,27 @@
             font-size: 22px;
         }
 
+        /* Fixed input text typing issue & cursor selection */
         .modal-input {
             width: 100%;
             padding: 14px 16px;
             margin: 18px 0;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.18) !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
             border-radius: 14px;
-            color: #ffffff;
-            font-size: 16px;
+            color: #ffffff !important;
+            font-size: 18px !important;
             text-align: center;
             box-sizing: border-box;
             outline: none;
+            user-select: auto !important;
+            -webkit-user-select: auto !important;
+            pointer-events: auto !important;
         }
 
         .modal-input:focus {
-            border-color: #c084fc;
-            box-shadow: 0 0 12px rgba(192, 132, 252, 0.5);
+            border-color: #c084fc !important;
+            box-shadow: 0 0 12px rgba(192, 132, 252, 0.6);
         }
 
         .modal-btn-container {
@@ -252,7 +258,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10000;
+            z-index: 10001;
             backdrop-filter: blur(10px);
             pointer-events: none;
         }
@@ -312,7 +318,7 @@
         <div class="modal-card">
             <h3>⚖️ Judge Access</h3>
             <p style="font-size:14px; color:#e2e8f0; margin-top:5px;">Please enter the password to proceed:</p>
-            <input type="password" id="judge-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="handleKeyPress(event)" />
+            <input type="password" id="judge-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="handleKeyPress(event)" autocomplete="off" />
             <div class="modal-btn-container">
                 <button class="btn" style="background:var(--danger);" onclick="closePasswordModal()">Cancel</button>
                 <button class="btn" onclick="verifyJudgePassword()">Submit</button>
@@ -513,11 +519,13 @@
 
         function selectRole(role) {
             if (role === 'teacher') {
-                document.getElementById('judge-pass-input').value = '';
+                const passInput = document.getElementById('judge-pass-input');
+                passInput.value = '';
                 document.getElementById('password-modal').style.display = 'flex';
                 setTimeout(() => {
-                    document.getElementById('judge-pass-input').focus();
-                }, 100);
+                    passInput.focus();
+                    passInput.click();
+                }, 200);
             }
         }
 
