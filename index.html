@@ -64,16 +64,23 @@
             overflow-y: auto !important;
         }
 
+        /* FULLSCREEN MODE: INUSOG ANG 3 SUSPECTS BOX PALAYO SA EDGE HANGGANG SA TINUKOY NA LINYA */
+        body.is-fullscreen .left-suspects-sidebar {
+            left: 42px !important;
+            top: 38% !important;
+        }
+
+        /* FULLSCREEN MODE: INUSOG ANG QR CODE PALAYO SA KANANG GILID */
         body.is-fullscreen .qr-code-wrapper {
-            right: 30px !important;
+            right: 65px !important;
             bottom: 60vh !important;
             transform: scale(1.12);
         }
 
-        /* FULLSCREEN MODE: ATTORNEY BUTTONS NA MAY PANTAY NA ESPASYO MULA SA 3 SUSPECT BOX AT LOWER EDGE */
+        /* FULLSCREEN MODE: INIBABA PA NG KUNTI ANG MGA ATTORNEY BUTTONS */
         body.is-fullscreen .attorney-buttons-container {
-            margin-top: 45px !important;
-            margin-bottom: 10px !important;
+            margin-top: 60px !important;
+            margin-bottom: 15px !important;
             gap: 18px !important;
         }
         body.is-fullscreen .attorney-buttons-container .group-btn {
@@ -130,7 +137,7 @@
         }
 
         body.is-fullscreen .rank-bar-track {
-            height: 220px !important; /* Pinalaki para sakupin ang malaking space sa baba */
+            height: 220px !important;
         }
 
         .urgent-warning-glow {
@@ -731,6 +738,19 @@
             margin: 16px 0;
         }
 
+        /* NAG GOGLOW AT NAG MOMOVE NA VERDICT RESULT BOXES */
+        @keyframes resultBoxFloatGlowGreen {
+            0% { transform: translateY(0px) scale(1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(16, 185, 129, 0.4); }
+            50% { transform: translateY(-4px) scale(1.015); box-shadow: 0 0 30px rgba(16, 185, 129, 0.95), inset 0 0 20px rgba(16, 185, 129, 0.7); }
+            100% { transform: translateY(0px) scale(1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(16, 185, 129, 0.4); }
+        }
+
+        @keyframes resultBoxFloatGlowRed {
+            0% { transform: translateY(0px) scale(1); box-shadow: 0 0 15px rgba(244, 63, 94, 0.6), inset 0 0 10px rgba(244, 63, 94, 0.4); }
+            50% { transform: translateY(-4px) scale(1.015); box-shadow: 0 0 30px rgba(244, 63, 94, 0.95), inset 0 0 20px rgba(244, 63, 94, 0.7); }
+            100% { transform: translateY(0px) scale(1); box-shadow: 0 0 15px rgba(244, 63, 94, 0.6), inset 0 0 10px rgba(244, 63, 94, 0.4); }
+        }
+
         .result-box-card {
             border-radius: 20px;
             padding: 16px 18px;
@@ -751,16 +771,18 @@
         }
 
         .result-box-innocent {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.15));
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.28), rgba(5, 150, 105, 0.2));
             border: 2px solid #34d399;
+            animation: resultBoxFloatGlowGreen 3s ease-in-out infinite;
         }
 
         .result-box-failing {
-            background: linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(225, 29, 72, 0.1));
-            border: 1.5px solid rgba(244, 63, 94, 0.6);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(225, 29, 72, 0.15));
+            border: 1.5px solid rgba(244, 63, 94, 0.8);
             padding: 12px 16px;
             max-width: 90%;
             margin: 0 auto;
+            animation: resultBoxFloatGlowRed 3s ease-in-out infinite;
         }
 
         #review-section {
