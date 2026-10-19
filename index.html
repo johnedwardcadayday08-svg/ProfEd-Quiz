@@ -528,7 +528,7 @@
     <div class="top-controls" id="top-controls-group">
         <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="I-hide/I-show dagiti buttons">▲</button>
         <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
-        <button class="control-btn surrender-btn" onclick="handleSurrender()">🏳️ Surrender</button>
+        <button class="control-btn surrender-btn" id="surrender-btn" onclick="handleSurrender()">🏳️ Surrender</button>
     </div>
 
     <div class="law-bg-element icon-1">⚖️</div>
@@ -809,7 +809,6 @@
 
         // TOGGLE TOP CONTROLS (FULLSCREEN & SURRENDER BUTTONS HIDE/SHOW)
         function toggleTopControls() {
-            const controlsGroup = document.getElementById('top-controls-group');
             const arrowBtn = document.getElementById('toggle-arrow-btn');
             const fsBtn = document.getElementById('fs-btn');
             const surrenderBtn = document.getElementById('surrender-btn');
