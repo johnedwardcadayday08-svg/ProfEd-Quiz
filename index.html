@@ -133,7 +133,7 @@
         .container { 
             position: relative;
             z-index: 3;
-            max-width: 900px; 
+            max-width: 650px; 
             margin: 20px auto; 
             background: var(--card-bg-transparent); 
             padding: 25px; 
@@ -167,17 +167,17 @@
             animation-delay: 0.5s;
         }
 
-        /* LEFT-SIDE FLOATING SUSPECTS PANEL FOR LAPTOP */
+        /* REFINED SLENDER LEFT-SIDE SUSPECTS PANEL FOR LAPTOP */
         .left-suspects-sidebar {
             position: fixed;
-            left: 25px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            width: 250px;
+            width: 215px;
             background: rgba(15, 23, 42, 0.65);
             border: 1.5px solid rgba(168, 85, 247, 0.4);
             border-radius: 20px;
-            padding: 16px;
+            padding: 14px 10px;
             z-index: 10;
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
@@ -194,7 +194,7 @@
             background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
-            padding: 10px;
+            padding: 10px 8px;
             margin-bottom: 10px;
             text-align: center;
         }
@@ -203,11 +203,42 @@
             margin-bottom: 0;
         }
 
+        /* WINNER MODAL STYLES */
+        .winner-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10005;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .winner-modal-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+            border: 2px solid #c084fc;
+            border-radius: 28px;
+            padding: 35px 30px;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(168, 85, 247, 0.4);
+            animation: modalPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
         /* JUDGE EJ'S CHAMBERS SPEECH CONTAINER */
         .judge-speech-container {
             position: relative;
             z-index: 3;
-            max-width: 900px;
+            max-width: 650px;
             margin: 0 auto 20px auto;
             background: rgba(15, 23, 42, 0.65);
             border: 1.5px solid rgba(168, 85, 247, 0.5);
@@ -277,7 +308,7 @@
             100% { transform: scale(1.06); }
         }
 
-        h1 { font-size: 26px; color: #f3e8ff; text-shadow: 0 2px 8px rgba(0,0,0,0.9); margin-top: 5px; font-weight: 800; }
+        h1 { font-size: 24px; color: #f3e8ff; text-shadow: 0 2px 8px rgba(0,0,0,0.9); margin-top: 5px; font-weight: 800; }
         h2 { font-size: 20px; color: #e9d5ff; text-shadow: 0 2px 6px rgba(0,0,0,0.8); }
         h1, h2 { text-align: center; }
         .hidden { display: none !important; }
@@ -561,9 +592,9 @@
         /* MEDIA QUERY: HIDE LEFT SIDEBAR AUTOMATICALLY ON MOBILE/CELLPHONE SCREENS */
         @media (max-width: 768px) {
             body { padding: 5px; }
-            .container { padding: 14px; border-radius: 16px; margin: 10px auto; }
+            .container { padding: 14px; border-radius: 16px; margin: 10px auto; max-width: 100%; }
             .left-suspects-sidebar { display: none !important; }
-            .judge-speech-container { margin: 10px; padding: 12px; gap: 10px; }
+            .judge-speech-container { margin: 10px auto; padding: 12px; gap: 10px; max-width: 100%; }
             .judge-speech-avatar { font-size: 24px; padding: 8px; }
             .judge-speech-text { font-size: 12.5px; }
             h1 { font-size: 18px; }
@@ -599,23 +630,40 @@
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
 
-    <!-- LEFT-SIDE FLOATING SUSPECTS PANEL FOR LAPTOP -->
+    <!-- WINNER POPUP MODAL FOR ALL PARTICIPANTS -->
+    <div class="winner-modal-overlay" id="winner-modal">
+        <div class="winner-modal-card">
+            <div style="font-size: 50px; margin-bottom: 5px;">🏆⚖️</div>
+            <h2 id="winner-title" style="color: #f472b6; font-size: 26px; margin: 10px 0;"></h2>
+            <div style="background: rgba(168, 85, 247, 0.2); border: 1.5px solid rgba(168, 85, 247, 0.5); padding: 15px; border-radius: 16px; margin: 15px 0;">
+                <p style="font-size: 22px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin: 0 0 8px 0;">
+                    🎉 Give 5 claps for that group and magaling, magaling! 👏
+                </p>
+                <p style="font-size: 26px; font-weight: 900; color: #6ee7b7; text-shadow: 0 0 15px rgba(110, 231, 183, 0.6); margin: 0;">
+                    CONGRATULATIONS YOU ARE INNOCENT! ✨
+                </p>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 10px; font-size: 16px; padding: 12px;" onclick="closeWinnerModal()">Close / View Results</button>
+        </div>
+    </div>
+
+    <!-- REFINED SLENDER LEFT-SIDE SUSPECTS PANEL FOR LAPTOP -->
     <div class="left-suspects-sidebar" id="left-sidebar">
-        <p style="font-size: 13px; color: #cbd5e1; margin: 0 0 10px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
+        <p style="font-size: 12px; color: #cbd5e1; margin: 0 0 8px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 22px;">👤</div>
-            <h4 style="margin: 3px 0; color: #f3e8ff; font-size: 12px;">Suspect A</h4>
-            <p style="font-size: 10.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Denied accessible training ramps for PWDs (R.A. 7277)</p>
+            <div style="font-size: 20px;">👤</div>
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11.5px;">Suspect A</h4>
+            <p style="font-size: 10px; color: #94a3b8; margin: 0; line-height: 1.25;">Denied accessible training ramps for PWDs (R.A. 7277)</p>
         </div>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 22px;">🧑‍💼</div>
-            <h4 style="margin: 3px 0; color: #f3e8ff; font-size: 12px;">Suspect B</h4>
-            <p style="font-size: 10.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Complied with teacher professional code of ethics</p>
+            <div style="font-size: 20px;">🧑‍💼</div>
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11.5px;">Suspect B</h4>
+            <p style="font-size: 10px; color: #94a3b8; margin: 0; line-height: 1.25;">Complied with teacher professional code of ethics</p>
         </div>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 22px;">🕵️‍♂️</div>
-            <h4 style="margin: 3px 0; color: #f3e8ff; font-size: 12px;">Suspect C</h4>
-            <p style="font-size: 10.5px; color: #94a3b8; margin: 0; line-height: 1.3;">Respected ancestral domains of indigenous communities</p>
+            <div style="font-size: 20px;">🕵️‍♂️</div>
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 11.5px;">Suspect C</h4>
+            <p style="font-size: 10px; color: #94a3b8; margin: 0; line-height: 1.25;">Respected ancestral domains of indigenous communities</p>
         </div>
     </div>
 
@@ -865,6 +913,7 @@
         let answeredQuestions = {};
         let finalScoreValue = 0;
         let totalAnsweredCount = 0;
+        let winnerModalShown = false;
 
         // JUDGE EJ REPEATING TYPEWRITER EFFECT
         const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, we have an urgent pending case on our docket regarding the protection of marginalized sectors and children\'s rights under our special statutes. Prepare your arguments and statutes meticulously—this session is now officially in session!"';
@@ -946,6 +995,10 @@
 
         function closeWarningModal() {
             document.getElementById('warning-modal').style.display = 'none';
+        }
+
+        function closeWinnerModal() {
+            document.getElementById('winner-modal').style.display = 'none';
         }
 
         function verifyJudgePassword() {
@@ -1123,6 +1176,7 @@
             if (timer <= 0) {
                 disableQuizInputsOnly();
                 revealExplanationsAndRating();
+                triggerWinnerAnnouncement(sortedGroups);
             }
         });
 
@@ -1138,6 +1192,21 @@
             disableQuizInputsOnly();
             revealExplanationsAndRating();
         });
+
+        function triggerWinnerAnnouncement(sortedGroups) {
+            if (winnerModalShown) return;
+            winnerModalShown = true;
+
+            if (sortedGroups && sortedGroups.length > 0) {
+                let topGroup = sortedGroups[0][0];
+                let topScore = sortedGroups[0][1];
+                document.getElementById('winner-title').innerText = `👑 Winner: ${topGroup} (${topScore} / 6 points)`;
+            } else {
+                document.getElementById('winner-title').innerText = `👑 Time is up!`;
+            }
+
+            document.getElementById('winner-modal').style.display = 'flex';
+        }
 
         function disableQuizInputsOnly() {
             document.querySelectorAll('#quiz-questions input[type="radio"]').forEach(input => {
