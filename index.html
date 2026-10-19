@@ -11,14 +11,13 @@
             --primary-hover: #7c3aed;
             --success: #10b981;
             --danger: #f43f5e;
-            --card-bg-transparent: rgba(15, 23, 42, 0.25);
+            --card-bg-transparent: rgba(15, 23, 42, 0.35);
             --card-bg-solid: rgba(15, 23, 42, 0.75); 
             --text-color: #ffffff;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Balanced darkened background overlay for perfect readability */
             background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), 
                         url('/background.jpg') no-repeat center center fixed;
             background-size: cover;
@@ -53,13 +52,13 @@
         .icon-4 { bottom: 10%; right: 7%; animation-delay: 4.5s; }
         .icon-5 { top: 50%; left: 3%; animation-delay: 2s; }
 
-        /* FULL BODY / TRANSPARENT PNG POP-UP AT RIGHT EDGE WITH SHADOW */
+        /* CLEAN RESPONSIVE PHOTO CUTOUT WITH SOFT NATURAL SHADOW */
         .side-profile-container {
             position: fixed;
             right: 0;
             bottom: 0;
-            width: 320px;
-            height: 85vh;
+            width: 280px;
+            height: 65vh;
             z-index: 5;
             pointer-events: none;
             display: flex;
@@ -75,13 +74,13 @@
             max-height: 100%;
             object-fit: contain;
             object-position: bottom right;
-            /* Stunning shadow and glow to emphasize full body cutout */
-            filter: drop-shadow(-15px 0px 30px rgba(168, 85, 247, 0.5)) drop-shadow(-25px 10px 40px rgba(0, 0, 0, 0.9));
+            /* Inalis ang purple glow; pinalitan ng natural black depth shadow */
+            filter: drop-shadow(-10px 5px 15px rgba(0, 0, 0, 0.7));
         }
 
         @keyframes profilePop {
-            0% { transform: translateX(80px); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
 
         .container { 
@@ -398,6 +397,7 @@
             100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.8) rotate(360deg); }
         }
 
+        /* MOBILE DISPLAY OPTIMIZATION */
         @media (max-width: 600px) {
             body { padding: 5px; }
             .container { padding: 14px; border-radius: 16px; }
@@ -410,7 +410,13 @@
             .options label { font-size: 12px; padding: 8px; }
             #judge-welcome-msg { font-size: 28px; }
             .student-welcome-text { font-size: 24px; }
-            .side-profile-container { width: 180px; height: 50vh; }
+            
+            /* Clean Mobile Photo Sizing Without Any Purple Box Overlay */
+            .side-profile-container { 
+                width: 160px; 
+                height: 38vh; 
+                opacity: 0.9;
+            }
         }
     </style>
 </head>
@@ -422,7 +428,7 @@
     <div class="law-bg-element icon-4">🔨</div>
     <div class="law-bg-element icon-5">🖋️</div>
 
-    <!-- Full Body Transparent PNG on First Screen with Glow Shadow -->
+    <!-- Clean Transparent Photo at Bottom Right Corner -->
     <div class="side-profile-container" id="side-profile">
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
