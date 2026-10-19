@@ -226,7 +226,7 @@
             border: 2px solid #c084fc;
             border-radius: 28px;
             padding: 35px 30px;
-            max-width: 520px;
+            max-width: 540px;
             width: 100%;
             text-align: center;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(168, 85, 247, 0.4);
@@ -633,14 +633,14 @@
     <!-- WINNER POPUP MODAL FOR ALL PARTICIPANTS -->
     <div class="winner-modal-overlay" id="winner-modal">
         <div class="winner-modal-card">
-            <div style="font-size: 50px; margin-bottom: 5px;">🏆⚖️</div>
-            <h2 id="winner-title" style="color: #f472b6; font-size: 26px; margin: 10px 0;"></h2>
-            <div style="background: rgba(168, 85, 247, 0.2); border: 1.5px solid rgba(168, 85, 247, 0.5); padding: 15px; border-radius: 16px; margin: 15px 0;">
-                <p style="font-size: 22px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin: 0 0 8px 0;">
-                    🎉 Give 5 claps for that group and magaling, magaling! 👏
+            <div style="font-size: 55px; margin-bottom: 5px;">🏆⚖️</div>
+            <h2 id="winner-title" style="color: #f472b6; font-size: 28px; margin: 10px 0;"></h2>
+            <div style="background: rgba(168, 85, 247, 0.2); border: 1.5px solid rgba(168, 85, 247, 0.5); padding: 18px; border-radius: 18px; margin: 18px 0;">
+                <p style="font-size: 20px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); margin: 0 0 12px 0;">
+                    👏 Give 5 claps for that group and say "magaling, magaling!" 🌟
                 </p>
-                <p style="font-size: 26px; font-weight: 900; color: #6ee7b7; text-shadow: 0 0 15px rgba(110, 231, 183, 0.6); margin: 0;">
-                    CONGRATULATIONS YOU ARE INNOCENT! ✨
+                <p id="winner-innocent-text" style="font-size: 27px; font-weight: 900; color: #6ee7b7; text-shadow: 0 0 18px rgba(110, 231, 183, 0.7); margin: 0; line-height: 1.3;">
+                    <!-- Dito ilalagay ang dynamic group name kasama ang "are innocent!" -->
                 </p>
             </div>
             <button class="btn" style="width: 100%; margin-top: 10px; font-size: 16px; padding: 12px;" onclick="closeWinnerModal()">Close / View Results</button>
@@ -1200,9 +1200,11 @@
             if (sortedGroups && sortedGroups.length > 0) {
                 let topGroup = sortedGroups[0][0];
                 let topScore = sortedGroups[0][1];
-                document.getElementById('winner-title').innerText = `👑 Winner: ${topGroup} (${topScore} / 6 points)`;
+                document.getElementById('winner-title').innerText = `👑 Top Innocent Counsel: ${topGroup} (${topScore} / 6 points)`;
+                document.getElementById('winner-innocent-text').innerText = `CONGRATULATIONS ${topGroup.toUpperCase()} ARE INNOCENT! ✨`;
             } else {
                 document.getElementById('winner-title').innerText = `👑 Time is up!`;
+                document.getElementById('winner-innocent-text').innerText = `CONGRATULATIONS THIS GROUP ARE INNOCENT! ✨`;
             }
 
             document.getElementById('winner-modal').style.display = 'flex';
