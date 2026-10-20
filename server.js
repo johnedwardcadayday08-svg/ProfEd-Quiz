@@ -1,21 +1,29 @@
 const express = require('express');
-const app = express();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const http = require('http');
+const { Server } = require('socket.io');
 const path = require('path');
 
-// Binabasa nito ang mga static files kahit nasa root folder man o public folder ang index.html at mga images mo
-app.use(express.static(path.join(__dirname))); 
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-let timer = 60;
+app.use(express.static(path.join(__dirname, 'public')));
+
+let isGameStarted = false;
 let timerInterval = null;
-let isGameStarted = false; 
-
 let groupScores = {
     'Attorney 1': 0,
     'Attorney 2': 0,
     'Attorney 3': 0,
     'Attorney 4': 0
+};
+
+// Hiwalay na timer para sa bawat grupo sa server side
+let groupTimers = {
+    'Attorney 1': 60,
+    'Attorney 2': 60,
+    'Attorney 3': 60,
+    'Attorney 4': 60
 };
 
 let attorneyPhotos = {
@@ -25,33 +33,63 @@ let attorneyPhotos = {
     'Attorney 4': ''
 };
 
-let judgePopupQueue = [];
+let popupQueue = [];
+
+const correctAnswers = {
+    q1: 'RA7277',
+    q2: 'RA7610',
+    q3: 'RA8371',
+    q4: 'CONST',
+    q5: 'RA7277',
+    q6: 'RA7836'
+};
 
 io.on('connection', (socket) => {
-    socket.emit('updateState', { groupScores, photos: attorneyPhotos });
+    // Ipadala ang kasalukuyang estado pag-connect
     socket.emit('gameState', { isGameStarted });
+    socket.emit('updateState', { groupScores, photos: attorneyPhotos });
 
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
-        if (attorneyPhotos[groupName] !== undefined) {
+        if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
-            judgePopupQueue.push({ groupName, photo });
+            popupQueue.push({ groupName, photo });
             io.emit('updateState', { groupScores, photos: attorneyPhotos });
-            io.emit('showJudgePopupQueue', judgePopupQueue);
+            io.emit('showJudgePopupQueue', popupQueue);
         }
     });
 
     socket.on('startTimer', () => {
         if (!isGameStarted) {
             isGameStarted = true;
-            io.emit('gameState', { isGameStarted: true });
+            // I-reset sa 60 seconds bago magsimula
+            groupTimers = {
+                'Attorney 1': 60,
+                'Attorney 2': 60,
+                'Attorney 3': 60,
+                'Attorney 4': 60
+            };
             
-            timer = 60;
-            clearInterval(timerInterval);
+            io.emit('gameState', { isGameStarted });
+
+            if (timerInterval) clearInterval(timerInterval);
+
             timerInterval = setInterval(() => {
-                timer--;
-                io.emit('timerUpdate', timer);
-                if (timer <= 0) {
+                let allZero = true;
+                
+                // Bawasan ang timer ng bawat grupo nang INDEPENDENT
+                Object.keys(groupTimers).forEach(group => {
+                    if (groupTimers[group] > 0) {
+                        groupTimers[group] -= 1;
+                        allZero = false;
+                    }
+                });
+
+                // I-broadcast ang bawat group timer sa lahat ng clients
+                io.emit('timerUpdate', groupTimers);
+
+                if (allZero) {
                     clearInterval(timerInterval);
+                    isGameStarted = false;
                     io.emit('timeUp');
                 }
             }, 1000);
@@ -60,36 +98,44 @@ io.on('connection', (socket) => {
 
     socket.on('submitAnswer', ({ groupName, questionId, answer }) => {
         if (!isGameStarted) return;
+        
+        const correctAns = correctAnswers[questionId];
+        const isCorrect = (answer === correctAns);
 
-        const correctAnswers = {
-            q1: 'RA7277',
-            q2: 'RA7610',
-            q3: 'RA8371',
-            q4: 'CONST',
-            q5: 'RA7277',
-            q6: 'RA7836'
-        };
-
-        let isCorrect = (correctAnswers[questionId] === answer);
         if (isCorrect) {
             groupScores[groupName] = (groupScores[groupName] || 0) + 1;
-            io.emit('updateState', { groupScores, photos: attorneyPhotos });
+            
+            // MAGDAGDAG NG +5 SECONDS SA SERVER TIMER NG TUMAMANG GRUPO LAMANG
+            if (groupTimers[groupName] !== undefined) {
+                groupTimers[groupName] += 5;
+            } else {
+                groupTimers[groupName] = 65;
+            }
         }
+
+        // I-send ang feedback sa nag-submit
         socket.emit('answerFeedback', { isCorrect, questionId, answer });
+
+        // I-update ang scores at timers sa lahat
+        io.emit('updateState', { groupScores, photos: attorneyPhotos });
+        io.emit('timerUpdate', groupTimers);
     });
 
     socket.on('resetGame', () => {
+        if (timerInterval) clearInterval(timerInterval);
         isGameStarted = false;
-        clearInterval(timerInterval);
-        timer = 60;
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
-        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-        judgePopupQueue = [];
+        groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
+        popupQueue = [];
         io.emit('resetState');
+    });
+
+    socket.on('disconnect', () => {
+        // Disconnect handler
     });
 });
 
 const PORT = process.env.PORT || 3000;
-http.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
