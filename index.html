@@ -17,6 +17,7 @@
             --text-color: #ffffff;
         }
 
+        /* HARDWARE ACCELERATION FOR MOBILE SMOOTHNESS */
         * {
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
@@ -1887,16 +1888,6 @@
                     targetLabel.classList.add(isCorrect ? "option-correct" : "option-wrong");
                 }
             }
-
-            // INDEPENDENT LOCAL TIMER INCREMENT PARA SA TUMAMANG GRUPO LAMANG
-            if (isCorrect && myGroup) {
-                if (groupTimers[myGroup] !== undefined) {
-                    groupTimers[myGroup] += 5;
-                } else {
-                    groupTimers[myGroup] = 65;
-                }
-                renderScoreboardAndPodium();
-            }
         });
 
         socket.on('updateState', ({ groupScores, photos }) => {
@@ -1998,14 +1989,11 @@
             isGameStarted = true;
             unlockQuizUI();
 
-            // IBANGGIT ANG BAWAT GRUPO NG ISANG SEC BAWAT TICK NG LOKAL NA TIMER
-            ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(g => {
-                if (groupTimers[g] === undefined) {
-                    groupTimers[g] = 60;
-                } else if (groupTimers[g] > 0) {
-                    groupTimers[g] -= 1;
-                }
-            });
+            if (typeof data === 'object' && data !== null) {
+                Object.keys(data).forEach(g => {
+                    groupTimers[g] = data[g];
+                });
+            }
 
             renderScoreboardAndPodium();
 

@@ -48,9 +48,10 @@ const correctAnswers = {
 };
 
 io.on('connection', (socket) => {
+    // Ipadala agad ang kasalukuyang state at timers pag-connect ng estudyante/judge
     socket.emit('gameState', { isGameStarted });
     socket.emit('updateState', { groupScores, photos: attorneyPhotos });
-    socket.emit('timerUpdate', groupTimers); // Ipadala agad ang initial timers
+    socket.emit('timerUpdate', groupTimers);
 
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
@@ -106,7 +107,6 @@ io.on('connection', (socket) => {
         if (isCorrect) {
             groupScores[groupName] = (groupScores[groupName] || 0) + 1;
             
-            // Magdagdag ng +5 seconds sa server timer ng grupo na ito
             if (groupTimers[groupName] !== undefined) {
                 groupTimers[groupName] += 5;
             } else {
@@ -116,8 +116,7 @@ io.on('connection', (socket) => {
 
         socket.emit('answerFeedback', { isCorrect, questionId, answer });
         io.emit('updateState', { groupScores, photos: attorneyPhotos });
-        
-        // I-broadcast agad ang bagong timers sa Judge monitor at iba pa
+        // I-broadcast agad ang updated timers sa Judge monitor at sa lahat ng grupo
         io.emit('timerUpdate', groupTimers);
     });
 
@@ -128,6 +127,7 @@ io.on('connection', (socket) => {
         groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
         popupQueue = [];
         io.emit('resetState');
+        io.emit('gameState', { isGameStarted });
         io.emit('timerUpdate', groupTimers);
     });
 
