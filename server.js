@@ -7,7 +7,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Dahil nasa iisang folder lang ang server.js at index.html
+app.use(express.static(__dirname));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 let isGameStarted = false;
 let timerInterval = null;
@@ -45,7 +50,6 @@ const correctAnswers = {
 };
 
 io.on('connection', (socket) => {
-    // Ipadala ang kasalukuyang estado pag-connect
     socket.emit('gameState', { isGameStarted });
     socket.emit('updateState', { groupScores, photos: attorneyPhotos });
 
@@ -61,7 +65,6 @@ io.on('connection', (socket) => {
     socket.on('startTimer', () => {
         if (!isGameStarted) {
             isGameStarted = true;
-            // I-reset sa 60 seconds bago magsimula
             groupTimers = {
                 'Attorney 1': 60,
                 'Attorney 2': 60,
@@ -76,7 +79,6 @@ io.on('connection', (socket) => {
             timerInterval = setInterval(() => {
                 let allZero = true;
                 
-                // Bawasan ang timer ng bawat grupo nang INDEPENDENT
                 Object.keys(groupTimers).forEach(group => {
                     if (groupTimers[group] > 0) {
                         groupTimers[group] -= 1;
@@ -84,7 +86,6 @@ io.on('connection', (socket) => {
                     }
                 });
 
-                // I-broadcast ang bawat group timer sa lahat ng clients
                 io.emit('timerUpdate', groupTimers);
 
                 if (allZero) {
@@ -105,7 +106,6 @@ io.on('connection', (socket) => {
         if (isCorrect) {
             groupScores[groupName] = (groupScores[groupName] || 0) + 1;
             
-            // MAGDAGDAG NG +5 SECONDS SA SERVER TIMER NG TUMAMANG GRUPO LAMANG
             if (groupTimers[groupName] !== undefined) {
                 groupTimers[groupName] += 5;
             } else {
@@ -113,10 +113,7 @@ io.on('connection', (socket) => {
             }
         }
 
-        // I-send ang feedback sa nag-submit
         socket.emit('answerFeedback', { isCorrect, questionId, answer });
-
-        // I-update ang scores at timers sa lahat
         io.emit('updateState', { groupScores, photos: attorneyPhotos });
         io.emit('timerUpdate', groupTimers);
     });
@@ -130,9 +127,7 @@ io.on('connection', (socket) => {
         io.emit('resetState');
     });
 
-    socket.on('disconnect', () => {
-        // Disconnect handler
-    });
+    socket.on('disconnect', () => {});
 });
 
 const PORT = process.env.PORT || 3000;
