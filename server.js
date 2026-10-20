@@ -36,6 +36,14 @@ let attorneyPhotos = {
     'Attorney 4': ''
 };
 
+// Tracking kung tapos na ba ang mga grupo sa pagsagot ng 6 items
+let groupCompletedStatus = {
+    'Attorney 1': false,
+    'Attorney 2': false,
+    'Attorney 3': false,
+    'Attorney 4': false
+};
+
 let popupQueue = [];
 
 const correctAnswers = {
@@ -49,14 +57,14 @@ const correctAnswers = {
 
 io.on('connection', (socket) => {
     socket.emit('gameState', { isGameStarted });
-    socket.emit('updateState', { groupScores, photos: attorneyPhotos });
+    socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
     socket.emit('timerUpdate', groupTimers);
 
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
             popupQueue.push({ groupName, photo });
-            io.emit('updateState', { groupScores, photos: attorneyPhotos });
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
             io.emit('showJudgePopupQueue', popupQueue);
         }
     });
@@ -71,8 +79,16 @@ io.on('connection', (socket) => {
                 'Attorney 4': 60
             };
             
+            groupCompletedStatus = {
+                'Attorney 1': false,
+                'Attorney 2': false,
+                'Attorney 3': false,
+                'Attorney 4': false
+            };
+            
             io.emit('gameState', { isGameStarted });
             io.emit('timerUpdate', groupTimers);
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
 
             if (timerInterval) clearInterval(timerInterval);
 
@@ -104,7 +120,7 @@ io.on('connection', (socket) => {
         io.emit('timeUp');
     });
 
-    socket.on('submitAnswer', ({ groupName, questionId, answer }) => {
+    socket.on('submitAnswer', ({ groupName, questionId, answer, answeredCount }) => {
         if (!isGameStarted) return;
         
         const correctAns = correctAnswers[questionId];
@@ -120,8 +136,14 @@ io.on('connection', (socket) => {
             }
         }
 
+        // Check kung naubos na ang 6 na tanong
+        if (answeredCount >= 6) {
+            groupCompletedStatus[groupName] = true;
+            io.emit('groupFinished', { groupName });
+        }
+
         socket.emit('answerFeedback', { isCorrect, questionId, answer });
-        io.emit('updateState', { groupScores, photos: attorneyPhotos });
+        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
         io.emit('timerUpdate', groupTimers);
     });
 
@@ -130,6 +152,7 @@ io.on('connection', (socket) => {
         isGameStarted = false;
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
+        groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         
         attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         popupQueue = [];

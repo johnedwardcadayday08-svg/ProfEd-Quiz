@@ -508,6 +508,12 @@
             will-change: transform;
         }
 
+        /* Kulay Green para sa natapos na sa podium */
+        .glowing-frame.completed-frame {
+            background: linear-gradient(135deg, #10b981, #34d399) !important;
+            box-shadow: 0 0 22px rgba(16, 185, 129, 0.9) !important;
+        }
+
         .glowing-frame img {
             width: 100%;
             height: 100%;
@@ -784,6 +790,11 @@
             flex-shrink: 0;
             transform: scaleX(-1);
         }
+        /* Kulay Green para sa mini avatar border kapag tapos na */
+        .attorney-avatar-mini.completed-avatar {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+        }
 
         .winner-modal-overlay {
             position: fixed;
@@ -1054,12 +1065,6 @@
             will-change: transform;
         }
 
-        @keyframes aestheticBannerGlow {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.01); }
-            100% { transform: scale(1); }
-        }
-
         .option-correct {
             background: rgba(16, 185, 129, 0.45) !important;
             border-color: #10b981 !important;
@@ -1233,9 +1238,36 @@
             0% { transform: scale(1); }
             100% { transform: scale(1.05); }
         }
+
+        /* Styling para sa 3-second notification banner sa Judge Monitor */
+        #judge-notification-banner {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 16px;
+            font-weight: 900;
+            font-size: 16px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            z-index: 100008;
+            display: none;
+            backdrop-filter: blur(10px);
+            animation: fadeInOutBanner 0.3s ease;
+        }
+        @keyframes fadeInOutBanner {
+            0% { opacity: 0; transform: translate(-50%, -20px); }
+            100% { opacity: 1; transform: translate(-50%, 0); }
+        }
     </style>
 </head>
 <body>
+
+    <!-- 3-Second Notification Banner para sa Judge Monitor -->
+    <div id="judge-notification-banner"></div>
 
     <div class="top-controls" id="top-controls-group">
         <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="Toggle">▲</button>
@@ -1601,6 +1633,7 @@
         let latestGroupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         let groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
         let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+        let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         let capturedDataUrl = '';
         let mediaStream = null;
 
@@ -1867,9 +1900,23 @@
             if (!isGameStarted) return;
             if (!myGroup || answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
-            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer });
+            
+            const answeredCount = Object.keys(answeredQuestions).length;
+            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer, answeredCount });
+            
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
+
+            // Kapag nasagot na ang lahat ng 6 na tanong, i-lock ulit ang screen at magpakita ng pop-up message
+            if (answeredCount >= 6) {
+                lockQuizUI();
+                const popup = document.getElementById('feedback-popup');
+                if (popup) {
+                    popup.className = "feedback-correct";
+                    popup.innerHTML = "Wait for the results!";
+                    popup.style.display = "block";
+                }
+            }
         }
 
         socket.on('gameState', ({ isGameStarted: started }) => {
@@ -1882,12 +1929,16 @@
         });
 
         socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
-            const popup = document.getElementById('feedback-popup');
-            if (popup) {
-                popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-                popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
-                popup.style.display = "block";
-                setTimeout(() => { popup.style.display = "none"; }, 1500);
+            const answeredCount = Object.keys(answeredQuestions).length;
+            // Kung tapos na ang 6 items, huwag nang patungan ang "Wait for the results!" pop-up
+            if (answeredCount < 6) {
+                const popup = document.getElementById('feedback-popup');
+                if (popup) {
+                    popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
+                    popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
+                    popup.style.display = "block";
+                    setTimeout(() => { popup.style.display = "none"; }, 1500);
+                }
             }
             if (questionId && answer) {
                 const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
@@ -1897,14 +1948,29 @@
             }
         });
 
-        socket.on('updateState', ({ groupScores, photos }) => {
+        socket.on('updateState', ({ groupScores, photos, completedStatus }) => {
             latestGroupScores = groupScores;
             if (photos) attorneyPhotos = photos;
+            if (completedStatus) groupCompletedStatus = completedStatus;
 
             renderScoreboardAndPodium();
 
             if (myGroup && groupScores[myGroup] !== undefined) {
                 document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / 6`;
+            }
+        });
+
+        // Socket listener para sa 3-second notification banner sa Judge Monitor kapag may natapos na grupo
+        socket.on('groupFinished', ({ groupName }) => {
+            if (isJudgeRole) {
+                const banner = document.getElementById('judge-notification-banner');
+                if (banner) {
+                    banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
+                    banner.style.display = 'block';
+                    setTimeout(() => {
+                        banner.style.display = 'none';
+                    }, 3000);
+                }
             }
         });
 
@@ -1920,10 +1986,11 @@
                 let tSecs = (tSeconds % 60).toString().padStart(2, '0');
                 let timeText = `${tMins}:${tSecs}`;
                 let isUrgent = tSeconds <= 15 && tSeconds > 0;
+                let isCompleted = groupCompletedStatus[group];
 
                 chartHTML += `
                     <div class="bar-row">
-                        <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini" />
+                        <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
                         <div class="bar-label">${group}</div>
                         <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
                         <div class="bar-score">${score}/6</div>
@@ -1938,6 +2005,7 @@
             sortedGroups.forEach(([group, score], idx) => {
                 let heightPercent = Math.max((score / 6) * 100, 8);
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
+                let isCompleted = groupCompletedStatus[group];
                 
                 let gradientBg = '';
                 if (score >= 5) {
@@ -1954,7 +2022,7 @@
                         <div class="rank-bar-track">
                             <div class="rank-bar-fill" style="height: ${heightPercent}%; background: ${gradientBg};"></div>
                         </div>
-                        <div class="glowing-frame">
+                        <div class="glowing-frame ${isCompleted ? 'completed-frame' : ''}">
                             <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
                         </div>
                         <div class="animated-attorney-label">${group}</div>
@@ -2001,13 +2069,17 @@
 
             let myTimer = myGroup && groupTimers[myGroup] !== undefined ? groupTimers[myGroup] : (groupTimers['Attorney 1'] || 60);
             
+            const answeredCount = Object.keys(answeredQuestions).length;
             if (myTimer >= 60 && !isGameStarted) {
                 lockQuizUI();
                 return;
             }
 
             isGameStarted = true;
-            unlockQuizUI();
+            // Kung hindi pa tapos ang student sa 6 questions, i-unlock; kung tapos na, panatilihing nakalock
+            if (answeredCount < 6) {
+                unlockQuizUI();
+            }
 
             renderScoreboardAndPodium();
 
