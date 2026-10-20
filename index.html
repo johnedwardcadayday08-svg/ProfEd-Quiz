@@ -150,7 +150,7 @@
             position: fixed;
             top: 15px;
             right: 18px;
-            z-index: 100005; /* High z-index to stay above instructions modal */
+            z-index: 100005;
             display: flex;
             gap: 10px;
             align-items: center;
@@ -1081,7 +1081,7 @@
             .left-suspects-sidebar { display: none !important; }
         }
 
-        /* AUTO-FITTING NO-SCROLL INSTRUCTIONS MODAL RESPONSIVE STYLES */
+        /* ENHANCED NO-SCROLL INSTRUCTIONS MODAL WITH EXTRA LARGE BOLD FONTS */
         .instructions-responsive-box {
             display: flex;
             flex-direction: column;
@@ -1091,28 +1091,30 @@
         }
 
         .inst-title {
-            font-size: clamp(20px, 3.8vh, 32px);
+            font-size: clamp(24px, 4.2vh, 36px);
+            font-weight: 900;
             margin: 0 0 2px 0;
             line-height: 1.1;
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
         }
 
         .inst-subtitle {
             color: #f472b6;
-            margin: 2px 0 8px 0;
-            font-size: clamp(13px, 2.2vh, 18px);
+            margin: 2px 0 10px 0;
+            font-size: clamp(16px, 2.6vh, 22px);
             font-weight: 800;
         }
 
         .inst-content-card {
             text-align: left;
-            font-size: clamp(11.5px, 1.8vh, 15px);
-            color: #f3e8ff;
-            line-height: 1.35;
+            font-size: clamp(14px, 2.2vh, 18px);
+            color: #ffffff;
+            line-height: 1.45;
             margin: 6px 0;
-            background: rgba(15, 23, 42, 0.7);
-            padding: clamp(8px, 1.8vh, 16px);
-            border-radius: 16px;
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.75);
+            padding: clamp(10px, 2.2vh, 20px);
+            border-radius: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -1121,11 +1123,37 @@
 
         .inst-btn {
             width: 100%;
-            padding: clamp(10px, 1.8vh, 14px) !important;
-            font-size: clamp(14px, 2.2vh, 18px) !important;
+            padding: clamp(12px, 2.2vh, 16px) !important;
+            font-size: clamp(16px, 2.6vh, 22px) !important;
             font-weight: 900 !important;
-            margin-top: 4px !important;
-            border-radius: 14px !important;
+            margin-top: 6px !important;
+            border-radius: 16px !important;
+        }
+
+        /* ATTORNEY TIMER BADGE IN LIVE SCOREBOARD */
+        .attorney-timer-badge {
+            background: rgba(16, 185, 129, 0.25);
+            border: 1.5px solid #10b981;
+            color: #6ee7b7;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: auto;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
+        }
+        .attorney-timer-badge.urgent-badge {
+            background: rgba(244, 63, 94, 0.3);
+            border-color: #f43f5e;
+            color: #fda4af;
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+            animation: badgePulse 0.8s infinite alternate;
+        }
+        @keyframes badgePulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
         }
     </style>
 </head>
@@ -1179,9 +1207,9 @@
         <p>📱 SCAN TO JOIN</p>
     </div>
 
-    <!-- NO-SCROLL AUTO-FIT INSTRUCTIONS MODAL (WORKS IN NORMAL & FULLSCREEN) -->
+    <!-- NO-SCROLL AUTO-FIT INSTRUCTIONS MODAL (WITH EXTRA LARGE FONTS) -->
     <div class="modal-overlay" id="instructions-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(14px); padding: 12px; box-sizing: border-box; overflow: hidden;">
-        <div class="modal-card instructions-responsive-box" style="max-width: 820px; width: 100%; max-height: calc(100vh - 24px); border: 2.5px solid rgba(192, 132, 252, 0.85); border-radius: 22px; padding: clamp(14px, 2.5vh, 26px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
+        <div class="modal-card instructions-responsive-box" style="max-width: 860px; width: 100%; max-height: calc(100vh - 24px); border: 2.5px solid rgba(192, 132, 252, 0.85); border-radius: 22px; padding: clamp(14px, 2.5vh, 26px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
             <div>
                 <div class="inst-title">📜⚖️ HOW TO PLAY ⚖️📜</div>
                 <div class="inst-subtitle">Welcome to PROFED 5 Quick Activity!</div>
@@ -1189,19 +1217,19 @@
             
             <div class="inst-content-card">
                 <div>
-                    <p style="margin: 0 0 4px 0; color: #38bdf8; font-weight: bold;"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
-                    <ul style="margin: 0; padding-left: 20px; color: #cbd5e1; font-weight: 600;">
-                        <li style="margin-bottom: 2px;">Piliin ang <b style="color: #f472b6;">Judge Big Screen Monitor</b> at ilagay ang password.</li>
-                        <li>I-click ang <b style="color: #10b981;">Start Quiz</b> para magsimula ang 60s timer at mag-unlock ang mga tanong.</li>
+                    <p style="margin: 0 0 6px 0; color: #38bdf8; font-weight: 800; font-size: clamp(16px, 2.4vh, 20px);"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
+                    <ul style="margin: 0; padding-left: 22px; color: #f1f5f9; font-weight: 700;">
+                        <li style="margin-bottom: 4px;">Piliin ang <b style="color: #f472b6;">Judge Big Screen Monitor</b> at ilagay ang password.</li>
+                        <li>I-click ang <b style="color: #10b981;">Start Quiz</b> para magsimula ang timer ng bawat grupo at mag-unlock ang mga tanong.</li>
                     </ul>
                 </div>
 
-                <div style="margin-top: 8px;">
-                    <p style="margin: 0 0 4px 0; color: #c084fc; font-weight: bold;"><strong>⚖️ Para sa Counsel / Students:</strong></p>
-                    <ul style="margin: 0; padding-left: 20px; color: #cbd5e1; font-weight: 600;">
-                        <li style="margin-bottom: 2px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>).</li>
-                        <li style="margin-bottom: 2px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b>.</li>
-                        <li>Maghintay sa waiting screen hanggang sa i-start ng Judge ang laro. Sagutan nang mabilis at tama ang mga tanong!</li>
+                <div style="margin-top: 10px;">
+                    <p style="margin: 0 0 6px 0; color: #c084fc; font-weight: 800; font-size: clamp(16px, 2.4vh, 20px);"><strong>⚖️ Para sa Counsel / Students:</strong></p>
+                    <ul style="margin: 0; padding-left: 22px; color: #f1f5f9; font-weight: 700;">
+                        <li style="margin-bottom: 4px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>).</li>
+                        <li style="margin-bottom: 4px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b>.</li>
+                        <li>Maghintay sa waiting screen. Sagutan nang mabilis at tama ang mga tanong! <b>Bawat tamang sagot = +5 Seconds Bonus Time! ⏱️✨</b></li>
                     </ul>
                 </div>
             </div>
@@ -1322,14 +1350,14 @@
             <div class="judge-main-layout">
                 <div class="judge-left-box">
                     <div class="header-bar">
-                        <span id="teacher-timer">Time Left: 01:00</span>
+                        <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings</span>
                         <div>
                             <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
                             <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
                         </div>
                     </div>
 
-                    <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard (Highest to Lowest)</h3>
+                    <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard & Group Timers</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
                 </div>
 
@@ -1506,86 +1534,37 @@
         let isGameStarted = false;
         let answeredQuestions = {};
         let latestGroupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
+        let groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
         let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         let capturedDataUrl = '';
         let mediaStream = null;
 
-        // AUDIO SOUND EFFECTS & SUSPENSE BACKGROUND BGM
-        let audioCtx = null;
-        let suspenseBgmAudio = null;
-        let lastUrgentBeepTime = 0;
+        // MP3 AUDIO SYSTEM CONFIGURATION
+        const bgmAudio = new Audio('/suspense-bgm.mp3');
+        bgmAudio.loop = true;
+        bgmAudio.volume = 0.35;
+
+        const urgentAudio = new Audio('/urgent-thrill.mp3');
+        urgentAudio.loop = true;
+        urgentAudio.volume = 0.65;
+
+        const clickAudio = new Audio('/click.mp3');
+        clickAudio.volume = 0.5;
 
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            if (!suspenseBgmAudio) {
-                startSuspenseBgm();
+            if (bgmAudio.paused) {
+                bgmAudio.play().catch(e => {});
             }
         }
 
         function playClickSound() {
             try {
-                initAudio();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.08);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.08);
+                clickAudio.currentTime = 0;
+                clickAudio.play().catch(e => {});
             } catch(e) {}
         }
 
-        function playUrgentThrillBeep() {
-            try {
-                initAudio();
-                const now = Date.now();
-                if (now - lastUrgentBeepTime < 900) return; // Prevent sound overlap
-                lastUrgentBeepTime = now;
-
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(140, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(70, audioCtx.currentTime + 0.25);
-                gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.25);
-            } catch(e) {}
-        }
-
-        function startSuspenseBgm() {
-            try {
-                const bufferSize = audioCtx.sampleRate * 2;
-                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = Math.sin(2 * Math.PI * 55 * (i / audioCtx.sampleRate)) * 0.05 + (Math.random() * 0.01);
-                }
-                const noise = audioCtx.createBufferSource();
-                noise.buffer = buffer;
-                noise.loop = true;
-                const gain = audioCtx.createGain();
-                gain.gain.value = 0.08;
-                noise.connect(gain);
-                gain.connect(audioCtx.destination);
-                noise.start();
-                suspenseBgmAudio = noise;
-            } catch(e) {}
-        }
-
-        // Add click listener to all buttons
+        // Add click listener to all buttons/inputs/labels
         document.addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.closest('label')) {
                 playClickSound();
@@ -1823,7 +1802,7 @@
             const popup = document.getElementById('feedback-popup');
             if (popup) {
                 popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-                popup.innerHTML = isCorrect ? "✔ CORRECT!" : "✖ INCORRECT!";
+                popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s)" : "✖ INCORRECT!";
                 popup.style.display = "block";
                 setTimeout(() => { popup.style.display = "none"; }, 1500);
             }
@@ -1839,18 +1818,33 @@
             latestGroupScores = groupScores;
             if (photos) attorneyPhotos = photos;
 
-            const sortedGroups = Object.entries(groupScores).sort((a, b) => b[1] - a[1]);
+            renderScoreboardAndPodium();
+
+            if (myGroup && groupScores[myGroup] !== undefined) {
+                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / 6`;
+            }
+        });
+
+        function renderScoreboardAndPodium() {
+            const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
             
             let chartHTML = '';
             sortedGroups.forEach(([group, score]) => {
                 let percentage = (score / 6) * 100;
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
+                let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 60;
+                let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
+                let tSecs = (tSeconds % 60).toString().padStart(2, '0');
+                let timeText = `${tMins}:${tSecs}`;
+                let isUrgent = tSeconds <= 15 && tSeconds > 0;
+
                 chartHTML += `
                     <div class="bar-row">
                         <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini" />
                         <div class="bar-label">${group}</div>
                         <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
                         <div class="bar-score">${score}/6</div>
+                        <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
                     </div>
                 `;
             });
@@ -1886,11 +1880,7 @@
             });
             const podiumDisplay = document.getElementById('podium-display');
             if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
-
-            if (myGroup && groupScores[myGroup] !== undefined) {
-                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / 6`;
-            }
-        });
+        }
 
         socket.on('showJudgePopupQueue', (queue) => {
             if (isJudgeRole) {
@@ -1913,31 +1903,55 @@
             }, 3000);
         }
 
-        socket.on('timerUpdate', (timer) => {
+        // UPDATE EACH ATTORNEY'S INDIVIDUAL TIMER
+        socket.on('timerUpdate', (data) => {
             isGameStarted = true;
             unlockQuizUI();
 
-            let mins = Math.floor(timer / 60).toString().padStart(2, '0');
-            let secs = (timer % 60).toString().padStart(2, '0');
+            // Check if server sent object of timers or global number
+            if (typeof data === 'object' && data !== null) {
+                groupTimers = data;
+            } else {
+                ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(g => {
+                    groupTimers[g] = data;
+                });
+            }
+
+            renderScoreboardAndPodium();
+
+            let myTimer = myGroup && groupTimers[myGroup] !== undefined ? groupTimers[myGroup] : (groupTimers['Attorney 1'] || 60);
+            let mins = Math.floor(myTimer / 60).toString().padStart(2, '0');
+            let secs = (myTimer % 60).toString().padStart(2, '0');
             let timeStr = `${mins}:${secs}`;
             let fullTimeStr = `Time Left: ${mins}:${secs}`;
             
-            document.getElementById('teacher-timer').innerText = fullTimeStr;
             document.getElementById('student-timer').innerText = fullTimeStr;
             document.getElementById('floating-timer-text').innerText = timeStr;
 
             const floatBadge = document.getElementById('floating-timer-badge');
-            if (timer <= 15 && timer > 0) {
+            if (myTimer <= 15 && myTimer > 0) {
                 document.body.classList.add('urgent-warning-glow');
                 if (floatBadge) floatBadge.classList.add('urgent-red');
-                playUrgentThrillBeep();
+
+                bgmAudio.pause();
+                if (urgentAudio.paused) {
+                    urgentAudio.play().catch(e => {});
+                }
             } else {
                 document.body.classList.remove('urgent-warning-glow');
                 if (floatBadge) floatBadge.classList.remove('urgent-red');
+
+                urgentAudio.pause();
+                urgentAudio.currentTime = 0;
             }
         });
 
         socket.on('timeUp', () => {
+            bgmAudio.pause();
+            urgentAudio.pause();
+            bgmAudio.currentTime = 0;
+            urgentAudio.currentTime = 0;
+
             document.body.classList.remove('urgent-warning-glow');
             const floatBadge = document.getElementById('floating-timer-badge');
             if (floatBadge) floatBadge.classList.remove('urgent-red');
