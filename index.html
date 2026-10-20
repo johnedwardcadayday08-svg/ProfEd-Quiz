@@ -148,9 +148,9 @@
 
         .top-controls {
             position: fixed;
-            top: 22px;
-            right: 25px;
-            z-index: 10005;
+            top: 15px;
+            right: 18px;
+            z-index: 100005; /* High z-index to stay above instructions modal */
             display: flex;
             gap: 10px;
             align-items: center;
@@ -172,7 +172,7 @@
             font-weight: bold;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(8px);
-            z-index: 10006;
+            z-index: 100006;
         }
 
         .control-btn {
@@ -1080,11 +1080,58 @@
         @media (max-width: 768px) {
             .left-suspects-sidebar { display: none !important; }
         }
+
+        /* AUTO-FITTING NO-SCROLL INSTRUCTIONS MODAL RESPONSIVE STYLES */
+        .instructions-responsive-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .inst-title {
+            font-size: clamp(20px, 3.8vh, 32px);
+            margin: 0 0 2px 0;
+            line-height: 1.1;
+        }
+
+        .inst-subtitle {
+            color: #f472b6;
+            margin: 2px 0 8px 0;
+            font-size: clamp(13px, 2.2vh, 18px);
+            font-weight: 800;
+        }
+
+        .inst-content-card {
+            text-align: left;
+            font-size: clamp(11.5px, 1.8vh, 15px);
+            color: #f3e8ff;
+            line-height: 1.35;
+            margin: 6px 0;
+            background: rgba(15, 23, 42, 0.7);
+            padding: clamp(8px, 1.8vh, 16px);
+            border-radius: 16px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        .inst-btn {
+            width: 100%;
+            padding: clamp(10px, 1.8vh, 14px) !important;
+            font-size: clamp(14px, 2.2vh, 18px) !important;
+            font-weight: 900 !important;
+            margin-top: 4px !important;
+            border-radius: 14px !important;
+        }
     </style>
 </head>
 <body>
 
-    <!-- TOP CONTROLS -->
+    <!-- TOP CONTROLS (ALWAYS VISIBLE ABOVE INSTRUCTIONS) -->
     <div class="top-controls" id="top-controls-group">
         <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="Toggle">▲</button>
         <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
@@ -1132,28 +1179,34 @@
         <p>📱 SCAN TO JOIN</p>
     </div>
 
-    <!-- FULLSCREEN & MALALAMIG/MALALAKING FONT INSTRUCTIONS MODAL -->
-    <div class="modal-overlay" id="instructions-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); padding: 20px; box-sizing: border-box; overflow-y: auto;">
-        <div class="modal-card" style="max-width: 900px; width: 100%; border: 3px solid rgba(192, 132, 252, 0.9); border-radius: 28px; padding: 35px 30px; box-shadow: 0 25px 60px rgba(0,0,0,0.85); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
-            <div style="font-size: 45px; margin-bottom: 8px;">📜⚖️ HOW TO PLAY ⚖️📜</div>
-            <h2 style="color: #f472b6; margin-top: 0; font-size: 26px; font-weight: 800;">Welcome to PROFED 5 Quick Activity!</h2>
+    <!-- NO-SCROLL AUTO-FIT INSTRUCTIONS MODAL (WORKS IN NORMAL & FULLSCREEN) -->
+    <div class="modal-overlay" id="instructions-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(14px); padding: 12px; box-sizing: border-box; overflow: hidden;">
+        <div class="modal-card instructions-responsive-box" style="max-width: 820px; width: 100%; max-height: calc(100vh - 24px); border: 2.5px solid rgba(192, 132, 252, 0.85); border-radius: 22px; padding: clamp(14px, 2.5vh, 26px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
+            <div>
+                <div class="inst-title">📜⚖️ HOW TO PLAY ⚖️📜</div>
+                <div class="inst-subtitle">Welcome to PROFED 5 Quick Activity!</div>
+            </div>
             
-            <div style="text-align: left; font-size: 18px; color: #f3e8ff; line-height: 1.7; margin: 25px 0; background: rgba(15, 23, 42, 0.7); padding: 25px; border-radius: 20px; border: 1.5px solid rgba(255, 255, 255, 0.2);">
-                <p style="margin: 0 0 12px 0; font-size: 22px; color: #38bdf8;"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
-                <ul style="margin: 0 0 20px 0; padding-left: 28px; color: #cbd5e1; font-weight: 600;">
-                    <li style="margin-bottom: 8px;">Piliin ang <b style="color: #f472b6;">Judge Big Screen Monitor</b> at ilagay ang password.</li>
-                    <li>I-click ang <b style="color: #10b981;">Start Quiz</b> para magsimula ang 60-second timer at mag-unlock ang mga tanong ng Counsel.</li>
-                </ul>
+            <div class="inst-content-card">
+                <div>
+                    <p style="margin: 0 0 4px 0; color: #38bdf8; font-weight: bold;"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; color: #cbd5e1; font-weight: 600;">
+                        <li style="margin-bottom: 2px;">Piliin ang <b style="color: #f472b6;">Judge Big Screen Monitor</b> at ilagay ang password.</li>
+                        <li>I-click ang <b style="color: #10b981;">Start Quiz</b> para magsimula ang 60s timer at mag-unlock ang mga tanong.</li>
+                    </ul>
+                </div>
 
-                <p style="margin: 0 0 12px 0; font-size: 22px; color: #c084fc;"><strong>⚖️ Para sa Counsel / Students:</strong></p>
-                <ul style="margin: 0; padding-left: 28px; color: #cbd5e1; font-weight: 600;">
-                    <li style="margin-bottom: 8px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>).</li>
-                    <li style="margin-bottom: 8px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b>.</li>
-                    <li>Maghintay sa waiting screen hanggang sa i-start ng Judge ang laro. Sagutan nang mabilis at tama ang mga tanong!</li>
-                </ul>
+                <div style="margin-top: 8px;">
+                    <p style="margin: 0 0 4px 0; color: #c084fc; font-weight: bold;"><strong>⚖️ Para sa Counsel / Students:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; color: #cbd5e1; font-weight: 600;">
+                        <li style="margin-bottom: 2px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>).</li>
+                        <li style="margin-bottom: 2px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b>.</li>
+                        <li>Maghintay sa waiting screen hanggang sa i-start ng Judge ang laro. Sagutan nang mabilis at tama ang mga tanong!</li>
+                    </ul>
+                </div>
             </div>
 
-            <button class="btn animated-main-btn" style="width: 100%; padding: 18px; font-size: 22px; font-weight: 900; margin-top: 10px; border-radius: 18px;" onclick="closeInstructionsModal()">Gets Ko Na! 🚀✨</button>
+            <button class="btn animated-main-btn inst-btn" onclick="closeInstructionsModal()">Gets Ko Na! 🚀✨</button>
         </div>
     </div>
 
@@ -1460,6 +1513,7 @@
         // AUDIO SOUND EFFECTS & SUSPENSE BACKGROUND BGM
         let audioCtx = null;
         let suspenseBgmAudio = null;
+        let lastUrgentBeepTime = 0;
 
         function initAudio() {
             if (!audioCtx) {
@@ -1490,9 +1544,29 @@
             } catch(e) {}
         }
 
+        function playUrgentThrillBeep() {
+            try {
+                initAudio();
+                const now = Date.now();
+                if (now - lastUrgentBeepTime < 900) return; // Prevent sound overlap
+                lastUrgentBeepTime = now;
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(70, audioCtx.currentTime + 0.25);
+                gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } catch(e) {}
+        }
+
         function startSuspenseBgm() {
             try {
-                // Looping suspense ambient drone sound
                 const bufferSize = audioCtx.sampleRate * 2;
                 const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
                 const data = buffer.getChannelData(0);
@@ -1856,6 +1930,7 @@
             if (timer <= 15 && timer > 0) {
                 document.body.classList.add('urgent-warning-glow');
                 if (floatBadge) floatBadge.classList.add('urgent-red');
+                playUrgentThrillBeep();
             } else {
                 document.body.classList.remove('urgent-warning-glow');
                 if (floatBadge) floatBadge.classList.remove('urgent-red');
