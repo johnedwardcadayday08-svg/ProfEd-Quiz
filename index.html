@@ -141,7 +141,6 @@
             height: 220px !important;
         }
 
-        /* EXPANDED FULLSCREEN INSTRUCTIONS MODAL BOX SAGAD SA KALIWA AT KANAN */
         body.is-fullscreen #instructions-modal {
             padding: 10px !important;
         }
@@ -228,7 +227,6 @@
             background: linear-gradient(135deg, rgba(244, 63, 94, 0.85), rgba(225, 29, 72, 0.85));
         }
 
-        /* LAW ICONS WITH GPU HARDWARE ACCELERATION */
         .law-bg-element {
             position: fixed;
             font-size: 36px;
@@ -349,7 +347,6 @@
                 backdrop-filter: blur(4px) !important;
             }
 
-            /* PERFECT FIT FOR CELLPHONE VIEW INSTRUCTIONS MODAL (NO SCROLLING NEEDED) */
             #instructions-modal {
                 padding: 8px !important;
                 align-items: center !important;
@@ -480,18 +477,24 @@
             100% { background-position: 0% 0%; }
         }
 
-        /* WATERY & TRANSPARENT AESTHETIC RANK BAR FILL */
+        @keyframes glowPulseEffect {
+            0% { filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.6)) brightness(1); }
+            50% { filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.9)) brightness(1.15); }
+            100% { filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.6)) brightness(1); }
+        }
+
+        /* WATERY, TRANSPARENT & GLOWING RANK BAR FILL */
         .rank-bar-fill {
             width: 100%;
             height: 0%;
             transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 12px 12px 0 0;
             background-size: 200% 200% !important;
-            animation: wateryWaveAnim 4s ease-in-out infinite alternate;
+            animation: wateryWaveAnim 4s ease-in-out infinite alternate, glowPulseEffect 3s ease-in-out infinite;
             backdrop-filter: blur(8px);
-            border-top: 2px solid rgba(255, 255, 255, 0.7);
-            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.35), 0 0 20px rgba(168, 85, 247, 0.4);
-            will-change: height, background-position;
+            border-top: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.4), 0 0 25px rgba(168, 85, 247, 0.6);
+            will-change: height, background-position, filter;
         }
 
         .glowing-frame {
@@ -701,7 +704,6 @@
             position: relative;
         }
 
-        /* UN-INVERT / UN-MIRROR CAMERA & PREVIEW */
         #webcam-video, #webcam-canvas {
             width: 100%;
             max-width: 240px;
@@ -725,47 +727,48 @@
             transform: scaleX(-1);
         }
 
-        /* ENHANCED NEAR-FULLSCREEN CENTERED POPUP FOR JOINED PARTICIPANTS */
+        /* MASSIVE ALMOST FULL-SCREEN POPUP FOR NEWLY JOINED PARTICIPANTS */
         #judge-photo-popup {
             position: fixed !important;
             top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
             width: 100vw !important; height: 100vh !important;
-            background: rgba(15, 23, 42, 0.92);
-            backdrop-filter: blur(16px);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 999999;
             margin: 0 !important;
-            padding: 20px !important;
+            padding: 15px !important;
             box-sizing: border-box;
         }
 
         .judge-popup-card {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99));
-            border: 4px solid #c084fc;
-            border-radius: 36px;
-            padding: clamp(30px, 5vh, 60px) clamp(20px, 5vw, 70px);
+            border: 5px solid #c084fc;
+            border-radius: 40px;
+            padding: clamp(20px, 4vh, 40px) clamp(20px, 4vw, 50px);
             text-align: center;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(192, 132, 252, 0.4);
+            box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 50px rgba(192, 132, 252, 0.6);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            max-width: 780px;
-            width: 90vw;
-            max-height: 85vh;
+            max-width: 95vw;
+            max-height: 95vh;
+            width: 850px;
             margin: auto;
+            box-sizing: border-box;
         }
 
         .judge-popup-card img {
-            width: clamp(200px, 38vh, 320px);
-            height: clamp(200px, 38vh, 320px);
+            width: clamp(260px, 52vh, 460px);
+            height: clamp(260px, 52vh, 460px);
             border-radius: 50%;
             object-fit: cover;
-            border: 6px solid #38bdf8;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 0 25px rgba(56, 189, 248, 0.6);
-            margin: 20px 0;
+            border: 7px solid #38bdf8;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(56, 189, 248, 0.7);
+            margin: 15px 0;
             transform: scaleX(-1);
         }
 
@@ -1011,7 +1014,6 @@
         }
         .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
 
-        /* STRICT OVERLAY AND LOCK STYLES */
         #student-view-wrapper {
             position: relative;
             width: 100%;
@@ -1035,7 +1037,6 @@
             opacity: 0.5 !important;
         }
 
-        /* WAITING BANNER STYLE */
         #waiting-banner {
             background: linear-gradient(135deg, rgba(168, 85, 247, 0.45), rgba(244, 114, 182, 0.45));
             border: 2px solid rgba(244, 114, 182, 0.7);
@@ -1162,7 +1163,6 @@
             .left-suspects-sidebar { display: none !important; }
         }
 
-        /* EXTRA LARGE & VISIBLE INSTRUCTIONS MODAL STYLES */
         .instructions-responsive-box {
             display: flex;
             flex-direction: column;
@@ -1211,7 +1211,6 @@
             border-radius: 16px !important;
         }
 
-        /* ATTORNEY TIMER BADGE IN LIVE SCOREBOARD */
         .attorney-timer-badge {
             background: rgba(16, 185, 129, 0.25);
             border: 1.5px solid #10b981;
@@ -1240,19 +1239,16 @@
 </head>
 <body>
 
-    <!-- TOP CONTROLS (ALWAYS VISIBLE ABOVE INSTRUCTIONS) -->
     <div class="top-controls" id="top-controls-group">
         <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="Toggle">▲</button>
         <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
         <button class="control-btn surrender-btn" id="surrender-btn" onclick="handleSurrender()">🏳️ Surrender</button>
     </div>
 
-    <!-- CIRCULAR TIMER ALIGNED WITH TOP CONTROLS -->
     <div id="floating-timer-badge">
         <span id="floating-timer-text">01:00</span>
     </div>
 
-    <!-- LAW ICONS -->
     <div class="law-bg-element icon-1">⚖️</div>
     <div class="law-bg-element icon-2">📜</div>
     <div class="law-bg-element icon-3">🏛️</div>
@@ -1282,13 +1278,11 @@
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
     </div>
 
-    <!-- QR CODE CONTAINER -->
     <div class="qr-code-wrapper" id="qr-wrapper">
         <div id="qrcode"></div>
         <p>📱 SCAN TO JOIN</p>
     </div>
 
-    <!-- NO-SCROLL AUTO-FIT INSTRUCTIONS MODAL (EXPANDED FULLSCREEN FIT) -->
     <div class="modal-overlay" id="instructions-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(14px); padding: 12px; box-sizing: border-box; overflow: hidden;">
         <div class="modal-card instructions-responsive-box" style="max-width: 98vw; width: 100%; max-height: calc(100vh - 24px); border: 3px solid rgba(192, 132, 252, 0.95); border-radius: 24px; padding: clamp(14px, 2.5vh, 28px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
             <div>
@@ -1319,7 +1313,6 @@
         </div>
     </div>
 
-    <!-- CAMERA CAPTURE MODAL -->
     <div id="camera-modal">
         <div class="camera-box">
             <h3 style="color: #f472b6; margin: 0 0 4px 0; font-size: 19px;"> Say Hi! 👋💖</h3>
@@ -1336,16 +1329,15 @@
         </div>
     </div>
 
-    <!-- EXCLUSIVE LARGE CENTERED POPUP FOR PARTICIPANTS JOINING -->
+    <!-- MASSIVE ALMOST FULL-SCREEN POPUP PARA SA MGA NAG-JOIN -->
     <div id="judge-photo-popup">
         <div class="judge-popup-card">
-            <h3 id="judge-popup-title" style="color: #38bdf8; font-size: clamp(24px, 4.5vh, 36px); font-weight: 900; margin: 0;"></h3>
+            <h3 id="judge-popup-title" style="color: #38bdf8; font-size: clamp(28px, 5vh, 44px); font-weight: 900; margin: 0;"></h3>
             <img id="judge-popup-img" src="" alt="Counsel Photo" />
-            <p style="color: #f3e8ff; font-size: clamp(16px, 2.8vh, 22px); font-weight: 800; margin: 10px 0 0 0;">Joined the courtroom proceedings! ✨</p>
+            <p style="color: #f3e8ff; font-size: clamp(18px, 3.2vh, 26px); font-weight: 800; margin: 10px 0 0 0;">Joined the courtroom proceedings! ✨</p>
         </div>
     </div>
 
-    <!-- AESTHETIC TIME'S UP MODAL -->
     <div class="winner-modal-overlay" id="winner-modal">
         <div class="winner-modal-card">
             <div style="font-size: 32px; margin-bottom: 2px;">⚖️✨ Court Verdict Results ✨⚖️</div>
@@ -1446,13 +1438,10 @@
                     <div class="animated-rank-title">👑 Live Podium & Group Showcase 🏛️</div>
                     <div class="animated-rank-subtitle">Top Standings & Glowing Avatars</div>
                     
-                    <div class="podium-area" id="podium-display">
-                        <!-- Dynamic Podium Render -->
-                    </div>
+                    <div class="podium-area" id="podium-display"></div>
                 </div>
             </div>
 
-            <!-- HORIZONTAL FULLSCREEN EXPLANATIONS AFTER QUIZ -->
             <div id="review-section">
                 <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px; font-size: 20px; font-weight: 800;">📜 Court Review: Detailed Explanations & Final Scores</h3>
                 
@@ -1492,12 +1481,10 @@
                 <span id="group-score-display">Score: 0 / 6</span>
             </div>
 
-            <!-- WAITING BANNER FOR PARTICIPANTS -->
             <div id="waiting-banner">
                 ⚖️✨ The court is still in recess. Please wait for the Judge to open the proceedings... ✨🏛️
             </div>
 
-            <!-- WRAPPER NA MAY LOCK OVERLAY -->
             <div id="student-view-wrapper">
                 <div id="lock-overlay" class="quiz-locked-overlay"></div>
 
@@ -1602,7 +1589,6 @@
         </div>
     </div>
 
-    <!-- JUDGE EJ CHAMBERS MESSAGE BOX -->
     <div class="judge-speech-container" id="judge-speech-box">
         <div class="judge-speech-avatar">👨‍⚖️</div>
         <p class="judge-speech-text" id="typewriter-text"></p>
@@ -1620,7 +1606,9 @@
         let capturedDataUrl = '';
         let mediaStream = null;
 
-        // HIGH-VOLUME SOUND EFFECTS & AUDIO SYSTEM
+        // TRACK KUNG SINO NA ANG NAKA-POP UP NA PARA HINDI NA UMULIT
+        let shownPopups = {};
+
         const bgmAudio = new Audio('/suspense-bgm.mp3');
         bgmAudio.loop = true;
         bgmAudio.volume = 0.85;
@@ -1632,13 +1620,12 @@
         const clickAudio = new Audio('/click.mp3');
         clickAudio.volume = 0.90;
 
-        // PEOPLE CROWD APPLAUSE & CHEERING SOUND
         const cheerAudio = new Audio('https://actions.google.com/sounds/v1/crowds/cheering_and_applause.ogg');
         cheerAudio.volume = 1.0;
 
         function initAudio() {
             if (bgmAudio.paused) {
-                bgmAudio.play().catch(e => console.log("Audio play deferred until user gesture"));
+                bgmAudio.play().catch(e => console.log("Audio play deferred"));
             }
         }
 
@@ -1649,7 +1636,6 @@
             } catch(e) {}
         }
 
-        // Trigger BGM play on page interactions immediately
         ['click', 'touchstart', 'pointerdown', 'DOMContentLoaded'].forEach(evt => {
             window.addEventListener(evt, () => initAudio(), { once: true });
         });
@@ -1822,7 +1808,6 @@
             canvas.width = video.videoWidth || 280;
             canvas.height = video.videoHeight || 210;
             
-            // Draw un-mirrored image onto canvas
             context.save();
             context.scale(-1, 1);
             context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
@@ -1908,7 +1893,7 @@
                 }
             }
 
-            // ADD 5 SECONDS BONUS ON CORRECT ANSWER FOR THE SPECIFIC GROUP
+            // PAG TAMA ANG SAGOT, YUNG GRUPO LANG NA ITO ANG DADAGDAGAN NG 5 SECONDS BONUS TIME
             if (isCorrect && myGroup) {
                 socket.emit('addBonusTime', { groupName: myGroup, bonusSeconds: 5 });
             }
@@ -1956,7 +1941,6 @@
                 let heightPercent = Math.max((score / 6) * 100, 8);
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 
-                // WATERY SEMI-TRANSPARENT GRADIENTS
                 let gradientBg = '';
                 if (score >= 5) {
                     gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
@@ -1983,9 +1967,16 @@
             if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
         }
 
+        // HINDI NA UULIT ANG POP UP NG MGA DATI NANG NAG-JOIN SA TULONG NG shownPopups TRACKER
         socket.on('showJudgePopupQueue', (queue) => {
             if (isJudgeRole) {
-                playPopupQueue(queue, 0);
+                let newQueue = queue.filter(item => !shownPopups[item.groupName + item.photo]);
+                newQueue.forEach(item => {
+                    shownPopups[item.groupName + item.photo] = true;
+                });
+                if (newQueue.length > 0) {
+                    playPopupQueue(newQueue, 0);
+                }
             }
         });
 
@@ -2004,7 +1995,6 @@
             }, 3000);
         }
 
-        // UPDATE EACH ATTORNEY'S INDIVIDUAL TIMER
         socket.on('timerUpdate', (data) => {
             isGameStarted = true;
             unlockQuizUI();
@@ -2055,7 +2045,6 @@
             bgmAudio.currentTime = 0;
             urgentAudio.currentTime = 0;
 
-            // PLAY CROWD CHEERING & APPLAUSE AT THE END OF THE QUIZ 👏🎉
             try {
                 cheerAudio.currentTime = 0;
                 cheerAudio.play().catch(e => {});
