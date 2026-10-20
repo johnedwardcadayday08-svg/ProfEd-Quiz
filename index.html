@@ -17,7 +17,6 @@
             --text-color: #ffffff;
         }
 
-        /* HARDWARE ACCELERATION FOR MOBILE SMOOTHNESS */
         * {
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
@@ -1889,16 +1888,14 @@
                 }
             }
 
-            // TANGGAPIN AT IDAGDAG ANG +5 SECONDS SA TIMER NG MISMONG TUMAMANG GRUPO
+            // INDEPENDENT LOCAL TIMER INCREMENT PARA SA TUMAMANG GRUPO LAMANG
             if (isCorrect && myGroup) {
                 if (groupTimers[myGroup] !== undefined) {
                     groupTimers[myGroup] += 5;
                 } else {
                     groupTimers[myGroup] = 65;
                 }
-                
-                // I-UPDATE AGAD ANG TIMER SA DATOR AT I-EMIT SA JUDGE MONITOR
-                socket.emit('updateAttorneyTimer', { groupName: myGroup, newTime: groupTimers[myGroup] });
+                renderScoreboardAndPodium();
             }
         });
 
@@ -2001,21 +1998,14 @@
             isGameStarted = true;
             unlockQuizUI();
 
-            if (typeof data === 'object' && data !== null) {
-                // UPDATE ANG PER-GROUP TIMERS
-                Object.keys(data).forEach(g => {
-                    groupTimers[g] = data[g];
-                });
-            } else if (typeof data === 'number') {
-                // KUNG BROADCAST NUMBER, BAWAT GRUPO AY BABAWASAN NG 1 KUNG WALA PA SILANG SET VALUE
-                ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(g => {
-                    if (groupTimers[g] === undefined) {
-                        groupTimers[g] = data;
-                    } else if (groupTimers[g] > 0) {
-                        groupTimers[g] -= 1;
-                    }
-                });
-            }
+            // IBANGGIT ANG BAWAT GRUPO NG ISANG SEC BAWAT TICK NG LOKAL NA TIMER
+            ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(g => {
+                if (groupTimers[g] === undefined) {
+                    groupTimers[g] = 60;
+                } else if (groupTimers[g] > 0) {
+                    groupTimers[g] -= 1;
+                }
+            });
 
             renderScoreboardAndPodium();
 
