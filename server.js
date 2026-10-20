@@ -7,7 +7,6 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Dahil nasa iisang folder lang ang server.js at index.html
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
@@ -23,7 +22,6 @@ let groupScores = {
     'Attorney 4': 0
 };
 
-// Hiwalay na timer para sa bawat grupo sa server side
 let groupTimers = {
     'Attorney 1': 60,
     'Attorney 2': 60,
@@ -52,6 +50,7 @@ const correctAnswers = {
 io.on('connection', (socket) => {
     socket.emit('gameState', { isGameStarted });
     socket.emit('updateState', { groupScores, photos: attorneyPhotos });
+    socket.emit('timerUpdate', groupTimers); // Ipadala agad ang initial timers
 
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
@@ -73,6 +72,7 @@ io.on('connection', (socket) => {
             };
             
             io.emit('gameState', { isGameStarted });
+            io.emit('timerUpdate', groupTimers);
 
             if (timerInterval) clearInterval(timerInterval);
 
@@ -106,6 +106,7 @@ io.on('connection', (socket) => {
         if (isCorrect) {
             groupScores[groupName] = (groupScores[groupName] || 0) + 1;
             
+            // Magdagdag ng +5 seconds sa server timer ng grupo na ito
             if (groupTimers[groupName] !== undefined) {
                 groupTimers[groupName] += 5;
             } else {
@@ -115,6 +116,8 @@ io.on('connection', (socket) => {
 
         socket.emit('answerFeedback', { isCorrect, questionId, answer });
         io.emit('updateState', { groupScores, photos: attorneyPhotos });
+        
+        // I-broadcast agad ang bagong timers sa Judge monitor at iba pa
         io.emit('timerUpdate', groupTimers);
     });
 
@@ -125,6 +128,7 @@ io.on('connection', (socket) => {
         groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
         popupQueue = [];
         io.emit('resetState');
+        io.emit('timerUpdate', groupTimers);
     });
 
     socket.on('disconnect', () => {});
