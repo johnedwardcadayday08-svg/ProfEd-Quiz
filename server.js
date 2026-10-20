@@ -48,7 +48,7 @@ const correctAnswers = {
 };
 
 io.on('connection', (socket) => {
-    // Ipadala agad ang kasalukuyang state at timers pag-connect ng estudyante/judge
+    // Ipadala agad ang kasalukuyang gameState sa bawat magkakonekta
     socket.emit('gameState', { isGameStarted });
     socket.emit('updateState', { groupScores, photos: attorneyPhotos });
     socket.emit('timerUpdate', groupTimers);
@@ -116,7 +116,6 @@ io.on('connection', (socket) => {
 
         socket.emit('answerFeedback', { isCorrect, questionId, answer });
         io.emit('updateState', { groupScores, photos: attorneyPhotos });
-        // I-broadcast agad ang updated timers sa Judge monitor at sa lahat ng grupo
         io.emit('timerUpdate', groupTimers);
     });
 
