@@ -1746,7 +1746,12 @@
             }
         });
 
-        function handleSurrender() { location.reload(); }
+        function handleSurrender() { 
+            attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+            shownPopups = {};
+            location.reload(); 
+        }
+
         function selectRole(role) {
             if (role === 'teacher') {
                 document.getElementById('password-modal').style.display = 'flex';
@@ -2083,7 +2088,11 @@
             if (reviewSec) reviewSec.style.display = "block";
         });
 
-        socket.on('resetState', () => { location.reload(); });
+        socket.on('resetState', () => { 
+            attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+            shownPopups = {};
+            location.reload(); 
+        });
     </script>
 </body>
 </html>

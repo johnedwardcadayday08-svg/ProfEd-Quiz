@@ -48,7 +48,6 @@ const correctAnswers = {
 };
 
 io.on('connection', (socket) => {
-    // Ipadala agad ang kasalukuyang gameState sa bawat magkakonekta
     socket.emit('gameState', { isGameStarted });
     socket.emit('updateState', { groupScores, photos: attorneyPhotos });
     socket.emit('timerUpdate', groupTimers);
@@ -124,7 +123,11 @@ io.on('connection', (socket) => {
         isGameStarted = false;
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
+        
+        // I-clear ang mga nakaimbak na litrato at queue
+        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         popupQueue = [];
+
         io.emit('resetState');
         io.emit('gameState', { isGameStarted });
         io.emit('timerUpdate', groupTimers);
