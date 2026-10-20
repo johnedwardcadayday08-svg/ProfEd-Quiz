@@ -21,6 +21,7 @@
         * {
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+            box-sizing: border-box;
         }
 
         body {
@@ -30,7 +31,7 @@
             background-size: cover;
             color: var(--text-color);
             margin: 0;
-            padding: 12px;
+            padding: 8px;
             min-height: 100vh;
             box-sizing: border-box;
             position: relative;
@@ -52,64 +53,76 @@
             -ms-overflow-style: none !important;
         }
 
+        /* EXPANDED FULLSCREEN LAPTOP VIEW WITH BIGGER FONTS & WIDER LAYOUT */
         body.is-fullscreen {
             overflow: hidden !important;
             height: 100vh !important;
             max-height: 100vh !important;
-            padding: 10px !important;
+            padding: 8px !important;
         }
 
         body.is-fullscreen .container {
-            max-width: 98vw !important;
-            width: 98vw !important;
-            margin: 5px auto !important;
-            padding: 20px 25px !important;
-            height: calc(100vh - 20px) !important;
+            max-width: 99vw !important;
+            width: 99vw !important;
+            margin: 0 auto !important;
+            padding: 18px 30px !important;
+            height: calc(100vh - 16px) !important;
             box-sizing: border-box;
             overflow-y: auto !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        body.is-fullscreen .animated-header-title {
+            font-size: clamp(28px, 3.2vh, 40px) !important;
+            margin-bottom: 8px !important;
         }
 
         body.is-fullscreen .left-suspects-sidebar {
-            left: 42px !important;
-            top: 38% !important;
+            left: 20px !important;
+            top: 40% !important;
         }
 
         body.is-fullscreen .qr-code-wrapper {
-            right: 65px !important;
-            bottom: 60vh !important;
-            transform: scale(1.12);
+            right: 25px !important;
+            bottom: 50vh !important;
+            transform: scale(1.15);
         }
 
         body.is-fullscreen .attorney-buttons-container {
-            margin-top: 60px !important;
+            margin-top: 40px !important;
             margin-bottom: 15px !important;
-            gap: 18px !important;
+            gap: 22px !important;
+            width: 100% !important;
+            max-width: 1400px !important;
         }
+        
         body.is-fullscreen .attorney-buttons-container .group-btn {
-            padding: 34px 16px !important;
-            font-size: 19px !important;
-            font-weight: 800 !important;
-            border-radius: 20px !important;
+            padding: 28px 20px !important;
+            font-size: clamp(20px, 2.5vh, 28px) !important;
+            font-weight: 900 !important;
+            border-radius: 22px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            min-height: 100px !important;
+            min-height: 110px !important;
         }
 
         body.is-fullscreen #teacher-view {
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 85px);
+            height: calc(100vh - 65px);
             box-sizing: border-box;
         }
 
         body.is-fullscreen .judge-main-layout {
             display: grid;
             grid-template-columns: 1.15fr 0.85fr;
-            gap: 20px;
+            gap: 24px;
             flex: 1;
             align-items: stretch;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         body.is-fullscreen .judge-left-box,
@@ -118,6 +131,30 @@
             display: flex !important;
             flex-direction: column !important;
             box-sizing: border-box !important;
+            padding: 22px !important;
+        }
+
+        body.is-fullscreen .bar-label {
+            font-size: 16px !important;
+            width: 110px !important;
+        }
+
+        body.is-fullscreen .bar-score {
+            font-size: 16px !important;
+            width: 50px !important;
+        }
+
+        body.is-fullscreen .attorney-timer-badge {
+            font-size: 15px !important;
+            padding: 5px 12px !important;
+        }
+
+        body.is-fullscreen .animated-rank-title {
+            font-size: 24px !important;
+        }
+
+        body.is-fullscreen .animated-rank-subtitle {
+            font-size: 15px !important;
         }
 
         body.is-fullscreen .bar-chart-container {
@@ -126,7 +163,7 @@
             flex-direction: column !important;
             justify-content: space-around !important;
             margin: 10px 0 0 0 !important;
-            padding: 16px !important;
+            padding: 18px !important;
         }
 
         body.is-fullscreen .podium-area {
@@ -138,7 +175,17 @@
         }
 
         body.is-fullscreen .rank-bar-track {
-            height: 220px !important;
+            height: 240px !important;
+            max-width: 68px !important;
+        }
+
+        body.is-fullscreen .glowing-frame {
+            width: 80px !important;
+            height: 80px !important;
+        }
+
+        body.is-fullscreen .animated-attorney-label {
+            font-size: 16px !important;
         }
 
         .urgent-warning-glow {
@@ -148,8 +195,8 @@
 
         .top-controls {
             position: fixed;
-            top: 15px;
-            right: 18px;
+            top: 12px;
+            right: 15px;
             z-index: 100005;
             display: flex;
             gap: 10px;
@@ -306,21 +353,74 @@
             }
         }
 
+        /* CELLPHONE VIEW AUTO-FIT OPTIMIZATION (NO SCROLL) */
         @media (max-width: 768px) {
-            .side-profile-container { width: 160px; height: 35vh; }
+            body {
+                padding: 4px !important;
+            }
+
+            .container {
+                padding: 12px 14px !important;
+                margin: 0 auto !important;
+                width: 100% !important;
+                border-radius: 18px !important;
+                backdrop-filter: blur(4px) !important;
+            }
+
+            .animated-header-title {
+                font-size: 18px !important;
+                margin: 4px 0 !important;
+            }
+
+            .app-logo {
+                width: 60px !important;
+                height: 60px !important;
+            }
+
+            .attorney-buttons-container .group-btn {
+                padding: 12px 10px !important;
+                font-size: 14.5px !important;
+                border-radius: 12px !important;
+            }
+
+            .question-card {
+                padding: 10px 12px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .question-card p {
+                font-size: 12.5px !important;
+                margin-bottom: 6px !important;
+            }
+
+            .options label {
+                padding: 6px 10px !important;
+                font-size: 11.5px !important;
+            }
+
+            .header-bar {
+                padding: 8px 12px !important;
+                font-size: 13.5px !important;
+                margin-bottom: 10px !important;
+            }
+
+            #waiting-banner {
+                padding: 12px 14px !important;
+                font-size: 14px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .side-profile-container { width: 130px; height: 30vh; }
             .qr-code-wrapper {
                 position: relative;
-                margin: 10px auto 5px auto;
+                margin: 6px auto;
                 width: fit-content;
                 right: auto;
                 bottom: auto;
-                transform: scale(0.85);
+                transform: scale(0.8);
             }
             .icon-5, .icon-6, .icon-9, .icon-10, .icon-13, .icon-15, .icon-18, .icon-19, .icon-22, .icon-24 {
                 display: none !important;
-            }
-            .container {
-                backdrop-filter: blur(4px) !important;
             }
         }
 
@@ -341,8 +441,8 @@
         @media (min-width: 1024px) {
             .container {
                 max-width: 1550px;
-                margin-left: 40px;
-                margin-right: 40px;
+                margin-left: 30px;
+                margin-right: 30px;
             }
         }
 
