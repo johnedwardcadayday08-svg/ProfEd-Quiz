@@ -400,28 +400,35 @@
         .rank-bar-track {
             width: 100%;
             max-width: 52px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px 10px 0 0;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 12px 12px 0 0;
             display: flex;
             align-items: flex-end;
             overflow: hidden;
             height: 170px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(6px);
         }
 
-        @keyframes podiumGlowAnim {
-            0% { filter: drop-shadow(0 0 4px currentColor); }
-            50% { filter: drop-shadow(0 0 10px currentColor); }
-            100% { filter: drop-shadow(0 0 4px currentColor); }
+        @keyframes wateryWaveAnim {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
         }
 
+        /* WATERY & TRANSPARENT AESTHETIC RANK BAR FILL */
         .rank-bar-fill {
             width: 100%;
             height: 0%;
-            transition: height 0.5s ease-in-out;
-            border-radius: 10px 10px 0 0;
-            animation: podiumGlowAnim 2.5s ease-in-out infinite;
-            will-change: height;
+            transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px 12px 0 0;
+            background-size: 200% 200% !important;
+            animation: wateryWaveAnim 4s ease-in-out infinite alternate;
+            backdrop-filter: blur(8px);
+            border-top: 2px solid rgba(255, 255, 255, 0.7);
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.35), 0 0 20px rgba(168, 85, 247, 0.4);
+            will-change: height, background-position;
         }
 
         .glowing-frame {
@@ -631,6 +638,7 @@
             position: relative;
         }
 
+        /* UN-INVERT / UN-MIRROR CAMERA & PREVIEW */
         #webcam-video, #webcam-canvas {
             width: 100%;
             max-width: 240px;
@@ -641,6 +649,7 @@
             background: #000;
             margin: 12px auto;
             display: block;
+            transform: scaleX(-1);
         }
 
         #captured-preview {
@@ -650,44 +659,51 @@
             object-fit: cover;
             border: 3.5px solid #38bdf8;
             margin: 12px auto;
+            transform: scaleX(-1);
         }
 
+        /* ENHANCED NEAR-FULLSCREEN CENTERED POPUP FOR JOINED PARTICIPANTS */
         #judge-photo-popup {
             position: fixed !important;
             top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
             width: 100vw !important; height: 100vh !important;
-            background: rgba(15, 23, 42, 0.88);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(16px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 999999;
             margin: 0 !important;
-            padding: 0 !important;
+            padding: 20px !important;
+            box-sizing: border-box;
         }
 
         .judge-popup-card {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99));
-            border: 3px solid #c084fc;
-            border-radius: 30px;
-            padding: 35px 50px;
+            border: 4px solid #c084fc;
+            border-radius: 36px;
+            padding: clamp(30px, 5vh, 60px) clamp(20px, 5vw, 70px);
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(192, 132, 252, 0.4);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            max-width: 780px;
+            width: 90vw;
+            max-height: 85vh;
             margin: auto;
         }
 
         .judge-popup-card img {
-            width: 160px;
-            height: 160px;
+            width: clamp(200px, 38vh, 320px);
+            height: clamp(200px, 38vh, 320px);
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #38bdf8;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-            margin: 15px 0;
+            border: 6px solid #38bdf8;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 0 25px rgba(56, 189, 248, 0.6);
+            margin: 20px 0;
+            transform: scaleX(-1);
         }
 
         .bar-row { 
@@ -703,6 +719,7 @@
             object-fit: cover;
             border: 2px solid #c084fc;
             flex-shrink: 0;
+            transform: scaleX(-1);
         }
 
         .winner-modal-overlay {
@@ -756,6 +773,7 @@
             object-fit: cover;
             border: 2px solid #fff;
             flex-shrink: 0;
+            transform: scaleX(-1);
         }
 
         .result-box-innocent {
@@ -1081,7 +1099,7 @@
             .left-suspects-sidebar { display: none !important; }
         }
 
-        /* ENHANCED NO-SCROLL INSTRUCTIONS MODAL WITH EXTRA LARGE BOLD FONTS */
+        /* EXTRA LARGE & VISIBLE INSTRUCTIONS MODAL STYLES */
         .instructions-responsive-box {
             display: flex;
             flex-direction: column;
@@ -1091,30 +1109,30 @@
         }
 
         .inst-title {
-            font-size: clamp(24px, 4.2vh, 36px);
-            font-weight: 900;
+            font-size: clamp(28px, 4.8vh, 42px) !important;
+            font-weight: 900 !important;
             margin: 0 0 2px 0;
             line-height: 1.1;
-            text-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.9);
         }
 
         .inst-subtitle {
             color: #f472b6;
             margin: 2px 0 10px 0;
-            font-size: clamp(16px, 2.6vh, 22px);
-            font-weight: 800;
+            font-size: clamp(18px, 3vh, 26px) !important;
+            font-weight: 900 !important;
         }
 
         .inst-content-card {
             text-align: left;
-            font-size: clamp(14px, 2.2vh, 18px);
+            font-size: clamp(18px, 2.8vh, 26px) !important;
             color: #ffffff;
-            line-height: 1.45;
+            line-height: 1.5;
             margin: 6px 0;
-            background: rgba(15, 23, 42, 0.75);
-            padding: clamp(10px, 2.2vh, 20px);
-            border-radius: 18px;
-            border: 2px solid rgba(255, 255, 255, 0.25);
+            background: rgba(15, 23, 42, 0.85);
+            padding: clamp(12px, 2.5vh, 24px);
+            border-radius: 20px;
+            border: 2.5px solid rgba(255, 255, 255, 0.35);
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -1123,8 +1141,8 @@
 
         .inst-btn {
             width: 100%;
-            padding: clamp(12px, 2.2vh, 16px) !important;
-            font-size: clamp(16px, 2.6vh, 22px) !important;
+            padding: clamp(14px, 2.5vh, 18px) !important;
+            font-size: clamp(18px, 3vh, 26px) !important;
             font-weight: 900 !important;
             margin-top: 6px !important;
             border-radius: 16px !important;
@@ -1135,9 +1153,9 @@
             background: rgba(16, 185, 129, 0.25);
             border: 1.5px solid #10b981;
             color: #6ee7b7;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 800;
-            padding: 3px 8px;
+            padding: 3px 9px;
             border-radius: 12px;
             margin-left: auto;
             flex-shrink: 0;
@@ -1207,9 +1225,9 @@
         <p>📱 SCAN TO JOIN</p>
     </div>
 
-    <!-- NO-SCROLL AUTO-FIT INSTRUCTIONS MODAL (WITH EXTRA LARGE FONTS) -->
+    <!-- NO-SCROLL AUTO-FIT INSTRUCTIONS MODAL (EXTRA LARGE FONTS) -->
     <div class="modal-overlay" id="instructions-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(14px); padding: 12px; box-sizing: border-box; overflow: hidden;">
-        <div class="modal-card instructions-responsive-box" style="max-width: 860px; width: 100%; max-height: calc(100vh - 24px); border: 2.5px solid rgba(192, 132, 252, 0.85); border-radius: 22px; padding: clamp(14px, 2.5vh, 26px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
+        <div class="modal-card instructions-responsive-box" style="max-width: 900px; width: 100%; max-height: calc(100vh - 24px); border: 3px solid rgba(192, 132, 252, 0.95); border-radius: 24px; padding: clamp(14px, 2.5vh, 28px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
             <div>
                 <div class="inst-title">📜⚖️ HOW TO PLAY ⚖️📜</div>
                 <div class="inst-subtitle">Welcome to PROFED 5 Quick Activity!</div>
@@ -1217,16 +1235,16 @@
             
             <div class="inst-content-card">
                 <div>
-                    <p style="margin: 0 0 6px 0; color: #38bdf8; font-weight: 800; font-size: clamp(16px, 2.4vh, 20px);"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
-                    <ul style="margin: 0; padding-left: 22px; color: #f1f5f9; font-weight: 700;">
+                    <p style="margin: 0 0 6px 0; color: #38bdf8; font-weight: 900;"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
+                    <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700;">
                         <li style="margin-bottom: 4px;">Piliin ang <b style="color: #f472b6;">Judge Big Screen Monitor</b> at ilagay ang password.</li>
                         <li>I-click ang <b style="color: #10b981;">Start Quiz</b> para magsimula ang timer ng bawat grupo at mag-unlock ang mga tanong.</li>
                     </ul>
                 </div>
 
                 <div style="margin-top: 10px;">
-                    <p style="margin: 0 0 6px 0; color: #c084fc; font-weight: 800; font-size: clamp(16px, 2.4vh, 20px);"><strong>⚖️ Para sa Counsel / Students:</strong></p>
-                    <ul style="margin: 0; padding-left: 22px; color: #f1f5f9; font-weight: 700;">
+                    <p style="margin: 0 0 6px 0; color: #c084fc; font-weight: 900;"><strong>⚖️ Para sa Counsel / Students:</strong></p>
+                    <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700;">
                         <li style="margin-bottom: 4px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>).</li>
                         <li style="margin-bottom: 4px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b>.</li>
                         <li>Maghintay sa waiting screen. Sagutan nang mabilis at tama ang mga tanong! <b>Bawat tamang sagot = +5 Seconds Bonus Time! ⏱️✨</b></li>
@@ -1255,12 +1273,12 @@
         </div>
     </div>
 
-    <!-- EXCLUSIVE JUDGE-ONLY CENTER POPUP -->
+    <!-- EXCLUSIVE LARGE CENTERED POPUP FOR PARTICIPANTS JOINING -->
     <div id="judge-photo-popup">
         <div class="judge-popup-card">
-            <h3 id="judge-popup-title" style="color: #38bdf8; font-size: 24px; font-weight: 800; margin: 0 0 10px 0;"></h3>
+            <h3 id="judge-popup-title" style="color: #38bdf8; font-size: clamp(24px, 4.5vh, 36px); font-weight: 900; margin: 0;"></h3>
             <img id="judge-popup-img" src="" alt="Counsel Photo" />
-            <p style="color: #f3e8ff; font-size: 16px; font-weight: bold; margin: 10px 0 0 0;">Joined the courtroom proceedings! ✨</p>
+            <p style="color: #f3e8ff; font-size: clamp(16px, 2.8vh, 22px); font-weight: 800; margin: 10px 0 0 0;">Joined the courtroom proceedings! ✨</p>
         </div>
     </div>
 
@@ -1539,21 +1557,25 @@
         let capturedDataUrl = '';
         let mediaStream = null;
 
-        // MP3 AUDIO SYSTEM CONFIGURATION
+        // HIGH-VOLUME SOUND EFFECTS & AUDIO SYSTEM
         const bgmAudio = new Audio('/suspense-bgm.mp3');
         bgmAudio.loop = true;
-        bgmAudio.volume = 0.35;
+        bgmAudio.volume = 0.85;
 
         const urgentAudio = new Audio('/urgent-thrill.mp3');
         urgentAudio.loop = true;
-        urgentAudio.volume = 0.65;
+        urgentAudio.volume = 0.95;
 
         const clickAudio = new Audio('/click.mp3');
-        clickAudio.volume = 0.5;
+        clickAudio.volume = 0.90;
+
+        // PEOPLE CROWD APPLAUSE & CHEERING SOUND
+        const cheerAudio = new Audio('https://actions.google.com/sounds/v1/crowds/cheering_and_applause.ogg');
+        cheerAudio.volume = 1.0;
 
         function initAudio() {
             if (bgmAudio.paused) {
-                bgmAudio.play().catch(e => {});
+                bgmAudio.play().catch(e => console.log("Audio play deferred until user gesture"));
             }
         }
 
@@ -1564,7 +1586,11 @@
             } catch(e) {}
         }
 
-        // Add click listener to all buttons/inputs/labels
+        // Trigger BGM play on page interactions immediately
+        ['click', 'touchstart', 'pointerdown', 'DOMContentLoaded'].forEach(evt => {
+            window.addEventListener(evt, () => initAudio(), { once: true });
+        });
+
         document.addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.closest('label')) {
                 playClickSound();
@@ -1572,6 +1598,7 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
+            initAudio();
             new QRCode(document.getElementById("qrcode"), {
                 text: "https://profed-quiz-y6ly.onrender.com",
                 width: 75,
@@ -1731,7 +1758,12 @@
             
             canvas.width = video.videoWidth || 280;
             canvas.height = video.videoHeight || 210;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Draw un-mirrored image onto canvas
+            context.save();
+            context.scale(-1, 1);
+            context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+            context.restore();
             
             capturedDataUrl = canvas.toDataURL('image/png');
             video.style.display = 'none';
@@ -1802,7 +1834,7 @@
             const popup = document.getElementById('feedback-popup');
             if (popup) {
                 popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-                popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s)" : "✖ INCORRECT!";
+                popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
                 popup.style.display = "block";
                 setTimeout(() => { popup.style.display = "none"; }, 1500);
             }
@@ -1811,6 +1843,11 @@
                 if (targetLabel) {
                     targetLabel.classList.add(isCorrect ? "option-correct" : "option-wrong");
                 }
+            }
+
+            // ADD 5 SECONDS BONUS ON CORRECT ANSWER FOR THE SPECIFIC GROUP
+            if (isCorrect && myGroup) {
+                socket.emit('addBonusTime', { groupName: myGroup, bonusSeconds: 5 });
             }
         });
 
@@ -1856,13 +1893,14 @@
                 let heightPercent = Math.max((score / 6) * 100, 8);
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 
+                // WATERY SEMI-TRANSPARENT GRADIENTS
                 let gradientBg = '';
                 if (score >= 5) {
-                    gradientBg = 'linear-gradient(to top, #7c3aed, #ca8a04, #10b981)';
+                    gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
                 } else if (score >= 3) {
-                    gradientBg = 'linear-gradient(to top, #7c3aed, #eab308)';
+                    gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
                 } else {
-                    gradientBg = 'linear-gradient(to top, #7c3aed, #c084fc)';
+                    gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
                 }
 
                 podiumHTML += `
@@ -1872,7 +1910,7 @@
                             <div class="rank-bar-fill" style="height: ${heightPercent}%; background: ${gradientBg};"></div>
                         </div>
                         <div class="glowing-frame">
-                            <img src="${photoSrc}" alt="${group}" />
+                            <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
                         </div>
                         <div class="animated-attorney-label">${group}</div>
                     </div>
@@ -1908,7 +1946,6 @@
             isGameStarted = true;
             unlockQuizUI();
 
-            // Check if server sent object of timers or global number
             if (typeof data === 'object' && data !== null) {
                 groupTimers = data;
             } else {
@@ -1943,6 +1980,9 @@
 
                 urgentAudio.pause();
                 urgentAudio.currentTime = 0;
+                if (bgmAudio.paused) {
+                    bgmAudio.play().catch(e => {});
+                }
             }
         });
 
@@ -1951,6 +1991,12 @@
             urgentAudio.pause();
             bgmAudio.currentTime = 0;
             urgentAudio.currentTime = 0;
+
+            // PLAY CROWD CHEERING & APPLAUSE AT THE END OF THE QUIZ 👏🎉
+            try {
+                cheerAudio.currentTime = 0;
+                cheerAudio.play().catch(e => {});
+            } catch(e) {}
 
             document.body.classList.remove('urgent-warning-glow');
             const floatBadge = document.getElementById('floating-timer-badge');
