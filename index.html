@@ -1651,7 +1651,6 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-            // SIGURURIN NA NAKALOCK AGAD SA SIMULA PA LANG
             lockQuizUI();
         });
 
@@ -1845,6 +1844,7 @@
                 
                 document.getElementById('floating-timer-badge').style.display = 'flex';
 
+                // TIYAKING NAKALOCK AT NAKALABAS ANG WAITING BANNER PAGKAPASOK NG ESTUDYANTE
                 if (!isGameStarted) {
                     lockQuizUI();
                 } else {
