@@ -97,6 +97,13 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Event para sa Manual Time's Up
+    socket.on('forceTimeUp', () => {
+        if (timerInterval) clearInterval(timerInterval);
+        isGameStarted = false;
+        io.emit('timeUp');
+    });
+
     socket.on('submitAnswer', ({ groupName, questionId, answer }) => {
         if (!isGameStarted) return;
         
@@ -124,7 +131,6 @@ io.on('connection', (socket) => {
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
         
-        // I-clear ang mga nakaimbak na litrato at queue
         attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         popupQueue = [];
 

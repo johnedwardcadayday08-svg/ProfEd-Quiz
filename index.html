@@ -1423,6 +1423,7 @@
                         <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings</span>
                         <div>
                             <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
+                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
                             <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
                         </div>
                     </div>
@@ -1859,6 +1860,7 @@
         }
 
         function startTimer() { socket.emit('startTimer'); }
+        function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { socket.emit('resetGame'); }
 
         function submitAns(questionId, answer) {
