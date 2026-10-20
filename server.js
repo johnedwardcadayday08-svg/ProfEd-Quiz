@@ -36,7 +36,6 @@ let attorneyPhotos = {
     'Attorney 4': ''
 };
 
-// Tracking kung tapos na ba ang mga grupo sa pagsagot ng 6 items
 let groupCompletedStatus = {
     'Attorney 1': false,
     'Attorney 2': false,
@@ -113,7 +112,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Event para sa Manual Time's Up
     socket.on('forceTimeUp', () => {
         if (timerInterval) clearInterval(timerInterval);
         isGameStarted = false;
@@ -136,7 +134,6 @@ io.on('connection', (socket) => {
             }
         }
 
-        // Check kung naubos na ang 6 na tanong
         if (answeredCount >= 6) {
             groupCompletedStatus[groupName] = true;
             io.emit('groupFinished', { groupName });

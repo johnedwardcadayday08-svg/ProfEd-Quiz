@@ -508,7 +508,6 @@
             will-change: transform;
         }
 
-        /* Kulay Green para sa natapos na sa podium */
         .glowing-frame.completed-frame {
             background: linear-gradient(135deg, #10b981, #34d399) !important;
             box-shadow: 0 0 22px rgba(16, 185, 129, 0.9) !important;
@@ -790,7 +789,6 @@
             flex-shrink: 0;
             transform: scaleX(-1);
         }
-        /* Kulay Green para sa mini avatar border kapag tapos na */
         .attorney-avatar-mini.completed-avatar {
             border-color: #10b981 !important;
             box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
@@ -1239,7 +1237,6 @@
             100% { transform: scale(1.05); }
         }
 
-        /* Styling para sa 3-second notification banner sa Judge Monitor */
         #judge-notification-banner {
             position: fixed;
             top: 20px;
@@ -1266,7 +1263,6 @@
 </head>
 <body>
 
-    <!-- 3-Second Notification Banner para sa Judge Monitor -->
     <div id="judge-notification-banner"></div>
 
     <div class="top-controls" id="top-controls-group">
@@ -1907,7 +1903,6 @@
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
 
-            // Kapag nasagot na ang lahat ng 6 na tanong, i-lock ulit ang screen at magpakita ng pop-up message
             if (answeredCount >= 6) {
                 lockQuizUI();
                 const popup = document.getElementById('feedback-popup');
@@ -1930,7 +1925,6 @@
 
         socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
             const answeredCount = Object.keys(answeredQuestions).length;
-            // Kung tapos na ang 6 items, huwag nang patungan ang "Wait for the results!" pop-up
             if (answeredCount < 6) {
                 const popup = document.getElementById('feedback-popup');
                 if (popup) {
@@ -1960,7 +1954,6 @@
             }
         });
 
-        // Socket listener para sa 3-second notification banner sa Judge Monitor kapag may natapos na grupo
         socket.on('groupFinished', ({ groupName }) => {
             if (isJudgeRole) {
                 const banner = document.getElementById('judge-notification-banner');
@@ -2076,7 +2069,6 @@
             }
 
             isGameStarted = true;
-            // Kung hindi pa tapos ang student sa 6 questions, i-unlock; kung tapos na, panatilihing nakalock
             if (answeredCount < 6) {
                 unlockQuizUI();
             }
@@ -2122,6 +2114,12 @@
                 cheerAudio.currentTime = 0;
                 cheerAudio.play().catch(e => {});
             } catch(e) {}
+
+            // ITAGO ANG "Wait for the results!" POP-UP KAGAD DITO
+            const popup = document.getElementById('feedback-popup');
+            if (popup) {
+                popup.style.display = "none";
+            }
 
             document.body.classList.remove('urgent-warning-glow');
             const floatBadge = document.getElementById('floating-timer-badge');
