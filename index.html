@@ -1035,8 +1035,10 @@
         }
 
         #waiting-banner {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.45), rgba(244, 114, 182, 0.45));
-            border: 2px solid rgba(244, 114, 182, 0.7);
+            position: relative;
+            z-index: 100;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(244, 114, 182, 0.95));
+            border: 3px solid rgba(244, 114, 182, 0.9);
             border-radius: 20px;
             padding: 22px 26px;
             text-align: center;
@@ -1044,9 +1046,8 @@
             font-weight: 900;
             color: #ffffff;
             margin-bottom: 20px;
-            box-shadow: 0 0 30px rgba(168, 85, 247, 0.5), inset 0 0 15px rgba(244, 114, 182, 0.3);
+            box-shadow: 0 0 35px rgba(168, 85, 247, 0.7);
             backdrop-filter: blur(10px);
-            animation: aestheticBannerGlow 3s ease-in-out infinite;
             display: block;
             letter-spacing: 0.8px;
             text-shadow: 0 0 12px rgba(244, 114, 182, 0.8);
@@ -1844,7 +1845,6 @@
                 
                 document.getElementById('floating-timer-badge').style.display = 'flex';
 
-                // TIYAKING NAKALOCK AT NAKALABAS ANG WAITING BANNER PAGKAPASOK NG ESTUDYANTE
                 if (!isGameStarted) {
                     lockQuizUI();
                 } else {
@@ -1986,18 +1986,24 @@
         }
 
         socket.on('timerUpdate', (data) => {
-            isGameStarted = true;
-            unlockQuizUI();
-
             if (typeof data === 'object' && data !== null) {
                 Object.keys(data).forEach(g => {
                     groupTimers[g] = data[g];
                 });
             }
 
+            let myTimer = myGroup && groupTimers[myGroup] !== undefined ? groupTimers[myGroup] : (groupTimers['Attorney 1'] || 60);
+            
+            if (myTimer >= 60 && !isGameStarted) {
+                lockQuizUI();
+                return;
+            }
+
+            isGameStarted = true;
+            unlockQuizUI();
+
             renderScoreboardAndPodium();
 
-            let myTimer = myGroup && groupTimers[myGroup] !== undefined ? groupTimers[myGroup] : (groupTimers['Attorney 1'] || 60);
             let mins = Math.floor(myTimer / 60).toString().padStart(2, '0');
             let secs = (myTimer % 60).toString().padStart(2, '0');
             let timeStr = `${mins}:${secs}`;
