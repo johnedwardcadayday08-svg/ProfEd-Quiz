@@ -316,7 +316,6 @@
                 bottom: auto;
                 transform: scale(0.85);
             }
-            /* OPMITIZATION FOR MOBILE: Hide heavy extra background elements */
             .icon-5, .icon-6, .icon-9, .icon-10, .icon-13, .icon-15, .icon-18, .icon-19, .icon-22, .icon-24 {
                 display: none !important;
             }
@@ -1133,6 +1132,31 @@
         <p>📱 SCAN TO JOIN</p>
     </div>
 
+    <!-- INSTRUCTIONS / HOW TO PLAY POPUP MODAL -->
+    <div class="modal-overlay" id="instructions-modal" style="display: flex;">
+        <div class="modal-card" style="max-width: 460px; border-color: rgba(192, 132, 252, 0.8);">
+            <div style="font-size: 32px; margin-bottom: 5px;">📜⚖️ HOW TO PLAY ⚖️📜</div>
+            <h3 style="color: #f472b6; margin-top: 0; font-size: 17px;">Welcome to PROFED 5 Quick Activity!</h3>
+            
+            <div style="text-align: left; font-size: 13.5px; color: #e2e8f0; line-height: 1.5; margin: 15px 0; background: rgba(15, 23, 42, 0.6); padding: 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.15);">
+                <p style="margin: 0 0 8px 0;"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
+                <ul style="margin: 0 0 12px 0; padding-left: 20px; color: #cbd5e1;">
+                    <li>Piliin ang <b>Judge Big Screen Monitor</b> at ilagay ang password.</li>
+                    <li>I-click ang <b>Start Quiz</b> para magsimula ang 60-second timer at mag-unlock ang mga tanong ng Counsel.</li>
+                </ul>
+
+                <p style="margin: 0 0 8px 0;"><strong>⚖️ Para sa Counsel / Students:</strong></p>
+                <ul style="margin: 0; padding-left: 20px; color: #cbd5e1;">
+                    <li>Pumili ng iyong nakatalagang grupo (<b>Attorney 1 - 4</b>).</li>
+                    <li>Kumuha ng litrato gamit ang camera at i-click ang <b>Join Now</b>.</li>
+                    <li>Maghintay sa waiting screen hanggang sa i-start ng Judge ang laro. Sagutan nang mabilis at tama ang mga tanong!</li>
+                </ul>
+            </div>
+
+            <button class="btn animated-main-btn" style="width: 100%; padding: 12px; font-size: 16px; margin-top: 5px;" onclick="closeInstructionsModal()">Gets Ko Na! 🚀</button>
+        </div>
+    </div>
+
     <!-- CAMERA CAPTURE MODAL -->
     <div id="camera-modal">
         <div class="camera-box">
@@ -1444,6 +1468,10 @@
             });
             disableAllRadioInputs(true);
         });
+
+        function closeInstructionsModal() {
+            document.getElementById('instructions-modal').style.display = 'none';
+        }
 
         function disableAllRadioInputs(disable) {
             const inputs = document.querySelectorAll('#quiz-questions input[type="radio"]');
