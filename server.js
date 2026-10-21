@@ -20,8 +20,6 @@ let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'At
 let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
 
 let individualParticipants = {};
-let individualTimers = {};
-
 let timerInterval = null;
 let serverPhotoArchive = [];
 let groupScoreHistory = [];
@@ -46,24 +44,19 @@ function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoint
     if (!essayText || typeof essayText !== 'string') return 0;
     let text = essayText.trim().toLowerCase();
     if (text.length < 10) return 0;
-
     let maxScore = maxPoints || 10;
     let combinedContext = ((questionText || "") + " " + (criteriaText || "")).toLowerCase();
     let words = combinedContext.match(/\b[a-zà-ÿ0-9]{4,}\b/gi) || [];
     let stopWords = new Set(['e.g.', 'type', 'points', 'para', 'sa', 'mga', 'nang', 'maging', 'dahil', 'ayon', 'kundi', 'rubrics', 'criteria']);
     let coreKeywords = Array.from(new Set(words.filter(w => !stopWords.has(w))));
-
     let matchCount = 0;
     coreKeywords.forEach(kw => { if (text.includes(kw)) matchCount++; });
-
     let relevanceRatio = coreKeywords.length > 0 ? (matchCount / coreKeywords.length) : 0.5;
     if (coreKeywords.length >= 3 && matchCount === 0) return 0;
-
     let wordCount = text.split(/\s+/).length;
     let lengthScoreRatio = wordCount >= 30 ? 1.0 : (wordCount >= 15 ? 0.7 : (wordCount >= 8 ? 0.4 : 0.2));
     let finalRatio = (relevanceRatio * 0.6) + (lengthScoreRatio * 0.4);
     if (finalRatio < 0.25) return 0;
-
     return Math.min(Math.max(Math.round(finalRatio * maxScore), 0), maxScore);
 }
 
@@ -74,7 +67,7 @@ io.on('connection', (socket) => {
     socket.emit('gameState', { isGameStarted });
     socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
     socket.emit('applyCustomQuestionsList', customQuestionsList);
-    socket.emit('timerUpdate', { groupTimers, individualTimers });
+    socket.emit('timerUpdate', groupTimers);
     socket.emit('photoArchiveUpdated', serverPhotoArchive);
     socket.emit('scoreHistoryUpdated', { groupScoreHistory, individualScoreHistory });
 
@@ -108,7 +101,8 @@ io.on('connection', (socket) => {
             serverPhotoArchive.push({ id: photoId, groupName, photo, timestamp: new Date().toLocaleTimeString() });
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
             io.emit('photoArchiveUpdated', serverPhotoArchive);
-            io.emit('triggerJudgePopup', { groupName, photo });
+            io.emit('newAttorneyJoined', { groupName, photo });
+            socket.broadcast.emit('triggerJudgePopup', { groupName, photo });
         }
     });
 
@@ -120,14 +114,13 @@ io.on('connection', (socket) => {
             serverPhotoArchive.push({ id: photoId, groupName: fullName, photo, timestamp: new Date().toLocaleTimeString() });
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
             io.emit('photoArchiveUpdated', serverPhotoArchive);
-            io.emit('triggerJudgePopup', { groupName: fullName, photo });
+            socket.broadcast.emit('triggerJudgePopup', { groupName: fullName, photo });
         }
     });
 
     socket.on('startTimer', () => {
         isGameStarted = true;
         io.emit('gameState', { isGameStarted });
-
         if (timerInterval) clearInterval(timerInterval);
 
         timerInterval = setInterval(() => {
@@ -136,6 +129,7 @@ io.on('connection', (socket) => {
                 Object.keys(groupTimers).forEach(g => {
                     if (!groupCompletedStatus[g] && groupTimers[g] > 0) { groupTimers[g]--; activeCount++; }
                 });
+                io.emit('timerUpdate', groupTimers);
                 if (activeCount === 0 || Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g])) {
                     clearInterval(timerInterval);
                     io.emit('timeUp');
@@ -145,12 +139,12 @@ io.on('connection', (socket) => {
                     let p = individualParticipants[pId];
                     if (!p.completed && p.timer > 0) { p.timer--; activeCount++; }
                 });
+                io.emit('timerUpdate', groupTimers);
                 if (activeCount === 0 || (Object.keys(individualParticipants).length > 0 && Object.keys(individualParticipants).every(pId => individualParticipants[pId].timer <= 0 || individualParticipants[pId].completed))) {
                     clearInterval(timerInterval);
                     io.emit('timeUp');
                 }
             }
-            io.emit('timerUpdate', { groupTimers, individualTimers });
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
         }, 1000);
     });
@@ -159,14 +153,14 @@ io.on('connection', (socket) => {
         if (timerInterval) clearInterval(timerInterval);
         if (currentGameMode === 'group') Object.keys(groupTimers).forEach(g => { groupTimers[g] = 0; });
         else Object.keys(individualParticipants).forEach(pId => { individualParticipants[pId].timer = 0; });
-        io.emit('timerUpdate', { groupTimers, individualTimers });
+        io.emit('timerUpdate', groupTimers);
         io.emit('timeUp');
     });
 
     socket.on('setTimerDuration', (seconds) => {
         if (currentGameMode === 'group') Object.keys(groupTimers).forEach(g => { groupTimers[g] = seconds; });
         else Object.keys(individualParticipants).forEach(pId => { individualParticipants[pId].timer = seconds; });
-        io.emit('timerUpdate', { groupTimers, individualTimers });
+        io.emit('timerUpdate', groupTimers);
     });
 
     socket.on('submitAnswer', ({ groupName, questionIndex, answer, answeredCount }) => {
@@ -200,7 +194,7 @@ io.on('connection', (socket) => {
 
             socket.emit('answerFeedback', { isCorrect, questionId: `q${questionIndex + 1}`, answer, earnedPoints, maxPoints: qObj ? (qObj.points || 1) : 1, qType: qObj ? qObj.type : 'multiple-choice' });
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
-            io.emit('timerUpdate', { groupTimers, individualTimers });
+            io.emit('timerUpdate', groupTimers);
 
             if (Object.keys(groupCompletedStatus).every(g => groupCompletedStatus[g])) {
                 if (timerInterval) clearInterval(timerInterval);
@@ -220,7 +214,7 @@ io.on('connection', (socket) => {
 
                 socket.emit('answerFeedback', { isCorrect, questionId: `q${questionIndex + 1}`, answer, earnedPoints, maxPoints: qObj ? (qObj.points || 1) : 1, qType: qObj ? qObj.type : 'multiple-choice' });
                 io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
-                io.emit('timerUpdate', { groupTimers, individualTimers });
+                io.emit('timerUpdate', groupTimers);
 
                 if (Object.keys(individualParticipants).length > 0 && Object.keys(individualParticipants).every(pId => individualParticipants[pId].completed)) {
                     if (timerInterval) clearInterval(timerInterval);

@@ -17,7 +17,10 @@
             --text-color: #ffffff;
         }
 
-        * { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        * {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -161,10 +164,12 @@
             box-shadow: 0 4px 16px rgba(168, 85, 247, 0.5);
         }
 
-        /* 3 Suspects Box (Itaas nang kaunti para di matakpan ang buttons) */
+        /* 3 Suspects Box - Naka-restore sa orihinal na pwesto at sizing */
         .left-suspects-sidebar {
-            position: fixed; left: 14px; top: 22%; width: 175px; background: rgba(15, 23, 42, 0.75);
-            border: 1.5px solid rgba(168, 85, 247, 0.5); border-radius: 16px; padding: 10px 6px; z-index: 10; backdrop-filter: blur(8px);
+            position: fixed; left: 14px; top: 36%; transform: translateY(-50%); width: 175px;
+            background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(168, 85, 247, 0.5);
+            border-radius: 16px; padding: 10px 6px; z-index: 10; backdrop-filter: blur(8px);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
         }
         .suspect-sidebar-card { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; padding: 7px 5px; margin-bottom: 7px; text-align: center; }
 
@@ -395,9 +400,9 @@
         </div>
     </div>
 
-    <!-- 3 SUSPECTS SIDEBAR (BY GROUP MODE ONLY) -->
+    <!-- 3 SUSPECTS SIDEBAR (BY GROUP MODE ONLY - ORIHINAL NA PWESTO) -->
     <div class="left-suspects-sidebar" id="left-sidebar">
-        <p style="font-size: 10.5px; color: #cbd5e1; margin: 0 0 6px 0; font-weight: 700; text-align: center;">📋 Active Docket</p>
+        <p style="font-size: 10.5px; color: #cbd5e1; margin: 0 0 6px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
         <div class="suspect-sidebar-card">
             <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect A</h4>
             <p style="font-size: 8.5px; color: #94a3b8; margin: 0;">R.A. 7277</p>
@@ -405,6 +410,10 @@
         <div class="suspect-sidebar-card">
             <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect B</h4>
             <p style="font-size: 8.5px; color: #94a3b8; margin: 0;">Code of Ethics</p>
+        </div>
+        <div class="suspect-sidebar-card">
+            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect C</h4>
+            <p style="font-size: 8.5px; color: #94a3b8; margin: 0;">IP Rights</p>
         </div>
     </div>
 
@@ -475,7 +484,7 @@
                             <button class="btn" style="background:var(--danger); padding: 6px 12px; font-size: 12px;" onclick="resetGame()">Reset Game</button>
                         </div>
                     </div>
-                    <h3 id="scoreboard-title" style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard</h3>
+                    <h3 id="scoreboard-title" style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard & Group Timers</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
                 </div>
 
@@ -534,8 +543,6 @@
         let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
 
         let individualParticipants = {};
-        let individualTimers = {};
-
         let totalQuestionsCount = 0;
         let totalMaxScore = 0;
         let capturedDataUrl = '';
@@ -902,12 +909,19 @@
         function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { socket.emit('resetGame'); }
 
+        socket.on('timerUpdate', (groupTimersData) => {
+            let myTimer = myGroup && groupTimersData[myGroup] !== undefined ? groupTimersData[myGroup] : 300;
+            let mins = Math.floor(myTimer / 60).toString().padStart(2, '0');
+            let secs = (myTimer % 60).toString().padStart(2, '0');
+            document.getElementById('student-timer').innerText = `Time Left: ${mins}:${secs}`;
+        });
+
         function submitAns(questionIndex, questionId, answer) {
             if (!isGameStarted) return;
             if (answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, fullName: myFullName, questionIndex, answer, answeredCount });
+            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer, answeredCount });
         }
 
         function selectRole(role) {
