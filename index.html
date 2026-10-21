@@ -45,44 +45,26 @@
         body.is-fullscreen .container { max-width: 98vw !important; width: 98vw !important; margin: 5px auto !important; padding: 20px 25px !important; height: calc(100vh - 20px) !important; box-sizing: border-box; overflow-y: auto !important; }
 
         .top-controls-glass-box {
-            position: fixed;
-            top: 12px;
-            right: 14px;
-            z-index: 100005;
-            background: rgba(15, 23, 42, 0.65);
-            border: 1.5px solid rgba(192, 132, 252, 0.45);
-            border-radius: 24px;
-            padding: 6px 10px;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
+            position: fixed; top: 12px; right: 14px; z-index: 100005;
+            background: rgba(15, 23, 42, 0.65); border: 1.5px solid rgba(192, 132, 252, 0.45);
+            border-radius: 24px; padding: 6px 10px; backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); display: flex; align-items: center; gap: 8px;
         }
-
         .top-controls-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 
         .toggle-controls-btn {
-            background: rgba(168, 85, 247, 0.85);
-            color: #f3e8ff;
-            border: 1.5px solid rgba(255, 255, 255, 0.35);
-            width: 30px; height: 30px; border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: bold; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px); z-index: 100006; flex-shrink: 0;
+            background: rgba(168, 85, 247, 0.85); color: #f3e8ff; border: 1.5px solid rgba(255, 255, 255, 0.35);
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: bold; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); z-index: 100006; flex-shrink: 0;
         }
 
         .control-btn {
             background: linear-gradient(135deg, rgba(168, 85, 247, 0.85), rgba(124, 58, 237, 0.85));
-            color: #f3e8ff; border: 1.5px solid rgba(255, 255, 255, 0.35);
-            padding: 6px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px;
-            border-radius: 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px); transition: all 0.25s ease; display: flex;
-            align-items: center; gap: 5px; white-space: nowrap;
+            color: #f3e8ff; border: 1.5px solid rgba(255, 255, 255, 0.35); padding: 6px 12px; font-size: 12px; font-weight: 700;
+            border-radius: 16px; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3); backdrop-filter: blur(8px);
+            display: flex; align-items: center; gap: 5px; white-space: nowrap;
         }
-
-        .control-btn:hover { transform: translateY(-2px) scale(1.02); border-color: rgba(255, 255, 255, 0.6); }
+        .control-btn:hover { transform: translateY(-2px) scale(1.02); }
 
         .surrender-btn { background: linear-gradient(135deg, rgba(244, 63, 94, 0.85), rgba(225, 29, 72, 0.85)); }
         .insert-btn { background: linear-gradient(135deg, rgba(16, 185, 129, 0.85), rgba(5, 150, 105, 0.85)); }
@@ -95,26 +77,19 @@
 
         .law-bg-element {
             position: fixed; font-size: 36px; opacity: 0.82; user-select: none; pointer-events: none;
-            animation: iconFloatGlow 4.2s ease-in-out infinite; z-index: 2;
-            filter: drop-shadow(0 0 12px rgba(244, 114, 182, 0.75)); will-change: transform; transform: translateZ(0);
+            animation: iconFloatGlow 4.2s ease-in-out infinite; z-index: 2; filter: drop-shadow(0 0 12px rgba(244, 114, 182, 0.75));
         }
-
         @keyframes iconFloatGlow {
             0% { transform: translate3d(0, 0px, 0) rotate(0deg) scale(1); }
             50% { transform: translate3d(0, -16px, 0) rotate(10deg) scale(1.1); }
             100% { transform: translate3d(0, 0px, 0) rotate(0deg) scale(1); }
         }
-
-        .icon-1 { top: 6%; left: 2%; animation-delay: 0s; }
-        .icon-2 { top: 10%; right: 3%; animation-delay: 0.7s; }
-        .icon-3 { bottom: 22%; left: 3%; animation-delay: 1.4s; }
-        .icon-4 { bottom: 18%; right: 2%; animation-delay: 2.1s; }
+        .icon-1 { top: 6%; left: 2%; } .icon-2 { top: 10%; right: 3%; } .icon-3 { bottom: 22%; left: 3%; } .icon-4 { bottom: 18%; right: 2%; }
 
         .side-profile-container {
-            position: fixed; right: 0; bottom: 0; width: 270px; height: 62vh; z-index: 5;
-            pointer-events: none; display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden;
+            position: fixed; right: 0; bottom: 0; width: 270px; height: 62vh; z-index: 5; pointer-events: none;
+            display: flex; align-items: flex-end; justify-content: flex-end; overflow: hidden;
         }
-
         .side-profile-img { width: 100%; height: auto; max-height: 100%; object-fit: contain; object-position: bottom right; filter: drop-shadow(-10px 5px 15px rgba(0, 0, 0, 0.7)); }
 
         .qr-code-wrapper {
@@ -122,10 +97,8 @@
             padding: 8px; border-radius: 16px; backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-
-        .qr-code-wrapper p { margin: 3px 0 0 0; font-size: 10px; font-weight: bold; color: #f3e8ff; letter-spacing: 0.5px; }
+        .qr-code-wrapper p { margin: 3px 0 0 0; font-size: 10px; font-weight: bold; color: #f3e8ff; }
         #qrcode { padding: 5px; background: #ffffff; border-radius: 8px; }
-
         @media (min-width: 769px) { .qr-code-wrapper { right: 35px; bottom: 55vh; } }
 
         .container { 
@@ -134,10 +107,7 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25); transition: all 0.3s ease;
         }
-
-        @media (min-width: 1024px) {
-            .container { max-width: 1550px; margin-left: 40px; margin-right: 40px; }
-        }
+        @media (min-width: 1024px) { .container { max-width: 1550px; margin-left: 40px; margin-right: 40px; } }
 
         .judge-main-layout { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 20px; align-items: stretch; width: 100%; }
         @media (max-width: 900px) { .judge-main-layout { grid-template-columns: 1fr; } }
@@ -153,28 +123,22 @@
             display: flex; align-items: flex-end; overflow: hidden; height: 170px; border: 1.5px solid rgba(255, 255, 255, 0.25);
             box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.1); backdrop-filter: blur(6px);
         }
-
         .rank-bar-fill {
             width: 100%; height: 0%; transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 12px 12px 0 0; background-size: 200% 200% !important;
             animation: wateryWaveAnim 4s ease-in-out infinite alternate, glowPulseEffect 3s ease-in-out infinite;
             backdrop-filter: blur(8px); border-top: 2px solid rgba(255, 255, 255, 0.8);
             box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.4), 0 0 25px rgba(168, 85, 247, 0.6);
-            will-change: height, background-position, filter;
         }
-
         @keyframes wateryWaveAnim { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 0%; } }
         @keyframes glowPulseEffect { 0% { filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.6)) brightness(1); } 50% { filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.9)) brightness(1.15); } 100% { filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.6)) brightness(1); } }
 
         .glowing-frame {
             width: 62px; height: 62px; border-radius: 50%; padding: 3px;
             background: linear-gradient(135deg, #f472b6, #38bdf8, #a855f7);
-            box-shadow: 0 0 18px rgba(192, 132, 252, 0.8); animation: glowMove 3s ease-in-out infinite;
-            margin-top: 10px; flex-shrink: 0;
+            box-shadow: 0 0 18px rgba(192, 132, 252, 0.8); animation: glowMove 3s ease-in-out infinite; margin-top: 10px; flex-shrink: 0;
         }
-        .glowing-frame.completed-frame { background: linear-gradient(135deg, #10b981, #34d399) !important; box-shadow: 0 0 22px rgba(16, 185, 129, 0.9) !important; }
         .glowing-frame img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #1e293b; }
-
         @keyframes glowMove { 0% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(0, -5px, 0) scale(1.04); } 100% { transform: translate3d(0, 0, 0) scale(1); } }
 
         .animated-rank-title { font-size: 17px; font-weight: 900; color: #f472b6; text-shadow: 0 0 12px rgba(244, 114, 182, 0.8); text-align: center; }
@@ -183,8 +147,7 @@
 
         .app-logo { width: 85px; height: 85px; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.9); box-shadow: 0 0 22px rgba(168, 85, 247, 0.8); }
         .animated-header-title { font-family: 'Cinzel', 'Georgia', serif; font-size: 24px; letter-spacing: 1.2px; color: #fdf4ff; text-align: center; font-weight: 900; margin: 10px 0 6px 0; text-shadow: 0 0 18px rgba(168, 85, 247, 0.9); }
-
-        .animated-main-btn { padding: 16px 36px !important; font-size: 18px !important; border-radius: 18px !important; letter-spacing: 0.5px; }
+        .animated-main-btn { padding: 16px 36px !important; font-size: 18px !important; border-radius: 18px !important; }
 
         .attorney-btn-1 { background: linear-gradient(135deg, #38bdf8, #0284c7) !important; box-shadow: 0 4px 16px rgba(56, 189, 248, 0.5) !important; }
         .attorney-btn-2 { background: linear-gradient(135deg, #a855f7, #7c3aed) !important; box-shadow: 0 4px 16px rgba(168, 85, 247, 0.5) !important; }
@@ -192,73 +155,45 @@
         .attorney-btn-4 { background: linear-gradient(135deg, #f43f5e, #be123c) !important; box-shadow: 0 4px 16px rgba(244, 63, 94, 0.5) !important; }
 
         .big-login-btn {
-            background: linear-gradient(135deg, #38bdf8, #a855f7) !important;
-            width: 100% !important;
-            max-width: 620px !important;
-            padding: 22px 30px !important;
-            font-size: 22px !important;
-            font-weight: 900 !important;
-            border-radius: 20px !important;
-            border: 2px solid rgba(255, 255, 255, 0.6) !important;
-            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.6), 0 0 25px rgba(168, 85, 247, 0.8) !important;
-            color: #ffffff !important;
-            cursor: pointer;
-            margin: 25px auto 10px auto !important;
-            display: block;
-            text-align: center;
+            background: linear-gradient(135deg, #38bdf8, #a855f7) !important; width: 100% !important; max-width: 320px !important;
+            padding: 16px 20px !important; font-size: 16.5px !important; font-weight: bold !important; border-radius: 16px !important;
+            border: none !important; color: #ffffff !important; cursor: pointer; margin: 10px auto !important; display: block; text-align: center;
+            box-shadow: 0 4px 16px rgba(168, 85, 247, 0.5);
         }
 
-        /* 3 Suspects Box Adjustment */
+        /* 3 Suspects Box (Itaas nang kaunti para di matakpan ang buttons) */
         .left-suspects-sidebar {
-            position: fixed; left: 14px; top: 12%; /* Inihinto/Itaas nang kaunti para di matakpan ang buttons */
-            width: 175px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(168, 85, 247, 0.5);
-            border-radius: 16px; padding: 10px 6px; z-index: 10; backdrop-filter: blur(8px); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+            position: fixed; left: 14px; top: 22%; width: 175px; background: rgba(15, 23, 42, 0.75);
+            border: 1.5px solid rgba(168, 85, 247, 0.5); border-radius: 16px; padding: 10px 6px; z-index: 10; backdrop-filter: blur(8px);
         }
-
         .suspect-sidebar-card { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; padding: 7px 5px; margin-bottom: 7px; text-align: center; }
 
         #camera-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(14px);
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10004; padding: 20px;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(14px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10004; padding: 20px;
         }
-
         .camera-box {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
-            border: 2.5px solid #c084fc; border-radius: 30px; padding: 28px 22px; max-width: 380px; width: 100%;
-            text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 30px rgba(168, 85, 247, 0.3); position: relative;
+            border: 2.5px solid #c084fc; border-radius: 30px; padding: 28px 22px; max-width: 380px; width: 100%; text-align: center;
         }
-
         #webcam-video, #webcam-canvas { width: 100%; max-width: 240px; height: 180px; border-radius: 20px; border: 3px solid #f472b6; object-fit: cover; background: #000; margin: 12px auto; display: block; transform: scaleX(-1); }
         #captured-preview { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 3.5px solid #38bdf8; margin: 12px auto; transform: scaleX(-1); }
 
         /* REALTIME CENTER POPUP FOR PARTICIPANTS IN JUDGE SCREEN */
         #judge-photo-popup {
             position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-            width: 100vw !important; height: 100vh !important; background: rgba(15, 23, 42, 0.92);
-            backdrop-filter: blur(20px); display: none; justify-content: center; align-items: center;
-            z-index: 999999; margin: 0 !important; padding: 15px !important; box-sizing: border-box;
+            width: 100vw !important; height: 100vh !important; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(20px);
+            display: none; justify-content: center; align-items: center; z-index: 999999; padding: 15px !important; box-sizing: border-box;
         }
-
         .judge-popup-card {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99));
             border: 5px solid #c084fc; border-radius: 40px; padding: 35px 45px; text-align: center;
             box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 50px rgba(192, 132, 252, 0.8);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            max-width: 90vw; max-height: 90vh; width: 750px; margin: auto; box-sizing: border-box;
-            animation: popupCenterGlow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 90vw; width: 750px; margin: auto;
         }
-
-        @keyframes popupCenterGlow {
-            0% { transform: scale(0.6); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
         .judge-popup-card img {
-            width: 320px; height: 320px; border-radius: 50%; object-fit: cover;
-            border: 7px solid #38bdf8; box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(56, 189, 248, 0.9);
-            margin: 15px 0; transform: scaleX(-1);
+            width: 320px; height: 320px; border-radius: 50%; object-fit: cover; border: 7px solid #38bdf8;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(56, 189, 248, 0.9); margin: 15px 0; transform: scaleX(-1);
         }
 
         .bar-row { display: flex; align-items: center; margin: 10px 0; gap: 10px; }
@@ -271,14 +206,12 @@
 
         .attorney-buttons-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 12px; margin-top: 10px; }
         .attorney-buttons-container .group-btn { width: 100%; max-width: 320px; margin: 0; padding: 16px 20px; color: #ffffff; font-size: 16.5px; font-weight: bold; border: none; border-radius: 16px; cursor: pointer; }
-
         @media (min-width: 768px) {
             .attorney-buttons-container { flex-direction: row; justify-content: center; gap: 16px; }
             .attorney-buttons-container .group-btn { width: auto; flex: 1; max-width: 210px; padding: 17px 12px; font-size: 16px; white-space: nowrap; }
         }
 
         .header-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.45); border: 1px solid rgba(255, 255, 255, 0.35); padding: 12px 18px; border-radius: 16px; margin-bottom: 15px; font-weight: bold; font-size: 16px; color: #f3e8ff; }
-
         .bar-chart-container { margin: 10px 0; background: rgba(15, 23, 42, 0.45); padding: 12px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); max-height: 480px; overflow-y: auto; }
         .bar-label { width: 100px; font-weight: bold; font-size: 13px; color: #f3e8ff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 24px; border-radius: 99px; overflow: hidden; margin: 0 8px; }
@@ -340,7 +273,6 @@
     <div class="modal-overlay" id="game-mode-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 420px;">
             <h3 style="color: #0284c7;">🎮 Select Game Mode</h3>
-            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili kung paano isasagawa ang aktibidad:</p>
             <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
                 <button class="btn" style="margin:0; padding:14px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectGameMode('group')">1: BY GROUP (Attorney 1 - 4)</button>
                 <button class="btn" style="margin:0; padding:14px; background: linear-gradient(135deg, #38bdf8, #0284c7);" onclick="selectGameMode('individual')">2: INDIVIDUAL (Unlimited Log-in)</button>
@@ -353,7 +285,6 @@
     <div class="modal-overlay" id="history-auth-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #eab308;">🔒 Confidential Score History</h3>
-            <p style="font-size:13px; color:#e2e8f0;">Please enter the password to view score history:</p>
             <input type="password" id="history-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="if(event.key==='Enter')verifyHistoryPassword()" autocomplete="off" />
             <div style="display:flex; gap:10px; justify-content:center;">
                 <button class="btn" style="background:var(--danger); width: 45%;" onclick="closeHistoryAuthModal()">Cancel</button>
@@ -381,11 +312,10 @@
         </div>
     </div>
 
-    <!-- PICTURE ARCHIVE MODAL (WITH SELECT & DELETE) -->
+    <!-- PICTURE ARCHIVE MODAL -->
     <div class="modal-overlay" id="archive-auth-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #f59e0b;">🔒 Confidential Picture Archive</h3>
-            <p style="font-size:13px; color:#e2e8f0;">Please enter the password to view participant photos:</p>
             <input type="password" id="archive-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="if(event.key==='Enter')verifyArchivePassword()" autocomplete="off" />
             <div style="display:flex; gap:10px; justify-content:center;">
                 <button class="btn" style="background:var(--danger); width: 45%;" onclick="closeArchiveAuthModal()">Cancel</button>
@@ -408,13 +338,13 @@
         </div>
     </div>
 
-    <!-- OTHER MODALS (Quiz Mode, Title, Timer, Insert) -->
+    <!-- OTHER MODALS -->
     <div class="modal-overlay" id="quiz-mode-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 450px;">
             <h3 style="color: #c084fc;">🔀 Select Quiz Mode</h3>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn" style="background: linear-gradient(135deg, #38bdf8, #0284c7);" onclick="selectQuizMode('multiple-choice')">1: PURE MULTIPLE CHOICE</button>
-                <button class="btn" style="background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectQuizMode('mixed')">2: MIXED (MC, ID, ENUM, T/F, SHORT ESSAY)</button>
+                <button class="btn" style="background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectQuizMode('mixed')">2: MIXED</button>
                 <button class="btn" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="selectQuizMode('long-essay')">3: LONG ESSAY</button>
             </div>
             <button class="btn" style="background:var(--danger); width: 100%; margin-top:10px;" onclick="closeQuizModeModal()">Cancel</button>
@@ -465,7 +395,7 @@
         </div>
     </div>
 
-    <!-- 3 SUSPECTS SIDEBAR (BY GROUP MODE FIRST PAGE ONLY) -->
+    <!-- 3 SUSPECTS SIDEBAR (BY GROUP MODE ONLY) -->
     <div class="left-suspects-sidebar" id="left-sidebar">
         <p style="font-size: 10.5px; color: #cbd5e1; margin: 0 0 6px 0; font-weight: 700; text-align: center;">📋 Active Docket</p>
         <div class="suspect-sidebar-card">
@@ -481,7 +411,7 @@
     <div class="side-profile-container" id="side-profile"><img src="/my-photo.png" alt="Profile" class="side-profile-img"></div>
     <div class="qr-code-wrapper" id="qr-wrapper"><div id="qrcode"></div><p>📱 SCAN TO JOIN</p></div>
 
-    <!-- INSTRUCTIONS MODAL (DYNAMIC BASED ON GAME MODE) -->
+    <!-- INSTRUCTIONS MODAL (DYNAMIC) -->
     <div class="modal-overlay" id="instructions-modal" style="display: flex; z-index: 100000;">
         <div class="modal-card" style="max-width: 750px; width: 95%;">
             <h2 id="inst-title" style="color: #c084fc; font-size: 28px; margin-top:0;">📜 HOW TO PLAY 📜</h2>
@@ -490,23 +420,18 @@
         </div>
     </div>
 
-    <!-- CAMERA MODAL FOR BOTH GROUP & INDIVIDUAL LOG-IN -->
+    <!-- CAMERA MODAL -->
     <div id="camera-modal">
         <div class="camera-box">
             <h3 style="color: #f472b6; margin: 0;">Say Hi! 👋💖</h3>
             <p style="font-size: 12.5px; color: #e2e8f0; margin-bottom: 10px;">Smile for the camera! ✨📸</p>
-
             <div id="indiv-name-input-box" class="hidden" style="margin-bottom: 10px;">
                 <input type="text" id="indiv-fullname-input" class="modal-input" style="margin:0; width: 90%; font-size: 14px;" placeholder="Enter Your Full Name..." autocomplete="off" />
             </div>
-
             <video id="webcam-video" autoplay playsinline></video>
             <canvas id="webcam-canvas" class="hidden"></canvas>
             <img id="captured-preview" class="hidden" />
-
-            <div id="camera-controls">
-                <button class="btn" onclick="capturePhoto()">Capture Photo 📷</button>
-            </div>
+            <div id="camera-controls"><button class="btn" onclick="capturePhoto()">Capture Photo 📷</button></div>
             <div id="join-now-container" class="hidden" style="margin-top:10px;">
                 <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); width:100%;" onclick="confirmJoinNow()">Join Now 🚀✨</button>
             </div>
@@ -522,7 +447,7 @@
             <button class="btn animated-main-btn" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             
             <div id="group-mode-buttons-wrapper">
-                <h3 style="text-align:center; margin-bottom: 6px; color: #f472b6; font-size: 15px;">Join as Group:</h3>
+                <h3 style="text-align:center; margin-bottom: 6px; color: #f472b6; font-size: 15px;">Join as:</h3>
                 <div class="attorney-buttons-container">
                     <button class="group-btn attorney-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
                     <button class="group-btn attorney-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
@@ -541,7 +466,6 @@
             <h1 class="animated-header-title" style="margin-top: 0; margin-bottom: 12px;">⚖️ Judge Real-Time Monitor ⚖️</h1>
             
             <div class="judge-main-layout">
-                <!-- KALIWANG BOX -->
                 <div class="judge-left-box">
                     <div class="header-bar">
                         <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings</span>
@@ -551,12 +475,10 @@
                             <button class="btn" style="background:var(--danger); padding: 6px 12px; font-size: 12px;" onclick="resetGame()">Reset Game</button>
                         </div>
                     </div>
-
                     <h3 id="scoreboard-title" style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
                 </div>
 
-                <!-- KANANG BOX -->
                 <div class="judge-right-box">
                     <div class="animated-rank-title">👑 Live Podium & Group Showcase 🏛️</div>
                     <div class="animated-rank-subtitle">Top Standings & Glowing Avatars</div>
@@ -623,13 +545,9 @@
         let individualScoreHistory = [];
         let globalQuestionsList = [];
 
-        // Game Mode Switching
         function openGameModeModal() { document.getElementById('game-mode-modal').style.display = 'flex'; }
         function closeGameModeModal() { document.getElementById('game-mode-modal').style.display = 'none'; }
-        function selectGameMode(mode) {
-            socket.emit('changeGameMode', mode);
-            closeGameModeModal();
-        }
+        function selectGameMode(mode) { socket.emit('changeGameMode', mode); closeGameModeModal(); }
 
         socket.on('gameModeUpdated', (mode) => {
             currentGameMode = mode;
@@ -648,7 +566,7 @@
             } else {
                 if (groupWrapper) groupWrapper.classList.add('hidden');
                 if (indivWrapper) indivWrapper.classList.remove('hidden');
-                if (leftSidebar) leftSidebar.style.display = 'none'; // Alisin sa Individual Mode
+                if (leftSidebar) leftSidebar.style.display = 'none';
             }
             updateInstructionsContent();
         }
@@ -684,7 +602,6 @@
 
         function closeInstructionsModal() { document.getElementById('instructions-modal').style.display = 'none'; }
 
-        // REALTIME POPUP EVENT FROM SERVER
         socket.on('triggerJudgePopup', ({ groupName, photo }) => {
             if (isJudgeRole) {
                 const popup = document.getElementById('judge-photo-popup');
@@ -695,20 +612,13 @@
             }
         });
 
-        // SCORE HISTORY LOGIC
-        function openHistoryAuthModal() {
-            document.getElementById('history-auth-modal').style.display = 'flex';
-            document.getElementById('history-pass-input').focus();
-        }
+        function openHistoryAuthModal() { document.getElementById('history-auth-modal').style.display = 'flex'; document.getElementById('history-pass-input').focus(); }
         function closeHistoryAuthModal() { document.getElementById('history-auth-modal').style.display = 'none'; }
         function verifyHistoryPassword() {
             let pass = document.getElementById('history-pass-input').value;
             closeHistoryAuthModal();
-            if (pass === "Quiz") {
-                document.getElementById('history-select-modal').style.display = 'flex';
-            } else {
-                alert("🚫 Access Denied! Wrong password.");
-            }
+            if (pass === "Quiz") document.getElementById('history-select-modal').style.display = 'flex';
+            else alert("🚫 Access Denied! Wrong password.");
         }
         function closeHistorySelectModal() { document.getElementById('history-select-modal').style.display = 'none'; }
         function closeHistoryDisplayModal() { document.getElementById('history-display-modal').style.display = 'none'; }
@@ -716,19 +626,13 @@
         function openGroupHistoryList() {
             closeHistorySelectModal();
             document.getElementById('history-modal-title').innerText = "📜 Group Score History";
-            let html = '';
-            if (groupScoreHistory.length === 0) {
-                html = '<p style="color:#cbd5e1;">Walang nakagagayang history ng mga grupo.</p>';
-            } else {
-                groupScoreHistory.forEach(item => {
-                    html += `
-                        <div style="background: rgba(168, 85, 247, 0.2); border: 1.5px solid #c084fc; border-radius: 14px; padding: 12px; margin-bottom: 10px;">
-                            <h4 style="margin:0; color:#38bdf8; font-size:18px;">👥 ${item.groupName} — <span style="color:#34d399;">${item.score}/${item.maxScore}</span></h4>
-                            <p style="margin:4px 0 0 0; font-size:12px; color:#e2e8f0;">📅 ${item.date} 🕒 ${item.time}</p>
-                        </div>
-                    `;
-                });
-            }
+            let html = groupScoreHistory.length === 0 ? '<p style="color:#cbd5e1;">Walang nakagagayang history ng mga grupo.</p>' : '';
+            groupScoreHistory.forEach(item => {
+                html += `<div style="background: rgba(168, 85, 247, 0.2); border: 1.5px solid #c084fc; border-radius: 14px; padding: 12px; margin-bottom: 10px;">
+                    <h4 style="margin:0; color:#38bdf8; font-size:18px;">👥 ${item.groupName} — <span style="color:#34d399;">${item.score}/${item.maxScore}</span></h4>
+                    <p style="margin:4px 0 0 0; font-size:12px; color:#e2e8f0;">📅 ${item.date} 🕒 ${item.time}</p>
+                </div>`;
+            });
             document.getElementById('history-modal-content').innerHTML = html;
             document.getElementById('history-display-modal').style.display = 'flex';
         }
@@ -736,19 +640,13 @@
         function openIndividualHistoryList() {
             closeHistorySelectModal();
             document.getElementById('history-modal-title').innerText = "📜 Individual Score History";
-            let html = '';
-            if (individualScoreHistory.length === 0) {
-                html = '<p style="color:#cbd5e1;">Walang nakagagayang history ng mga indibidwal.</p>';
-            } else {
-                individualScoreHistory.forEach(item => {
-                    html += `
-                        <div style="background: rgba(56, 189, 248, 0.2); border: 1.5px solid #38bdf8; border-radius: 14px; padding: 12px; margin-bottom: 10px;">
-                            <h4 style="margin:0; color:#f472b6; font-size:18px;">👤 ${item.name} — <span style="color:#34d399;">${item.score}/${item.maxScore}</span></h4>
-                            <p style="margin:4px 0 0 0; font-size:12px; color:#e2e8f0;">📅 ${item.date} 🕒 ${item.time}</p>
-                        </div>
-                    `;
-                });
-            }
+            let html = individualScoreHistory.length === 0 ? '<p style="color:#cbd5e1;">Walang nakagagayang history ng mga indibidwal.</p>' : '';
+            individualScoreHistory.forEach(item => {
+                html += `<div style="background: rgba(56, 189, 248, 0.2); border: 1.5px solid #38bdf8; border-radius: 14px; padding: 12px; margin-bottom: 10px;">
+                    <h4 style="margin:0; color:#f472b6; font-size:18px;">👤 ${item.name} — <span style="color:#34d399;">${item.score}/${item.maxScore}</span></h4>
+                    <p style="margin:4px 0 0 0; font-size:12px; color:#e2e8f0;">📅 ${item.date} 🕒 ${item.time}</p>
+                </div>`;
+            });
             document.getElementById('history-modal-content').innerHTML = html;
             document.getElementById('history-display-modal').style.display = 'flex';
         }
@@ -758,30 +656,19 @@
             individualScoreHistory = data.individualScoreHistory || [];
         });
 
-        // PICTURE ARCHIVE SELECT & DELETE LOGIC
-        function openArchiveAuthModal() {
-            document.getElementById('archive-auth-modal').style.display = 'flex';
-            document.getElementById('archive-pass-input').focus();
-        }
+        function openArchiveAuthModal() { document.getElementById('archive-auth-modal').style.display = 'flex'; document.getElementById('archive-pass-input').focus(); }
         function closeArchiveAuthModal() { document.getElementById('archive-auth-modal').style.display = 'none'; }
         function closeArchiveModal() { document.getElementById('archive-modal').style.display = 'none'; }
-
         function verifyArchivePassword() {
             let pass = document.getElementById('archive-pass-input').value;
             closeArchiveAuthModal();
-            if (pass === "Quiz") {
-                renderPhotoArchive();
-                document.getElementById('archive-modal').style.display = 'flex';
-            } else {
-                alert("🚫 Access Denied!");
-            }
+            if (pass === "Quiz") { renderPhotoArchive(); document.getElementById('archive-modal').style.display = 'flex'; }
+            else alert("🚫 Access Denied!");
         }
 
         socket.on('photoArchiveUpdated', (archive) => {
             serverPhotoArchive = archive;
-            if (document.getElementById('archive-modal').style.display === 'flex') {
-                renderPhotoArchive();
-            }
+            if (document.getElementById('archive-modal').style.display === 'flex') renderPhotoArchive();
         });
 
         function renderPhotoArchive() {
@@ -792,14 +679,12 @@
             }
             let html = '';
             serverPhotoArchive.forEach(item => {
-                html += `
-                    <div class="archive-item">
-                        <input type="checkbox" class="archive-checkbox" value="${item.id}" />
-                        <img src="${item.photo || '/logo.png'}" alt="${item.groupName}" />
-                        <p style="margin:4px 0; font-size:14px; font-weight:800;">${item.groupName}</p>
-                        <span style="font-size:10px; color:#f472b6;">🕒 ${item.timestamp}</span>
-                    </div>
-                `;
+                html += `<div class="archive-item">
+                    <input type="checkbox" class="archive-checkbox" value="${item.id}" />
+                    <img src="${item.photo || '/logo.png'}" alt="${item.groupName}" />
+                    <p style="margin:4px 0; font-size:14px; font-weight:800;">${item.groupName}</p>
+                    <span style="font-size:10px; color:#f472b6;">🕒 ${item.timestamp}</span>
+                </div>`;
             });
             container.innerHTML = html;
         }
@@ -807,22 +692,14 @@
         function deleteSelectedArchivePhotos() {
             let checkboxes = document.querySelectorAll('.archive-checkbox:checked');
             let selectedIds = Array.from(checkboxes).map(cb => cb.value);
-            if (selectedIds.length === 0) {
-                alert("Pumili muna ng litrato na gustong burahin!");
-                return;
-            }
-            if (confirm(`Sigurado ka bang gusto mong burahin ang ${selectedIds.length} piling litrato?`)) {
-                socket.emit('deleteSelectedPhotos', selectedIds);
-            }
+            if (selectedIds.length === 0) { alert("Pumili muna ng litrato na gustong burahin!"); return; }
+            if (confirm(`Sigurado ka bang gusto mong burahin ang ${selectedIds.length} piling litrato?`)) socket.emit('deleteSelectedPhotos', selectedIds);
         }
 
         function confirmEraseAllArchive() {
-            if (confirm("Sigurado ka bang gusto mong burahin ang LAHAT ng litrato sa archive?")) {
-                socket.emit('clearPhotoArchive');
-            }
+            if (confirm("Sigurado ka bang gusto mong burahin ang LAHAT ng litrato sa archive?")) socket.emit('clearPhotoArchive');
         }
 
-        // CAMERA LOGIC FOR GROUP & INDIVIDUAL
         async function selectGroup(groupName) {
             myGroup = groupName;
             document.getElementById('indiv-name-input-box').classList.add('hidden');
@@ -840,44 +717,31 @@
             try {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                 document.getElementById('webcam-video').srcObject = mediaStream;
-            } catch (err) {
-                alert("Hindi ma-access ang camera.");
-            }
+            } catch (err) { alert("Hindi ma-access ang camera."); }
         }
 
         function capturePhoto() {
             const video = document.getElementById('webcam-video');
             const canvas = document.getElementById('webcam-canvas');
             const context = canvas.getContext('2d');
-            
             canvas.width = video.videoWidth || 280;
             canvas.height = video.videoHeight || 210;
-            
             context.save(); context.scale(-1, 1);
             context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
             context.restore();
-            
             capturedDataUrl = canvas.toDataURL('image/png');
-            video.style.display = 'none';
-            canvas.style.display = 'none';
-            
+            video.style.display = 'none'; canvas.style.display = 'none';
             const preview = document.getElementById('captured-preview');
-            preview.src = capturedDataUrl;
-            preview.classList.remove('hidden');
-
+            preview.src = capturedDataUrl; preview.classList.remove('hidden');
             document.getElementById('camera-controls').classList.add('hidden');
             document.getElementById('join-now-container').classList.remove('hidden');
-
             if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
         }
 
         function confirmJoinNow() {
             if (currentGameMode === 'individual') {
                 let nameInput = document.getElementById('indiv-fullname-input').value;
-                if (!nameInput || !nameInput.trim()) {
-                    alert("Mangyaring i-type muna ang inyong Buong Pangalan!");
-                    return;
-                }
+                if (!nameInput || !nameInput.trim()) { alert("Mangyaring i-type muna ang inyong Buong Pangalan!"); return; }
                 myFullName = nameInput.trim();
                 socket.emit('registerIndividualParticipant', { fullName: myFullName, photo: capturedDataUrl });
             } else {
@@ -889,7 +753,6 @@
             document.getElementById('side-profile').style.display = 'none';
             document.getElementById('qr-wrapper').style.display = 'none';
             document.getElementById('left-sidebar').style.display = 'none';
-
             document.getElementById('student-view').classList.remove('hidden');
             document.getElementById('group-title').innerText = currentGameMode === 'group' ? `Dashboard: ${myGroup}` : `Participant: ${myFullName}`;
             document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
@@ -897,14 +760,12 @@
             if (!isGameStarted) lockQuizUI(); else unlockQuizUI();
         }
 
-        // MONITOR RENDER ENGINE (DYNAMIC FOR BOTH MODES)
         socket.on('updateState', ({ groupScores, photos, completedStatus, individualParticipants: indivs, gameMode }) => {
             latestGroupScores = groupScores;
             if (photos) attorneyPhotos = photos;
             if (completedStatus) groupCompletedStatus = completedStatus;
             if (indivs) individualParticipants = indivs;
             if (gameMode) currentGameMode = gameMode;
-
             renderScoreboardAndPodium();
         });
 
@@ -913,24 +774,17 @@
             const podiumDisplay = document.getElementById('podium-display');
 
             if (currentGameMode === 'group') {
-                // BY GROUP MONITOR RENDER
                 const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
                 let chartHTML = '';
                 sortedGroups.forEach(([group, score]) => {
                     let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
                     let photoSrc = attorneyPhotos[group] || '/logo.png';
-                    let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
-                    let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
-                    let tSecs = (tSeconds % 60).toString().padStart(2, '0');
-
-                    chartHTML += `
-                        <div class="bar-row">
-                            <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini" />
-                            <div class="bar-label">${group}</div>
-                            <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
-                            <div class="bar-score">${score}/${totalMaxScore}</div>
-                        </div>
-                    `;
+                    chartHTML += `<div class="bar-row">
+                        <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini" />
+                        <div class="bar-label">${group}</div>
+                        <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
+                        <div class="bar-score">${score}/${totalMaxScore}</div>
+                    </div>`;
                 });
                 if (barChart) barChart.innerHTML = chartHTML;
 
@@ -938,90 +792,62 @@
                 sortedGroups.forEach(([group, score], idx) => {
                     let heightPercent = totalMaxScore > 0 ? Math.max((score / totalMaxScore) * 100, 10) : 10;
                     let photoSrc = attorneyPhotos[group] || '/logo.png';
-                    podiumHTML += `
-                        <div class="podium-col">
-                            <div class="rank-bar-track">
-                                <div class="rank-bar-fill" style="height: ${heightPercent}%;"></div>
-                            </div>
-                            <div class="glowing-frame">
-                                <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
-                            </div>
-                            <div class="animated-attorney-label">${group}</div>
-                        </div>
-                    `;
+                    podiumHTML += `<div class="podium-col">
+                        <div class="rank-bar-track"><div class="rank-bar-fill" style="height: ${heightPercent}%;"></div></div>
+                        <div class="glowing-frame"><img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" /></div>
+                        <div class="animated-attorney-label">${group}</div>
+                    </div>`;
                 });
                 if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
-
             } else {
-                // INDIVIDUAL MONITOR RENDER (UNLIMITED PARTICIPANTS)
                 const indivList = Object.values(individualParticipants).sort((a, b) => b.score - a.score);
-                
-                // Kaliwang Box: Scrolling List ng Pangalan at Score
                 let chartHTML = '<div style="display:flex; flex-direction:column; gap:8px;">';
-                if (indivList.length === 0) {
-                    chartHTML += '<p style="color:#cbd5e1; font-size:13px;">Waiting for participants to log-in...</p>';
-                } else {
+                if (indivList.length === 0) chartHTML += '<p style="color:#cbd5e1; font-size:13px;">Waiting for participants to log-in...</p>';
+                else {
                     indivList.forEach(p => {
-                        chartHTML += `
-                            <div style="display:flex; align-items:center; background:rgba(30,41,59,0.7); padding:8px 12px; border-radius:12px; border:1px solid #38bdf8;">
-                                <img src="${p.photo || '/logo.png'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover; margin-right:10px; transform:scaleX(-1);" />
-                                <div style="font-size:13px; font-weight:800; color:#f3e8ff; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</div>
-                                <div style="font-size:14px; font-weight:900; color:#34d399;">${p.score}/${totalMaxScore}</div>
-                            </div>
-                        `;
+                        chartHTML += `<div style="display:flex; align-items:center; background:rgba(30,41,59,0.7); padding:8px 12px; border-radius:12px; border:1px solid #38bdf8;">
+                            <img src="${p.photo || '/logo.png'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover; margin-right:10px; transform:scaleX(-1);" />
+                            <div style="font-size:13px; font-weight:800; color:#f3e8ff; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name}</div>
+                            <div style="font-size:14px; font-weight:900; color:#34d399;">${p.score}/${totalMaxScore}</div>
+                        </div>`;
                     });
                 }
                 chartHTML += '</div>';
                 if (barChart) barChart.innerHTML = chartHTML;
 
-                // Kanang Box: Top 1-9 Rankings
                 let top3 = indivList.slice(0, 3);
                 let top4to9 = indivList.slice(3, 9);
-
                 let podiumHTML = '<div style="width:100%; display:flex; flex-direction:column; align-items:center;">';
-                
-                // Top 1-3 Rank Bars
                 podiumHTML += '<div class="podium-area" style="height:210px; margin-top:0;">';
                 top3.forEach((p, idx) => {
                     let heightPercent = totalMaxScore > 0 ? Math.max((p.score / totalMaxScore) * 100, 15) : 15;
-                    podiumHTML += `
-                        <div class="podium-col">
-                            <div style="font-size:10px; font-weight:900; color:#f472b6;">Rank ${idx+1}</div>
-                            <div class="rank-bar-track" style="height:110px;">
-                                <div class="rank-bar-fill" style="height:${heightPercent}%;"></div>
-                            </div>
-                            <div class="glowing-frame" style="width:48px; height:48px;">
-                                <img src="${p.photo || '/logo.png'}" style="transform:scaleX(-1);" />
-                            </div>
-                            <div class="indiv-rank-name">${p.name}</div>
-                            <div class="indiv-rank-score">${p.score}/${totalMaxScore}</div>
-                        </div>
-                    `;
+                    podiumHTML += `<div class="podium-col">
+                        <div style="font-size:10px; font-weight:900; color:#f472b6;">Rank ${idx+1}</div>
+                        <div class="rank-bar-track" style="height:110px;"><div class="rank-bar-fill" style="height:${heightPercent}%;"></div></div>
+                        <div class="glowing-frame" style="width:48px; height:48px;"><img src="${p.photo || '/logo.png'}" style="transform:scaleX(-1);" /></div>
+                        <div class="indiv-rank-name">${p.name}</div>
+                        <div class="indiv-rank-score">${p.score}/${totalMaxScore}</div>
+                    </div>`;
                 });
                 podiumHTML += '</div>';
 
-                // Top 4-9 Circles
                 if (top4to9.length > 0) {
                     podiumHTML += '<div class="indiv-ranking-grid">';
                     top4to9.forEach((p, idx) => {
-                        podiumHTML += `
-                            <div class="indiv-rank-card">
-                                <div style="font-size:9px; color:#f472b6; font-weight:800;">Rank ${idx+4}</div>
-                                <img src="${p.photo || '/logo.png'}" />
-                                <div class="indiv-rank-name">${p.name}</div>
-                                <div class="indiv-rank-score">${p.score}/${totalMaxScore}</div>
-                            </div>
-                        `;
+                        podiumHTML += `<div class="indiv-rank-card">
+                            <div style="font-size:9px; color:#f472b6; font-weight:800;">Rank ${idx+4}</div>
+                            <img src="${p.photo || '/logo.png'}" />
+                            <div class="indiv-rank-name">${p.name}</div>
+                            <div class="indiv-rank-score">${p.score}/${totalMaxScore}</div>
+                        </div>`;
                     });
                     podiumHTML += '</div>';
                 }
-
                 podiumHTML += '</div>';
                 if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
             }
         }
 
-        // QUIZ RENDER & LOCK LOGIC
         socket.on('applyCustomQuestionsList', (questionsList) => {
             globalQuestionsList = questionsList;
             totalQuestionsCount = questionsList.length;
@@ -1032,29 +858,19 @@
         function renderQuestionsUI(questionsList) {
             const quizContainer = document.getElementById('quiz-questions');
             let questionsHTML = '';
-
             questionsList.forEach((q, idx) => {
                 let qNum = idx + 1;
                 let qKey = `q${qNum}`;
                 let optionsHTML = '';
-
                 if (q.options) {
                     Object.keys(q.options).forEach(optKey => {
-                        optionsHTML += `
-                            <label>
-                                <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns(${idx}, '${qKey}', '${optKey}')"> 
-                                ${optKey}) ${q.options[optKey]}
-                            </label>
-                        `;
+                        optionsHTML += `<label><input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns(${idx}, '${qKey}', '${optKey}')"> ${optKey}) ${q.options[optKey]}</label>`;
                     });
                 }
-
-                questionsHTML += `
-                    <div class="question-card" id="card-${qKey}">
-                        <p><b>Q${qNum}:</b> ${q.question} <span style="font-size:12px; color:#f472b6;">(${q.points || 1} pts)</span></p>
-                        <div class="options">${optionsHTML}</div>
-                    </div>
-                `;
+                questionsHTML += `<div class="question-card" id="card-${qKey}">
+                    <p><b>Q${qNum}:</b> ${q.question} <span style="font-size:12px; color:#f472b6;">(${q.points || 1} pts)</span></p>
+                    <div class="options">${optionsHTML}</div>
+                </div>`;
             });
             if (quizContainer) quizContainer.innerHTML = questionsHTML;
         }
@@ -1063,7 +879,6 @@
             const quizQuestionsEl = document.getElementById('quiz-questions');
             const waitingBannerEl = document.getElementById('waiting-banner');
             const lockOverlayEl = document.getElementById('lock-overlay');
-
             if (quizQuestionsEl) quizQuestionsEl.classList.add('quiz-locked-questions');
             if (waitingBannerEl) waitingBannerEl.style.display = 'block';
             if (lockOverlayEl) lockOverlayEl.style.display = 'block';
@@ -1073,7 +888,6 @@
             const quizQuestionsEl = document.getElementById('quiz-questions');
             const waitingBannerEl = document.getElementById('waiting-banner');
             const lockOverlayEl = document.getElementById('lock-overlay');
-
             if (quizQuestionsEl) quizQuestionsEl.classList.remove('quiz-locked-questions');
             if (waitingBannerEl) waitingBannerEl.style.display = 'none';
             if (lockOverlayEl) lockOverlayEl.style.display = 'none';
@@ -1092,16 +906,12 @@
             if (!isGameStarted) return;
             if (answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
-
             const answeredCount = Object.keys(answeredQuestions).length;
             socket.emit('submitAnswer', { groupName: myGroup, fullName: myFullName, questionIndex, answer, answeredCount });
         }
 
         function selectRole(role) {
-            if (role === 'teacher') {
-                document.getElementById('password-modal').style.display = 'flex';
-                document.getElementById('judge-pass-input').focus();
-            }
+            if (role === 'teacher') { document.getElementById('password-modal').style.display = 'flex'; document.getElementById('judge-pass-input').focus(); }
         }
         function closePasswordModal() { document.getElementById('password-modal').style.display = 'none'; }
         function verifyJudgePassword() {
@@ -1115,15 +925,12 @@
                 document.getElementById('left-sidebar').style.display = 'none';
                 document.getElementById('teacher-view').classList.remove('hidden');
                 document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
-            } else {
-                alert("🚫 Wrong Password!");
-            }
+            } else alert("🚫 Wrong Password!");
         }
 
         window.onload = () => {
             new QRCode(document.getElementById("qrcode"), {
-                text: window.location.href,
-                width: 75, height: 75, colorDark: "#6b21a8", colorLight: "#ffffff"
+                text: window.location.href, width: 75, height: 75, colorDark: "#6b21a8", colorLight: "#ffffff"
             });
             updateGameModeUI();
         };
@@ -1134,11 +941,8 @@
         }
 
         function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-            } else {
-                document.exitFullscreen();
-            }
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
         }
 
         function handleSurrender() { location.reload(); }
@@ -1159,7 +963,6 @@
         function savePlainQuestions() {
             let val = document.getElementById('custom-questions-plaintext').value;
             if (val) {
-                // simple parser
                 let questions = [{ question: val, type: 'multiple-choice', options: { A: 'Sample A', B: 'Sample B' }, answer: 'A', points: 1 }];
                 socket.emit('updatePlainQuestionsData', questions);
                 closeInsertModal();
