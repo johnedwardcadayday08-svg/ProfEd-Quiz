@@ -7,12 +7,10 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// I-serve ang mga static files mula sa root folder
 app.use(express.static(path.join(__dirname)));
 
-// Default data para sa laro
 let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
-let currentQuizMode = "multiple-choice"; // 'multiple-choice', 'mixed', o 'long-essay'
+let currentQuizMode = "multiple-choice";
 let isGameStarted = false;
 let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
 let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
@@ -21,7 +19,6 @@ let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'At
 let timerInterval = null;
 let serverPhotoArchive = [];
 
-// Default custom questions
 let customQuestionsList = [
     {
         question: "Ayon sa Kautusang Pampamahalaan at Code of Ethics, ano ang pangunahing batayan ng pagpaparusa o pagdidisiplina ng isang guro sa mag-aaral?",
@@ -37,8 +34,47 @@ let customQuestionsList = [
     }
 ];
 
+// AUTOMATIC RUBRICS SCORING ENGINE FOR ESSAYS
+function evaluateEssayScore(essayText, criteriaText, maxPoints) {
+    if (!essayText || essayText.trim().length === 0) return 0;
+
+    let text = essayText.trim();
+    let wordCount = text.split(/\s+/).length;
+    let totalMax = maxPoints || 10;
+
+    let scorePercentage = 0;
+
+    // 1. Length & Depth Check (35%)
+    if (wordCount >= 30) scorePercentage += 0.35;
+    else if (wordCount >= 15) scorePercentage += 0.25;
+    else scorePercentage += 0.15;
+
+    // 2. Keyword & Concept Relevance (40%)
+    let lowerCriteria = (criteriaText || "").toLowerCase();
+    let lowerEssay = text.toLowerCase();
+    let keywords = lowerCriteria.match(/\b[a-zà-ÿ]{4,}\b/gi) || [];
+    
+    let matchedCount = 0;
+    keywords.forEach(kw => {
+        if (lowerEssay.includes(kw)) matchedCount++;
+    });
+
+    if (keywords.length > 0) {
+        let matchRatio = matchedCount / keywords.length;
+        scorePercentage += Math.min(matchRatio * 0.40, 0.40);
+    } else {
+        scorePercentage += 0.35;
+    }
+
+    // 3. Coherence & Structure (25%)
+    if (text.includes('.') || text.includes(',')) scorePercentage += 0.25;
+    else scorePercentage += 0.15;
+
+    let computedPoints = Math.round(scorePercentage * totalMax);
+    return Math.min(Math.max(computedPoints, 1), totalMax);
+}
+
 io.on('connection', (socket) => {
-    // Ipadala ang kasalukuyang state sa bagong pasok na client
     socket.emit('titleUpdated', currentAppTitle);
     socket.emit('quizModeUpdated', currentQuizMode);
     socket.emit('gameState', { isGameStarted });
@@ -47,19 +83,16 @@ io.on('connection', (socket) => {
     socket.emit('timerUpdate', groupTimers);
     socket.emit('photoArchiveUpdated', serverPhotoArchive);
 
-    // Baguhin ang App Title
     socket.on('changeAppTitle', (newTitle) => {
         currentAppTitle = newTitle;
         io.emit('titleUpdated', currentAppTitle);
     });
 
-    // Baguhin ang Quiz Mode
     socket.on('changeQuizMode', (mode) => {
         currentQuizMode = mode;
         io.emit('quizModeUpdated', currentQuizMode);
     });
 
-    // I-update ang mga tanong mula sa Plain Text Parser
     socket.on('updatePlainQuestionsData', (questionsList) => {
         if (questionsList && questionsList.length > 0) {
             customQuestionsList = questionsList;
@@ -67,7 +100,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Pagrehistro ng Attorney Photo at pagsali
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
@@ -82,7 +114,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Pagsisimula ng Timer at Laro
     socket.on('startTimer', () => {
         if (isGameStarted) return;
         isGameStarted = true;
@@ -109,7 +140,6 @@ io.on('connection', (socket) => {
         }, 1000);
     });
 
-    // Force Time's Up Handler (Inayos para gumana ang button sa monitor screen)
     socket.on('forceTimeUp', () => {
         if (timerInterval) clearInterval(timerInterval);
         Object.keys(groupTimers).forEach(g => {
@@ -119,7 +149,6 @@ io.on('connection', (socket) => {
         io.emit('timeUp');
     });
 
-    // Pag-set ng Timer Duration
     socket.on('setTimerDuration', (seconds) => {
         Object.keys(groupTimers).forEach(g => {
             groupTimers[g] = seconds;
@@ -127,16 +156,41 @@ io.on('connection', (socket) => {
         io.emit('timerUpdate', groupTimers);
     });
 
-    // Pagsagot sa Tanong
-    socket.on('submitAnswer', ({ groupName, questionId, answer, answeredCount }) => {
+    socket.on('submitAnswer', ({ groupName, questionIndex, answer, answeredCount }) => {
         if (groupScores[groupName] !== undefined && !groupCompletedStatus[groupName]) {
-            groupScores[groupName] = answeredCount;
+            let qObj = customQuestionsList[questionIndex];
+            let earnedPoints = 0;
+            let isCorrect = false;
+
+            if (qObj) {
+                if (qObj.type === 'essay') {
+                    earnedPoints = evaluateEssayScore(answer, qObj.rubrics || qObj.explanation, qObj.points || 10);
+                    isCorrect = earnedPoints > 0;
+                } else {
+                    let cleanUserAns = String(answer).trim().toLowerCase();
+                    let cleanCorrectAns = String(qObj.answer).trim().toLowerCase();
+                    if (cleanUserAns === cleanCorrectAns) {
+                        isCorrect = true;
+                        earnedPoints = qObj.points || 1;
+                        if (groupTimers[groupName] !== undefined) {
+                            groupTimers[groupName] += 5;
+                        }
+                    } else {
+                        earnedPoints = 0;
+                    }
+                }
+            }
+
+            socket.emit('answerFeedback', { isCorrect, questionId: `q${questionIndex + 1}`, answer, earnedPoints, maxPoints: qObj ? (qObj.points || 1) : 1 });
+
+            groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
             
             if (answeredCount >= customQuestionsList.length) {
                 groupCompletedStatus[groupName] = true;
             }
 
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
+            io.emit('timerUpdate', groupTimers);
 
             const allCompleted = Object.keys(groupCompletedStatus).every(g => groupCompletedStatus[g]);
             if (allCompleted) {
@@ -146,7 +200,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // I-reset ang Laro
     socket.on('resetGame', () => {
         if (timerInterval) clearInterval(timerInterval);
         isGameStarted = false;
@@ -156,7 +209,6 @@ io.on('connection', (socket) => {
         io.emit('resetState');
     });
 
-    // Burahin ang Photo Archive
     socket.on('clearPhotoArchive', () => {
         serverPhotoArchive = [];
         io.emit('photoArchiveUpdated', serverPhotoArchive);

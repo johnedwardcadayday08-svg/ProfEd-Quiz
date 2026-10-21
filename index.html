@@ -1057,6 +1057,25 @@
             resize: vertical;
         }
 
+        .essay-done-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 13.5px;
+            padding: 10px 18px;
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            transition: all 0.2s ease;
+        }
+        .essay-done-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
         .rubrics-badge-box {
             background: rgba(168, 85, 247, 0.18);
             border: 1.5px dashed rgba(192, 132, 252, 0.7);
@@ -1379,7 +1398,6 @@
         <span id="floating-timer-text">05:00</span>
     </div>
 
-    <!-- IN-UPDATE ANG QUIZ MODE SELECTION MODAL -->
     <div class="modal-overlay" id="quiz-mode-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 450px;">
             <h3 style="color: #c084fc;">🔀 Select Quiz Mode</h3>
@@ -1888,7 +1906,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        // AUTOMATIC ADVANCED ESSAY, RUBRICS & QUESTION PARSER
         function savePlainQuestions() {
             try {
                 let rawInput = document.getElementById('custom-questions-plaintext').value;
@@ -1956,12 +1973,11 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                         }
                     });
 
-                    // Auto-detect Essay kung may rubrics o salitang "Ipaliwanag/Explain"
                     if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText)) {
                         if (Object.keys(options).length === 0 && !answer) {
                             qType = 'essay';
                             if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kelebanse ng sagot.";
-                            if (points === 1) points = 5;
+                            if (points === 1) points = 10;
                         }
                     }
 
@@ -2019,7 +2035,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     Object.keys(opts).forEach(optKey => {
                         optionsHTML += `
                             <label id="lbl-${qKey}-${optKey}">
-                                <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}', ${q.points || 1})"> 
+                                <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns(${idx}, '${qKey}', '${optKey}')"> 
                                 ${optKey}) ${opts[optKey]}
                             </label>
                         `;
@@ -2027,23 +2043,22 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
                 } 
                 else if (effectiveMode === 'long-essay' || q.type === 'essay') {
-                    // Essay Format Display
                     inputFieldHTML = `
                         <div class="rubrics-badge-box">
                             📌 <b>Criteria for Judging:</b> ${q.rubrics || 'Nilalaman at Kaangkupan ng Sagot'}<br>
-                            🎯 <b>Total Points:</b> ${q.points || 5} Points
+                            🎯 <b>Total Points:</b> ${q.points || 10} Points
                         </div>
-                        <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong kumpletong sagot dito..." onblur="submitEssayAns('${qKey}', this.value, ${q.points || 5})"></textarea>
+                        <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong kumpletong sagot dito..."></textarea>
+                        <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerEssaySubmit(${idx}, '${qKey}')">Submit Essay & Auto-Grade 🚀</button>
                     `;
                 }
                 else {
-                    // Mixed Mode (MC, ID, Enum, T/F, Essay)
                     if (q.type === 'multiple-choice' && q.options && Object.keys(q.options).length > 0) {
                         let optionsHTML = '';
                         Object.keys(q.options).forEach(optKey => {
                             optionsHTML += `
                                 <label id="lbl-${qKey}-${optKey}">
-                                    <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}', ${q.points || 1})"> 
+                                    <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns(${idx}, '${qKey}', '${optKey}')"> 
                                     ${optKey}) ${q.options[optKey]}
                                 </label>
                             `;
@@ -2053,23 +2068,24 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                         inputFieldHTML = `
                             <div class="options">
                                 <label id="lbl-${qKey}-True">
-                                    <input type="radio" name="${qKey}" value="True" onchange="submitAns('${qKey}', 'True', ${q.points || 1})"> A) True / Tama
+                                    <input type="radio" name="${qKey}" value="True" onchange="submitAns(${idx}, '${qKey}', 'True')"> A) True / Tama
                                 </label>
                                 <label id="lbl-${qKey}-False">
-                                    <input type="radio" name="${qKey}" value="False" onchange="submitAns('${qKey}', 'False', ${q.points || 1})"> B) False / Mali
+                                    <input type="radio" name="${qKey}" value="False" onchange="submitAns(${idx}, '${qKey}', 'False')"> B) False / Mali
                                 </label>
                             </div>`;
                     } else if (q.type === 'essay') {
                         inputFieldHTML = `
                             <div class="rubrics-badge-box">
                                 📌 <b>Criteria / Rubrics:</b> ${q.rubrics || 'Kabuuan ng Kaisipan at Grammar'}<br>
-                                🎯 <b>Max Score:</b> ${q.points || 5} Points
+                                🎯 <b>Max Score:</b> ${q.points || 10} Points
                             </div>
-                            <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong essay dito..." onblur="submitEssayAns('${qKey}', this.value, ${q.points || 5})"></textarea>`;
+                            <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong essay dito..."></textarea>
+                            <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerEssaySubmit(${idx}, '${qKey}')">Submit Essay & Auto-Grade 🚀</button>`;
                     } else {
                         inputFieldHTML = `
                             <div style="margin-top: 8px;">
-                                <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot..." autocomplete="off" onchange="submitMixedTextAns('${qKey}', this.value, ${q.points || 1})" />
+                                <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot..." autocomplete="off" onchange="submitMixedTextAns(${idx}, '${qKey}', this.value)" />
                             </div>`;
                     }
                 }
@@ -2105,7 +2121,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         }
 
         function disableAllRadioInputs(disable) {
-            const inputs = document.querySelectorAll('#quiz-questions input[type="radio"], #quiz-questions input[type="text"], #quiz-questions textarea');
+            const inputs = document.querySelectorAll('#quiz-questions input[type="radio"], #quiz-questions input[type="text"], #quiz-questions textarea, #quiz-questions button');
             inputs.forEach(input => {
                 input.disabled = disable;
             });
@@ -2303,14 +2319,13 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { socket.emit('resetGame'); }
 
-        function submitAns(questionId, answer, pts) {
+        function submitAns(questionIndex, questionId, answer) {
             if (!isGameStarted) return;
             if (!myGroup || answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
             
-            let currentScore = (latestGroupScores[myGroup] || 0) + (pts || 1);
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer, answeredCount: currentScore });
+            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer, answeredCount });
             
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
@@ -2326,15 +2341,14 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         }
 
-        function submitMixedTextAns(questionId, answerText, pts) {
+        function submitMixedTextAns(questionIndex, questionId, answerText) {
             if (!isGameStarted) return;
             if (!myGroup || answeredQuestions[questionId]) return;
             if (!answerText || !answerText.trim()) return;
             
             answeredQuestions[questionId] = true;
-            let currentScore = (latestGroupScores[myGroup] || 0) + (pts || 1);
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer: answerText, answeredCount: currentScore });
+            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: answerText, answeredCount });
             
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
@@ -2353,15 +2367,33 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         }
 
-        function submitEssayAns(questionId, essayText, pts) {
+        function triggerEssaySubmit(questionIndex, questionId) {
+            const txtArea = document.getElementById(`textarea-${questionId}`);
+            if (!txtArea) return;
+            const val = txtArea.value;
+
+            if (!val || !val.trim()) {
+                alert("Mangyaring isulat muna ang iyong essay bago pindutin ang Submit!");
+                return;
+            }
+
+            submitEssayAns(questionIndex, questionId, val);
+
+            const btn = document.getElementById(`btn-done-${questionId}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Submitted & Evaluated ✔️";
+                btn.style.background = "rgba(148, 163, 184, 0.4)";
+            }
+        }
+
+        function submitEssayAns(questionIndex, questionId, essayText) {
             if (!isGameStarted) return;
             if (!myGroup || answeredQuestions[questionId]) return;
-            if (!essayText || !essayText.trim()) return;
 
             answeredQuestions[questionId] = true;
-            let currentScore = (latestGroupScores[myGroup] || 0) + (pts || 5);
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer: essayText, answeredCount: currentScore });
+            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: essayText, answeredCount });
 
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
@@ -2389,15 +2421,20 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         });
 
-        socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
+        socket.on('answerFeedback', ({ isCorrect, questionId, answer, earnedPoints, maxPoints }) => {
             const answeredCount = Object.keys(answeredQuestions).length;
-            if (answeredCount < totalQuestionsCount) {
+            if (answeredCount <= totalQuestionsCount) {
                 const popup = document.getElementById('feedback-popup');
                 if (popup) {
-                    popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-                    popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
+                    if (earnedPoints !== undefined && maxPoints !== undefined) {
+                        popup.className = earnedPoints > 0 ? "feedback-correct" : "feedback-wrong";
+                        popup.innerHTML = `📝 ESSAY GRADED!<br><span style="font-size:20px;">Score: ${earnedPoints} / ${maxPoints} Points</span>`;
+                    } else {
+                        popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
+                        popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
+                    }
                     popup.style.display = "block";
-                    setTimeout(() => { popup.style.display = "none"; }, 1500);
+                    setTimeout(() => { popup.style.display = "none"; }, 2000);
                 }
             }
             if (questionId && answer) {
