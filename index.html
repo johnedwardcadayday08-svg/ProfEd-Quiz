@@ -68,103 +68,6 @@
             overflow-y: auto !important;
         }
 
-        body.is-fullscreen .left-suspects-sidebar {
-            left: 42px !important;
-            top: 38% !important;
-        }
-
-        body.is-fullscreen .qr-code-wrapper {
-            right: 65px !important;
-            bottom: 60vh !important;
-            transform: scale(1.12);
-        }
-
-        body.is-fullscreen .attorney-buttons-container {
-            margin-top: 60px !important;
-            margin-bottom: 15px !important;
-            gap: 18px !important;
-        }
-        body.is-fullscreen .attorney-buttons-container .group-btn {
-            padding: 34px 16px !important;
-            font-size: 19px !important;
-            font-weight: 800 !important;
-            border-radius: 20px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            min-height: 100px !important;
-        }
-
-        body.is-fullscreen #teacher-view {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 85px);
-            box-sizing: border-box;
-        }
-
-        body.is-fullscreen .judge-main-layout {
-            display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
-            gap: 20px;
-            flex: 1;
-            align-items: stretch;
-            margin-bottom: 10px;
-        }
-
-        body.is-fullscreen .judge-left-box,
-        body.is-fullscreen .judge-right-box {
-            height: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            box-sizing: border-box !important;
-        }
-
-        body.is-fullscreen .bar-chart-container {
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-around !important;
-            margin: 10px 0 0 0 !important;
-            padding: 16px !important;
-        }
-
-        body.is-fullscreen .podium-area {
-            flex: 1 !important;
-            height: auto !important;
-            align-items: flex-end !important;
-            margin-top: auto !important;
-            margin-bottom: 5px !important;
-        }
-
-        body.is-fullscreen .rank-bar-track {
-            height: 220px !important;
-        }
-
-        body.is-fullscreen #instructions-modal {
-            padding: 10px !important;
-        }
-        body.is-fullscreen .instructions-responsive-box {
-            max-width: 98vw !important;
-            width: 98vw !important;
-            max-height: 96vh !important;
-            padding: 24px 35px !important;
-        }
-        body.is-fullscreen .inst-title {
-            font-size: clamp(34px, 4.5vh, 48px) !important;
-        }
-        body.is-fullscreen .inst-subtitle {
-            font-size: clamp(22px, 3vh, 32px) !important;
-        }
-        body.is-fullscreen .inst-content-card {
-            font-size: clamp(20px, 2.8vh, 30px) !important;
-            padding: 20px 35px !important;
-            line-height: 1.6 !important;
-        }
-        body.is-fullscreen .inst-btn {
-            font-size: clamp(22px, 3vh, 32px) !important;
-            padding: 18px !important;
-        }
-
         .urgent-warning-glow {
             box-shadow: inset 0 0 50px rgba(244, 63, 94, 0.9), 0 0 30px rgba(244, 63, 94, 0.8);
             border: 3px solid #f43f5e !important;
@@ -184,7 +87,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
         }
 
         .top-controls-buttons {
@@ -232,11 +134,6 @@
             white-space: nowrap;
         }
 
-        .control-btn:hover {
-            transform: translateY(-2px) scale(1.02);
-            border-color: rgba(255, 255, 255, 0.6);
-        }
-
         .surrender-btn { background: linear-gradient(135deg, rgba(244, 63, 94, 0.85), rgba(225, 29, 72, 0.85)); }
         .insert-btn { background: linear-gradient(135deg, rgba(16, 185, 129, 0.85), rgba(5, 150, 105, 0.85)); }
         .title-btn { background: linear-gradient(135deg, rgba(56, 189, 248, 0.85), rgba(2, 132, 199, 0.85)); }
@@ -252,8 +149,6 @@
             animation: iconFloatGlow 4.2s ease-in-out infinite;
             z-index: 2;
             filter: drop-shadow(0 0 12px rgba(244, 114, 182, 0.75));
-            will-change: transform;
-            transform: translateZ(0);
         }
 
         @keyframes iconFloatGlow {
@@ -262,30 +157,12 @@
             100% { transform: translate3d(0, 0px, 0) rotate(0deg) scale(1); }
         }
 
-        .icon-1 { top: 6%; left: 2%; animation-delay: 0s; }
-        .icon-2 { top: 10%; right: 3%; animation-delay: 0.7s; }
-        .icon-3 { bottom: 22%; left: 3%; animation-delay: 1.4s; }
-        .icon-4 { bottom: 18%; right: 2%; animation-delay: 2.1s; }
-        .icon-5 { top: 40%; left: 1%; animation-delay: 1.1s; }
-        .icon-6 { top: 55%; right: 5%; animation-delay: 2.3s; }
-        .icon-7 { top: 4%; left: 14%; animation-delay: 0.4s; }
-        .icon-8 { bottom: 4%; left: 32%; animation-delay: 3.2s; }
-        .icon-9 { top: 30%; right: 1%; animation-delay: 1.7s; }
-        .icon-10 { bottom: 8%; right: 22%; animation-delay: 3.6s; }
-        .icon-11 { top: 75%; left: 7%; animation-delay: 2.0s; }
-        .icon-12 { top: 22%; left: 8%; animation-delay: 0.9s; }
-        .icon-13 { top: 85%; right: 10%; animation-delay: 1.3s; }
-        .icon-14 { top: 2%; right: 18%; animation-delay: 2.5s; }
-        .icon-15 { top: 48%; left: 95%; animation-delay: 1.6s; }
-        .icon-16 { bottom: 35%; left: 1%; animation-delay: 2.8s; }
-        .icon-17 { top: 15%; left: 28%; animation-delay: 0.3s; }
-        .icon-18 { bottom: 28%; right: 32%; animation-delay: 2.2s; }
-        .icon-19 { top: 68%; right: 15%; animation-delay: 3.1s; }
-        .icon-20 { top: 38%; left: 22%; animation-delay: 1.9s; }
-        .icon-21 { bottom: 12%; left: 18%; animation-delay: 2.7s; }
-        .icon-22 { top: 82%; left: 30%; animation-delay: 0.6s; }
-        .icon-23 { top: 18%; right: 35%; animation-delay: 3.4s; }
-        .icon-24 { bottom: 42%; right: 18%; animation-delay: 1.2s; }
+        .icon-1 { top: 6%; left: 2%; }
+        .icon-2 { top: 10%; right: 3%; }
+        .icon-3 { bottom: 22%; left: 3%; }
+        .icon-4 { bottom: 18%; right: 2%; }
+        .icon-5 { top: 40%; left: 1%; }
+        .icon-6 { top: 55%; right: 5%; }
 
         .side-profile-container {
             position: fixed;
@@ -323,6 +200,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            right: 35px; 
+            bottom: 55vh;
         }
 
         .qr-code-wrapper p {
@@ -330,65 +209,12 @@
             font-size: 10px;
             font-weight: bold;
             color: #f3e8ff;
-            letter-spacing: 0.5px;
         }
 
         #qrcode {
             padding: 5px;
             background: #ffffff;
             border-radius: 8px;
-        }
-
-        @media (min-width: 769px) {
-            .qr-code-wrapper { right: 35px; bottom: 55vh; }
-        }
-
-        @media (max-width: 768px) {
-            .side-profile-container { width: 160px; height: 35vh; }
-            .qr-code-wrapper {
-                position: relative;
-                margin: 10px auto 5px auto;
-                width: fit-content;
-                right: auto;
-                bottom: auto;
-                transform: scale(0.85);
-            }
-            .icon-5, .icon-6, .icon-9, .icon-10, .icon-13, .icon-15, .icon-18, .icon-19, .icon-22, .icon-24 {
-                display: none !important;
-            }
-            .container { backdrop-filter: blur(4px) !important; }
-
-            #instructions-modal {
-                padding: 8px !important;
-                align-items: center !important;
-            }
-            .instructions-responsive-box {
-                padding: 12px 14px !important;
-                max-height: 98vh !important;
-                height: auto !important;
-                border-radius: 18px !important;
-            }
-            .inst-title {
-                font-size: 20px !important;
-                margin-bottom: 2px !important;
-            }
-            .inst-subtitle {
-                font-size: 13px !important;
-                margin-bottom: 6px !important;
-            }
-            .inst-content-card {
-                font-size: 11.5px !important;
-                padding: 10px 12px !important;
-                line-height: 1.35 !important;
-                margin: 4px 0 !important;
-            }
-            .inst-content-card ul { padding-left: 16px !important; }
-            .inst-content-card li { margin-bottom: 3px !important; }
-            .inst-btn {
-                font-size: 14px !important;
-                padding: 10px !important;
-                margin-top: 6px !important;
-            }
         }
 
         .container { 
@@ -402,15 +228,6 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); 
             backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
-            transition: all 0.3s ease;
-        }
-
-        @media (min-width: 1024px) {
-            .container {
-                max-width: 1550px;
-                margin-left: 40px;
-                margin-right: 40px;
-            }
         }
 
         .judge-main-layout {
@@ -419,10 +236,6 @@
             gap: 20px;
             align-items: stretch;
             width: 100%;
-        }
-
-        @media (max-width: 900px) {
-            .judge-main-layout { grid-template-columns: 1fr; }
         }
 
         .judge-left-box {
@@ -440,7 +253,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
 
         .podium-area {
@@ -472,20 +284,6 @@
             overflow: hidden;
             height: 170px;
             border: 1.5px solid rgba(255, 255, 255, 0.25);
-            box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(6px);
-        }
-
-        @keyframes wateryWaveAnim {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 0%; }
-        }
-
-        @keyframes glowPulseEffect {
-            0% { filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.6)) brightness(1); }
-            50% { filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.9)) brightness(1.15); }
-            100% { filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.6)) brightness(1); }
         }
 
         .rank-bar-fill {
@@ -494,11 +292,7 @@
             transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 12px 12px 0 0;
             background-size: 200% 200% !important;
-            animation: wateryWaveAnim 4s ease-in-out infinite alternate, glowPulseEffect 3s ease-in-out infinite;
-            backdrop-filter: blur(8px);
             border-top: 2px solid rgba(255, 255, 255, 0.8);
-            box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.4), 0 0 25px rgba(168, 85, 247, 0.6);
-            will-change: height, background-position, filter;
         }
 
         .glowing-frame {
@@ -508,10 +302,8 @@
             padding: 3px;
             background: linear-gradient(135deg, #f472b6, #38bdf8, #a855f7);
             box-shadow: 0 0 18px rgba(192, 132, 252, 0.8);
-            animation: glowMove 3s ease-in-out infinite;
             margin-top: 10px;
             flex-shrink: 0;
-            will-change: transform;
         }
 
         .glowing-frame.completed-frame {
@@ -527,30 +319,18 @@
             background: #1e293b;
         }
 
-        @keyframes glowMove {
-            0% { transform: translate3d(0, 0, 0) scale(1); }
-            50% { transform: translate3d(0, -5px, 0) scale(1.04); }
-            100% { transform: translate3d(0, 0, 0) scale(1); }
-        }
-
         .animated-rank-title {
             font-size: 17px;
             font-weight: 900;
             color: #f472b6;
-            text-shadow: 0 0 12px rgba(244, 114, 182, 0.8), 0 0 20px rgba(192, 132, 252, 0.6);
-            animation: titleFloatGlow 3s ease-in-out infinite;
             text-align: center;
-            will-change: transform;
         }
 
         .animated-rank-subtitle {
             font-size: 12px;
             color: #e2e8f0;
-            text-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
-            animation: textSubtleWave 3.5s ease-in-out infinite;
             text-align: center;
             margin: 3px 0 10px 0;
-            will-change: transform;
         }
 
         .animated-attorney-label {
@@ -558,26 +338,6 @@
             font-weight: 800;
             margin-top: 5px;
             color: #f3e8ff;
-            text-shadow: 0 0 10px rgba(192, 132, 252, 0.8);
-            animation: labelPulseGlow 2.5s ease-in-out infinite;
-        }
-
-        @keyframes titleFloatGlow {
-            0% { transform: translate3d(0, 0, 0); }
-            50% { transform: translate3d(0, -3px, 0); }
-            100% { transform: translate3d(0, 0, 0); }
-        }
-
-        @keyframes textSubtleWave {
-            0% { transform: translate3d(0, 0, 0); }
-            50% { transform: translate3d(0, -2px, 0); }
-            100% { transform: translate3d(0, 0, 0); }
-        }
-
-        @keyframes labelPulseGlow {
-            0% { opacity: 0.9; }
-            50% { opacity: 1; }
-            100% { opacity: 0.9; }
         }
 
         .rank-label-badge {
@@ -588,7 +348,6 @@
             padding: 2px 8px;
             border-radius: 10px;
             margin-bottom: 6px;
-            box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
         }
 
         .app-logo {
@@ -598,14 +357,6 @@
             border-radius: 50%;
             border: 3px solid rgba(255, 255, 255, 0.9);
             box-shadow: 0 0 22px rgba(168, 85, 247, 0.8);
-            animation: logoBreath 3s ease-in-out infinite;
-            will-change: transform;
-        }
-
-        @keyframes logoBreath {
-            0% { transform: translate3d(0, 0, 0) scale(1); }
-            50% { transform: translate3d(0, -4px, 0) scale(1.04); }
-            100% { transform: translate3d(0, 0, 0) scale(1); }
         }
 
         .animated-header-title {
@@ -616,53 +367,18 @@
             text-align: center;
             font-weight: 900;
             margin: 10px 0 6px 0;
-            text-shadow: 0 0 18px rgba(168, 85, 247, 0.9);
-            animation: titleGlowMove 3.5s ease-in-out infinite;
-            will-change: transform;
-        }
-
-        @keyframes titleGlowMove {
-            0% { transform: translate3d(0, 0, 0); }
-            50% { transform: translate3d(0, -3px, 0); }
-            100% { transform: translate3d(0, 0, 0); }
-        }
-
-        @keyframes buttonPulseAnim {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
         }
 
         .animated-main-btn { 
-            animation: buttonPulseAnim 2.5s ease-in-out infinite; 
             padding: 16px 36px !important; 
             font-size: 18px !important;
             border-radius: 18px !important;
-            letter-spacing: 0.5px;
-            will-change: transform;
         }
 
-        .attorney-btn-1 {
-            background: linear-gradient(135deg, #38bdf8, #0284c7) !important;
-            box-shadow: 0 4px 16px rgba(56, 189, 248, 0.5) !important;
-        }
-        .attorney-btn-2 {
-            background: linear-gradient(135deg, #a855f7, #7c3aed) !important;
-            box-shadow: 0 4px 16px rgba(168, 85, 247, 0.5) !important;
-        }
-        .attorney-btn-3 {
-            background: linear-gradient(135deg, #10b981, #059669) !important;
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5) !important;
-        }
-        .attorney-btn-4 {
-            background: linear-gradient(135deg, #f43f5e, #be123c) !important;
-            box-shadow: 0 4px 16px rgba(244, 63, 94, 0.5) !important;
-        }
-
-        .animated-group-btn-1 { animation: buttonPulseAnim 2.5s ease-in-out infinite; }
-        .animated-group-btn-2 { animation: buttonPulseAnim 2.5s ease-in-out infinite; animation-delay: 0.3s; }
-        .animated-group-btn-3 { animation: buttonPulseAnim 2.5s ease-in-out infinite; animation-delay: 0.6s; }
-        .animated-group-btn-4 { animation: buttonPulseAnim 2.5s ease-in-out infinite; animation-delay: 0.9s; }
+        .attorney-btn-1 { background: linear-gradient(135deg, #38bdf8, #0284c7) !important; }
+        .attorney-btn-2 { background: linear-gradient(135deg, #a855f7, #7c3aed) !important; }
+        .attorney-btn-3 { background: linear-gradient(135deg, #10b981, #059669) !important; }
+        .attorney-btn-4 { background: linear-gradient(135deg, #f43f5e, #be123c) !important; }
 
         .left-suspects-sidebar {
             position: fixed;
@@ -676,7 +392,6 @@
             padding: 10px 6px;
             z-index: 10;
             backdrop-filter: blur(8px);
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
         }
 
         .suspect-sidebar-card {
@@ -709,11 +424,9 @@
             max-width: 380px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 30px rgba(168, 85, 247, 0.3);
-            position: relative;
         }
 
-        #webcam-video, #webcam-canvas {
+        #webcam-video {
             width: 100%;
             max-width: 240px;
             height: 180px;
@@ -746,36 +459,26 @@
             justify-content: center;
             align-items: center;
             z-index: 999999;
-            margin: 0 !important;
-            padding: 15px !important;
-            box-sizing: border-box;
+            padding: 15px;
         }
 
         .judge-popup-card {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99));
             border: 5px solid #c084fc;
             border-radius: 40px;
-            padding: clamp(20px, 4vh, 40px) clamp(20px, 4vw, 50px);
+            padding: 30px;
             text-align: center;
-            box-shadow: 0 35px 90px rgba(0, 0, 0, 0.95), 0 0 50px rgba(192, 132, 252, 0.6);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             max-width: 95vw;
-            max-height: 95vh;
             width: 850px;
             margin: auto;
-            box-sizing: border-box;
         }
 
         .judge-popup-card img {
-            width: clamp(260px, 52vh, 460px);
-            height: clamp(260px, 52vh, 460px);
+            width: 320px;
+            height: 320px;
             border-radius: 50%;
             object-fit: cover;
             border: 7px solid #38bdf8;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(56, 189, 248, 0.7);
             margin: 15px 0;
             transform: scaleX(-1);
         }
@@ -797,7 +500,6 @@
         }
         .attorney-avatar-mini.completed-avatar {
             border-color: #10b981 !important;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
         }
 
         .winner-modal-overlay {
@@ -810,8 +512,6 @@
             align-items: center;
             z-index: 10005;
             padding: 15px;
-            box-sizing: border-box;
-            overflow-y: auto;
         }
 
         .winner-modal-card {
@@ -822,7 +522,6 @@
             max-width: 650px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
             max-height: 92vh;
             overflow-y: auto;
         }
@@ -841,7 +540,6 @@
             align-items: center;
             gap: 15px;
             text-align: left;
-            backdrop-filter: blur(8px);
         }
 
         .result-box-img {
@@ -862,9 +560,6 @@
         .result-box-failing {
             background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(225, 29, 72, 0.15));
             border: 1.5px solid rgba(244, 63, 94, 0.8);
-            padding: 12px 16px;
-            max-width: 90%;
-            margin: 0 auto;
         }
 
         #review-section {
@@ -876,7 +571,6 @@
             display: none;
             width: 100%;
             box-sizing: border-box;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
 
         .horizontal-explanations-grid {
@@ -903,7 +597,6 @@
             border: 1.5px solid rgba(168, 85, 247, 0.5);
             padding: 8px 16px;
             border-radius: 16px;
-            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             gap: 15px;
@@ -944,10 +637,8 @@
             background: linear-gradient(135deg, #a855f7, #9333ea); 
             color: white; border: none; padding: 12px 24px; font-size: 15px; 
             border-radius: 14px; cursor: pointer; font-weight: bold; margin: 8px auto; 
-            box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
             display: inline-block;
         }
-        .btn:hover { background: linear-gradient(135deg, #9333ea, #7e22ce); }
 
         .attorney-buttons-container {
             display: flex;
@@ -983,7 +674,6 @@
                 max-width: 210px;
                 padding: 17px 12px;
                 font-size: 16px;
-                white-space: nowrap;
             }
         }
 
@@ -1033,10 +723,7 @@
 
         .quiz-locked-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: 99;
             background: rgba(15, 23, 42, 0.2);
             pointer-events: auto;
@@ -1061,24 +748,10 @@
             font-weight: 900;
             color: #ffffff;
             margin-bottom: 20px;
-            box-shadow: 0 0 35px rgba(168, 85, 247, 0.7);
-            backdrop-filter: blur(10px);
-            display: block;
-            letter-spacing: 0.8px;
-            text-shadow: 0 0 12px rgba(244, 114, 182, 0.8);
-            will-change: transform;
         }
 
-        .option-correct {
-            background: rgba(16, 185, 129, 0.45) !important;
-            border-color: #10b981 !important;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
-        }
-        .option-wrong {
-            background: rgba(244, 63, 94, 0.45) !important;
-            border-color: #f43f5e !important;
-            box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
-        }
+        .option-correct { background: rgba(16, 185, 129, 0.45) !important; border-color: #10b981 !important; }
+        .option-wrong { background: rgba(244, 63, 94, 0.45) !important; border-color: #f43f5e !important; }
 
         .explanation-box {
             margin-top: 12px; padding: 12px 14px;
@@ -1089,10 +762,8 @@
 
         #floating-timer-badge {
             position: fixed;
-            top: 22px;
-            left: 25px;
-            width: 48px;
-            height: 48px;
+            top: 22px; left: 25px;
+            width: 48px; height: 48px;
             border-radius: 50%;
             background: #10b981;
             color: #ffffff;
@@ -1102,21 +773,11 @@
             justify-content: center;
             font-weight: 800;
             font-size: 11px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
             z-index: 10006;
             border: 1.5px solid rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(8px);
-            transition: background 0.3s ease, transform 0.3s ease;
-            text-align: center;
-            line-height: 1.1;
         }
         #floating-timer-badge.urgent-red {
             background: #f43f5e !important;
-            animation: pulseTimer 1s infinite alternate;
-        }
-        @keyframes pulseTimer {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
         }
 
         #feedback-popup { 
@@ -1125,17 +786,8 @@
             padding: 20px 40px; border-radius: 20px; 
             font-size: 26px; font-weight: 900; color: white; 
             z-index: 10005; display: none; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px); text-align: center;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            text-align: center;
         }
-
-        @keyframes popupScale {
-            0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
         .feedback-correct { background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95)); }
         .feedback-wrong { background: linear-gradient(135deg, rgba(244, 63, 94, 0.95), rgba(225, 29, 72, 0.95)); }
 
@@ -1159,64 +811,12 @@
 
         #judge-welcome-overlay, #student-welcome-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.9);
-            display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10001; backdrop-filter: blur(10px);
+            display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10001;
         }
         #judge-welcome-msg { font-size: 35px; font-weight: bold; color: #f472b6; text-align: center; }
         .student-welcome-logo { width: 105px; height: 105px; border-radius: 50%; border: 3px solid #f472b6; object-fit: cover; margin-bottom: 18px; }
         .student-welcome-text { font-size: 32px; font-weight: bold; color: #f3e8ff; margin: 0; }
         .student-welcome-sub { font-size: 19px; color: #f472b6; margin-top: 10px; font-weight: bold; }
-
-        @media (max-width: 768px) {
-            .left-suspects-sidebar { display: none !important; }
-        }
-
-        .instructions-responsive-box {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            box-sizing: border-box;
-        }
-
-        .inst-title {
-            font-size: clamp(28px, 4.8vh, 42px) !important;
-            font-weight: 900 !important;
-            margin: 0 0 2px 0;
-            line-height: 1.1;
-            text-shadow: 0 0 20px rgba(168, 85, 247, 0.9);
-        }
-
-        .inst-subtitle {
-            color: #f472b6;
-            margin: 2px 0 10px 0;
-            font-size: clamp(18px, 3vh, 26px) !important;
-            font-weight: 900 !important;
-        }
-
-        .inst-content-card {
-            text-align: left;
-            font-size: clamp(18px, 2.8vh, 26px) !important;
-            color: #ffffff;
-            line-height: 1.5;
-            margin: 6px 0;
-            background: rgba(15, 23, 42, 0.85);
-            padding: clamp(12px, 2.5vh, 24px);
-            border-radius: 20px;
-            border: 2.5px solid rgba(255, 255, 255, 0.35);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-        }
-
-        .inst-btn {
-            width: 100%;
-            padding: clamp(14px, 2.5vh, 18px) !important;
-            font-size: clamp(18px, 3vh, 26px) !important;
-            font-weight: 900 !important;
-            margin-top: 6px !important;
-            border-radius: 16px !important;
-        }
 
         .attorney-timer-badge {
             background: rgba(16, 185, 129, 0.25);
@@ -1228,25 +828,16 @@
             border-radius: 12px;
             margin-left: auto;
             flex-shrink: 0;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s ease;
         }
         .attorney-timer-badge.urgent-badge {
             background: rgba(244, 63, 94, 0.3);
             border-color: #f43f5e;
             color: #fda4af;
-            box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
-            animation: badgePulse 0.8s infinite alternate;
-        }
-        @keyframes badgePulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
         }
 
         #judge-notification-banner {
             position: fixed;
-            top: 20px;
-            left: 50%;
+            top: 20px; left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, #10b981, #059669);
             color: #ffffff;
@@ -1254,16 +845,8 @@
             border-radius: 16px;
             font-weight: 900;
             font-size: 16px;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6);
-            border: 2px solid rgba(255, 255, 255, 0.4);
             z-index: 100008;
             display: none;
-            backdrop-filter: blur(10px);
-            animation: fadeInOutBanner 0.3s ease;
-        }
-        @keyframes fadeInOutBanner {
-            0% { opacity: 0; transform: translate(-50%, -20px); }
-            100% { opacity: 1; transform: translate(-50%, 0); }
         }
 
         .archive-grid {
@@ -1282,7 +865,6 @@
             border-radius: 20px;
             padding: 14px;
             text-align: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
         }
 
         .archive-item img {
@@ -1292,7 +874,6 @@
             object-fit: cover;
             border: 4px solid #38bdf8;
             transform: scaleX(-1);
-            box-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
             margin: 0 auto 10px auto;
             display: block;
         }
@@ -1340,7 +921,7 @@
     <div class="modal-overlay" id="title-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #38bdf8;">✏️ Change App Title</h3>
-            <p style="font-size: 13px; color: #cbd5e1;">I-type ang bagong title na lalabas sa buong app at sa screen ng lahat ng participants:</p>
+            <p style="font-size: 13px; color: #cbd5e1;">I-type ang bagong title:</p>
             <input type="text" id="new-title-input" class="modal-input" placeholder="Enter new title..." autocomplete="off" />
             <div style="display:flex; gap:10px; justify-content:center; width: 100%;">
                 <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closeTitleModal()">Cancel</button>
@@ -1352,18 +933,12 @@
     <div class="modal-overlay" id="timer-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #f472b6;">⏱️ Set Real-Time Timer</h3>
-            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili ng oras na magco-countdown sa lahat ng participants:</p>
-            
             <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 280px; margin: 0 auto 15px auto;">
-                <button class="btn" style="margin:0; padding:10px; background: rgba(56, 189, 248, 0.3); border: 1.5px solid #38bdf8;" onclick="selectTimerOption(30)">⚡ 30 Seconds</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(168, 85, 247, 0.3); border: 1.5px solid #c084fc;" onclick="selectTimerOption(60)">⏱️ 1 Minute</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(16, 185, 129, 0.3); border: 1.5px solid #34d399;" onclick="selectTimerOption(90)">⏱️ 1 Minute and 30 Seconds</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(245, 158, 11, 0.3); border: 1.5px solid #fbbf24;" onclick="selectTimerOption(120)">⏱️ 2 Minutes</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(236, 72, 153, 0.3); border: 1.5px solid #f472b6;" onclick="selectTimerOption(150)">⏱️ 2 Minutes and 30 Seconds</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(99, 102, 241, 0.3); border: 1.5px solid #818cf8;" onclick="selectTimerOption(180)">⏱️ 3 Minutes</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(244, 63, 94, 0.3); border: 1.5px solid #f87171;" onclick="selectTimerOption(300)">🔥 5 Minutes</button>
+                <button class="btn" style="margin:0; padding:10px;" onclick="selectTimerOption(30)">⚡ 30 Seconds</button>
+                <button class="btn" style="margin:0; padding:10px;" onclick="selectTimerOption(60)">⏱️ 1 Minute</button>
+                <button class="btn" style="margin:0; padding:10px;" onclick="selectTimerOption(120)">⏱️ 2 Minutes</button>
+                <button class="btn" style="margin:0; padding:10px;" onclick="selectTimerOption(300)">🔥 5 Minutes</button>
             </div>
-
             <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeTimerModal()">Close</button>
         </div>
     </div>
@@ -1371,11 +946,11 @@
     <div class="modal-overlay" id="archive-auth-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #f59e0b;">🔒 Confidential Picture Archive</h3>
-            <p style="font-size:13px; color:#e2e8f0; margin-top:5px;">Please enter the password to view participant photos:</p>
+            <p style="font-size:13px; color:#e2e8f0;">Please enter password:</p>
             <input type="password" id="archive-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="handleArchiveKeyPress(event)" autocomplete="off" />
             <div style="display:flex; gap:10px; justify-content:center; width: 100%;">
                 <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closeArchiveAuthModal()">Cancel</button>
-                <button class="btn" style="width: 45%; margin:0; padding:10px;" onclick="verifyArchivePassword()">Access Archive 🖼️</button>
+                <button class="btn" style="width: 45%; margin:0; padding:10px;" onclick="verifyArchivePassword()">Access 🖼️</button>
             </div>
         </div>
     </div>
@@ -1383,27 +958,20 @@
     <div class="modal-overlay" id="archive-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 850px; width: 95%;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">
-                <h3 style="color: #f59e0b; margin:0; font-size: 20px;">🖼️ Saved Participants Picture Archive</h3>
-                <button class="btn" style="background: linear-gradient(135deg, #f43f5e, #be123c); margin: 0; padding: 8px 14px; font-size: 13px;" onclick="confirmEraseAllArchive()" title="Erase All Photos">🗑️ Erase All</button>
+                <h3 style="color: #f59e0b; margin:0; font-size: 20px;">🖼️ Saved Pictures Archive</h3>
+                <button class="btn" style="background: var(--danger); margin: 0; padding: 8px 14px; font-size: 13px;" onclick="confirmEraseAllArchive()">🗑️ Erase All</button>
             </div>
-            
-            <p style="font-size: 12px; color: #cbd5e1; margin: 10px 0 0 0; text-align: left;">Awtomatikong nakatago rito ang lahat ng mga nakaraang kinuhang litrato kasama ang oras at petsa:</p>
-            
             <div class="archive-grid" id="archive-photos-container">
-                <p style="color:#94a3b8; font-size:13px; grid-column: 1/-1;">Walang nakatagong litrato sa archive.</p>
+                <p style="color:#94a3b8; font-size:13px; grid-column: 1/-1;">Walang nakatagong litrato.</p>
             </div>
-
-            <button class="btn" style="background:var(--danger); width: 100%; margin-top:15px; padding:12px;" onclick="closeArchiveModal()">Close Archive</button>
+            <button class="btn" style="background:var(--danger); width: 100%; margin-top:15px; padding:12px;" onclick="closeArchiveModal()">Close</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="insert-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left;">
             <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions</h3>
-            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">I-paste ang mga tanong nang direkta. Sundin ang format na Q:, A), B), C), D), Answer:, at Explanation:</p>
-            
             <textarea id="custom-questions-plaintext" class="modal-input" style="width: 100%; max-width: 100%; height: 260px; font-family: monospace; font-size: 12px; text-align: left;" placeholder="I-paste ang plain text questions dito..."></textarea>
-
             <div style="display:flex; gap:12px; justify-content:center; width: 100%; margin-top: 15px;">
                 <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closeInsertModal()">Cancel</button>
                 <button class="btn" style="background: var(--success); width: 45%; margin:0; padding:10px;" onclick="savePlainQuestions()">Apply Realtime 🚀</button>
@@ -1417,24 +985,6 @@
     <div class="law-bg-element icon-4">🔨</div>
     <div class="law-bg-element icon-5">🖋️</div>
     <div class="law-bg-element icon-6">💼</div>
-    <div class="law-bg-element icon-7">🎓</div>
-    <div class="law-bg-element icon-8">🚨</div>
-    <div class="law-bg-element icon-9">📖</div>
-    <div class="law-bg-element icon-10">🏛️</div>
-    <div class="law-bg-element icon-11">⚖️</div>
-    <div class="law-bg-element icon-12">📜</div>
-    <div class="law-bg-element icon-13">⚖️</div>
-    <div class="law-bg-element icon-14">🏛️</div>
-    <div class="law-bg-element icon-15">💼</div>
-    <div class="law-bg-element icon-16">🖋️</div>
-    <div class="law-bg-element icon-17">📜</div>
-    <div class="law-bg-element icon-18">🔨</div>
-    <div class="law-bg-element icon-19">🎓</div>
-    <div class="law-bg-element icon-20">⚖️</div>
-    <div class="law-bg-element icon-21">📖</div>
-    <div class="law-bg-element icon-22">🏛️</div>
-    <div class="law-bg-element icon-23">🚨</div>
-    <div class="law-bg-element icon-24">🖋️</div>
 
     <div class="side-profile-container" id="side-profile">
         <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
@@ -1445,40 +995,9 @@
         <p>📱 SCAN TO JOIN</p>
     </div>
 
-    <div class="modal-overlay" id="instructions-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(14px); padding: 12px; box-sizing: border-box; overflow: hidden;">
-        <div class="modal-card instructions-responsive-box" style="max-width: 98vw; width: 100%; max-height: calc(100vh - 24px); border: 3px solid rgba(192, 132, 252, 0.95); border-radius: 24px; padding: clamp(14px, 2.5vh, 28px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
-            <div>
-                <div class="inst-title">📜⚖️ HOW TO PLAY ⚖️📜</div>
-                <div class="inst-subtitle" id="inst-sub-title">Welcome to PROFED 5 GROUP 2 QUICK ACTIVITY!</div>
-            </div>
-            
-            <div class="inst-content-card">
-                <div>
-                    <p style="margin: 0 0 6px 0; color: #38bdf8; font-weight: 900;"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
-                    <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700;">
-                        <li style="margin-bottom: 4px;">Piliin ang <b style="color: #f472b6;">Judge Big Screen Monitor</b> at ilagay ang password.</li>
-                        <li>I-click ang <b style="color: #10b981;">Start Quiz</b> para magsimula ang timer ng bawat grupo at mag-unlock ang mga tanong.</li>
-                    </ul>
-                </div>
-
-                <div style="margin-top: 10px;">
-                    <p style="margin: 0 0 6px 0; color: #c084fc; font-weight: 900;"><strong>⚖️ Para sa Counsel / Students:</strong></p>
-                    <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700;">
-                        <li style="margin-bottom: 4px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>).</li>
-                        <li style="margin-bottom: 4px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b>.</li>
-                        <li>Maghintay sa waiting screen. Sagutan nang mabilis at tama ang mga tanong! <b>Bawat tamang sagot = +5 Seconds Bonus Time! ⏱️✨</b></li>
-                    </ul>
-                </div>
-            </div>
-
-            <button class="btn animated-main-btn inst-btn" onclick="closeInstructionsModal()">Gets Ko Na! 🚀✨</button>
-        </div>
-    </div>
-
     <div id="camera-modal">
         <div class="camera-box">
             <h3 style="color: #f472b6; margin: 0 0 4px 0; font-size: 19px;"> Say Hi! 👋💖</h3>
-            <p style="font-size: 12.5px; color: #e2e8f0; margin: 0 0 10px 0;">Smile for the court camera! ✨📸</p>
             <video id="webcam-video" autoplay playsinline></video>
             <canvas id="webcam-canvas" class="hidden"></canvas>
             <img id="captured-preview" class="hidden" />
@@ -1486,44 +1005,31 @@
                 <button class="btn" style="padding:10px 22px; font-size:14px;" onclick="capturePhoto()">Capture Photo 📷</button>
             </div>
             <div id="join-now-container" class="hidden" style="margin-top:10px;">
-                <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); width:100%; padding:12px;" onclick="confirmJoinNow()">Join Now 🚀✨</button>
+                <button class="btn animated-main-btn" style="background: var(--success); width:100%; padding:12px;" onclick="confirmJoinNow()">Join Now 🚀✨</button>
             </div>
         </div>
     </div>
 
     <div id="judge-photo-popup">
         <div class="judge-popup-card">
-            <h3 id="judge-popup-title" style="color: #38bdf8; font-size: clamp(28px, 5vh, 44px); font-weight: 900; margin: 0;"></h3>
+            <h3 id="judge-popup-title" style="color: #38bdf8; font-size: 32px; font-weight: 900; margin: 0;"></h3>
             <img id="judge-popup-img" src="" alt="Counsel Photo" />
-            <p style="color: #f3e8ff; font-size: clamp(18px, 3.2vh, 26px); font-weight: 800; margin: 10px 0 0 0;">Joined the courtroom proceedings! ✨</p>
+            <p style="color: #f3e8ff; font-size: 20px; font-weight: 800; margin: 10px 0 0 0;">Joined proceedings! ✨</p>
         </div>
     </div>
 
     <div class="winner-modal-overlay" id="winner-modal">
         <div class="winner-modal-card">
-            <div style="font-size: 32px; margin-bottom: 2px;">⚖️✨ Court Verdict Results ✨⚖️</div>
-            <h2 style="color: #d8b4fe; font-size: 18px; margin: 4px 0 12px 0;">Final Performance Review</h2>
+            <div style="font-size: 28px; margin-bottom: 2px;">⚖️✨ Court Verdict Results ✨⚖️</div>
             <div class="results-boxes-container" id="attorneys-results-list"></div>
-            <button class="btn" style="width: 100%; margin-top: 10px; font-size: 15px; padding: 11px;" onclick="closeWinnerModal()">Close / View Full Screen Explanations</button>
+            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="closeWinnerModal()">Close</button>
         </div>
     </div>
 
     <div class="left-suspects-sidebar" id="left-sidebar">
-        <p style="font-size: 10.5px; color: #cbd5e1; margin: 0 0 6px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
+        <p style="font-size: 10.5px; color: #cbd5e1; margin: 0 0 6px 0; font-weight: 700; text-align: center;">📋 Active Docket</p>
         <div class="suspect-sidebar-card">
-            <div style="font-size: 15px;">👤</div>
             <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect A</h4>
-            <p style="font-size: 8.5px; color: #94a3b8; margin: 0; line-height: 1.2;">Denied accessible training ramps (R.A. 7277)</p>
-        </div>
-        <div class="suspect-sidebar-card">
-            <div style="font-size: 15px;">🧑‍💼</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect B</h4>
-            <p style="font-size: 8.5px; color: #94a3b8; margin: 0; line-height: 1.2;">Complied with teacher code of ethics</p>
-        </div>
-        <div class="suspect-sidebar-card">
-            <div style="font-size: 15px;">🕵️‍♂️</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect C</h4>
-            <p style="font-size: 8.5px; color: #94a3b8; margin: 0; line-height: 1.2;">Respected ancestral domains of IPs</p>
         </div>
     </div>
 
@@ -1532,20 +1038,18 @@
     <div class="modal-overlay" id="password-modal">
         <div class="modal-card">
             <h3>⚖️ Judge Access</h3>
-            <p style="font-size:14px; color:#e2e8f0; margin-top:5px;">Please enter the password to proceed:</p>
-            <input type="password" id="judge-pass-input" class="modal-input" placeholder="Enter Password..." onkeyup="handleKeyPress(event)" autocomplete="off" />
-            <div style="display:flex; gap:12px; justify-content:center; width: 100%; margin-top: 10px;">
-                <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closePasswordModal()">Cancel</button>
-                <button class="btn" style="width: 45%; margin:0; padding:10px;" onclick="verifyJudgePassword()">Submit</button>
+            <input type="password" id="judge-pass-input" class="modal-input" placeholder="Password..." onkeyup="handleKeyPress(event)" autocomplete="off" />
+            <div style="display:flex; gap:12px; justify-content:center; width: 100%;">
+                <button class="btn" style="background:var(--danger); width: 45%; margin:0;" onclick="closePasswordModal()">Cancel</button>
+                <button class="btn" style="width: 45%; margin:0;" onclick="verifyJudgePassword()">Submit</button>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="warning-modal">
         <div class="modal-card" style="border-color: var(--danger);">
-            <h3 style="color: #f87171; font-size: 18px;">🚫 ACCESS DENIED</h3>
-            <p style="font-size:14.5px; font-weight:bold; color:#fca5a5; margin: 15px 0;">You are a criminal trying to steal someone's private property!</p>
-            <button class="btn" style="background:var(--danger); padding:10px 20px;" onclick="closeWarningModal()">Dismiss</button>
+            <h3 style="color: #f87171;">🚫 ACCESS DENIED</h3>
+            <button class="btn" style="background:var(--danger);" onclick="closeWarningModal()">Dismiss</button>
         </div>
     </div>
 
@@ -1557,62 +1061,42 @@
         <div style="text-align:center;">
             <img src="/logo.png" alt="MCC Logo" class="student-welcome-logo">
             <h2 class="student-welcome-text">🎆✨ Welcome Future Educators! 💖📚</h2>
-            <div class="student-welcome-sub">Preparing for excellence in Values Education... ✨</div>
         </div>
     </div>
 
     <div class="container" id="main-container">
         <div id="role-select">
-            <div style="text-align:center; margin-bottom: 4px;">
-                <img src="/logo.png" alt="Logo" class="app-logo">
-            </div>
+            <img src="/logo.png" alt="Logo" class="app-logo">
             <h1 class="animated-header-title" id="display-main-title">⚖️ PROFED 5 GROUP 2 QUICK ACTIVITY 📜</h1>
-            <p style="text-align:center; margin: 4px 0 10px 0; font-size: 14px; color: #e9d5ff;">Select your mode to begin:</p>
             <button class="btn animated-main-btn" style="margin-bottom: 12px;" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
-            <h3 style="text-align:center; margin-bottom: 6px; color: #f472b6; font-size: 15px;">Join as:</h3>
             <div class="attorney-buttons-container">
-                <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
-                <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
-                <button class="group-btn attorney-btn-3 animated-group-btn-3" onclick="selectGroup('Attorney 3')">Attorney 3</button>
-                <button class="group-btn attorney-btn-4 animated-group-btn-4" onclick="selectGroup('Attorney 4')">Attorney 4</button>
+                <button class="group-btn attorney-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
+                <button class="group-btn attorney-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
+                <button class="group-btn attorney-btn-3" onclick="selectGroup('Attorney 3')">Attorney 3</button>
+                <button class="group-btn attorney-btn-4" onclick="selectGroup('Attorney 4')">Attorney 4</button>
             </div>
         </div>
 
         <div id="teacher-view" class="hidden">
-            <h1 class="animated-header-title" style="margin-top: 0; margin-bottom: 12px;">⚖️ Judge Real-Time Monitor ⚖️</h1>
-            
+            <h1 class="animated-header-title">⚖️ Judge Real-Time Monitor ⚖️</h1>
             <div class="judge-main-layout">
                 <div class="judge-left-box">
                     <div class="header-bar">
-                        <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings</span>
+                        <span>⚖️ Court Proceedings</span>
                         <div>
-                            <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
-                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                            <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
+                            <button class="btn" style="padding: 8px 14px;" onclick="startTimer()">Start</button>
+                            <button class="btn" style="background:var(--danger); padding: 8px 14px;" onclick="resetGame()">Reset</button>
                         </div>
                     </div>
-
-                    <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard & Group Timers</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
                 </div>
-
                 <div class="judge-right-box">
-                    <div class="animated-rank-title">👑 Live Podium & Group Showcase 🏛️</div>
-                    <div class="animated-rank-subtitle">Top Standings & Glowing Avatars</div>
-                    
+                    <div class="animated-rank-title">👑 Live Podium 🏛️</div>
                     <div class="podium-area" id="podium-display"></div>
                 </div>
             </div>
-
             <div id="review-section">
-                <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px; font-size: 20px; font-weight: 800;">📜 Court Review: Detailed Explanations & Final Scores</h3>
-                
-                <div class="horizontal-explanations-grid" id="review-explanations-grid">
-                    <div class="explanation-card-item">
-                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q1: Magna Carta for Disabled Persons</p>
-                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ay naglalayong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan.</p>
-                    </div>
-                </div>
+                <div class="horizontal-explanations-grid" id="review-explanations-grid"></div>
             </div>
         </div>
 
@@ -1622,21 +1106,12 @@
                 <span id="student-timer">Time Left: --:--</span>
                 <span id="group-score-display">Score: 0 / 0</span>
             </div>
-
-            <div id="waiting-banner">
-                ⚖️✨ The court is still in recess. Please wait for the Judge to open the proceedings... ✨🏛️
-            </div>
-
+            <div id="waiting-banner">⚖️✨ The court is still in recess. Please wait... ✨🏛️</div>
             <div id="student-view-wrapper">
                 <div id="lock-overlay" class="quiz-locked-overlay"></div>
                 <div id="quiz-questions" class="quiz-locked-questions"></div>
             </div>
         </div>
-    </div>
-
-    <div class="judge-speech-container" id="judge-speech-box">
-        <div class="judge-speech-avatar">👨‍⚖️</div>
-        <p class="judge-speech-text" id="typewriter-text"></p>
     </div>
 
     <script>
@@ -1653,63 +1128,15 @@
         let capturedDataUrl = '';
         let mediaStream = null;
         let serverPhotoArchive = [];
-
         let shownPopups = {};
 
-        const bgmAudio = new Audio('/suspense-bgm.mp3');
-        bgmAudio.loop = true;
-        bgmAudio.volume = 0.85;
-
-        const urgentAudio = new Audio('/urgent-thrill.mp3');
-        urgentAudio.loop = true;
-        urgentAudio.volume = 0.95;
-
-        const clickAudio = new Audio('/click.mp3');
-        clickAudio.volume = 0.90;
-
-        const cheerAudio = new Audio('https://actions.google.com/sounds/v1/crowds/cheering_and_applause.ogg');
-        cheerAudio.volume = 1.0;
-
-        function initAudio() {
-            if (bgmAudio.paused) {
-                bgmAudio.play().catch(e => console.log("Audio play deferred"));
-            }
-        }
-
-        function playClickSound() {
-            try {
-                clickAudio.currentTime = 0;
-                clickAudio.play().catch(e => {});
-            } catch(e) {}
-        }
-
-        ['click', 'touchstart', 'pointerdown', 'DOMContentLoaded'].forEach(evt => {
-            window.addEventListener(evt, () => initAudio(), { once: true });
-        });
-
-        document.addEventListener('click', (e) => {
-            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.closest('label')) {
-                playClickSound();
-            }
-        });
-
         window.addEventListener('DOMContentLoaded', () => {
-            initAudio();
             new QRCode(document.getElementById("qrcode"), {
                 text: "https://profed-quiz-y6ly.onrender.com",
-                width: 75,
-                height: 75,
-                colorDark: "#6b21a8",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
+                width: 75, height: 75, colorDark: "#6b21a8", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
             });
             lockQuizUI();
         });
-
-        function closeInstructionsModal() {
-            initAudio();
-            document.getElementById('instructions-modal').style.display = 'none';
-        }
 
         function openTitleModal() { document.getElementById('title-modal').style.display = 'flex'; }
         function closeTitleModal() { document.getElementById('title-modal').style.display = 'none'; }
@@ -1720,11 +1147,9 @@
                 closeTitleModal();
             }
         }
-
         socket.on('titleUpdated', (newTitle) => {
             document.getElementById('page-title-tag').innerText = newTitle;
             document.getElementById('display-main-title').innerText = `⚖️ ${newTitle} 📜`;
-            document.getElementById('inst-sub-title').innerText = `Welcome to ${newTitle}!`;
         });
 
         function openTimerModal() { document.getElementById('timer-modal').style.display = 'flex'; }
@@ -1732,334 +1157,168 @@
         function selectTimerOption(seconds) {
             socket.emit('setTimerDuration', seconds);
             closeTimerModal();
-            alert(`Tagumpay! Na-set ang timer sa ${seconds} seconds! ⏱️`);
         }
 
-        function openArchiveAuthModal() {
-            document.getElementById('archive-auth-modal').style.display = 'flex';
-            document.getElementById('archive-pass-input').focus();
-        }
+        function openArchiveAuthModal() { document.getElementById('archive-auth-modal').style.display = 'flex'; }
         function closeArchiveAuthModal() { document.getElementById('archive-auth-modal').style.display = 'none'; }
         function closeArchiveModal() { document.getElementById('archive-modal').style.display = 'none'; }
         function handleArchiveKeyPress(e) { if (e.key === 'Enter') verifyArchivePassword(); }
-
         function verifyArchivePassword() {
-            const inputPass = document.getElementById('archive-pass-input').value;
-            closeArchiveAuthModal();
-            if (inputPass === "Quiz") {
+            if (document.getElementById('archive-pass-input').value === "Quiz") {
+                closeArchiveAuthModal();
                 renderPhotoArchive();
                 document.getElementById('archive-modal').style.display = 'flex';
-            } else {
-                document.getElementById('warning-modal').style.display = 'flex';
-            }
+            } else { document.getElementById('warning-modal').style.display = 'flex'; }
         }
-
-        socket.on('photoArchiveUpdated', (archive) => {
-            serverPhotoArchive = archive;
-            if (document.getElementById('archive-modal').style.display === 'flex') {
-                renderPhotoArchive();
-            }
-        });
-
-        function confirmEraseAllArchive() {
-            if (confirm("Sigurado ka bang gusto mong burahin ang LAHAT ng nakatagong litrato sa archive? 🗑️")) {
-                socket.emit('clearPhotoArchive');
-            }
-        }
-
+        socket.on('photoArchiveUpdated', (archive) => { serverPhotoArchive = archive; if (document.getElementById('archive-modal').style.display === 'flex') renderPhotoArchive(); });
+        function confirmEraseAllArchive() { if (confirm("Burahin ang lahat ng litrato?")) socket.emit('clearPhotoArchive'); }
         function renderPhotoArchive() {
             const container = document.getElementById('archive-photos-container');
-            if (!serverPhotoArchive || serverPhotoArchive.length === 0) {
-                container.innerHTML = `<p style="color:#94a3b8; font-size:14px; grid-column: 1/-1; text-align:center; padding: 20px 0;">Walang nakatagong litrato sa archive.</p>`;
-                return;
-            }
-
+            if (!serverPhotoArchive || serverPhotoArchive.length === 0) { container.innerHTML = `<p style="color:#94a3b8; text-align:center;">Walang litrato.</p>`; return; }
             let html = '';
             serverPhotoArchive.forEach(item => {
-                html += `
-                    <div class="archive-item">
-                        <img src="${item.photo || '/logo.png'}" alt="${item.groupName}">
-                        <p>${item.groupName}</p>
-                        <span>🕒 ${item.timestamp}</span>
-                    </div>
-                `;
+                html += `<div class="archive-item"><img src="${item.photo}"> <p>${item.groupName}</p> <span>🕒 ${item.timestamp}</span></div>`;
             });
             container.innerHTML = html;
         }
 
-        const defaultPlainSample = `Q: Aling teorya ni Lawrence Kohlberg ang tumutukoy sa antas kung saan ang pagpapasya ng bata ay nakabatay sa pag-iwas sa parusa at pagsunod sa ganti?
-A) Post-Conventional Level
-B) Conventional Level
-C) Pre-Conventional Level
-D) Universal Ethical Principles
-Answer: C
-Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng mga panlabas na kahihinatnan tulad ng parusa (Punishment and Obedience) at gantimpala.`;
+        function openInsertModal() { document.getElementById('insert-modal').style.display = 'flex'; }
+        function closeInsertModal() { document.getElementById('insert-modal').style.display = 'none'; }
 
-        function openInsertModal() {
-            document.getElementById('insert-modal').style.display = 'flex';
-            if (!document.getElementById('custom-questions-plaintext').value) {
-                document.getElementById('custom-questions-plaintext').value = defaultPlainSample;
-            }
-        }
-
-        function closeInsertModal() {
-            document.getElementById('insert-modal').style.display = 'none';
-        }
-
-        // SUPER-ROBUST MOBILE & CUSTOM FONT TOLERANT QUESTION PARSER
+        // SUPER-ROBUST PARSER NA NAG-AAYOS SA BLANGKO AT HINDI NABABASANG CHOICES
         function savePlainQuestions() {
             try {
                 let rawInput = document.getElementById('custom-questions-plaintext').value;
-                if (!rawInput || !rawInput.trim()) {
-                    alert("Mangyaring maglagay ng text ng mga tanong.");
-                    return;
-                }
+                if (!rawInput || !rawInput.trim()) { alert("Maglagay ng text."); return; }
 
-                // 1. Linisin ang text mula sa custom fonts, hearts, at iba't ibang uri ng quotation marks
                 let cleanText = rawInput
                     .replace(/♡/g, 'o')
                     .replace(/♥/g, 'o')
                     .replace(/[\u201C\u201D]/g, '"')
                     .replace(/[\u2018\u2019]/g, "'")
                     .replace(/\r\n/g, '\n')
-                    .replace(/\r/g, '\n')
+                    .replace(/\r/g, '\n');
+
+                cleanText = cleanText
+                    .replace(/([^\n])\s*([A-D][\)\.\:\-])/gi, '$1\n$2')
+                    .replace(/([^\n])\s*(Ans(?:wer)?[:\-\)\.]?)/gi, '$1\n$2')
+                    .replace(/([^\n])\s*(Exp(?:lanation)?[:\-\)\.]?)/gi, '$1\n$2')
                     .trim();
 
-                // 2. Hatiin ang mga tanong gamit ang 'Q:' o 'Q1:' o 'Question' kahit walang bagong linya (mobile-paste friendly)
                 let blocks = cleanText.split(/(?=(?:^|\n|\r|\s|[^\w])Q[\d\.\s]*[:\-\)])/i);
-                
                 let questionsList = [];
 
                 blocks.forEach(block => {
                     let trimmedBlock = block.trim();
                     if (!trimmedBlock) return;
 
-                    // Kuhanin ang Tanong (Q:)
-                    let qMatch = trimmedBlock.match(/Q[\d\.\s]*[:\-\)]\s*([\s\S]*?)(?=(?:[A-D][\)\.\:\-]|Ans(?:wer)?|Exp(?:lanation)?|$))/i);
+                    let qMatch = trimmedBlock.match(/Q[\d\.\s]*[:\-\)]\s*([\s\S]*?)(?=(?:\n[A-D][\)\.\:\-]|Ans(?:wer)?|Exp(?:lanation)?|$))/i);
                     let qText = qMatch ? qMatch[1].replace(/\n/g, ' ').trim() : "";
 
-                    // Kuhanin ang Options (A, B, C, D)
                     let options = {};
-                    let optMatches = [...trimmedBlock.matchAll(/([A-D])[\)\.\:\-]\s*([\s\S]*?)(?=(?:[A-D][\)\.\:\-]|Ans(?:wer)?|Exp(?:lanation)?|$))/gi)];
-                    
-                    optMatches.forEach(m => {
-                        let letter = m[1].toUpperCase();
-                        let val = m[2].replace(/\n/g, ' ').trim();
-                        if (['A', 'B', 'C', 'D'].includes(letter)) {
-                            options[letter] = val;
+                    let lines = trimmedBlock.split('\n');
+
+                    lines.forEach(line => {
+                        let optMatch = line.trim().match(/^([A-D])[\)\.\:\-]\s*(.+)$/i);
+                        if (optMatch) {
+                            let letter = optMatch[1].toUpperCase();
+                            let optValue = optMatch[2].trim();
+                            if (optValue) {
+                                options[letter] = optValue;
+                            }
                         }
                     });
 
-                    // Kuhanin ang Tamang Sagot (Answer:)
                     let ansMatch = trimmedBlock.match(/Ans(?:wer)?[\s:\-\)\.]*\s*([A-D])/i);
                     let answer = ansMatch ? ansMatch[1].toUpperCase() : "";
 
-                    // Kuhanin ang Paliwanag (Explanation:)
                     let expMatch = trimmedBlock.match(/Exp(?:lanation)?[\s:\-\)\.]*\s*([\s\S]*?)$/i);
-                    let explanation = expMatch ? expMatch[1].replace(/\n/g, ' ').trim() : "Walang nakasaad na paliwanag.";
+                    let explanation = expMatch ? expMatch[1].replace(/\n/g, ' ').trim() : "Walang paliwanag.";
 
-                    // Kung nabasa nang maayos ang tanong, options, at sagot:
                     if (qText && Object.keys(options).length >= 2 && answer) {
-                        questionsList.push({
-                            question: qText,
-                            options: options,
-                            answer: answer,
-                            explanation: explanation
-                        });
+                        questionsList.push({ question: qText, options, answer, explanation });
                     }
                 });
 
                 if (questionsList.length === 0) {
-                    alert("Hindi pa rin nabasa. Siguraduhing may 'Q:' at 'Answer: A/B/C/D' sa iyong pinate.");
+                    alert("Hindi mabasa. Siguraduhing may Q:, A), B), C), D), at Answer:");
                     return;
                 }
 
                 socket.emit('updatePlainQuestionsData', questionsList);
                 closeInsertModal();
-                alert(`Tagumpay! ${questionsList.length} tanong ang na-update sa LAHAT ng screen! 🚀`);
+                alert(`Tagumpay! ${questionsList.length} tanong ang na-update! 🚀`);
             } catch (err) {
-                alert("May error sa pagbasa ng text mula sa cellphone keyboard.");
+                alert("May error sa pagbasa ng text.");
             }
         }
 
         socket.on('applyCustomQuestionsList', (questionsList) => {
             totalQuestionsCount = questionsList.length;
-            const quizContainer = document.getElementById('quiz-questions');
-            const reviewGrid = document.getElementById('review-explanations-grid');
-            
             let questionsHTML = '';
             let reviewHTML = '';
 
             questionsList.forEach((q, idx) => {
                 let qNum = idx + 1;
                 let qKey = `q${qNum}`;
-
                 let optionsHTML = '';
                 Object.keys(q.options).forEach(optKey => {
-                    optionsHTML += `
-                        <label id="lbl-${qKey}-${optKey}">
-                            <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> 
-                            ${optKey}) ${q.options[optKey]}
-                        </label>
-                    `;
+                    optionsHTML += `<label id="lbl-${qKey}-${optKey}"><input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> ${optKey}) ${q.options[optKey]}</label>`;
                 });
-
-                questionsHTML += `
-                    <div class="question-card" id="card-${qKey}">
-                        <p><b>Q${qNum}:</b> ${q.question}</p>
-                        <div class="options">
-                            ${optionsHTML}
-                        </div>
-                        <div class="explanation-box" id="exp-${qKey}">
-                            <b>🔍 Detalyadong Paliwanag:</b> ${q.explanation}
-                        </div>
-                    </div>
-                `;
-
-                reviewHTML += `
-                    <div class="explanation-card-item">
-                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q${qNum}: ${q.question}</p>
-                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;">
-                            <b>Tamang Sagot (${q.answer}):</b> ${q.explanation}
-                        </p>
-                    </div>
-                `;
+                questionsHTML += `<div class="question-card"><p><b>Q${qNum}:</b> ${q.question}</p><div class="options">${optionsHTML}</div><div class="explanation-box" id="exp-${qKey}"><b>Paliwanag:</b> ${q.explanation}</div></div>`;
+                reviewHTML += `<div class="explanation-card-item"><p style="color: #38bdf8;"><b>Q${qNum}:</b> ${q.question}</p><p style="color: #ecfdf5;"><b>Tamang Sagot (${q.answer}):</b> ${q.explanation}</p></div>`;
             });
 
-            if (quizContainer) quizContainer.innerHTML = questionsHTML;
-            if (reviewGrid) reviewGrid.innerHTML = reviewHTML;
-
+            document.getElementById('quiz-questions').innerHTML = questionsHTML;
+            document.getElementById('review-explanations-grid').innerHTML = reviewHTML;
             answeredQuestions = {};
-            if (myGroup && latestGroupScores[myGroup] !== undefined) {
-                document.getElementById('group-score-display').innerText = `Score: 0 / ${totalQuestionsCount}`;
-            }
         });
 
         function disableAllRadioInputs(disable) {
-            const inputs = document.querySelectorAll('#quiz-questions input[type="radio"]');
-            inputs.forEach(input => {
-                input.disabled = disable;
-            });
+            document.querySelectorAll('#quiz-questions input[type="radio"]').forEach(i => i.disabled = disable);
         }
-
         function lockQuizUI() {
-            const quizQuestionsEl = document.getElementById('quiz-questions');
-            const waitingBannerEl = document.getElementById('waiting-banner');
-            const lockOverlayEl = document.getElementById('lock-overlay');
-
-            if (quizQuestionsEl) quizQuestionsEl.classList.add('quiz-locked-questions');
-            if (waitingBannerEl) waitingBannerEl.style.display = 'block';
-            if (lockOverlayEl) lockOverlayEl.style.display = 'block';
+            document.getElementById('quiz-questions').classList.add('quiz-locked-questions');
+            document.getElementById('waiting-banner').style.display = 'block';
+            document.getElementById('lock-overlay').style.display = 'block';
             disableAllRadioInputs(true);
         }
-
         function unlockQuizUI() {
-            const quizQuestionsEl = document.getElementById('quiz-questions');
-            const waitingBannerEl = document.getElementById('waiting-banner');
-            const lockOverlayEl = document.getElementById('lock-overlay');
-
-            if (quizQuestionsEl) quizQuestionsEl.classList.remove('quiz-locked-questions');
-            if (waitingBannerEl) waitingBannerEl.style.display = 'none';
-            if (lockOverlayEl) lockOverlayEl.style.display = 'none';
+            document.getElementById('quiz-questions').classList.remove('quiz-locked-questions');
+            document.getElementById('waiting-banner').style.display = 'none';
+            document.getElementById('lock-overlay').style.display = 'none';
             disableAllRadioInputs(false);
         }
 
         function toggleTopControls() {
-            const arrowBtn = document.getElementById('toggle-arrow-btn');
             const btnWrapper = document.getElementById('controls-button-wrapper');
-
-            if (btnWrapper.style.display === 'none') {
-                btnWrapper.style.display = 'flex';
-                arrowBtn.innerText = '▲';
-            } else {
-                btnWrapper.style.display = 'none';
-                arrowBtn.innerText = '▼';
-            }
+            btnWrapper.style.display = btnWrapper.style.display === 'none' ? 'flex' : 'none';
         }
-
-        const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, review your statutes carefully before time runs out!"';
-        let charIndex = 0;
-
-        function typeWriter() {
-            const target = document.getElementById('typewriter-text');
-            if (charIndex < judgeMessage.length) {
-                target.innerHTML = judgeMessage.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
-                charIndex++;
-                setTimeout(typeWriter, 35);
-            } else {
-                target.innerHTML = judgeMessage;
-            }
-        }
-        window.onload = () => typeWriter();
-
         function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().then(() => {
-                    document.body.classList.add('is-fullscreen');
-                }).catch(err => console.log(err));
-                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen().then(() => {
-                        document.body.classList.remove('is-fullscreen');
-                    });
-                }
-                document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
-            }
+            if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
+            else { if (document.exitFullscreen) document.exitFullscreen(); }
         }
-
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                document.body.classList.remove('is-fullscreen');
-                document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
-            } else {
-                document.body.classList.add('is-fullscreen');
-                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
-            }
-        });
-
-        function handleSurrender() { 
-            attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-            shownPopups = {};
-            location.reload(); 
-        }
-
-        function selectRole(role) {
-            if (role === 'teacher') {
-                document.getElementById('password-modal').style.display = 'flex';
-                document.getElementById('judge-pass-input').focus();
-            }
-        }
-        function handleKeyPress(event) { if (event.key === 'Enter') verifyJudgePassword(); }
+        function handleSurrender() { location.reload(); }
+        function selectRole(role) { if (role === 'teacher') document.getElementById('password-modal').style.display = 'flex'; }
+        function handleKeyPress(e) { if (e.key === 'Enter') verifyJudgePassword(); }
         function closePasswordModal() { document.getElementById('password-modal').style.display = 'none'; }
         function closeWarningModal() { document.getElementById('warning-modal').style.display = 'none'; }
-        function closeWinnerModal() { 
-            document.getElementById('winner-modal').style.display = 'none'; 
-            const reviewSec = document.getElementById('review-section');
-            if (reviewSec) reviewSec.style.display = "block";
-        }
+        function closeWinnerModal() { document.getElementById('winner-modal').style.display = 'none'; document.getElementById('review-section').style.display = "block"; }
 
         function verifyJudgePassword() {
-            const pass = document.getElementById('judge-pass-input').value;
-            closePasswordModal();
-            if (pass === "Quiz") {
+            if (document.getElementById('judge-pass-input').value === "Quiz") {
+                closePasswordModal();
                 isJudgeRole = true;
-                const judgeWelcome = document.getElementById('judge-welcome-overlay');
-                judgeWelcome.style.display = 'flex';
-
+                document.getElementById('judge-welcome-overlay').style.display = 'flex';
                 setTimeout(() => {
-                    judgeWelcome.style.display = 'none';
+                    document.getElementById('judge-welcome-overlay').style.display = 'none';
                     document.getElementById('role-select').classList.add('hidden');
                     document.getElementById('side-profile').style.display = 'none';
                     document.getElementById('qr-wrapper').style.display = 'none';
                     document.getElementById('left-sidebar').style.display = 'none';
-                    document.getElementById('judge-speech-box').style.display = 'none';
                     document.getElementById('teacher-view').classList.remove('hidden');
-                    document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
                 }, 1800);
-            } else {
-                document.getElementById('warning-modal').style.display = 'flex';
-            }
+            } else { document.getElementById('warning-modal').style.display = 'flex'; }
         }
 
         async function selectGroup(groupName) {
@@ -2068,341 +1327,106 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             try {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                 document.getElementById('webcam-video').srcObject = mediaStream;
-            } catch (err) {
-                alert("Hindi ma-access ang camera.");
-            }
+            } catch (err) { alert("Hindi ma-access ang camera."); }
         }
 
         function capturePhoto() {
             const video = document.getElementById('webcam-video');
             const canvas = document.getElementById('webcam-canvas');
-            const context = canvas.getContext('2d');
-            
             canvas.width = video.videoWidth || 280;
             canvas.height = video.videoHeight || 210;
-            
-            context.save();
-            context.scale(-1, 1);
-            context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
-            context.restore();
-            
+            canvas.getContext('2d').drawImage(video, 0, 0);
             capturedDataUrl = canvas.toDataURL('image/png');
             video.style.display = 'none';
-            canvas.style.display = 'none';
-            
-            const preview = document.getElementById('captured-preview');
-            preview.src = capturedDataUrl;
-            preview.classList.remove('hidden');
-
+            document.getElementById('captured-preview').src = capturedDataUrl;
+            document.getElementById('captured-preview').classList.remove('hidden');
             document.getElementById('camera-controls').classList.add('hidden');
             document.getElementById('join-now-container').classList.remove('hidden');
-
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-            }
+            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
         }
 
         function confirmJoinNow() {
             document.getElementById('camera-modal').style.display = 'none';
             socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
-
-            const studentWelcome = document.getElementById('student-welcome-overlay');
-            studentWelcome.style.display = 'flex';
-
+            document.getElementById('student-welcome-overlay').style.display = 'flex';
             setTimeout(() => {
-                studentWelcome.style.display = 'none';
+                document.getElementById('student-welcome-overlay').style.display = 'none';
                 document.getElementById('role-select').classList.add('hidden');
                 document.getElementById('side-profile').style.display = 'none';
                 document.getElementById('qr-wrapper').style.display = 'none';
                 document.getElementById('left-sidebar').style.display = 'none';
-                document.getElementById('judge-speech-box').style.display = 'none';
                 document.getElementById('student-view').classList.remove('hidden');
                 document.getElementById('group-title').innerText = `Dashboard: ${myGroup}`;
-                document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
-                
                 document.getElementById('floating-timer-badge').style.display = 'flex';
-
-                if (!isGameStarted) {
-                    lockQuizUI();
-                } else {
-                    unlockQuizUI();
-                }
+                if (!isGameStarted) lockQuizUI(); else unlockQuizUI();
             }, 1800);
         }
 
         function startTimer() { socket.emit('startTimer'); }
-        function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { socket.emit('resetGame'); }
 
         function submitAns(questionId, answer) {
-            if (!isGameStarted) return;
-            if (!myGroup || answeredQuestions[questionId]) return;
+            if (!isGameStarted || !myGroup || answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
-            
-            const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer, answeredCount });
-            
-            const expBox = document.getElementById(`exp-${questionId}`);
-            if (expBox) expBox.style.display = "block";
-
-            if (answeredCount >= totalQuestionsCount) {
-                lockQuizUI();
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    popup.className = "feedback-correct";
-                    popup.innerHTML = "Wait for the results!";
-                    popup.style.display = "block";
-                }
-            }
+            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer, answeredCount: Object.keys(answeredQuestions).length });
+            document.getElementById(`exp-${questionId}`).style.display = "block";
         }
 
         socket.on('gameState', ({ isGameStarted: started }) => {
             isGameStarted = started;
-            if (isGameStarted) {
-                unlockQuizUI();
-            } else {
-                lockQuizUI();
-            }
-        });
-
-        socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
-            const answeredCount = Object.keys(answeredQuestions).length;
-            if (answeredCount < totalQuestionsCount) {
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-                    popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
-                    popup.style.display = "block";
-                    setTimeout(() => { popup.style.display = "none"; }, 1500);
-                }
-            }
-            if (questionId && answer) {
-                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
-                if (targetLabel) {
-                    targetLabel.classList.add(isCorrect ? "option-correct" : "option-wrong");
-                }
-            }
+            if (isGameStarted) unlockQuizUI(); else lockQuizUI();
         });
 
         socket.on('updateState', ({ groupScores, photos, completedStatus }) => {
             latestGroupScores = groupScores;
             if (photos) attorneyPhotos = photos;
             if (completedStatus) groupCompletedStatus = completedStatus;
-
             renderScoreboardAndPodium();
-
             if (myGroup && groupScores[myGroup] !== undefined) {
                 document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / ${totalQuestionsCount}`;
             }
         });
 
-        socket.on('groupFinished', ({ groupName }) => {
-            if (isJudgeRole) {
-                const banner = document.getElementById('judge-notification-banner');
-                if (banner) {
-                    banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
-                    banner.style.display = 'block';
-                    setTimeout(() => {
-                        banner.style.display = 'none';
-                    }, 3000);
-                }
-            }
-        });
-
         function renderScoreboardAndPodium() {
             const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
-            
             let chartHTML = '';
             sortedGroups.forEach(([group, score]) => {
                 let percentage = totalQuestionsCount > 0 ? (score / totalQuestionsCount) * 100 : 0;
-                let photoSrc = attorneyPhotos[group] || '/logo.png';
-                let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
-                let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
-                let tSecs = (tSeconds % 60).toString().padStart(2, '0');
-                let timeText = `${tMins}:${tSecs}`;
-                let isUrgent = tSeconds <= 15 && tSeconds > 0;
-                let isCompleted = groupCompletedStatus[group];
-
-                chartHTML += `
-                    <div class="bar-row">
-                        <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
-                        <div class="bar-label">${group}</div>
-                        <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
-                        <div class="bar-score">${score}/${totalQuestionsCount}</div>
-                        <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
-                    </div>
-                `;
+                chartHTML += `<div class="bar-row"><div class="bar-label">${group}</div><div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div><div class="bar-score">${score}/${totalQuestionsCount}</div></div>`;
             });
-            const barChart = document.getElementById('bar-chart');
-            if (barChart) barChart.innerHTML = chartHTML;
+            document.getElementById('bar-chart').innerHTML = chartHTML;
 
             let podiumHTML = '';
             sortedGroups.forEach(([group, score], idx) => {
                 let heightPercent = totalQuestionsCount > 0 ? Math.max((score / totalQuestionsCount) * 100, 8) : 8;
-                let photoSrc = attorneyPhotos[group] || '/logo.png';
-                let isCompleted = groupCompletedStatus[group];
-                
-                let gradientBg = '';
-                if (totalQuestionsCount > 0 && score >= Math.ceil(totalQuestionsCount * 0.8)) {
-                    gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
-                } else if (totalQuestionsCount > 0 && score >= Math.ceil(totalQuestionsCount * 0.5)) {
-                    gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
-                } else {
-                    gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
-                }
-
-                podiumHTML += `
-                    <div class="podium-col">
-                        <div class="rank-label-badge">Top ${idx + 1}</div>
-                        <div class="rank-bar-track">
-                            <div class="rank-bar-fill" style="height: ${heightPercent}%; background: ${gradientBg};"></div>
-                        </div>
-                        <div class="glowing-frame ${isCompleted ? 'completed-frame' : ''}">
-                            <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
-                        </div>
-                        <div class="animated-attorney-label">${group}</div>
-                    </div>
-                `;
+                podiumHTML += `<div class="podium-col"><div class="rank-label-badge">Top ${idx + 1}</div><div class="rank-bar-track"><div class="rank-bar-fill" style="height: ${heightPercent}%;"></div></div><div class="animated-attorney-label">${group}</div></div>`;
             });
-            const podiumDisplay = document.getElementById('podium-display');
-            if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
-        }
-
-        socket.on('showJudgePopupQueue', (queue) => {
-            if (isJudgeRole) {
-                let newQueue = queue.filter(item => !shownPopups[item.groupName + item.photo]);
-                newQueue.forEach(item => {
-                    shownPopups[item.groupName + item.photo] = true;
-                });
-                if (newQueue.length > 0) {
-                    playPopupQueue(newQueue, 0);
-                }
-            }
-        });
-
-        function playPopupQueue(queue, index) {
-            if (index >= queue.length) return;
-            const item = queue[index];
-
-            const popup = document.getElementById('judge-photo-popup');
-            document.getElementById('judge-popup-title').innerText = `${item.groupName} entered the court! ⚖️`;
-            document.getElementById('judge-popup-img').src = item.photo || '/logo.png';
-            popup.style.display = 'flex';
-
-            setTimeout(() => {
-                popup.style.display = 'none';
-                setTimeout(() => { playPopupQueue(queue, index + 1); }, 400);
-            }, 3000);
+            document.getElementById('podium-display').innerHTML = podiumHTML;
         }
 
         socket.on('timerUpdate', (data) => {
-            if (typeof data === 'object' && data !== null) {
-                Object.keys(data).forEach(g => {
-                    groupTimers[g] = data[g];
-                });
-            }
-
+            if (typeof data === 'object') Object.keys(data).forEach(g => groupTimers[g] = data[g]);
             let myTimer = myGroup && groupTimers[myGroup] !== undefined ? groupTimers[myGroup] : (groupTimers['Attorney 1'] || 300);
-            
-            const answeredCount = Object.keys(answeredQuestions).length;
-
-            if (!isGameStarted) {
-                lockQuizUI();
-            } else if (answeredCount < totalQuestionsCount) {
-                unlockQuizUI();
-            }
-
-            renderScoreboardAndPodium();
-
             let mins = Math.floor(myTimer / 60).toString().padStart(2, '0');
             let secs = (myTimer % 60).toString().padStart(2, '0');
-            let timeStr = `${mins}:${secs}`;
-            let fullTimeStr = `Time Left: ${mins}:${secs}`;
-            
-            document.getElementById('student-timer').innerText = fullTimeStr;
-            document.getElementById('floating-timer-text').innerText = timeStr;
-
-            const floatBadge = document.getElementById('floating-timer-badge');
-            if (myTimer <= 15 && myTimer > 0) {
-                document.body.classList.add('urgent-warning-glow');
-                if (floatBadge) floatBadge.classList.add('urgent-red');
-
-                bgmAudio.pause();
-                if (urgentAudio.paused) {
-                    urgentAudio.play().catch(e => {});
-                }
-            } else {
-                document.body.classList.remove('urgent-warning-glow');
-                if (floatBadge) floatBadge.classList.remove('urgent-red');
-
-                urgentAudio.pause();
-                urgentAudio.currentTime = 0;
-                if (bgmAudio.paused) {
-                    bgmAudio.play().catch(e => {});
-                }
-            }
+            document.getElementById('student-timer').innerText = `Time Left: ${mins}:${secs}`;
+            document.getElementById('floating-timer-text').innerText = `${mins}:${secs}`;
         });
 
         socket.on('timeUp', () => {
-            bgmAudio.pause();
-            urgentAudio.pause();
-            bgmAudio.currentTime = 0;
-            urgentAudio.currentTime = 0;
-
-            try {
-                cheerAudio.currentTime = 0;
-                cheerAudio.play().catch(e => {});
-            } catch(e) {}
-
-            const popup = document.getElementById('feedback-popup');
-            if (popup) {
-                popup.style.display = "none";
-            }
-
-            document.body.classList.remove('urgent-warning-glow');
-            const floatBadge = document.getElementById('floating-timer-badge');
-            if (floatBadge) floatBadge.classList.remove('urgent-red');
-
             disableAllRadioInputs(true);
             document.querySelectorAll('.explanation-box').forEach(box => box.style.display = "block");
-
-            const attorneysListContainer = document.getElementById('attorneys-results-list');
             let resultsHTML = '';
             ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
                 const score = latestGroupScores[attorney] || 0;
-                const photoSrc = attorneyPhotos[attorney] || '/logo.png';
-                if (totalQuestionsCount > 0 && score >= Math.ceil(totalQuestionsCount * 0.8)) {
-                    resultsHTML += `
-                        <div class="result-box-card result-box-innocent">
-                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
-                            <div>
-                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalQuestionsCount} Points</h4>
-                                <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
-                            </div>
-                        </div>`;
-                } else {
-                    resultsHTML += `
-                        <div class="result-box-card result-box-failing">
-                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
-                            <div>
-                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalQuestionsCount} Points</h4>
-                                <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
-                            </div>
-                        </div>`;
-                }
+                resultsHTML += `<div class="result-box-card result-box-innocent"><div><h4>${attorney} — ${score} / ${totalQuestionsCount} Points</h4></div></div>`;
             });
-            attorneysListContainer.innerHTML = resultsHTML;
+            document.getElementById('attorneys-results-list').innerHTML = resultsHTML;
             document.getElementById('winner-modal').style.display = 'flex';
-            
-            const reviewSec = document.getElementById('review-section');
-            if (reviewSec) reviewSec.style.display = "block";
+            document.getElementById('review-section').style.display = "block";
         });
 
-        socket.on('resetState', () => { 
-            attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-            shownPopups = {};
-            location.reload(); 
-        });
+        socket.on('resetState', () => { location.reload(); });
     </script>
 </body>
 </html>
