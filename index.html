@@ -242,6 +242,7 @@
         .title-btn { background: linear-gradient(135deg, rgba(56, 189, 248, 0.85), rgba(2, 132, 199, 0.85)); }
         .archive-btn { background: linear-gradient(135deg, rgba(245, 158, 11, 0.85), rgba(217, 119, 6, 0.85)); }
         .timer-btn { background: linear-gradient(135deg, rgba(236, 72, 153, 0.85), rgba(190, 24, 93, 0.85)); }
+        .quiz-mode-btn { background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(79, 70, 229, 0.85)); }
 
         .law-bg-element {
             position: fixed;
@@ -1026,6 +1027,20 @@
         }
         .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
 
+        .mixed-input-field {
+            width: 100%;
+            max-width: 100%;
+            padding: 10px 14px;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid rgba(56, 189, 248, 0.5);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
         #student-view-wrapper {
             position: relative;
             width: 100%;
@@ -1266,7 +1281,6 @@
             100% { opacity: 1; transform: translate(-50%, 0); }
         }
 
-        /* BIGGER PICTURE ARCHIVE GRID & IMAGES */
         .archive-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1326,6 +1340,7 @@
         
         <div class="top-controls-buttons" id="controls-button-wrapper">
             <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+            <button class="control-btn quiz-mode-btn" onclick="openQuizModeModal()">🔀 Quiz Mode</button>
             <button class="control-btn title-btn" onclick="openTitleModal()">✏️ Change Title</button>
             <button class="control-btn timer-btn" onclick="openTimerModal()">⏱️ Set Timer</button>
             <button class="control-btn insert-btn" onclick="openInsertModal()">➕ Insert Questions</button>
@@ -1336,6 +1351,21 @@
 
     <div id="floating-timer-badge">
         <span id="floating-timer-text">05:00</span>
+    </div>
+
+    <!-- QUIZ MODE SELECTION MODAL -->
+    <div class="modal-overlay" id="quiz-mode-modal" style="display: none; z-index: 100010;">
+        <div class="modal-card">
+            <h3 style="color: #c084fc;">🔀 Select Quiz Mode</h3>
+            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili kung anong uri ng pagsusulit ang ipapatupad sa lahat ng participants:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; margin: 0 auto 15px auto;">
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #38bdf8, #0284c7);" onclick="selectQuizMode('multiple-choice')">1: Pure Multiple Choice</button>
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectQuizMode('mixed')">2: Mixed (MC, ID, Enum, T/F)</button>
+            </div>
+
+            <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeQuizModeModal()">Cancel</button>
+        </div>
     </div>
 
     <div class="modal-overlay" id="title-modal" style="display: none; z-index: 100010;">
@@ -1381,7 +1411,6 @@
         </div>
     </div>
 
-    <!-- PICTURE ARCHIVE DISPLAY MODAL WITH ERASE EMOJI BUTTON & EXTRA LARGE PHOTOS -->
     <div class="modal-overlay" id="archive-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 850px; width: 95%;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">
@@ -1401,8 +1430,8 @@
 
     <div class="modal-overlay" id="insert-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left;">
-            <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions</h3>
-            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">I-paste ang mga tanong nang direkta. Sundin ang format na Q:, A), B), C), D), Answer:, at Explanation:</p>
+            <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions (MC / Mixed)</h3>
+            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">I-paste ang mga tanong. Suportado ang Multiple Choice, Identification, Enumeration, at True/False kasama ang Answer at Explanation:</p>
             
             <textarea id="custom-questions-plaintext" class="modal-input" style="width: 100%; max-width: 100%; height: 260px; font-family: monospace; font-size: 12px; text-align: left;" placeholder="I-paste ang plain text questions dito..."></textarea>
 
@@ -1646,6 +1675,7 @@
         let myGroup = null;
         let isJudgeRole = false;
         let isGameStarted = false;
+        let currentQuizMode = 'multiple-choice';
         let answeredQuestions = {};
         let latestGroupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
@@ -1655,6 +1685,7 @@
         let capturedDataUrl = '';
         let mediaStream = null;
         let serverPhotoArchive = [];
+        let globalQuestionsList = [];
 
         let shownPopups = {};
 
@@ -1712,6 +1743,21 @@
             initAudio();
             document.getElementById('instructions-modal').style.display = 'none';
         }
+
+        function openQuizModeModal() { document.getElementById('quiz-mode-modal').style.display = 'flex'; }
+        function closeQuizModeModal() { document.getElementById('quiz-mode-modal').style.display = 'none'; }
+        function selectQuizMode(mode) {
+            socket.emit('changeQuizMode', mode);
+            closeQuizModeModal();
+            alert(`Tagumpay! Na-set ang Quiz Mode sa: ${mode === 'mixed' ? 'Mixed Quiz (MC, ID, Enum, T/F)' : 'Pure Multiple Choice'}! 🔀`);
+        }
+
+        socket.on('quizModeUpdated', (mode) => {
+            currentQuizMode = mode;
+            if (globalQuestionsList.length > 0) {
+                renderQuestionsUI(globalQuestionsList);
+            }
+        });
 
         function openTitleModal() { document.getElementById('title-modal').style.display = 'flex'; }
         function closeTitleModal() { document.getElementById('title-modal').style.display = 'none'; }
@@ -1795,7 +1841,22 @@ B) Conventional Level
 C) Pre-Conventional Level
 D) Universal Ethical Principles
 Answer: C
-Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng mga panlabas na kahihinatnan tulad ng parusa (Punishment and Obedience) at gantimpala.`;
+Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng mga panlabas na kahihinatnan tulad ng parusa (Punishment and Obedience) at gantimpala.
+
+Q: Sino ang ama ng Modernong Sikolohiya?
+Type: Identification
+Answer: Wilhelm Wundt
+Explanation: Si Wilhelm Wundt ang nagtatag ng kauna-unahang laboratoryo ng sikolohiya.
+
+Q: Ibigay ang dalawang uri ng kognitibong pag-unlad ayon kay Piaget.
+Type: Enumeration
+Answer: Assimilation, Accommodation
+Explanation: Ang assimilation at accommodation ay ang mga proseso ng adaptation.
+
+Q: Ang edukasyon sa pagpapahalaga ay para lamang sa mga batang nasa elementarya. (True or False)
+Type: True/False
+Answer: False
+Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang tao.`;
 
         function openInsertModal() {
             document.getElementById('insert-modal').style.display = 'flex';
@@ -1808,7 +1869,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        // BULLETPROOF UNICODE & CUSTOM FONT TOLERANT QUESTION PARSER
+        // BULLETPROOF MIXED & MULTIPLE CHOICE PARSER
         function savePlainQuestions() {
             try {
                 let rawInput = document.getElementById('custom-questions-plaintext').value;
@@ -1817,7 +1878,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     return;
                 }
 
-                // Linisin ang custom font artifacts (tulad ng heart symbol '♡' pabalik sa 'o'/'O')
                 let cleanText = rawInput
                     .replace(/♡/g, 'o')
                     .replace(/♥/g, 'o')
@@ -1827,9 +1887,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     .replace(/\r/g, '\n')
                     .trim();
 
-                // Hatiin sa bawat block ng tanong
                 let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
-                
                 let questionsList = [];
 
                 rawBlocks.forEach(block => {
@@ -1839,36 +1897,52 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
                     
                     let qText = "";
+                    let qType = "multiple-choice";
                     let options = {};
                     let answer = "";
                     let explanation = "";
 
                     lines.forEach(line => {
-                        // Match Question Line
                         if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
                             qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
                         } 
-                        // Match Option Lines (A), B), C), D) o A., B., C., D.)
+                        else if (/^Type[\s:\-\)\.]/i.test(line)) {
+                            let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
+                            if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
+                            else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
+                            else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
+                            else qType = 'multiple-choice';
+                        }
                         else if (/^[A-D][\)\.\:\-]/i.test(line)) {
                             let optKey = line.charAt(0).toUpperCase();
                             let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
                             options[optKey] = optVal;
                         } 
-                        // Match Answer Line
                         else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
-                            let rawAns = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim().toUpperCase();
-                            let match = rawAns.match(/[A-D]/);
-                            if (match) answer = match[0];
+                            answer = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim();
                         } 
-                        // Match Explanation Line
                         else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
                             explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
                         }
                     });
 
-                    if (qText && Object.keys(options).length > 0 && answer) {
+                    // Auto-detect type kung walang 'Type:' tag pero may options o kaya ay T/F sa tanong
+                    if (Object.keys(options).length > 0) {
+                        qType = 'multiple-choice';
+                    } else if (qType === 'multiple-choice') {
+                        if (/true\s*(?:\/|or)\s*false/i.test(qText) || /t\s*\/\s*f/i.test(qText)) {
+                            qType = 'true-false';
+                        } else if (/i-bigay ang/i.test(qText) || /mga uri/i.test(qText) || /enumera/i.test(qText)) {
+                            qType = 'enumeration';
+                        } else {
+                            qType = 'identification';
+                        }
+                    }
+
+                    if (qText && answer) {
                         questionsList.push({
                             question: qText,
+                            type: qType,
                             options: options,
                             answer: answer,
                             explanation: explanation || "Walang nakasaad na paliwanag."
@@ -1877,7 +1951,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 });
 
                 if (questionsList.length === 0) {
-                    alert("Hindi pa rin nabasa. Siguraduhing may 'Q:' sa simula at 'Answer: A/B/C/D' sa bawat tanong.");
+                    alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula at 'Answer:' sa bawat tanong.");
                     return;
                 }
 
@@ -1885,11 +1959,16 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 closeInsertModal();
                 alert(`Tagumpay! ${questionsList.length} tanong ang na-update sa LAHAT ng screen! 🚀`);
             } catch (err) {
-                alert("May error sa pagbasa ng text mula sa cellphone.");
+                alert("May error sa pagbasa ng text.");
             }
         }
 
         socket.on('applyCustomQuestionsList', (questionsList) => {
+            globalQuestionsList = questionsList;
+            renderQuestionsUI(questionsList);
+        });
+
+        function renderQuestionsUI(questionsList) {
             totalQuestionsCount = questionsList.length;
             const quizContainer = document.getElementById('quiz-questions');
             const reviewGrid = document.getElementById('review-explanations-grid');
@@ -1901,22 +1980,58 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 let qNum = idx + 1;
                 let qKey = `q${qNum}`;
 
-                let optionsHTML = '';
-                Object.keys(q.options).forEach(optKey => {
-                    optionsHTML += `
-                        <label id="lbl-${qKey}-${optKey}">
-                            <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> 
-                            ${optKey}) ${q.options[optKey]}
-                        </label>
-                    `;
-                });
+                let inputFieldHTML = '';
+                let effectiveMode = currentQuizMode;
+
+                if (effectiveMode === 'multiple-choice') {
+                    // Force Multiple choice rendering kung Pure Multiple Choice mode
+                    let opts = q.options && Object.keys(q.options).length > 0 ? q.options : { A: "Tama", B: "Mali", C: "Wala sa nabanggit", D: "Lahat ng nabanggit" };
+                    let optionsHTML = '';
+                    Object.keys(opts).forEach(optKey => {
+                        optionsHTML += `
+                            <label id="lbl-${qKey}-${optKey}">
+                                <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> 
+                                ${optKey}) ${opts[optKey]}
+                            </label>
+                        `;
+                    });
+                    inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
+                } else {
+                    // Mixed Mode batay sa tiyak na type ng tanong
+                    if (q.type === 'multiple-choice' && q.options && Object.keys(q.options).length > 0) {
+                        let optionsHTML = '';
+                        Object.keys(q.options).forEach(optKey => {
+                            optionsHTML += `
+                                <label id="lbl-${qKey}-${optKey}">
+                                    <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> 
+                                    ${optKey}) ${q.options[optKey]}
+                                </label>
+                            `;
+                        });
+                        inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
+                    } else if (q.type === 'true-false') {
+                        inputFieldHTML = `
+                            <div class="options">
+                                <label id="lbl-${qKey}-True">
+                                    <input type="radio" name="${qKey}" value="True" onchange="submitAns('${qKey}', 'True')"> A) True / Tama
+                                </label>
+                                <label id="lbl-${qKey}-False">
+                                    <input type="radio" name="${qKey}" value="False" onchange="submitAns('${qKey}', 'False')"> B) False / Mali
+                                </label>
+                            </div>`;
+                    } else {
+                        // Identification o Enumeration
+                        inputFieldHTML = `
+                            <div style="margin-top: 8px;">
+                                <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot dito..." autocomplete="off" onchange="submitMixedTextAns('${qKey}', this.value)" />
+                            </div>`;
+                    }
+                }
 
                 questionsHTML += `
                     <div class="question-card" id="card-${qKey}">
                         <p><b>Q${qNum}:</b> ${q.question}</p>
-                        <div class="options">
-                            ${optionsHTML}
-                        </div>
+                        ${inputFieldHTML}
                         <div class="explanation-box" id="exp-${qKey}">
                             <b>🔍 Detalyadong Paliwanag:</b> ${q.explanation}
                         </div>
@@ -1940,10 +2055,10 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             if (myGroup && latestGroupScores[myGroup] !== undefined) {
                 document.getElementById('group-score-display').innerText = `Score: 0 / ${totalQuestionsCount}`;
             }
-        });
+        }
 
         function disableAllRadioInputs(disable) {
-            const inputs = document.querySelectorAll('#quiz-questions input[type="radio"]');
+            const inputs = document.querySelectorAll('#quiz-questions input[type="radio"], #quiz-questions input[type="text"]');
             inputs.forEach(input => {
                 input.disabled = disable;
             });
@@ -2151,6 +2266,32 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
+
+            if (answeredCount >= totalQuestionsCount) {
+                lockQuizUI();
+                const popup = document.getElementById('feedback-popup');
+                if (popup) {
+                    popup.className = "feedback-correct";
+                    popup.innerHTML = "Wait for the results!";
+                    popup.style.display = "block";
+                }
+            }
+        }
+
+        function submitMixedTextAns(questionId, answerText) {
+            if (!isGameStarted) return;
+            if (!myGroup || answeredQuestions[questionId]) return;
+            if (!answerText || !answerText.trim()) return;
+            
+            answeredQuestions[questionId] = true;
+            const answeredCount = Object.keys(answeredQuestions).length;
+            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer: answerText, answeredCount });
+            
+            const expBox = document.getElementById(`exp-${questionId}`);
+            if (expBox) expBox.style.display = "block";
+
+            const textInput = document.getElementById(`input-${questionId}`);
+            if (textInput) textInput.disabled = true;
 
             if (answeredCount >= totalQuestionsCount) {
                 lockQuizUI();
