@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title-tag">PROFED 5 GROUP 2 QUICK ACTIVITY</title>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --primary: #8b5cf6;
@@ -59,110 +58,13 @@
         }
 
         body.is-fullscreen .container {
-            max-width: 98vw !important;
-            width: 98vw !important;
-            margin: 5px auto !important;
+            max-width: 950px !important;
+            width: 950px !important;
+            margin: 0 auto !important;
             padding: 20px 25px !important;
-            height: calc(100vh - 20px) !important;
+            height: 100vh !important;
             box-sizing: border-box;
-            overflow-y: auto !important;
-        }
-
-        body.is-fullscreen .qr-code-wrapper {
-            right: 65px !important;
-            bottom: 60vh !important;
-            transform: scale(1.12);
-        }
-
-        body.is-fullscreen .attorney-buttons-container {
-            margin-top: 50px !important;
-            margin-bottom: 15px !important;
-            gap: 18px !important;
-        }
-        body.is-fullscreen .attorney-buttons-container .group-btn {
-            padding: 34px 16px !important;
-            font-size: 19px !important;
-            font-weight: 800 !important;
-            border-radius: 20px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            min-height: 100px !important;
-        }
-
-        body.is-fullscreen #teacher-view {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 85px);
-            box-sizing: border-box;
-        }
-
-        body.is-fullscreen .judge-main-layout {
-            display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
-            gap: 20px;
-            flex: 1;
-            align-items: stretch;
-            margin-bottom: 10px;
-        }
-
-        body.is-fullscreen .judge-left-box,
-        body.is-fullscreen .judge-right-box {
-            height: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            box-sizing: border-box !important;
-        }
-
-        body.is-fullscreen .bar-chart-container {
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-around !important;
-            margin: 10px 0 0 0 !important;
-            padding: 16px !important;
-        }
-
-        body.is-fullscreen .podium-area {
-            flex: 1 !important;
-            height: auto !important;
-            align-items: flex-end !important;
-            margin-top: auto !important;
-            margin-bottom: 5px !important;
-        }
-
-        body.is-fullscreen .rank-bar-track {
-            height: 220px !important;
-        }
-
-        body.is-fullscreen #instructions-modal {
-            padding: 10px !important;
-        }
-        body.is-fullscreen .instructions-responsive-box {
-            max-width: 98vw !important;
-            width: 98vw !important;
-            max-height: 96vh !important;
-            padding: 24px 35px !important;
-        }
-        body.is-fullscreen .inst-title {
-            font-size: clamp(34px, 4.5vh, 48px) !important;
-        }
-        body.is-fullscreen .inst-subtitle {
-            font-size: clamp(22px, 3vh, 32px) !important;
-        }
-        body.is-fullscreen .inst-content-card {
-            font-size: clamp(20px, 2.8vh, 30px) !important;
-            padding: 20px 35px !important;
-            line-height: 1.6 !important;
-        }
-        body.is-fullscreen .inst-btn {
-            font-size: clamp(22px, 3vh, 32px) !important;
-            padding: 18px !important;
-        }
-
-        .urgent-warning-glow {
-            box-shadow: inset 0 0 50px rgba(244, 63, 94, 0.9), 0 0 30px rgba(244, 63, 94, 0.8);
-            border: 3px solid #f43f5e !important;
+            overflow: hidden !important;
         }
 
         .top-controls-glass-box {
@@ -284,108 +186,11 @@
         .icon-23 { top: 18%; right: 35%; animation-delay: 3.4s; }
         .icon-24 { bottom: 42%; right: 18%; animation-delay: 1.2s; }
 
-        .side-profile-container {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            width: 270px;
-            height: 62vh;
-            z-index: 5;
-            pointer-events: none;
-            display: flex;
-            align-items: flex-end;
-            justify-content: flex-end;
-            overflow: hidden;
-        }
-
-        .side-profile-img {
-            width: 100%;
-            height: auto;
-            max-height: 100%;
-            object-fit: contain;
-            object-position: bottom right;
-            filter: drop-shadow(-10px 5px 15px rgba(0, 0, 0, 0.7));
-        }
-
-        .qr-code-wrapper {
-            position: fixed;
-            z-index: 10;
-            background: rgba(30, 41, 59, 0.75);
-            border: 2px solid rgba(192, 132, 252, 0.6);
-            padding: 8px;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .qr-code-wrapper p {
-            margin: 3px 0 0 0;
-            font-size: 10px;
-            font-weight: bold;
-            color: #f3e8ff;
-            letter-spacing: 0.5px;
-        }
-
-        #qrcode {
-            padding: 5px;
-            background: #ffffff;
-            border-radius: 8px;
-        }
-
-        @media (min-width: 769px) {
-            .qr-code-wrapper { right: 35px; bottom: 55vh; }
-        }
-
         @media (max-width: 768px) {
-            .side-profile-container { width: 160px; height: 35vh; }
-            .qr-code-wrapper {
-                position: relative;
-                margin: 10px auto 5px auto;
-                width: fit-content;
-                right: auto;
-                bottom: auto;
-                transform: scale(0.85);
-            }
             .icon-5, .icon-6, .icon-9, .icon-10, .icon-13, .icon-15, .icon-18, .icon-19, .icon-22, .icon-24 {
                 display: none !important;
             }
             .container { backdrop-filter: blur(4px) !important; }
-
-            #instructions-modal {
-                padding: 8px !important;
-                align-items: center !important;
-            }
-            .instructions-responsive-box {
-                padding: 12px 14px !important;
-                max-height: 98vh !important;
-                height: auto !important;
-                border-radius: 18px !important;
-            }
-            .inst-title {
-                font-size: 20px !important;
-                margin-bottom: 2px !important;
-            }
-            .inst-subtitle {
-                font-size: 13px !important;
-                margin-bottom: 6px !important;
-            }
-            .inst-content-card {
-                font-size: 11.5px !important;
-                padding: 10px 12px !important;
-                line-height: 1.35 !important;
-                margin: 4px 0 !important;
-            }
-            .inst-content-card ul { padding-left: 16px !important; }
-            .inst-content-card li { margin-bottom: 3px !important; }
-            .inst-btn {
-                font-size: 14px !important;
-                padding: 10px !important;
-                margin-top: 6px !important;
-            }
         }
 
         .container { 
@@ -400,14 +205,6 @@
             backdrop-filter: blur(6px);
             border: 1.5px solid rgba(255, 255, 255, 0.25);
             transition: all 0.3s ease;
-        }
-
-        @media (min-width: 1024px) {
-            .container {
-                max-width: 1550px;
-                margin-left: 40px;
-                margin-right: 40px;
-            }
         }
 
         .judge-main-layout {
@@ -440,7 +237,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
         }
 
-        /* INDIVIDUAL MONITOR LAYOUT STYLES (UNLIMITED PARTICIPANTS) */
         .individual-monitor-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -803,6 +599,36 @@
             margin-top: 15px;
         }
 
+        /* 3 SUSPECT BOX SA FIRST PAGE (NILAGAY SA TAAS AT NAKATAGO SA MOBILE) */
+        .left-suspects-sidebar {
+            position: relative;
+            margin: 15px auto 10px auto;
+            width: 100%;
+            max-width: 650px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1.5px solid rgba(168, 85, 247, 0.5);
+            border-radius: 16px;
+            padding: 10px 14px;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+        }
+        @media (max-width: 768px) {
+            .left-suspects-sidebar { display: none !important; }
+        }
+
+        .suspect-sidebar-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 7px 8px;
+            text-align: center;
+            flex: 1;
+        }
+
         #camera-modal {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -1015,6 +841,7 @@
             text-align: left;
         }
 
+        /* ORIHINAL NA JUDGE MESSAGE CONTAINER (WALANG AVATAR) */
         .judge-speech-container {
             position: relative;
             z-index: 3;
@@ -1022,28 +849,18 @@
             margin: 6px auto 10px auto;
             background: rgba(15, 23, 42, 0.65);
             border: 1.5px solid rgba(168, 85, 247, 0.5);
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 16px;
             backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .judge-speech-avatar {
-            font-size: 26px;
-            background: rgba(168, 85, 247, 0.2);
-            padding: 5px 9px;
-            border-radius: 50%;
-            border: 1px solid rgba(168, 85, 247, 0.5);
-            flex-shrink: 0;
+            text-align: center;
         }
 
         .judge-speech-text {
-            font-size: 13px;
+            font-size: 13.5px;
             color: #f3e8ff;
-            line-height: 1.35;
+            line-height: 1.4;
             margin: 0;
+            font-style: italic;
         }
 
         h2 { font-size: 19px; color: #e9d5ff; text-align: center; }
@@ -1077,7 +894,7 @@
             align-items: center;
             width: 100%;
             gap: 12px;
-            margin-top: 25px;
+            margin-top: 15px;
         }
 
         .attorney-buttons-container .group-btn {
@@ -1413,15 +1230,23 @@
         </div>
     </div>
 
-    <!-- TIMER MODAL -->
+    <!-- TIMER MODAL (UPDATED TIMER OPTIONS) -->
     <div class="modal-overlay" id="timer-modal" style="display: none; z-index: 100010;">
-        <div class="modal-card">
+        <div class="modal-card" style="max-width: 440px; max-height: 90vh; overflow-y: auto;">
             <h3 style="color: #f472b6;">⏱️ Set Real-Time Timer</h3>
-            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 280px; margin: 15px auto;">
-                <button class="btn" style="margin:0; padding:10px; background: rgba(56, 189, 248, 0.3);" onclick="selectTimerOption(30)">⚡ 30 Seconds</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(168, 85, 247, 0.3);" onclick="selectTimerOption(60)">⏱️ 1 Minute</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(16, 185, 129, 0.3);" onclick="selectTimerOption(120)">⏱️ 2 Minutes</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(244, 63, 94, 0.3);" onclick="selectTimerOption(300)">🔥 5 Minutes</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin: 15px 0;">
+                <button class="btn" style="margin:0; padding:10px; background: rgba(56, 189, 248, 0.3);" onclick="selectTimerOption(30)">⚡ 30 Secs</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(168, 85, 247, 0.3);" onclick="selectTimerOption(60)">⏱️ 1 Min</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(16, 185, 129, 0.3);" onclick="selectTimerOption(90)">⏱️ 1 Min & 30 Sec</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(244, 63, 94, 0.3);" onclick="selectTimerOption(120)">🔥 2 Mins</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(56, 189, 248, 0.3);" onclick="selectTimerOption(180)">⏱️ 3 Mins</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(168, 85, 247, 0.3);" onclick="selectTimerOption(240)">⏱️ 4 Mins</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(16, 185, 129, 0.3);" onclick="selectTimerOption(300)">⏱️ 5 Mins</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(244, 63, 94, 0.3);" onclick="selectTimerOption(360)">⏱️ 6 Mins</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(56, 189, 248, 0.3);" onclick="selectTimerOption(420)">⏱️ 7 Mins</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(168, 85, 247, 0.3);" onclick="selectTimerOption(480)">⏱️ 8 Mins</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(16, 185, 129, 0.3);" onclick="selectTimerOption(540)">⏱️ 9 Mins</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(244, 63, 94, 0.3);" onclick="selectTimerOption(600)">⏱️ 10 Mins</button>
             </div>
             <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeTimerModal()">Close</button>
         </div>
@@ -1527,34 +1352,19 @@
     <div class="law-bg-element icon-23">🚨</div>
     <div class="law-bg-element icon-24">🖋️</div>
 
-    <div class="side-profile-container" id="side-profile">
-        <img src="/my-photo.png" alt="John Edward" class="side-profile-img">
-    </div>
-
-    <div class="qr-code-wrapper" id="qr-wrapper">
-        <div id="qrcode"></div>
-        <p>📱 SCAN TO JOIN</p>
-    </div>
-
-    <!-- WELCOME / INSTRUCTIONS MODAL (DYNAMIC CONTENT) -->
+    <!-- WELCOME / INSTRUCTIONS MODAL (ESPISIPIKONG HOW TO PLAY NA MAY 5SEC BONUS) -->
     <div class="modal-overlay" id="instructions-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(14px); padding: 12px; box-sizing: border-box;">
-        <div class="modal-card instructions-responsive-box" style="max-width: 98vw; width: 100%; max-height: calc(100vh - 24px); border: 3px solid rgba(192, 132, 252, 0.95); border-radius: 24px; padding: clamp(14px, 2.5vh, 28px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
+        <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 92vh; border: 3px solid rgba(192, 132, 252, 0.95); border-radius: 24px; padding: 25px 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto; overflow-y: auto;">
             <div>
-                <div class="inst-title">📜⚖️ HOW TO PLAY ⚖️📜</div>
-                <div class="inst-subtitle" id="inst-sub-title">Welcome to PROFED 5 GROUP 2 QUICK ACTIVITY!</div>
+                <div style="font-size: 24px; font-weight: 900; color: #f472b6; margin-bottom: 6px;">📜⚖️ HOW TO PLAY ⚖️📜</div>
+                <div style="font-size: 15px; font-weight: 700; color: #e9d5ff; margin-bottom: 15px;">Welcome to PROFED 5 GROUP 2 QUICK ACTIVITY!</div>
             </div>
             
-            <div class="inst-content-card" id="dynamic-inst-body">
-                <div>
-                    <p style="margin: 0 0 6px 0; color: #38bdf8; font-weight: 900;"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
-                    <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700;">
-                        <li style="margin-bottom: 4px;">Piliin ang <b style="color: #f472b6;">Judge Big Screen Monitor</b> at ilagay ang password.</li>
-                        <li>I-click ang <b style="color: #10b981;">Start Quiz</b> para magsimula ang timer at mag-unlock ang mga tanong.</li>
-                    </ul>
-                </div>
+            <div id="dynamic-inst-body" style="text-align: left; background: rgba(15,23,42,0.6); border: 1.5px solid rgba(168,85,247,0.4); border-radius: 16px; padding: 16px 20px; font-size: 13.5px; line-height: 1.5; color: #f3e8ff;">
+                <!-- DYNAMIC CONTENT -->
             </div>
 
-            <button class="btn animated-main-btn inst-btn" onclick="closeInstructionsModal()">Gets Ko Na! 🚀✨</button>
+            <button class="btn animated-main-btn" style="margin-top: 18px; width: 100%; padding: 14px; font-size: 16px;" onclick="closeInstructionsModal()">Gets Ko Na! 🚀✨</button>
         </div>
     </div>
 
@@ -1638,8 +1448,28 @@
                 <img src="/logo.png" alt="Logo" class="app-logo">
             </div>
             <h1 class="animated-header-title" id="display-main-title">⚖️ PROFED 5 GROUP 2 QUICK ACTIVITY 📜</h1>
-            <p style="text-align:center; margin: 4px 0 10px 0; font-size: 14px; color: #e9d5ff;">Select your mode to begin:</p>
-            <button class="btn animated-main-btn" style="margin-bottom: 15px;" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
+            
+            <!-- 3 SUSPECT BOX (NASA TAAS NG ATTY BUTTONS AT NAKATAGO SA MOBILE) -->
+            <div class="left-suspects-sidebar" id="left-sidebar">
+                <div class="suspect-sidebar-card">
+                    <div style="font-size: 14px;">👤</div>
+                    <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 9.5px;">Suspect A</h4>
+                    <p style="font-size: 8px; color: #94a3b8; margin: 0; line-height: 1.1;">Denied accessible training ramps (R.A. 7277)</p>
+                </div>
+                <div class="suspect-sidebar-card">
+                    <div style="font-size: 14px;">🧑‍💼</div>
+                    <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 9.5px;">Suspect B</h4>
+                    <p style="font-size: 8px; color: #94a3b8; margin: 0; line-height: 1.1;">Complied with teacher code of ethics</p>
+                </div>
+                <div class="suspect-sidebar-card">
+                    <div style="font-size: 14px;">🕵️‍♂️</div>
+                    <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 9.5px;">Suspect C</h4>
+                    <p style="font-size: 8px; color: #94a3b8; margin: 0; line-height: 1.1;">Respected ancestral domains of IPs</p>
+                </div>
+            </div>
+
+            <p style="text-align:center; margin: 8px 0 6px 0; font-size: 14px; color: #e9d5ff;">Select your mode to begin:</p>
+            <button class="btn animated-main-btn" style="margin-bottom: 10px;" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             
             <div id="group-buttons-wrapper" class="attorney-buttons-container">
                 <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
@@ -1730,8 +1560,8 @@
         </div>
     </div>
 
+    <!-- ORIHINAL NA JUDGE MESSAGE CONTAINER (WALANG AVATAR) -->
     <div class="judge-speech-container" id="judge-speech-box">
-        <div class="judge-speech-avatar">👨‍⚖️</div>
         <p class="judge-speech-text" id="typewriter-text"></p>
     </div>
 
@@ -1767,9 +1597,6 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initAudio();
-            new QRCode(document.getElementById("qrcode"), {
-                text: "https://profed-quiz-y6ly.onrender.com", width: 75, height: 75, colorDark: "#6b21a8", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
-            });
             lockQuizUI();
             updateInstructionsContent('group');
         });
@@ -1780,25 +1607,22 @@
             const bodyContainer = document.getElementById('dynamic-inst-body');
             if (modeType === 'group') {
                 bodyContainer.innerHTML = `
-                    <div>
-                        <p style="margin: 0 0 6px 0; color: #38bdf8; font-weight: 900;"><strong>👨‍⚖️ By Group Mode (Attorneys 1-4):</strong></p>
-                        <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700; text-align: left;">
-                            <li style="margin-bottom: 4px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>).</li>
-                            <li style="margin-bottom: 4px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b> upang awtomatikong lumabas sa monitor ng judge.</li>
-                            <li>Maghintay habang nasa waiting screen hanggang i-click ng Judge ang Start Game. Sagutan nang tama at mabilis!</li>
-                        </ul>
-                    </div>
+                    <p style="margin: 0 0 6px 0; color: #38bdf8; font-weight: 900;"><strong>👨‍⚖️ Para sa By Group Mode:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; font-weight: 600;">
+                        <li>Piliin ang iyong nakatalagang grupo (<b style="color:#f472b6;">Attorney 1 - 4</b>).</li>
+                        <li>Kumuha ng litrato gamit ang camera at i-click ang <b style="color:#10b981;">Join Now</b> upang awtomatikong mag-pop up sa monitor ng judge.</li>
+                        <li>Hintayin ang Judge na i-click ang <b>Start Game</b> para mag-unlock ang mga tanong at magsimula ang countdown.</li>
+                        <li>Bawat tamang sagot ay may karagdagang <b style="color:#34d399;">+5 seconds bonus time</b> sa real-time!</li>
+                    </ul>
                 `;
             } else {
                 bodyContainer.innerHTML = `
-                    <div>
-                        <p style="margin: 0 0 6px 0; color: #ec4899; font-weight: 900;"><strong>👥 Individual Mode (Unlimited Participants):</strong></p>
-                        <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700; text-align: left;">
-                            <li style="margin-bottom: 4px;">I-click ang malaking <b style="color: #38bdf8;">Log-in / Join Quiz</b> button sa unang pahina.</li>
-                            <li style="margin-bottom: 4px;">Ilagay ang iyong buong pangalan at kumuha ng selfie/litrato bago i-click ang <b style="color: #10b981;">Join Now</b>.</li>
-                            <li>Hintayin ang Start Game ng judge. Ang iyong iskor at ranggo ay mag-a-update sa real-time sa monitor screen!</li>
-                        </ul>
-                    </div>
+                    <p style="margin: 0 0 6px 0; color: #ec4899; font-weight: 900;"><strong>👥 Para sa Individual Mode:</strong></p>
+                    <ul style="margin: 0; padding-left: 20px; font-weight: 600;">
+                        <li>I-click ang malaking <b style="color:#38bdf8;">Log-in / Join Quiz</b> button sa unang pahina.</li>
+                        <li>Ilagay ang iyong buong pangalan at kumuha ng litrato bago i-click ang <b style="color:#10b981;">Join Now</b>.</li>
+                        <li>Hintayin ang Start Game. Sagutan nang tama at mabilis; bawat tamang sagot ay may <b style="color:#34d399;">+5 seconds bonus time</b>!</li>
+                    </ul>
                 `;
             }
             document.getElementById('instructions-modal').style.display = 'flex';
@@ -2032,6 +1856,18 @@ Explanation: RA 7277 ang Magna Carta for Disabled Persons.`;
             const btnWrap = document.getElementById('controls-button-wrapper');
             btnWrap.style.display = btnWrap.style.display === 'none' ? 'flex' : 'none';
         }
+
+        const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Let the proceedings commence with utmost integrity, adherence to professional ethics, and intellectual rigor. May the finest counsels prevail."';
+        let charIndex = 0;
+        function typeWriter() {
+            const target = document.getElementById('typewriter-text');
+            if (charIndex < judgeMessage.length) {
+                target.innerHTML = judgeMessage.substring(0, charIndex + 1);
+                charIndex++;
+                setTimeout(typeWriter, 35);
+            }
+        }
+        window.onload = () => typeWriter();
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
