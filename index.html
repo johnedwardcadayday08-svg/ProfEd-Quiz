@@ -1808,28 +1808,35 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        // FLEXIBLE MOBILE SAFE QUESTION PARSER (HANDLES CUSTOM FONTS / EMOJI ARTIFACTS / MESSENGER PASTE)
+        // BULLETPROOF UNICODE & CUSTOM FONT TOLERANT QUESTION PARSER
         function savePlainQuestions() {
             try {
-                let text = document.getElementById('custom-questions-plaintext').value;
-                if (!text || !text.trim()) {
+                let rawInput = document.getElementById('custom-questions-plaintext').value;
+                if (!rawInput || !rawInput.trim()) {
                     alert("Mangyaring maglagay ng text ng mga tanong.");
                     return;
                 }
 
-                // Linisin at i-normalize ang text mula sa mobile clipboard
-                text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+                // Linisin ang custom font artifacts (tulad ng heart symbol '♡' pabalik sa 'o'/'O')
+                let cleanText = rawInput
+                    .replace(/♡/g, 'o')
+                    .replace(/♥/g, 'o')
+                    .replace(/[\u201C\u201D]/g, '"')
+                    .replace(/[\u2018\u2019]/g, "'")
+                    .replace(/\r\n/g, '\n')
+                    .replace(/\r/g, '\n')
+                    .trim();
 
-                // Hatiin ang text sa pamamagitan ng paghahanap sa "Q:" o "Q1:", "Q2:" kahit walang newline
-                let rawBlocks = text.split(/(?=(?:^|\n|\s|[^\w])Q[\d\.\s]*[:\-\)])/i);
+                // Hatiin sa bawat block ng tanong
+                let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
                 
                 let questionsList = [];
 
                 rawBlocks.forEach(block => {
-                    let cleanBlock = block.trim();
-                    if (!cleanBlock) return;
+                    let trimmedBlock = block.trim();
+                    if (!trimmedBlock) return;
 
-                    let lines = cleanBlock.split('\n').map(l => l.trim()).filter(l => l);
+                    let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
                     
                     let qText = "";
                     let options = {};
@@ -1837,26 +1844,25 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     let explanation = "";
 
                     lines.forEach(line => {
-                        // Match Question Header
-                        if (/^Q[\d\.\s]*[:\-\)]/i.test(line)) {
-                            qText = line.replace(/^Q[\d\.\s]*[:\-\)]/i, '').trim();
+                        // Match Question Line
+                        if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
+                            qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
                         } 
-                        // Match Options A), B), C), D) or A., B., C., D.
-                        else if (/^[A-D][\)\.]/i.test(line)) {
+                        // Match Option Lines (A), B), C), D) o A., B., C., D.)
+                        else if (/^[A-D][\)\.\:\-]/i.test(line)) {
                             let optKey = line.charAt(0).toUpperCase();
-                            let optVal = line.substring(2).trim();
+                            let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
                             options[optKey] = optVal;
                         } 
-                        // Match Answer key (kahit may custom font artifact)
-                        else if (/^Ans(?:wer)?[\s:\-\)]/i.test(line)) {
-                            let rawAns = line.replace(/^Ans(?:wer)?[\s:\-\)]/i, '').trim().toUpperCase();
-                            // Kuhanin ang unang letter A, B, C, o D
+                        // Match Answer Line
+                        else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
+                            let rawAns = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim().toUpperCase();
                             let match = rawAns.match(/[A-D]/);
                             if (match) answer = match[0];
                         } 
-                        // Match Explanation
-                        else if (/^Exp(?:lanation)?[\s:\-\)]/i.test(line)) {
-                            explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)]/i, '').trim();
+                        // Match Explanation Line
+                        else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
+                            explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
                         }
                     });
 
@@ -1871,7 +1877,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 });
 
                 if (questionsList.length === 0) {
-                    alert("Hindi nabasa ang mga tanong. Siguraduhing nagsisimula sa 'Q:' o 'Q1:' at may 'Answer: A/B/C/D'.");
+                    alert("Hindi pa rin nabasa. Siguraduhing may 'Q:' sa simula at 'Answer: A/B/C/D' sa bawat tanong.");
                     return;
                 }
 
@@ -1879,7 +1885,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 closeInsertModal();
                 alert(`Tagumpay! ${questionsList.length} tanong ang na-update sa LAHAT ng screen! 🚀`);
             } catch (err) {
-                alert("May error sa pagbasa ng text mula sa cellphone keyboard.");
+                alert("May error sa pagbasa ng text mula sa cellphone.");
             }
         }
 
