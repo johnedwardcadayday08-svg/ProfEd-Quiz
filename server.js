@@ -59,12 +59,15 @@ io.on('connection', (socket) => {
     socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
     socket.emit('timerUpdate', groupTimers);
 
-    // Dynamic update para sa realtime inserted questions at answer key
-    socket.on('updateCustomQuestions', ({ questionsData, answersData }) => {
-        if (answersData) {
-            correctAnswers = answersData;
-        }
-        io.emit('applyCustomQuestions', questionsData);
+    // Bagon Update: Isang array/object nalang ng mga tanong ang ipapasa
+    socket.on('updateCustomQuestionsData', (questionsList) => {
+        let newAnswers = {};
+        questionsList.forEach((item, idx) => {
+            let qKey = `q${idx + 1}`;
+            newAnswers[qKey] = item.answer;
+        });
+        correctAnswers = newAnswers;
+        io.emit('applyCustomQuestionsList', questionsList);
     });
 
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
@@ -142,7 +145,7 @@ io.on('connection', (socket) => {
             }
         }
 
-        if (answeredCount >= 6) {
+        if (answeredCount >= Object.keys(correctAnswers).length) {
             groupCompletedStatus[groupName] = true;
             io.emit('groupFinished', { groupName });
         }

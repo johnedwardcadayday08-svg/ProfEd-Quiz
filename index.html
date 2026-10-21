@@ -1280,17 +1280,13 @@
         <span id="floating-timer-text">01:00</span>
     </div>
 
-    <!-- INSERT QUESTIONS MODAL -->
+    <!-- SIMPLE INSERT QUESTIONS MODAL -->
     <div class="modal-overlay" id="insert-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left;">
-            <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Custom Questions & Answers</h3>
-            <p style="font-size: 12.5px; color: #cbd5e1; text-align: center; margin-bottom: 15px;">Ilagay ang HTML code para sa mga bagong tanong (Q1 hanggang Q6) at ang kaukulang tamang sagot.</p>
+            <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Questions, Answers & Explanations</h3>
+            <p style="font-size: 12.5px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">I-paste ang madaling JSON format ng iyong mga tanong below:</p>
             
-            <label style="font-size: 13px; font-weight: bold; color: #f3e8ff;">HTML ng mga Tanong (#quiz-questions):</label>
-            <textarea id="custom-questions-html" class="modal-input" style="width: 100%; max-width: 100%; height: 180px; font-family: monospace; font-size: 12px; text-align: left;" placeholder="I-paste dito ang HTML code ng mga question cards..."></textarea>
-            
-            <label style="font-size: 13px; font-weight: bold; color: #f3e8ff; margin-top: 10px; display: block;">Tamang Sagot (JSON Format):</label>
-            <textarea id="custom-answers-json" class="modal-input" style="width: 100%; max-width: 100%; height: 70px; font-family: monospace; font-size: 12px; text-align: left;" placeholder='{"q1": "A", "q2": "B", "q3": "C", "q4": "D", "q5": "A", "q6": "B"}'></textarea>
+            <textarea id="custom-questions-json" class="modal-input" style="width: 100%; max-width: 100%; height: 260px; font-family: monospace; font-size: 12px; text-align: left;" placeholder="I-paste ang JSON dito..."></textarea>
 
             <div style="display:flex; gap:12px; justify-content:center; width: 100%; margin-top: 15px;">
                 <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closeInsertModal()">Cancel</button>
@@ -1495,7 +1491,7 @@
             <div id="review-section">
                 <h3 style="color: #c084fc; text-align: center; margin-bottom: 15px; font-size: 20px; font-weight: 800;">📜 Court Review: Detailed Explanations & Final Scores</h3>
                 
-                <div class="horizontal-explanations-grid">
+                <div class="horizontal-explanations-grid" id="review-explanations-grid">
                     <div class="explanation-card-item">
                         <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q1: Magna Carta for Disabled Persons</p>
                         <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;"><b>Republic Act No. 7277</b> ay naglalayong magbigay ng rehabilitasyon, buong pagpapaunlad, at sariling pagiging maaasahan ng mga may kapansanan.</p>
@@ -1654,6 +1650,7 @@
         let groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
         let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
+        let totalQuestionsCount = 6;
         let capturedDataUrl = '';
         let mediaStream = null;
 
@@ -1714,15 +1711,36 @@
             document.getElementById('instructions-modal').style.display = 'none';
         }
 
-        // Functions para sa Insert Questions Modal
+        // BAGONG SIMPLE JSON FORMAT PARA SA INSERT QUESTIONS
+        const defaultSampleJSON = [
+  {
+    "question": "Aling batas ang Magna Carta of Women?",
+    "options": {
+      "A": "Republic Act No. 9710",
+      "B": "Republic Act No. 7610",
+      "C": "Republic Act No. 9155",
+      "D": "Republic Act No. 10533"
+    },
+    "answer": "A",
+    "explanation": "Ang Republic Act No. 9710 ay ang Magna Carta of Women."
+  },
+  {
+    "question": "Aling kategorya sa Bloom's Taxonomy ang tumutukoy sa pag-alala ng mga katotohanan?",
+    "options": {
+      "A": "Applying",
+      "B": "Remembering",
+      "C": "Analyzing",
+      "D": "Evaluating"
+    },
+    "answer": "B",
+    "explanation": "Ang Remembering ang pinakamababang antas na nakatuon sa pag-alala."
+  }
+];
+
         function openInsertModal() {
             document.getElementById('insert-modal').style.display = 'flex';
-            const currentHTML = document.getElementById('quiz-questions').innerHTML;
-            if (!document.getElementById('custom-questions-html').value) {
-                document.getElementById('custom-questions-html').value = currentHTML;
-            }
-            if (!document.getElementById('custom-answers-json').value) {
-                document.getElementById('custom-answers-json').value = '{\n  "q1": "RA7277",\n  "q2": "RA7610",\n  "q3": "RA8371",\n  "q4": "CONST",\n  "q5": "RA7277",\n  "q6": "RA7836"\n}';
+            if (!document.getElementById('custom-questions-json').value) {
+                document.getElementById('custom-questions-json').value = JSON.stringify(defaultSampleJSON, null, 2);
             }
         }
 
@@ -1732,28 +1750,75 @@
 
         function saveCustomQuestions() {
             try {
-                const newHTML = document.getElementById('custom-questions-html').value;
-                const jsonText = document.getElementById('custom-answers-json').value;
-                const newAnswers = JSON.parse(jsonText);
+                const jsonText = document.getElementById('custom-questions-json').value;
+                const questionsList = JSON.parse(jsonText);
 
-                socket.emit('updateCustomQuestions', {
-                    questionsData: newHTML,
-                    answersData: newAnswers
-                });
+                if (!Array.isArray(questionsList) || questionsList.length === 0) {
+                    alert("Kailangan ay may kahit isang tanong sa array list.");
+                    return;
+                }
+
+                socket.emit('updateCustomQuestionsData', questionsList);
 
                 closeInsertModal();
                 alert("Tagumpay na na-update ang mga tanong at sagot sa lahat ng participants! 🚀");
             } catch (err) {
-                alert("May mali sa JSON format ng Answer Key. Paki-check po ito.");
+                alert("May mali sa JSON format. Siguraduhing tama ang mga comma at quotes.");
             }
         }
 
-        socket.on('applyCustomQuestions', (htmlData) => {
+        // AUTOMATIC BUILDER NG UI MULA SA USER DATA
+        socket.on('applyCustomQuestionsList', (questionsList) => {
+            totalQuestionsCount = questionsList.length;
             const quizContainer = document.getElementById('quiz-questions');
-            if (quizContainer) {
-                quizContainer.innerHTML = htmlData;
-            }
+            const reviewGrid = document.getElementById('review-explanations-grid');
+            
+            let questionsHTML = '';
+            let reviewHTML = '';
+
+            questionsList.forEach((q, idx) => {
+                let qNum = idx + 1;
+                let qKey = `q${qNum}`;
+
+                let optionsHTML = '';
+                Object.keys(q.options).forEach(optKey => {
+                    optionsHTML += `
+                        <label id="lbl-${qKey}-${optKey}">
+                            <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> 
+                            ${optKey}) ${q.options[optKey]}
+                        </label>
+                    `;
+                });
+
+                questionsHTML += `
+                    <div class="question-card" id="card-${qKey}">
+                        <p><b>Q${qNum}:</b> ${q.question}</p>
+                        <div class="options">
+                            ${optionsHTML}
+                        </div>
+                        <div class="explanation-box" id="exp-${qKey}">
+                            <b>🔍 Detalyadong Paliwanag:</b> ${q.explanation}
+                        </div>
+                    </div>
+                `;
+
+                reviewHTML += `
+                    <div class="explanation-card-item">
+                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q${qNum}: ${q.question}</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;">
+                            <b>Tamang Sagot (${q.answer}):</b> ${q.explanation}
+                        </p>
+                    </div>
+                `;
+            });
+
+            if (quizContainer) quizContainer.innerHTML = questionsHTML;
+            if (reviewGrid) reviewGrid.innerHTML = reviewHTML;
+
             answeredQuestions = {};
+            if (myGroup && latestGroupScores[myGroup] !== undefined) {
+                document.getElementById('group-score-display').innerText = `Score: 0 / ${totalQuestionsCount}`;
+            }
         });
 
         function disableAllRadioInputs(disable) {
@@ -1972,7 +2037,7 @@
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
 
-            if (answeredCount >= 6) {
+            if (answeredCount >= totalQuestionsCount) {
                 lockQuizUI();
                 const popup = document.getElementById('feedback-popup');
                 if (popup) {
@@ -1994,7 +2059,7 @@
 
         socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
             const answeredCount = Object.keys(answeredQuestions).length;
-            if (answeredCount < 6) {
+            if (answeredCount < totalQuestionsCount) {
                 const popup = document.getElementById('feedback-popup');
                 if (popup) {
                     popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
@@ -2019,7 +2084,7 @@
             renderScoreboardAndPodium();
 
             if (myGroup && groupScores[myGroup] !== undefined) {
-                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / 6`;
+                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / ${totalQuestionsCount}`;
             }
         });
 
@@ -2041,7 +2106,7 @@
             
             let chartHTML = '';
             sortedGroups.forEach(([group, score]) => {
-                let percentage = (score / 6) * 100;
+                let percentage = (score / totalQuestionsCount) * 100;
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 60;
                 let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
@@ -2055,7 +2120,7 @@
                         <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
                         <div class="bar-label">${group}</div>
                         <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
-                        <div class="bar-score">${score}/6</div>
+                        <div class="bar-score">${score}/${totalQuestionsCount}</div>
                         <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
                     </div>
                 `;
@@ -2065,14 +2130,14 @@
 
             let podiumHTML = '';
             sortedGroups.forEach(([group, score], idx) => {
-                let heightPercent = Math.max((score / 6) * 100, 8);
+                let heightPercent = Math.max((score / totalQuestionsCount) * 100, 8);
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 let isCompleted = groupCompletedStatus[group];
                 
                 let gradientBg = '';
-                if (score >= 5) {
+                if (score >= Math.ceil(totalQuestionsCount * 0.8)) {
                     gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
-                } else if (score >= 3) {
+                } else if (score >= Math.ceil(totalQuestionsCount * 0.5)) {
                     gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
                 } else {
                     gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
@@ -2138,7 +2203,7 @@
             }
 
             isGameStarted = true;
-            if (answeredCount < 6) {
+            if (answeredCount < totalQuestionsCount) {
                 unlockQuizUI();
             }
 
@@ -2201,12 +2266,12 @@
             ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
                 const score = latestGroupScores[attorney] || 0;
                 const photoSrc = attorneyPhotos[attorney] || '/logo.png';
-                if (score >= 5) {
+                if (score >= Math.ceil(totalQuestionsCount * 0.8)) {
                     resultsHTML += `
                         <div class="result-box-card result-box-innocent">
                             <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
                             <div>
-                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / 6 Points</h4>
+                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalQuestionsCount} Points</h4>
                                 <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
                             </div>
                         </div>`;
@@ -2215,7 +2280,7 @@
                         <div class="result-box-card result-box-failing">
                             <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
                             <div>
-                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / 6 Points</h4>
+                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalQuestionsCount} Points</h4>
                                 <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
                             </div>
                         </div>`;
