@@ -170,7 +170,6 @@
             border: 3px solid #f43f5e !important;
         }
 
-        /* GLASSMORPHISM MAIN TRANSPARENT CONTROL BOX */
         .top-controls-glass-box {
             position: fixed;
             top: 12px;
@@ -341,10 +340,7 @@
         }
 
         @media (min-width: 769px) {
-            .qr-code-wrapper {
-                right: 35px;
-                bottom: 55vh;
-            }
+            .qr-code-wrapper { right: 35px; bottom: 55vh; }
         }
 
         @media (max-width: 768px) {
@@ -360,9 +356,7 @@
             .icon-5, .icon-6, .icon-9, .icon-10, .icon-13, .icon-15, .icon-18, .icon-19, .icon-22, .icon-24 {
                 display: none !important;
             }
-            .container {
-                backdrop-filter: blur(4px) !important;
-            }
+            .container { backdrop-filter: blur(4px) !important; }
 
             #instructions-modal {
                 padding: 8px !important;
@@ -388,12 +382,8 @@
                 line-height: 1.35 !important;
                 margin: 4px 0 !important;
             }
-            .inst-content-card ul {
-                padding-left: 16px !important;
-            }
-            .inst-content-card li {
-                margin-bottom: 3px !important;
-            }
+            .inst-content-card ul { padding-left: 16px !important; }
+            .inst-content-card li { margin-bottom: 3px !important; }
             .inst-btn {
                 font-size: 14px !important;
                 padding: 10px !important;
@@ -432,9 +422,7 @@
         }
 
         @media (max-width: 900px) {
-            .judge-main-layout {
-                grid-template-columns: 1fr;
-            }
+            .judge-main-layout { grid-template-columns: 1fr; }
         }
 
         .judge-left-box {
@@ -1323,7 +1311,6 @@
 
     <div id="judge-notification-banner"></div>
 
-    <!-- MAIN TRANSPARENT GLASSMORPHISM CONTROL BOX -->
     <div class="top-controls-glass-box" id="top-controls-group">
         <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="Toggle">▲</button>
         
@@ -1338,10 +1325,9 @@
     </div>
 
     <div id="floating-timer-badge">
-        <span id="floating-timer-text">01:00</span>
+        <span id="floating-timer-text">05:00</span>
     </div>
 
-    <!-- CHANGE TITLE MODAL -->
     <div class="modal-overlay" id="title-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #38bdf8;">✏️ Change App Title</h3>
@@ -1354,15 +1340,14 @@
         </div>
     </div>
 
-    <!-- SET TIMER MODAL -->
     <div class="modal-overlay" id="timer-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #f472b6;">⏱️ Set Real-Time Timer</h3>
-            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili ng oras na magco-countdown sa lahat ng participants (Mananatili ang +5s bonus time bawat tamang sagot!):</p>
+            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili ng oras na magco-countdown sa lahat ng participants:</p>
             
             <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 280px; margin: 0 auto 15px auto;">
                 <button class="btn" style="margin:0; padding:10px; background: rgba(56, 189, 248, 0.3); border: 1.5px solid #38bdf8;" onclick="selectTimerOption(30)">⚡ 30 Seconds</button>
-                <button class="btn" style="margin:0; padding:10px; background: rgba(168, 85, 247, 0.3); border: 1.5px solid #c084fc;" onclick="selectTimerOption(60)">⏱️ 1 Minute (Default)</button>
+                <button class="btn" style="margin:0; padding:10px; background: rgba(168, 85, 247, 0.3); border: 1.5px solid #c084fc;" onclick="selectTimerOption(60)">⏱️ 1 Minute</button>
                 <button class="btn" style="margin:0; padding:10px; background: rgba(16, 185, 129, 0.3); border: 1.5px solid #34d399;" onclick="selectTimerOption(90)">⏱️ 1 Minute and 30 Seconds</button>
                 <button class="btn" style="margin:0; padding:10px; background: rgba(245, 158, 11, 0.3); border: 1.5px solid #fbbf24;" onclick="selectTimerOption(120)">⏱️ 2 Minutes</button>
                 <button class="btn" style="margin:0; padding:10px; background: rgba(236, 72, 153, 0.3); border: 1.5px solid #f472b6;" onclick="selectTimerOption(150)">⏱️ 2 Minutes and 30 Seconds</button>
@@ -1374,7 +1359,6 @@
         </div>
     </div>
 
-    <!-- PICTURE ARCHIVE AUTH MODAL -->
     <div class="modal-overlay" id="archive-auth-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #f59e0b;">🔒 Confidential Picture Archive</h3>
@@ -1387,7 +1371,6 @@
         </div>
     </div>
 
-    <!-- PICTURE ARCHIVE DISPLAY MODAL -->
     <div class="modal-overlay" id="archive-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 600px; width: 95%;">
             <h3 style="color: #f59e0b; margin-top:0;">🖼️ Saved Participants Picture Archive</h3>
@@ -1401,7 +1384,6 @@
         </div>
     </div>
 
-    <!-- PLAIN TEXT INSERT QUESTIONS MODAL -->
     <div class="modal-overlay" id="insert-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left;">
             <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions</h3>
@@ -1624,7 +1606,7 @@
         <div id="student-view" class="hidden">
             <h1 id="group-title">Counsel Dashboard</h1>
             <div class="header-bar">
-                <span id="student-timer">Time Left: 01:00</span>
+                <span id="student-timer">Time Left: --:--</span>
                 <span id="group-score-display">Score: 0 / 0</span>
             </div>
 
@@ -1651,7 +1633,7 @@
         let isGameStarted = false;
         let answeredQuestions = {};
         let latestGroupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
-        let groupTimers = { 'Attorney 1': 60, 'Attorney 2': 60, 'Attorney 3': 60, 'Attorney 4': 60 };
+        let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
         let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         let totalQuestionsCount = 0;
@@ -1737,7 +1719,7 @@
         function selectTimerOption(seconds) {
             socket.emit('setTimerDuration', seconds);
             closeTimerModal();
-            alert(`Tagumpay! Na-set ang timer sa ${seconds} seconds para sa susunod na laro! ⏱️`);
+            alert(`Tagumpay! Na-set ang timer sa ${seconds} seconds! ⏱️`);
         }
 
         function openArchiveAuthModal() {
@@ -1802,12 +1784,14 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             document.getElementById('insert-modal').style.display = 'none';
         }
 
+        // ULTRA-ROBUST MOBILE safe question parser
         function savePlainQuestions() {
             try {
                 let text = document.getElementById('custom-questions-plaintext').value;
                 text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-                const rawBlocks = text.split(/(?=(?:^|\n)\s*Q[\d\.\s]*:)/i);
+                // Hahatiin kahit anong dikit sa mobile paste gamit ang global multiline match
+                const rawBlocks = text.split(/(?=(?:^|\n|\r)\s*Q[\d\.\s]*:)/i);
                 let questionsList = [];
 
                 rawBlocks.forEach(block => {
@@ -2139,7 +2123,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             }
         });
 
-        // FEEDBACK POPUP AT REALTIME TIMER UPDATE AFTER (+5s)
         socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
             const answeredCount = Object.keys(answeredQuestions).length;
             if (answeredCount < totalQuestionsCount) {
@@ -2191,7 +2174,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             sortedGroups.forEach(([group, score]) => {
                 let percentage = totalQuestionsCount > 0 ? (score / totalQuestionsCount) * 100 : 0;
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
-                let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 60;
+                let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
                 let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
                 let tSecs = (tSeconds % 60).toString().padStart(2, '0');
                 let timeText = `${tMins}:${tSecs}`;
@@ -2270,6 +2253,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             }, 3000);
         }
 
+        // REAL-TIME TIMER UPDATER (PROPERLY ACCEPTS ANY TIMER VALUE e.g. 5 MINS)
         socket.on('timerUpdate', (data) => {
             if (typeof data === 'object' && data !== null) {
                 Object.keys(data).forEach(g => {
@@ -2277,16 +2261,13 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 });
             }
 
-            let myTimer = myGroup && groupTimers[myGroup] !== undefined ? groupTimers[myGroup] : (groupTimers['Attorney 1'] || 60);
+            let myTimer = myGroup && groupTimers[myGroup] !== undefined ? groupTimers[myGroup] : (groupTimers['Attorney 1'] || 300);
             
             const answeredCount = Object.keys(answeredQuestions).length;
-            if (myTimer >= 60 && !isGameStarted) {
-                lockQuizUI();
-                return;
-            }
 
-            isGameStarted = true;
-            if (answeredCount < totalQuestionsCount) {
+            if (!isGameStarted) {
+                lockQuizUI();
+            } else if (answeredCount < totalQuestionsCount) {
                 unlockQuizUI();
             }
 

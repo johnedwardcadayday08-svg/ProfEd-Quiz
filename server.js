@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 let isGameStarted = false;
 let timerInterval = null;
-let customTimerDuration = 60; // Default: 60 seconds
+let customTimerDuration = 300; // Default: 300s (5mins) o huling pinili
 let appTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY"; 
 
 let groupScores = {
@@ -26,10 +26,10 @@ let groupScores = {
 };
 
 let groupTimers = {
-    'Attorney 1': 60,
-    'Attorney 2': 60,
-    'Attorney 3': 60,
-    'Attorney 4': 60
+    'Attorney 1': 300,
+    'Attorney 2': 300,
+    'Attorney 3': 300,
+    'Attorney 4': 300
 };
 
 let attorneyPhotos = {
@@ -78,9 +78,9 @@ io.on('connection', (socket) => {
         }
     });
 
-    // SET TIMER DURATION - Ina-update ang default countdown duration
+    // SET TIMER DURATION - Realtime broadcast at persistent update
     socket.on('setTimerDuration', (seconds) => {
-        customTimerDuration = parseInt(seconds) || 60;
+        customTimerDuration = parseInt(seconds) || 300;
         Object.keys(groupTimers).forEach(group => {
             groupTimers[group] = customTimerDuration;
         });
@@ -166,7 +166,6 @@ io.on('connection', (socket) => {
         io.emit('timeUp');
     });
 
-    // SUBMIT ANSWER LOGIC (+5s BONUS TIME PER CORRECT ANSWER)
     socket.on('submitAnswer', ({ groupName, questionId, answer, answeredCount }) => {
         if (!isGameStarted) return;
         
@@ -175,8 +174,6 @@ io.on('connection', (socket) => {
 
         if (isCorrect) {
             groupScores[groupName] = (groupScores[groupName] || 0) + 1;
-            
-            // Dagdag na +5 Seconds sa grupo kahit anong timer ang naka-set
             if (groupTimers[groupName] !== undefined) {
                 groupTimers[groupName] += 5;
             } else {
