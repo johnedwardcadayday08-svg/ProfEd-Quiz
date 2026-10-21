@@ -11,7 +11,6 @@ app.use(express.static(path.join(__dirname)));
 
 let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
 let currentQuizMode = "multiple-choice";
-let currentGameMode = "group";
 let isGameStarted = false;
 let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
 let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
@@ -19,10 +18,6 @@ let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'At
 let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
 let timerInterval = null;
 let serverPhotoArchive = [];
-
-let individualParticipants = {};
-let groupScoreHistory = [];
-let individualScoreHistory = [];
 
 let customQuestionsList = [
     {
@@ -39,19 +34,22 @@ let customQuestionsList = [
     }
 ];
 
+// MATALINONG SCORING ENGINE PARA SA ESSAY
 function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoints) {
     if (!essayText || typeof essayText !== 'string') return 0;
 
     let text = essayText.trim().toLowerCase();
-    if (text.length < 10) return 0;
+    if (text.length < 10) return 0; // Sobrang iksi o walang laman
 
     let maxScore = maxPoints || 10;
     let combinedContext = ((questionText || "") + " " + (criteriaText || "")).toLowerCase();
 
+    // Kunin ang mahahalagang mga salita (stop-word removal)
     let words = combinedContext.match(/\b[a-zà-ÿ0-9]{4,}\b/gi) || [];
     let stopWords = new Set(['e.g.', 'type', 'points', 'para', 'sa', 'mga', 'nang', 'maging', 'dahil', 'ayon', 'kundi', 'rubrics', 'criteria']);
     let coreKeywords = Array.from(new Set(words.filter(w => !stopWords.has(w))));
 
+    // 1. Tiyakin kung may kaugnayan ang sagot sa Tanong at Criteria
     let matchCount = 0;
     coreKeywords.forEach(kw => {
         if (text.includes(kw)) matchCount++;
@@ -59,10 +57,12 @@ function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoint
 
     let relevanceRatio = coreKeywords.length > 0 ? (matchCount / coreKeywords.length) : 0.5;
 
+    // Kapag walang kaugnayan sa tanong o criteria, 0 puntos!
     if (coreKeywords.length >= 3 && matchCount === 0) {
         return 0;
     }
 
+    // 2. Pagtuon sa Haba at Lalim ng Paliwanag
     let wordCount = text.split(/\s+/).length;
     let lengthScoreRatio = 0;
     if (wordCount >= 30) lengthScoreRatio = 1.0;
@@ -70,9 +70,10 @@ function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoint
     else if (wordCount >= 8) lengthScoreRatio = 0.4;
     else lengthScoreRatio = 0.2;
 
+    // Pagkukuwenta ng kabuuang porsyento ng puntos
     let finalRatio = (relevanceRatio * 0.6) + (lengthScoreRatio * 0.4);
 
-    if (finalRatio < 0.25) return 0;
+    if (finalRatio < 0.25) return 0; // Pag hindi na-meet ang pamantayan
 
     let computedPoints = Math.round(finalRatio * maxScore);
     return Math.min(Math.max(computedPoints, 0), maxScore);
@@ -81,13 +82,11 @@ function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoint
 io.on('connection', (socket) => {
     socket.emit('titleUpdated', currentAppTitle);
     socket.emit('quizModeUpdated', currentQuizMode);
-    socket.emit('gameModeUpdated', currentGameMode);
     socket.emit('gameState', { isGameStarted });
-    socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
+    socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
     socket.emit('applyCustomQuestionsList', customQuestionsList);
     socket.emit('timerUpdate', groupTimers);
     socket.emit('photoArchiveUpdated', serverPhotoArchive);
-    socket.emit('scoreHistoryUpdated', { groupScoreHistory, individualScoreHistory });
 
     socket.on('changeAppTitle', (newTitle) => {
         currentAppTitle = newTitle;
@@ -97,12 +96,6 @@ io.on('connection', (socket) => {
     socket.on('changeQuizMode', (mode) => {
         currentQuizMode = mode;
         io.emit('quizModeUpdated', currentQuizMode);
-    });
-
-    socket.on('changeGameMode', (mode) => {
-        currentGameMode = mode;
-        io.emit('gameModeUpdated', currentGameMode);
-        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
     });
 
     socket.on('updatePlainQuestionsData', (questionsList) => {
@@ -115,34 +108,14 @@ io.on('connection', (socket) => {
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
-            let photoId = Date.now() + Math.random().toString(36).substr(2, 5);
             serverPhotoArchive.push({
-                id: photoId,
                 groupName,
                 photo,
                 timestamp: new Date().toLocaleTimeString()
             });
-            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
             io.emit('photoArchiveUpdated', serverPhotoArchive);
             io.emit('newAttorneyJoined', { groupName, photo });
-            io.emit('triggerJudgePopup', { groupName, photo });
-        }
-    });
-
-    socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
-        if (fullName && photo) {
-            let pId = socket.id;
-            individualParticipants[pId] = { id: pId, name: fullName, score: 0, photo: photo, completed: false, timer: 300 };
-            let photoId = Date.now() + Math.random().toString(36).substr(2, 5);
-            serverPhotoArchive.push({
-                id: photoId,
-                groupName: fullName,
-                photo,
-                timestamp: new Date().toLocaleTimeString()
-            });
-            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
-            io.emit('photoArchiveUpdated', serverPhotoArchive);
-            io.emit('triggerJudgePopup', { groupName: fullName, photo });
         }
     });
 
@@ -154,100 +127,64 @@ io.on('connection', (socket) => {
 
         timerInterval = setInterval(() => {
             let activeCount = 0;
-            if (currentGameMode === 'group') {
-                Object.keys(groupTimers).forEach(g => {
-                    if (!groupCompletedStatus[g] && groupTimers[g] > 0) {
-                        groupTimers[g]--;
-                        activeCount++;
-                    }
-                });
-                io.emit('timerUpdate', groupTimers);
+            Object.keys(groupTimers).forEach(g => {
+                if (!groupCompletedStatus[g] && groupTimers[g] > 0) {
+                    groupTimers[g]--;
+                    activeCount++;
+                }
+            });
 
-                const allFinished = Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g]);
-                if (activeCount === 0 || allFinished) {
-                    clearInterval(timerInterval);
-                    io.emit('timeUp');
-                }
-            } else {
-                Object.keys(individualParticipants).forEach(pId => {
-                    let p = individualParticipants[pId];
-                    if (!p.completed && p.timer > 0) {
-                        p.timer--;
-                        activeCount++;
-                    }
-                });
-                io.emit('timerUpdate', groupTimers);
-                const allIndivFinished = Object.keys(individualParticipants).length > 0 && Object.keys(individualParticipants).every(pId => individualParticipants[pId].timer <= 0 || individualParticipants[pId].completed);
-                if (activeCount === 0 || allIndivFinished) {
-                    clearInterval(timerInterval);
-                    io.emit('timeUp');
-                }
+            io.emit('timerUpdate', groupTimers);
+
+            const allFinished = Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g]);
+            if (activeCount === 0 || allFinished) {
+                clearInterval(timerInterval);
+                io.emit('timeUp');
             }
-            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
         }, 1000);
     });
 
     socket.on('forceTimeUp', () => {
         if (timerInterval) clearInterval(timerInterval);
-        if (currentGameMode === 'group') {
-            Object.keys(groupTimers).forEach(g => { groupTimers[g] = 0; });
-        } else {
-            Object.keys(individualParticipants).forEach(pId => { individualParticipants[pId].timer = 0; });
-        }
+        Object.keys(groupTimers).forEach(g => {
+            groupTimers[g] = 0;
+        });
         io.emit('timerUpdate', groupTimers);
         io.emit('timeUp');
     });
 
     socket.on('setTimerDuration', (seconds) => {
-        if (currentGameMode === 'group') {
-            Object.keys(groupTimers).forEach(g => { groupTimers[g] = seconds; });
-        } else {
-            Object.keys(individualParticipants).forEach(pId => { individualParticipants[pId].timer = seconds; });
-        }
+        Object.keys(groupTimers).forEach(g => {
+            groupTimers[g] = seconds;
+        });
         io.emit('timerUpdate', groupTimers);
     });
 
     socket.on('submitAnswer', ({ groupName, questionIndex, answer, answeredCount }) => {
-        let qObj = customQuestionsList[questionIndex];
-        let earnedPoints = 0;
-        let isCorrect = false;
+        if (groupScores[groupName] !== undefined && !groupCompletedStatus[groupName]) {
+            let qObj = customQuestionsList[questionIndex];
+            let earnedPoints = 0;
+            let isCorrect = false;
 
-        if (qObj) {
-            if (qObj.type === 'essay') {
-                earnedPoints = evaluateSmartEssayScore(answer, qObj.question, qObj.rubrics || qObj.explanation, qObj.points || 10);
-                isCorrect = earnedPoints > 0;
-            } else {
-                let cleanUserAns = String(answer).trim().toLowerCase();
-                let cleanCorrectAns = String(qObj.answer).trim().toLowerCase();
-                
-                if (cleanUserAns === cleanCorrectAns || (cleanCorrectAns !== 'n/a' && cleanUserAns.includes(cleanCorrectAns))) {
-                    isCorrect = true;
-                    earnedPoints = qObj.points || 1;
+            if (qObj) {
+                if (qObj.type === 'essay') {
+                    earnedPoints = evaluateSmartEssayScore(answer, qObj.question, qObj.rubrics || qObj.explanation, qObj.points || 10);
+                    isCorrect = earnedPoints > 0;
                 } else {
-                    earnedPoints = 0;
-                    isCorrect = false;
+                    let cleanUserAns = String(answer).trim().toLowerCase();
+                    let cleanCorrectAns = String(qObj.answer).trim().toLowerCase();
+                    
+                    if (cleanUserAns === cleanCorrectAns || (cleanCorrectAns !== 'n/a' && cleanUserAns.includes(cleanCorrectAns))) {
+                        isCorrect = true;
+                        earnedPoints = qObj.points || 1;
+                        if (groupTimers[groupName] !== undefined) {
+                            groupTimers[groupName] += 5; // Bonus time sa tamang sagot
+                        }
+                    } else {
+                        earnedPoints = 0;
+                        isCorrect = false;
+                    }
                 }
-            }
-        }
-
-        let maxScoreTotal = customQuestionsList.reduce((acc, q) => acc + (q.points || 1), 0);
-
-        if (currentGameMode === 'group' && groupName && groupScores[groupName] !== undefined && !groupCompletedStatus[groupName]) {
-            if (isCorrect && qObj.type !== 'essay' && groupTimers[groupName] !== undefined) {
-                groupTimers[groupName] += 5;
-            }
-            groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
-            
-            if (answeredCount >= customQuestionsList.length) {
-                groupCompletedStatus[groupName] = true;
-                groupScoreHistory.push({
-                    groupName,
-                    score: groupScores[groupName],
-                    maxScore: maxScoreTotal,
-                    date: new Date().toLocaleDateString(),
-                    time: new Date().toLocaleTimeString()
-                });
-                io.emit('scoreHistoryUpdated', { groupScoreHistory, individualScoreHistory });
             }
 
             socket.emit('answerFeedback', { 
@@ -259,51 +196,19 @@ io.on('connection', (socket) => {
                 qType: qObj ? qObj.type : 'multiple-choice'
             });
 
-            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
+            groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
+            
+            if (answeredCount >= customQuestionsList.length) {
+                groupCompletedStatus[groupName] = true;
+            }
+
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
             io.emit('timerUpdate', groupTimers);
 
             const allCompleted = Object.keys(groupCompletedStatus).every(g => groupCompletedStatus[g]);
             if (allCompleted) {
                 if (timerInterval) clearInterval(timerInterval);
                 io.emit('timeUp');
-            }
-        } else if (currentGameMode === 'individual' && socket.id && individualParticipants[socket.id]) {
-            let p = individualParticipants[socket.id];
-            if (!p.completed) {
-                if (isCorrect && qObj.type !== 'essay') {
-                    p.timer += 5;
-                }
-                p.score += earnedPoints;
-
-                if (answeredCount >= customQuestionsList.length) {
-                    p.completed = true;
-                    individualScoreHistory.push({
-                        name: p.name,
-                        score: p.score,
-                        maxScore: maxScoreTotal,
-                        date: new Date().toLocaleDateString(),
-                        time: new Date().toLocaleTimeString()
-                    });
-                    io.emit('scoreHistoryUpdated', { groupScoreHistory, individualScoreHistory });
-                }
-
-                socket.emit('answerFeedback', { 
-                    isCorrect, 
-                    questionId: `q${questionIndex + 1}`, 
-                    answer, 
-                    earnedPoints, 
-                    maxPoints: qObj ? (qObj.points || 1) : 1,
-                    qType: qObj ? qObj.type : 'multiple-choice'
-                });
-
-                io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
-                io.emit('timerUpdate', groupTimers);
-
-                const allIndivCompleted = Object.keys(individualParticipants).length > 0 && Object.keys(individualParticipants).every(pId => individualParticipants[pId].completed);
-                if (allIndivCompleted) {
-                    if (timerInterval) clearInterval(timerInterval);
-                    io.emit('timeUp');
-                }
             }
         }
     });
@@ -314,22 +219,12 @@ io.on('connection', (socket) => {
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
-        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-        individualParticipants = {};
         io.emit('resetState');
-        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
     });
 
     socket.on('clearPhotoArchive', () => {
         serverPhotoArchive = [];
         io.emit('photoArchiveUpdated', serverPhotoArchive);
-    });
-
-    socket.on('deleteSelectedPhotos', (photoIds) => {
-        if (Array.isArray(photoIds)) {
-            serverPhotoArchive = serverPhotoArchive.filter(item => !photoIds.includes(item.id));
-            io.emit('photoArchiveUpdated', serverPhotoArchive);
-        }
     });
 });
 
