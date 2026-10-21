@@ -1,108 +1,221 @@
 const express = require('express');
-const app = express();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const http = require('http');
+const { Server } = require('socket.io');
 const path = require('path');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
 app.use(express.static(__dirname));
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 let isGameStarted = false;
-let globalTimer = 90; // 1 minute 30 seconds
 let timerInterval = null;
+let customTimerDuration = 60; // Default: 60 seconds
+let appTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY"; 
 
 let groupScores = {
-    'Soul 1': 0,
-    'Soul 2': 0,
-    'Soul 3': 0,
-    'Soul 4': 0
+    'Attorney 1': 0,
+    'Attorney 2': 0,
+    'Attorney 3': 0,
+    'Attorney 4': 0
+};
+
+let groupTimers = {
+    'Attorney 1': 60,
+    'Attorney 2': 60,
+    'Attorney 3': 60,
+    'Attorney 4': 60
 };
 
 let attorneyPhotos = {
-    'Soul 1': '',
-    'Soul 2': '',
-    'Soul 3': '',
-    'Soul 4': ''
+    'Attorney 1': '',
+    'Attorney 2': '',
+    'Attorney 3': '',
+    'Attorney 4': ''
 };
 
-// Tamang sagot para sa 10 tanong
-const correctAnswers = {
-    q1: 'B', q2: 'B', q3: 'A', q4: 'C', q5: 'A',
-    q6: 'B', q7: 'C', q8: 'A', q9: 'C', q10: 'B'
+let photoArchive = [];
+
+let groupCompletedStatus = {
+    'Attorney 1': false,
+    'Attorney 2': false,
+    'Attorney 3': false,
+    'Attorney 4': false
+};
+
+let popupQueue = [];
+let currentQuestionsList = null; 
+
+let correctAnswers = {
+    q1: 'RA7277',
+    q2: 'RA7610',
+    q3: 'RA8371',
+    q4: 'CONST',
+    q5: 'RA7277',
+    q6: 'RA7836'
 };
 
 io.on('connection', (socket) => {
     socket.emit('gameState', { isGameStarted });
-    socket.emit('updateState', { groupScores, photos: attorneyPhotos });
-    socket.emit('timerUpdate', globalTimer);
+    socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
+    socket.emit('timerUpdate', groupTimers);
+    socket.emit('titleUpdated', appTitle);
+    socket.emit('photoArchiveUpdated', photoArchive);
+
+    if (currentQuestionsList) {
+        socket.emit('applyCustomQuestionsList', currentQuestionsList);
+    }
+
+    socket.on('changeAppTitle', (newTitle) => {
+        if (newTitle && newTitle.trim()) {
+            appTitle = newTitle.trim();
+            io.emit('titleUpdated', appTitle);
+        }
+    });
+
+    // SET TIMER DURATION - Ina-update ang default countdown duration
+    socket.on('setTimerDuration', (seconds) => {
+        customTimerDuration = parseInt(seconds) || 60;
+        Object.keys(groupTimers).forEach(group => {
+            groupTimers[group] = customTimerDuration;
+        });
+        io.emit('timerUpdate', groupTimers);
+    });
+
+    socket.on('updatePlainQuestionsData', (questionsList) => {
+        let newAnswers = {};
+        questionsList.forEach((item, idx) => {
+            let qKey = `q${idx + 1}`;
+            newAnswers[qKey] = item.answer;
+        });
+
+        correctAnswers = newAnswers;
+        currentQuestionsList = questionsList;
+        io.emit('applyCustomQuestionsList', questionsList);
+    });
 
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
-            io.emit('updateState', { groupScores, photos: attorneyPhotos });
-            io.emit('newParticipantJoined', { groupName, photo });
+            
+            photoArchive.push({
+                groupName,
+                photo,
+                timestamp: new Date().toLocaleTimeString()
+            });
+
+            popupQueue.push({ groupName, photo });
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
+            io.emit('showJudgePopupQueue', popupQueue);
+            io.emit('photoArchiveUpdated', photoArchive);
         }
     });
 
     socket.on('startTimer', () => {
-        if (isGameStarted) return;
+        if (!isGameStarted) {
+            isGameStarted = true;
+            groupTimers = {
+                'Attorney 1': customTimerDuration,
+                'Attorney 2': customTimerDuration,
+                'Attorney 3': customTimerDuration,
+                'Attorney 4': customTimerDuration
+            };
+            
+            groupCompletedStatus = {
+                'Attorney 1': false,
+                'Attorney 2': false,
+                'Attorney 3': false,
+                'Attorney 4': false
+            };
+            
+            io.emit('gameState', { isGameStarted });
+            io.emit('timerUpdate', groupTimers);
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
 
-        isGameStarted = true;
-        globalTimer = 90;
+            if (timerInterval) clearInterval(timerInterval);
 
-        io.emit('gameState', { isGameStarted: true });
-        io.emit('timerUpdate', globalTimer);
+            timerInterval = setInterval(() => {
+                let allZero = true;
+                
+                Object.keys(groupTimers).forEach(group => {
+                    if (groupTimers[group] > 0) {
+                        groupTimers[group] -= 1;
+                        allZero = false;
+                    }
+                });
 
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            if (globalTimer > 0) {
-                globalTimer--;
-                io.emit('timerUpdate', globalTimer);
-            } else {
-                clearInterval(timerInterval);
-                isGameStarted = false;
-                io.emit('gameState', { isGameStarted: false });
-                io.emit('timeUp');
-            }
-        }, 1000);
+                io.emit('timerUpdate', groupTimers);
+
+                if (allZero) {
+                    clearInterval(timerInterval);
+                    isGameStarted = false;
+                    io.emit('timeUp');
+                }
+            }, 1000);
+        }
     });
 
     socket.on('forceTimeUp', () => {
-        clearInterval(timerInterval);
-        globalTimer = 0;
+        if (timerInterval) clearInterval(timerInterval);
         isGameStarted = false;
-        io.emit('timerUpdate', 0);
-        io.emit('gameState', { isGameStarted: false });
         io.emit('timeUp');
     });
 
-    // Kapag pinindot ang Reset -> Mawawala pati mga larawan ng participants
-    socket.on('resetGame', () => {
-        clearInterval(timerInterval);
-        isGameStarted = false;
-        globalTimer = 90;
-        groupScores = { 'Soul 1': 0, 'Soul 2': 0, 'Soul 3': 0, 'Soul 4': 0 };
-        attorneyPhotos = { 'Soul 1': '', 'Soul 2': '', 'Soul 3': '', 'Soul 4': '' };
-        
-        io.emit('gameState', { isGameStarted: false });
-        io.emit('timerUpdate', globalTimer);
-        io.emit('updateState', { groupScores, photos: attorneyPhotos });
-        io.emit('closeWinnerModal');
-    });
-
-    socket.on('submitAnswer', ({ groupName, questionId, answer }) => {
+    // SUBMIT ANSWER LOGIC (+5s BONUS TIME PER CORRECT ANSWER)
+    socket.on('submitAnswer', ({ groupName, questionId, answer, answeredCount }) => {
         if (!isGameStarted) return;
+        
+        const correctAns = correctAnswers[questionId];
+        const isCorrect = (answer === correctAns);
 
-        const isCorrect = correctAnswers[questionId] === answer;
         if (isCorrect) {
             groupScores[groupName] = (groupScores[groupName] || 0) + 1;
+            
+            // Dagdag na +5 Seconds sa grupo kahit anong timer ang naka-set
+            if (groupTimers[groupName] !== undefined) {
+                groupTimers[groupName] += 5;
+            } else {
+                groupTimers[groupName] = customTimerDuration + 5;
+            }
         }
 
-        socket.emit('answerFeedback', { isCorrect });
-        io.emit('updateState', { groupScores, photos: attorneyPhotos });
+        if (answeredCount >= Object.keys(correctAnswers).length) {
+            groupCompletedStatus[groupName] = true;
+            io.emit('groupFinished', { groupName });
+        }
+
+        socket.emit('answerFeedback', { isCorrect, questionId, answer });
+        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
+        io.emit('timerUpdate', groupTimers);
+    });
+
+    socket.on('resetGame', () => {
+        if (timerInterval) clearInterval(timerInterval);
+        isGameStarted = false;
+        groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
+        groupTimers = { 
+            'Attorney 1': customTimerDuration, 
+            'Attorney 2': customTimerDuration, 
+            'Attorney 3': customTimerDuration, 
+            'Attorney 4': customTimerDuration 
+        };
+        groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
+        
+        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+        popupQueue = [];
+
+        io.emit('resetState');
+        io.emit('gameState', { isGameStarted });
+        io.emit('timerUpdate', groupTimers);
     });
 });
 
 const PORT = process.env.PORT || 3000;
-http.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
