@@ -1806,7 +1806,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        // SUPER-ROBUST MOBILE & CUSTOM FONT TOLERANT QUESTION PARSER
+        // SUPER-ROBUST MULTI-FORMAT & MOBILE TOLERANT PARSER (NA-FIX ANG BLANK CHOICES)
         function savePlainQuestions() {
             try {
                 let rawInput = document.getElementById('custom-questions-plaintext').value;
@@ -1815,17 +1815,23 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     return;
                 }
 
-                // 1. Linisin ang text mula sa custom fonts, hearts, at iba't ibang uri ng quotation marks
+                // 1. Linisin ang text mula sa hearts, custom quotes, at iba pang kakaibang karakter
                 let cleanText = rawInput
                     .replace(/♡/g, 'o')
                     .replace(/♥/g, 'o')
                     .replace(/[\u201C\u201D]/g, '"')
                     .replace(/[\u2018\u2019]/g, "'")
                     .replace(/\r\n/g, '\n')
-                    .replace(/\r/g, '\n')
+                    .replace(/\r/g, '\n');
+
+                // 2. Tiyaking may bagong linya bago ang A), B), C), D), Answer:, at Explanation: para hindi magdikit-dikit
+                cleanText = cleanText
+                    .replace(/([^\n])\s*([A-D][\)\.\:\-])/gi, '$1\n$2')
+                    .replace(/([^\n])\s*(Ans(?:wer)?[:\-\)\.]?)/gi, '$1\n$2')
+                    .replace(/([^\n])\s*(Exp(?:lanation)?[:\-\)\.]?)/gi, '$1\n$2')
                     .trim();
 
-                // 2. Hatiin ang mga tanong gamit ang 'Q:' o 'Q1:' o 'Question' kahit walang bagong linya (mobile-paste friendly)
+                // 3. Hatiin ang mga tanong gamit ang 'Q:' o 'Q1:' o 'Question'
                 let blocks = cleanText.split(/(?=(?:^|\n|\r|\s|[^\w])Q[\d\.\s]*[:\-\)])/i);
                 
                 let questionsList = [];
@@ -1835,18 +1841,21 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     if (!trimmedBlock) return;
 
                     // Kuhanin ang Tanong (Q:)
-                    let qMatch = trimmedBlock.match(/Q[\d\.\s]*[:\-\)]\s*([\s\S]*?)(?=(?:[A-D][\)\.\:\-]|Ans(?:wer)?|Exp(?:lanation)?|$))/i);
+                    let qMatch = trimmedBlock.match(/Q[\d\.\s]*[:\-\)]\s*([\s\S]*?)(?=(?:\n[A-D][\)\.\:\-]|Ans(?:wer)?|Exp(?:lanation)?|$))/i);
                     let qText = qMatch ? qMatch[1].replace(/\n/g, ' ').trim() : "";
 
-                    // Kuhanin ang Options (A, B, C, D)
+                    // Kuhanin ang bawat Option (A, B, C, D) kahit tuldok o parenthesis ang gamit
                     let options = {};
-                    let optMatches = [...trimmedBlock.matchAll(/([A-D])[\)\.\:\-]\s*([\s\S]*?)(?=(?:[A-D][\)\.\:\-]|Ans(?:wer)?|Exp(?:lanation)?|$))/gi)];
-                    
-                    optMatches.forEach(m => {
-                        let letter = m[1].toUpperCase();
-                        let val = m[2].replace(/\n/g, ' ').trim();
-                        if (['A', 'B', 'C', 'D'].includes(letter)) {
-                            options[letter] = val;
+                    let lines = trimmedBlock.split('\n');
+
+                    lines.forEach(line => {
+                        let optMatch = line.trim().match(/^([A-D])[\)\.\:\-]\s*(.+)$/i);
+                        if (optMatch) {
+                            let letter = optMatch[1].toUpperCase();
+                            let optValue = optMatch[2].trim();
+                            if (optValue) {
+                                options[letter] = optValue;
+                            }
                         }
                     });
 
@@ -1858,7 +1867,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     let expMatch = trimmedBlock.match(/Exp(?:lanation)?[\s:\-\)\.]*\s*([\s\S]*?)$/i);
                     let explanation = expMatch ? expMatch[1].replace(/\n/g, ' ').trim() : "Walang nakasaad na paliwanag.";
 
-                    // Kung nabasa nang maayos ang tanong, options, at sagot:
+                    // Tiyaking mayroong A, B, C, D at hindi blanko ang bawat isa
                     if (qText && Object.keys(options).length >= 2 && answer) {
                         questionsList.push({
                             question: qText,
@@ -1870,13 +1879,13 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 });
 
                 if (questionsList.length === 0) {
-                    alert("Hindi pa rin nabasa. Siguraduhing may 'Q:' at 'Answer: A/B/C/D' sa iyong pinate.");
+                    alert("Hindi mabasa ang mga tanong at choices. Siguraduhing nasa magkakaibang linya ang Q:, A), B), C), D), at Answer:");
                     return;
                 }
 
                 socket.emit('updatePlainQuestionsData', questionsList);
                 closeInsertModal();
-                alert(`Tagumpay! ${questionsList.length} tanong ang na-update sa LAHAT ng screen! 🚀`);
+                alert(`Tagumpay! ${questionsList.length} tanong at kumpletong choices ang na-update sa LAHAT ng screen! 🚀`);
             } catch (err) {
                 alert("May error sa pagbasa ng text mula sa cellphone keyboard.");
             }
@@ -2050,10 +2059,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 setTimeout(() => {
                     judgeWelcome.style.display = 'none';
                     document.getElementById('role-select').classList.add('hidden');
-                    document.getElementById('side-profile').style.display = 'none';
-                    document.getElementById('qr-wrapper').style.display = 'none';
-                    document.getElementById('left-sidebar').style.display = 'none';
-                    document.getElementById('judge-speech-box').style.display = 'none';
                     document.getElementById('teacher-view').classList.remove('hidden');
                     document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
                 }, 1800);
