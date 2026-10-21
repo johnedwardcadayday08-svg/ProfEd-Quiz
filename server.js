@@ -45,7 +45,7 @@ let groupCompletedStatus = {
 
 let popupQueue = [];
 
-const correctAnswers = {
+let correctAnswers = {
     q1: 'RA7277',
     q2: 'RA7610',
     q3: 'RA8371',
@@ -58,6 +58,14 @@ io.on('connection', (socket) => {
     socket.emit('gameState', { isGameStarted });
     socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
     socket.emit('timerUpdate', groupTimers);
+
+    // Dynamic update para sa realtime inserted questions at answer key
+    socket.on('updateCustomQuestions', ({ questionsData, answersData }) => {
+        if (answersData) {
+            correctAnswers = answersData;
+        }
+        io.emit('applyCustomQuestions', questionsData);
+    });
 
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
