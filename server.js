@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 let isGameStarted = false;
 let timerInterval = null;
-let customTimerDuration = 300; // Default: 300s (5mins) o huling pinili
+let customTimerDuration = 300; // Default 5 mins
 let appTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY"; 
 
 let groupScores = {
@@ -78,7 +78,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // SET TIMER DURATION - Realtime broadcast at persistent update
     socket.on('setTimerDuration', (seconds) => {
         customTimerDuration = parseInt(seconds) || 300;
         Object.keys(groupTimers).forEach(group => {
@@ -103,10 +102,13 @@ io.on('connection', (socket) => {
         if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
             
+            const now = new Date();
+            const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
             photoArchive.push({
                 groupName,
                 photo,
-                timestamp: new Date().toLocaleTimeString()
+                timestamp: timeString
             });
 
             popupQueue.push({ groupName, photo });
@@ -114,6 +116,12 @@ io.on('connection', (socket) => {
             io.emit('showJudgePopupQueue', popupQueue);
             io.emit('photoArchiveUpdated', photoArchive);
         }
+    });
+
+    // ERASE ALL PHOTOS FROM ARCHIVE
+    socket.on('clearPhotoArchive', () => {
+        photoArchive = [];
+        io.emit('photoArchiveUpdated', photoArchive);
     });
 
     socket.on('startTimer', () => {

@@ -1266,44 +1266,54 @@
             100% { opacity: 1; transform: translate(-50%, 0); }
         }
 
+        /* BIGGER PICTURE ARCHIVE GRID & IMAGES */
         .archive-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 12px;
-            max-height: 320px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+            max-height: 480px;
             overflow-y: auto;
             margin-top: 15px;
-            padding: 5px;
+            padding: 10px;
         }
 
         .archive-item {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1.5px solid rgba(192, 132, 252, 0.4);
-            border-radius: 14px;
-            padding: 8px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(192, 132, 252, 0.6);
+            border-radius: 20px;
+            padding: 14px;
             text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
         }
 
         .archive-item img {
-            width: 70px;
-            height: 70px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #38bdf8;
+            border: 4px solid #38bdf8;
             transform: scaleX(-1);
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
+            margin: 0 auto 10px auto;
+            display: block;
         }
 
         .archive-item p {
-            margin: 4px 0 0 0;
-            font-size: 11px;
-            font-weight: bold;
+            margin: 6px 0 2px 0;
+            font-size: 16px;
+            font-weight: 900;
             color: #f3e8ff;
         }
 
         .archive-item span {
-            font-size: 9.5px;
-            color: #cbd5e1;
+            font-size: 11.5px;
+            color: #f472b6;
+            font-weight: 700;
             display: block;
+            background: rgba(244, 114, 182, 0.15);
+            padding: 4px 8px;
+            border-radius: 10px;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -1371,16 +1381,21 @@
         </div>
     </div>
 
+    <!-- PICTURE ARCHIVE DISPLAY MODAL WITH ERASE EMOJI BUTTON & EXTRA LARGE PHOTOS -->
     <div class="modal-overlay" id="archive-modal" style="display: none; z-index: 100010;">
-        <div class="modal-card" style="max-width: 600px; width: 95%;">
-            <h3 style="color: #f59e0b; margin-top:0;">🖼️ Saved Participants Picture Archive</h3>
-            <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 10px;">Awtomatikong nakatago rito ang lahat ng mga nakaraang kinuhang litrato:</p>
+        <div class="modal-card" style="max-width: 850px; width: 95%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">
+                <h3 style="color: #f59e0b; margin:0; font-size: 20px;">🖼️ Saved Participants Picture Archive</h3>
+                <button class="btn" style="background: linear-gradient(135deg, #f43f5e, #be123c); margin: 0; padding: 8px 14px; font-size: 13px;" onclick="confirmEraseAllArchive()" title="Erase All Photos">🗑️ Erase All</button>
+            </div>
+            
+            <p style="font-size: 12px; color: #cbd5e1; margin: 10px 0 0 0; text-align: left;">Awtomatikong nakatago rito ang lahat ng mga nakaraang kinuhang litrato kasama ang oras at petsa:</p>
             
             <div class="archive-grid" id="archive-photos-container">
                 <p style="color:#94a3b8; font-size:13px; grid-column: 1/-1;">Walang nakatagong litrato sa archive.</p>
             </div>
 
-            <button class="btn" style="background:var(--danger); width: 100%; margin-top:15px; padding:10px;" onclick="closeArchiveModal()">Close Archive</button>
+            <button class="btn" style="background:var(--danger); width: 100%; margin-top:15px; padding:12px;" onclick="closeArchiveModal()">Close Archive</button>
         </div>
     </div>
 
@@ -1743,12 +1758,21 @@
 
         socket.on('photoArchiveUpdated', (archive) => {
             serverPhotoArchive = archive;
+            if (document.getElementById('archive-modal').style.display === 'flex') {
+                renderPhotoArchive();
+            }
         });
+
+        function confirmEraseAllArchive() {
+            if (confirm("Sigurado ka bang gusto mong burahin ang LAHAT ng nakatagong litrato sa archive? 🗑️")) {
+                socket.emit('clearPhotoArchive');
+            }
+        }
 
         function renderPhotoArchive() {
             const container = document.getElementById('archive-photos-container');
             if (!serverPhotoArchive || serverPhotoArchive.length === 0) {
-                container.innerHTML = `<p style="color:#94a3b8; font-size:13px; grid-column: 1/-1;">Walang nakatagong litrato sa archive.</p>`;
+                container.innerHTML = `<p style="color:#94a3b8; font-size:14px; grid-column: 1/-1; text-align:center; padding: 20px 0;">Walang nakatagong litrato sa archive.</p>`;
                 return;
             }
 
@@ -1758,7 +1782,7 @@
                     <div class="archive-item">
                         <img src="${item.photo || '/logo.png'}" alt="${item.groupName}">
                         <p>${item.groupName}</p>
-                        <span>${item.timestamp}</span>
+                        <span>🕒 ${item.timestamp}</span>
                     </div>
                 `;
             });
@@ -1784,36 +1808,55 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        // ULTRA-ROBUST MOBILE safe question parser
+        // FLEXIBLE MOBILE SAFE QUESTION PARSER (HANDLES CUSTOM FONTS / EMOJI ARTIFACTS / MESSENGER PASTE)
         function savePlainQuestions() {
             try {
                 let text = document.getElementById('custom-questions-plaintext').value;
-                text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+                if (!text || !text.trim()) {
+                    alert("Mangyaring maglagay ng text ng mga tanong.");
+                    return;
+                }
 
-                // Hahatiin kahit anong dikit sa mobile paste gamit ang global multiline match
-                const rawBlocks = text.split(/(?=(?:^|\n|\r)\s*Q[\d\.\s]*:)/i);
+                // Linisin at i-normalize ang text mula sa mobile clipboard
+                text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+
+                // Hatiin ang text sa pamamagitan ng paghahanap sa "Q:" o "Q1:", "Q2:" kahit walang newline
+                let rawBlocks = text.split(/(?=(?:^|\n|\s|[^\w])Q[\d\.\s]*[:\-\)])/i);
+                
                 let questionsList = [];
 
                 rawBlocks.forEach(block => {
-                    let lines = block.split('\n').map(l => l.trim()).filter(l => l);
-                    if (lines.length === 0) return;
+                    let cleanBlock = block.trim();
+                    if (!cleanBlock) return;
 
+                    let lines = cleanBlock.split('\n').map(l => l.trim()).filter(l => l);
+                    
                     let qText = "";
                     let options = {};
                     let answer = "";
                     let explanation = "";
 
                     lines.forEach(line => {
-                        if (/^Q[\d\.\s]*:/i.test(line)) {
-                            qText = line.replace(/^Q[\d\.\s]*:/i, '').trim();
-                        } else if (/^[A-Za-z][\)\.]/.test(line)) {
+                        // Match Question Header
+                        if (/^Q[\d\.\s]*[:\-\)]/i.test(line)) {
+                            qText = line.replace(/^Q[\d\.\s]*[:\-\)]/i, '').trim();
+                        } 
+                        // Match Options A), B), C), D) or A., B., C., D.
+                        else if (/^[A-D][\)\.]/i.test(line)) {
                             let optKey = line.charAt(0).toUpperCase();
                             let optVal = line.substring(2).trim();
                             options[optKey] = optVal;
-                        } else if (/^Answer\s*:/i.test(line)) {
-                            answer = line.replace(/^Answer\s*:/i, '').trim().toUpperCase();
-                        } else if (/^Explanation\s*:/i.test(line)) {
-                            explanation = line.replace(/^Explanation\s*:/i, '').trim();
+                        } 
+                        // Match Answer key (kahit may custom font artifact)
+                        else if (/^Ans(?:wer)?[\s:\-\)]/i.test(line)) {
+                            let rawAns = line.replace(/^Ans(?:wer)?[\s:\-\)]/i, '').trim().toUpperCase();
+                            // Kuhanin ang unang letter A, B, C, o D
+                            let match = rawAns.match(/[A-D]/);
+                            if (match) answer = match[0];
+                        } 
+                        // Match Explanation
+                        else if (/^Exp(?:lanation)?[\s:\-\)]/i.test(line)) {
+                            explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)]/i, '').trim();
                         }
                     });
 
@@ -1828,7 +1871,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 });
 
                 if (questionsList.length === 0) {
-                    alert("Walang nabasang tanong. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
+                    alert("Hindi nabasa ang mga tanong. Siguraduhing nagsisimula sa 'Q:' o 'Q1:' at may 'Answer: A/B/C/D'.");
                     return;
                 }
 
@@ -1836,7 +1879,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 closeInsertModal();
                 alert(`Tagumpay! ${questionsList.length} tanong ang na-update sa LAHAT ng screen! 🚀`);
             } catch (err) {
-                alert("May error sa pagbasa ng text mula sa mobile keyboard.");
+                alert("May error sa pagbasa ng text mula sa cellphone keyboard.");
             }
         }
 
@@ -2253,7 +2296,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             }, 3000);
         }
 
-        // REAL-TIME TIMER UPDATER (PROPERLY ACCEPTS ANY TIMER VALUE e.g. 5 MINS)
         socket.on('timerUpdate', (data) => {
             if (typeof data === 'object' && data !== null) {
                 Object.keys(data).forEach(g => {
