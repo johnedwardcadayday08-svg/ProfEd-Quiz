@@ -1280,17 +1280,17 @@
         <span id="floating-timer-text">01:00</span>
     </div>
 
-    <!-- SIMPLE INSERT QUESTIONS MODAL -->
+    <!-- PLAIN TEXT INSERT QUESTIONS MODAL -->
     <div class="modal-overlay" id="insert-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left;">
-            <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Questions, Answers & Explanations</h3>
-            <p style="font-size: 12.5px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">I-paste ang madaling JSON format ng iyong mga tanong below:</p>
+            <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions</h3>
+            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">I-paste ang mga tanong nang direkta. Sundin ang format na Q:, A), B), C), D), Answer:, at Explanation:</p>
             
-            <textarea id="custom-questions-json" class="modal-input" style="width: 100%; max-width: 100%; height: 260px; font-family: monospace; font-size: 12px; text-align: left;" placeholder="I-paste ang JSON dito..."></textarea>
+            <textarea id="custom-questions-plaintext" class="modal-input" style="width: 100%; max-width: 100%; height: 260px; font-family: monospace; font-size: 12px; text-align: left;" placeholder="I-paste ang plain text questions dito..."></textarea>
 
             <div style="display:flex; gap:12px; justify-content:center; width: 100%; margin-top: 15px;">
                 <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closeInsertModal()">Cancel</button>
-                <button class="btn" style="background: var(--success); width: 45%; margin:0; padding:10px;" onclick="saveCustomQuestions()">Apply Realtime 🚀</button>
+                <button class="btn" style="background: var(--success); width: 45%; margin:0; padding:10px;" onclick="savePlainQuestions()">Apply Realtime 🚀</button>
             </div>
         </div>
     </div>
@@ -1711,36 +1711,27 @@
             document.getElementById('instructions-modal').style.display = 'none';
         }
 
-        // BAGONG SIMPLE JSON FORMAT PARA SA INSERT QUESTIONS
-        const defaultSampleJSON = [
-  {
-    "question": "Aling batas ang Magna Carta of Women?",
-    "options": {
-      "A": "Republic Act No. 9710",
-      "B": "Republic Act No. 7610",
-      "C": "Republic Act No. 9155",
-      "D": "Republic Act No. 10533"
-    },
-    "answer": "A",
-    "explanation": "Ang Republic Act No. 9710 ay ang Magna Carta of Women."
-  },
-  {
-    "question": "Aling kategorya sa Bloom's Taxonomy ang tumutukoy sa pag-alala ng mga katotohanan?",
-    "options": {
-      "A": "Applying",
-      "B": "Remembering",
-      "C": "Analyzing",
-      "D": "Evaluating"
-    },
-    "answer": "B",
-    "explanation": "Ang Remembering ang pinakamababang antas na nakatuon sa pag-alala."
-  }
-];
+        // DEFAULT SAMPLE PARA SA PLAIN TEXT MODAL
+        const defaultPlainSample = `Q: Aling batas ang Magna Carta of Women?
+A) Republic Act No. 9710
+B) Republic Act No. 7610
+C) Republic Act No. 9155
+D) Republic Act No. 10533
+Answer: A
+Explanation: Ang Republic Act No. 9710 ay ang Magna Carta of Women.
+
+Q: Aling kategorya sa Bloom's Taxonomy ang pag-alala ng mga katotohanan?
+A) Applying
+B) Remembering
+C) Analyzing
+D) Evaluating
+Answer: B
+Explanation: Ang Remembering ang pinakamababang antas na nakatuon sa pag-alala.`;
 
         function openInsertModal() {
             document.getElementById('insert-modal').style.display = 'flex';
-            if (!document.getElementById('custom-questions-json').value) {
-                document.getElementById('custom-questions-json').value = JSON.stringify(defaultSampleJSON, null, 2);
+            if (!document.getElementById('custom-questions-plaintext').value) {
+                document.getElementById('custom-questions-plaintext').value = defaultPlainSample;
             }
         }
 
@@ -1748,26 +1739,60 @@
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        function saveCustomQuestions() {
+        // AWTOMATIKONG PARSER MULA SA PLAIN TEXT PATUNGO SA SYSTEM FORMAT
+        function savePlainQuestions() {
             try {
-                const jsonText = document.getElementById('custom-questions-json').value;
-                const questionsList = JSON.parse(jsonText);
+                const text = document.getElementById('custom-questions-plaintext').value;
+                const blocks = text.split(/\n\s*\n/); // Hatiin kada tanong base sa blank line
+                let questionsList = [];
 
-                if (!Array.isArray(questionsList) || questionsList.length === 0) {
-                    alert("Kailangan ay may kahit isang tanong sa array list.");
+                blocks.forEach(block => {
+                    let lines = block.split('\n').map(l => l.trim()).filter(l => l);
+                    if (lines.length === 0) return;
+
+                    let qText = "";
+                    let options = {};
+                    let answer = "";
+                    let explanation = "";
+
+                    lines.forEach(line => {
+                        if (line.toLowerCase().startsWith('q:')) {
+                            qText = line.substring(2).trim();
+                        } else if (/^[a-zA-Z]\)/.test(line)) {
+                            let optKey = line.charAt(0).toUpperCase();
+                            let optVal = line.substring(2).trim();
+                            options[optKey] = optVal;
+                        } else if (line.toLowerCase().startsWith('answer:')) {
+                            answer = line.substring(7).trim().toUpperCase();
+                        } else if (line.toLowerCase().startsWith('explanation:')) {
+                            explanation = line.substring(12).trim();
+                        }
+                    });
+
+                    if (qText && Object.keys(options).length > 0 && answer) {
+                        questionsList.push({
+                            question: qText,
+                            options: options,
+                            answer: answer,
+                            explanation: explanation || "Walang nakasaad na paliwanag."
+                        });
+                    }
+                });
+
+                if (questionsList.length === 0) {
+                    alert("Walang nabasang tanong. Pakisunod ang format na 'Q:', 'A)', 'Answer:', at 'Explanation:'.");
                     return;
                 }
 
-                socket.emit('updateCustomQuestionsData', questionsList);
-
+                socket.emit('updatePlainQuestionsData', questionsList);
                 closeInsertModal();
-                alert("Tagumpay na na-update ang mga tanong at sagot sa lahat ng participants! 🚀");
+                alert("Tagumpay na na-update ang mga tanong sa lahat ng participants nang realtime! 🚀");
             } catch (err) {
-                alert("May mali sa JSON format. Siguraduhing tama ang mga comma at quotes.");
+                alert("May nakitang error sa pagbasa ng plain text. Paki-check po ang pagkakabuo.");
             }
         }
 
-        // AUTOMATIC BUILDER NG UI MULA SA USER DATA
+        // AUTOMATIC BUILDER NG UI MULA SA PLAIN TEXT DATA
         socket.on('applyCustomQuestionsList', (questionsList) => {
             totalQuestionsCount = questionsList.length;
             const quizContainer = document.getElementById('quiz-questions');

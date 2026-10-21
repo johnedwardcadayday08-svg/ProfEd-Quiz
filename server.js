@@ -59,8 +59,8 @@ io.on('connection', (socket) => {
     socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
     socket.emit('timerUpdate', groupTimers);
 
-    // Bagon Update: Isang array/object nalang ng mga tanong ang ipapasa
-    socket.on('updateCustomQuestionsData', (questionsList) => {
+    // Tanggapin ang plain text at awtomatikong i-parse sa server
+    socket.on('updatePlainQuestionsData', (questionsList) => {
         let newAnswers = {};
         questionsList.forEach((item, idx) => {
             let qKey = `q${idx + 1}`;
