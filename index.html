@@ -1041,6 +1041,32 @@
             box-sizing: border-box;
         }
 
+        .essay-textarea-field {
+            width: 100%;
+            max-width: 100%;
+            height: 120px;
+            padding: 12px;
+            margin-top: 8px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1.5px solid rgba(192, 132, 252, 0.6);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        .rubrics-badge-box {
+            background: rgba(168, 85, 247, 0.18);
+            border: 1.5px dashed rgba(192, 132, 252, 0.7);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-top: 8px;
+            font-size: 12.5px;
+            color: #f3e8ff;
+        }
+
         #student-view-wrapper {
             position: relative;
             width: 100%;
@@ -1353,15 +1379,16 @@
         <span id="floating-timer-text">05:00</span>
     </div>
 
-    <!-- QUIZ MODE SELECTION MODAL -->
+    <!-- IN-UPDATE ANG QUIZ MODE SELECTION MODAL -->
     <div class="modal-overlay" id="quiz-mode-modal" style="display: none; z-index: 100010;">
-        <div class="modal-card">
+        <div class="modal-card" style="max-width: 450px;">
             <h3 style="color: #c084fc;">🔀 Select Quiz Mode</h3>
             <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili kung anong uri ng pagsusulit ang ipapatupad sa lahat ng participants:</p>
             
-            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; margin: 0 auto 15px auto;">
-                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #38bdf8, #0284c7);" onclick="selectQuizMode('multiple-choice')">1: Pure Multiple Choice</button>
-                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectQuizMode('mixed')">2: Mixed (MC, ID, Enum, T/F)</button>
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin: 0 auto 15px auto;">
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #38bdf8, #0284c7);" onclick="selectQuizMode('multiple-choice')">1: PURE MULTIPLE CHOICE</button>
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectQuizMode('mixed')">2: MIXED (MC, ID, ENUM, T/F, SHORT ESSAY)</button>
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #ec4899, #be185d);" onclick="selectQuizMode('long-essay')">3: LONG ESSAY</button>
             </div>
 
             <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeQuizModeModal()">Cancel</button>
@@ -1430,8 +1457,8 @@
 
     <div class="modal-overlay" id="insert-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left;">
-            <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions (MC / Mixed)</h3>
-            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">I-paste ang mga tanong. Suportado ang Multiple Choice, Identification, Enumeration, at True/False kasama ang Answer at Explanation:</p>
+            <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions</h3>
+            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">Para sa Essays: Ipasok ang Rubrics at Points/Score. Hindi na kailangan ng Answer Key o Explanation!</p>
             
             <textarea id="custom-questions-plaintext" class="modal-input" style="width: 100%; max-width: 100%; height: 260px; font-family: monospace; font-size: 12px; text-align: left;" placeholder="I-paste ang plain text questions dito..."></textarea>
 
@@ -1682,6 +1709,7 @@
         let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         let totalQuestionsCount = 0;
+        let totalMaxScore = 0;
         let capturedDataUrl = '';
         let mediaStream = null;
         let serverPhotoArchive = [];
@@ -1749,7 +1777,8 @@
         function selectQuizMode(mode) {
             socket.emit('changeQuizMode', mode);
             closeQuizModeModal();
-            alert(`Tagumpay! Na-set ang Quiz Mode sa: ${mode === 'mixed' ? 'Mixed Quiz (MC, ID, Enum, T/F)' : 'Pure Multiple Choice'}! 🔀`);
+            let modeTitle = mode === 'mixed' ? 'MIXED' : (mode === 'long-essay' ? 'LONG ESSAY' : 'PURE MULTIPLE CHOICE');
+            alert(`Tagumpay! Na-set ang Quiz Mode sa: ${modeTitle}! 🔀`);
         }
 
         socket.on('quizModeUpdated', (mode) => {
@@ -1835,28 +1864,18 @@
             container.innerHTML = html;
         }
 
-        const defaultPlainSample = `Q: Aling teorya ni Lawrence Kohlberg ang tumutukoy sa antas kung saan ang pagpapasya ng bata ay nakabatay sa pag-iwas sa parusa at pagsunod sa ganti?
+        const defaultPlainSample = `Q: Ipaliwanag ang kahalagahan ng Code of Ethics sa propesyonal na pagtuturo.
+Type: Essay
+Rubrics: Nilalaman (5 pts), Organisasyon (3 pts), Gramatika (2 pts)
+Points: 10
+
+Q: Aling teorya ni Lawrence Kohlberg ang tumutukoy sa antas kung saan ang pagpapasya ng bata ay nakabatay sa pag-iwas sa parusa?
 A) Post-Conventional Level
 B) Conventional Level
 C) Pre-Conventional Level
 D) Universal Ethical Principles
 Answer: C
-Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng mga panlabas na kahihinatnan tulad ng parusa (Punishment and Obedience) at gantimpala.
-
-Q: Sino ang ama ng Modernong Sikolohiya?
-Type: Identification
-Answer: Wilhelm Wundt
-Explanation: Si Wilhelm Wundt ang nagtatag ng kauna-unahang laboratoryo ng sikolohiya.
-
-Q: Ibigay ang dalawang uri ng kognitibong pag-unlad ayon kay Piaget.
-Type: Enumeration
-Answer: Assimilation, Accommodation
-Explanation: Ang assimilation at accommodation ay ang mga proseso ng adaptation.
-
-Q: Ang edukasyon sa pagpapahalaga ay para lamang sa mga batang nasa elementarya. (True or False)
-Type: True/False
-Answer: False
-Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang tao.`;
+Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`;
 
         function openInsertModal() {
             document.getElementById('insert-modal').style.display = 'flex';
@@ -1869,7 +1888,7 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        // BULLETPROOF MIXED & MULTIPLE CHOICE PARSER
+        // AUTOMATIC ADVANCED ESSAY, RUBRICS & QUESTION PARSER
         function savePlainQuestions() {
             try {
                 let rawInput = document.getElementById('custom-questions-plaintext').value;
@@ -1901,6 +1920,8 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
                     let options = {};
                     let answer = "";
                     let explanation = "";
+                    let rubrics = "";
+                    let points = 1;
 
                     lines.forEach(line => {
                         if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
@@ -1908,10 +1929,19 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
                         } 
                         else if (/^Type[\s:\-\)\.]/i.test(line)) {
                             let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
-                            if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
+                            if (tVal.includes('essay')) qType = 'essay';
+                            else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
                             else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
                             else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
                             else qType = 'multiple-choice';
+                        }
+                        else if (/^Rubrics?[\s:\-\)\.]/i.test(line) || /^Criteria[\s:\-\)\.]/i.test(line)) {
+                            rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
+                            qType = 'essay';
+                        }
+                        else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
+                            let ptsMatch = line.match(/\d+/);
+                            if (ptsMatch) points = parseInt(ptsMatch[0], 10);
                         }
                         else if (/^[A-D][\)\.\:\-]/i.test(line)) {
                             let optKey = line.charAt(0).toUpperCase();
@@ -1926,38 +1956,36 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
                         }
                     });
 
-                    // Auto-detect type kung walang 'Type:' tag pero may options o kaya ay T/F sa tanong
-                    if (Object.keys(options).length > 0) {
-                        qType = 'multiple-choice';
-                    } else if (qType === 'multiple-choice') {
-                        if (/true\s*(?:\/|or)\s*false/i.test(qText) || /t\s*\/\s*f/i.test(qText)) {
-                            qType = 'true-false';
-                        } else if (/i-bigay ang/i.test(qText) || /mga uri/i.test(qText) || /enumera/i.test(qText)) {
-                            qType = 'enumeration';
-                        } else {
-                            qType = 'identification';
+                    // Auto-detect Essay kung may rubrics o salitang "Ipaliwanag/Explain"
+                    if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText)) {
+                        if (Object.keys(options).length === 0 && !answer) {
+                            qType = 'essay';
+                            if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kelebanse ng sagot.";
+                            if (points === 1) points = 5;
                         }
                     }
 
-                    if (qText && answer) {
+                    if (qText) {
                         questionsList.push({
                             question: qText,
                             type: qType,
                             options: options,
-                            answer: answer,
-                            explanation: explanation || "Walang nakasaad na paliwanag."
+                            answer: answer || "N/A (Essay/Constructed Response)",
+                            explanation: explanation || (rubrics ? `Criteria for Judging: ${rubrics}` : "Walang nakasaad na paliwanag."),
+                            rubrics: rubrics,
+                            points: points
                         });
                     }
                 });
 
                 if (questionsList.length === 0) {
-                    alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula at 'Answer:' sa bawat tanong.");
+                    alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
                     return;
                 }
 
                 socket.emit('updatePlainQuestionsData', questionsList);
                 closeInsertModal();
-                alert(`Tagumpay! ${questionsList.length} tanong ang na-update sa LAHAT ng screen! 🚀`);
+                alert(`Tagumpay! Awtomatikong nabasa ang ${questionsList.length} tanong/essays sa LAHAT ng screen! 🚀`);
             } catch (err) {
                 alert("May error sa pagbasa ng text.");
             }
@@ -1970,6 +1998,8 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
 
         function renderQuestionsUI(questionsList) {
             totalQuestionsCount = questionsList.length;
+            totalMaxScore = questionsList.reduce((acc, q) => acc + (q.points || 1), 0);
+            
             const quizContainer = document.getElementById('quiz-questions');
             const reviewGrid = document.getElementById('review-explanations-grid');
             
@@ -1984,26 +2014,36 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
                 let effectiveMode = currentQuizMode;
 
                 if (effectiveMode === 'multiple-choice') {
-                    // Force Multiple choice rendering kung Pure Multiple Choice mode
-                    let opts = q.options && Object.keys(q.options).length > 0 ? q.options : { A: "Tama", B: "Mali", C: "Wala sa nabanggit", D: "Lahat ng nabanggit" };
+                    let opts = q.options && Object.keys(q.options).length > 0 ? q.options : { A: "Option A", B: "Option B", C: "Option C", D: "Option D" };
                     let optionsHTML = '';
                     Object.keys(opts).forEach(optKey => {
                         optionsHTML += `
                             <label id="lbl-${qKey}-${optKey}">
-                                <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> 
+                                <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}', ${q.points || 1})"> 
                                 ${optKey}) ${opts[optKey]}
                             </label>
                         `;
                     });
                     inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
-                } else {
-                    // Mixed Mode batay sa tiyak na type ng tanong
+                } 
+                else if (effectiveMode === 'long-essay' || q.type === 'essay') {
+                    // Essay Format Display
+                    inputFieldHTML = `
+                        <div class="rubrics-badge-box">
+                            📌 <b>Criteria for Judging:</b> ${q.rubrics || 'Nilalaman at Kaangkupan ng Sagot'}<br>
+                            🎯 <b>Total Points:</b> ${q.points || 5} Points
+                        </div>
+                        <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong kumpletong sagot dito..." onblur="submitEssayAns('${qKey}', this.value, ${q.points || 5})"></textarea>
+                    `;
+                }
+                else {
+                    // Mixed Mode (MC, ID, Enum, T/F, Essay)
                     if (q.type === 'multiple-choice' && q.options && Object.keys(q.options).length > 0) {
                         let optionsHTML = '';
                         Object.keys(q.options).forEach(optKey => {
                             optionsHTML += `
                                 <label id="lbl-${qKey}-${optKey}">
-                                    <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> 
+                                    <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}', ${q.points || 1})"> 
                                     ${optKey}) ${q.options[optKey]}
                                 </label>
                             `;
@@ -2013,27 +2053,33 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
                         inputFieldHTML = `
                             <div class="options">
                                 <label id="lbl-${qKey}-True">
-                                    <input type="radio" name="${qKey}" value="True" onchange="submitAns('${qKey}', 'True')"> A) True / Tama
+                                    <input type="radio" name="${qKey}" value="True" onchange="submitAns('${qKey}', 'True', ${q.points || 1})"> A) True / Tama
                                 </label>
                                 <label id="lbl-${qKey}-False">
-                                    <input type="radio" name="${qKey}" value="False" onchange="submitAns('${qKey}', 'False')"> B) False / Mali
+                                    <input type="radio" name="${qKey}" value="False" onchange="submitAns('${qKey}', 'False', ${q.points || 1})"> B) False / Mali
                                 </label>
                             </div>`;
+                    } else if (q.type === 'essay') {
+                        inputFieldHTML = `
+                            <div class="rubrics-badge-box">
+                                📌 <b>Criteria / Rubrics:</b> ${q.rubrics || 'Kabuuan ng Kaisipan at Grammar'}<br>
+                                🎯 <b>Max Score:</b> ${q.points || 5} Points
+                            </div>
+                            <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong essay dito..." onblur="submitEssayAns('${qKey}', this.value, ${q.points || 5})"></textarea>`;
                     } else {
-                        // Identification o Enumeration
                         inputFieldHTML = `
                             <div style="margin-top: 8px;">
-                                <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot dito..." autocomplete="off" onchange="submitMixedTextAns('${qKey}', this.value)" />
+                                <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot..." autocomplete="off" onchange="submitMixedTextAns('${qKey}', this.value, ${q.points || 1})" />
                             </div>`;
                     }
                 }
 
                 questionsHTML += `
                     <div class="question-card" id="card-${qKey}">
-                        <p><b>Q${qNum}:</b> ${q.question}</p>
+                        <p><b>Q${qNum}:</b> ${q.question} <span style="font-size: 12px; color: #f472b6;">(${q.points || 1} pts)</span></p>
                         ${inputFieldHTML}
                         <div class="explanation-box" id="exp-${qKey}">
-                            <b>🔍 Detalyadong Paliwanag:</b> ${q.explanation}
+                            <b>🔍 Paliwanag / Rubrics:</b> ${q.explanation}
                         </div>
                     </div>
                 `;
@@ -2042,7 +2088,8 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
                     <div class="explanation-card-item">
                         <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q${qNum}: ${q.question}</p>
                         <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;">
-                            <b>Tamang Sagot (${q.answer}):</b> ${q.explanation}
+                            <b>Batayan / Tamang Sagot:</b> ${q.answer}<br>
+                            <b>Detaye:</b> ${q.explanation}
                         </p>
                     </div>
                 `;
@@ -2053,12 +2100,12 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
 
             answeredQuestions = {};
             if (myGroup && latestGroupScores[myGroup] !== undefined) {
-                document.getElementById('group-score-display').innerText = `Score: 0 / ${totalQuestionsCount}`;
+                document.getElementById('group-score-display').innerText = `Score: 0 / ${totalMaxScore}`;
             }
         }
 
         function disableAllRadioInputs(disable) {
-            const inputs = document.querySelectorAll('#quiz-questions input[type="radio"], #quiz-questions input[type="text"]');
+            const inputs = document.querySelectorAll('#quiz-questions input[type="radio"], #quiz-questions input[type="text"], #quiz-questions textarea');
             inputs.forEach(input => {
                 input.disabled = disable;
             });
@@ -2256,13 +2303,14 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
         function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { socket.emit('resetGame'); }
 
-        function submitAns(questionId, answer) {
+        function submitAns(questionId, answer, pts) {
             if (!isGameStarted) return;
             if (!myGroup || answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
             
+            let currentScore = (latestGroupScores[myGroup] || 0) + (pts || 1);
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer, answeredCount });
+            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer, answeredCount: currentScore });
             
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
@@ -2278,20 +2326,48 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
             }
         }
 
-        function submitMixedTextAns(questionId, answerText) {
+        function submitMixedTextAns(questionId, answerText, pts) {
             if (!isGameStarted) return;
             if (!myGroup || answeredQuestions[questionId]) return;
             if (!answerText || !answerText.trim()) return;
             
             answeredQuestions[questionId] = true;
+            let currentScore = (latestGroupScores[myGroup] || 0) + (pts || 1);
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer: answerText, answeredCount });
+            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer: answerText, answeredCount: currentScore });
             
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
 
             const textInput = document.getElementById(`input-${questionId}`);
             if (textInput) textInput.disabled = true;
+
+            if (answeredCount >= totalQuestionsCount) {
+                lockQuizUI();
+                const popup = document.getElementById('feedback-popup');
+                if (popup) {
+                    popup.className = "feedback-correct";
+                    popup.innerHTML = "Wait for the results!";
+                    popup.style.display = "block";
+                }
+            }
+        }
+
+        function submitEssayAns(questionId, essayText, pts) {
+            if (!isGameStarted) return;
+            if (!myGroup || answeredQuestions[questionId]) return;
+            if (!essayText || !essayText.trim()) return;
+
+            answeredQuestions[questionId] = true;
+            let currentScore = (latestGroupScores[myGroup] || 0) + (pts || 5);
+            const answeredCount = Object.keys(answeredQuestions).length;
+            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer: essayText, answeredCount: currentScore });
+
+            const expBox = document.getElementById(`exp-${questionId}`);
+            if (expBox) expBox.style.display = "block";
+
+            const txtArea = document.getElementById(`textarea-${questionId}`);
+            if (txtArea) txtArea.disabled = true;
 
             if (answeredCount >= totalQuestionsCount) {
                 lockQuizUI();
@@ -2340,7 +2416,7 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
             renderScoreboardAndPodium();
 
             if (myGroup && groupScores[myGroup] !== undefined) {
-                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / ${totalQuestionsCount}`;
+                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / ${totalMaxScore}`;
             }
         });
 
@@ -2362,7 +2438,7 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
             
             let chartHTML = '';
             sortedGroups.forEach(([group, score]) => {
-                let percentage = totalQuestionsCount > 0 ? (score / totalQuestionsCount) * 100 : 0;
+                let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
                 let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
@@ -2376,7 +2452,7 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
                         <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
                         <div class="bar-label">${group}</div>
                         <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
-                        <div class="bar-score">${score}/${totalQuestionsCount}</div>
+                        <div class="bar-score">${score}/${totalMaxScore}</div>
                         <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
                     </div>
                 `;
@@ -2386,14 +2462,14 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
 
             let podiumHTML = '';
             sortedGroups.forEach(([group, score], idx) => {
-                let heightPercent = totalQuestionsCount > 0 ? Math.max((score / totalQuestionsCount) * 100, 8) : 8;
+                let heightPercent = totalMaxScore > 0 ? Math.max((score / totalMaxScore) * 100, 8) : 8;
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 let isCompleted = groupCompletedStatus[group];
                 
                 let gradientBg = '';
-                if (totalQuestionsCount > 0 && score >= Math.ceil(totalQuestionsCount * 0.8)) {
+                if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
                     gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
-                } else if (totalQuestionsCount > 0 && score >= Math.ceil(totalQuestionsCount * 0.5)) {
+                } else if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.5)) {
                     gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
                 } else {
                     gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
@@ -2519,12 +2595,12 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
             ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
                 const score = latestGroupScores[attorney] || 0;
                 const photoSrc = attorneyPhotos[attorney] || '/logo.png';
-                if (totalQuestionsCount > 0 && score >= Math.ceil(totalQuestionsCount * 0.8)) {
+                if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
                     resultsHTML += `
                         <div class="result-box-card result-box-innocent">
                             <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
                             <div>
-                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalQuestionsCount} Points</h4>
+                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalMaxScore} Points</h4>
                                 <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
                             </div>
                         </div>`;
@@ -2533,7 +2609,7 @@ Explanation: Ang Values Education ay patuloy na proseso sa buong buhay ng isang 
                         <div class="result-box-card result-box-failing">
                             <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
                             <div>
-                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalQuestionsCount} Points</h4>
+                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalMaxScore} Points</h4>
                                 <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
                             </div>
                         </div>`;

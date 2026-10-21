@@ -7,12 +7,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// I-serve ang mga static files mula sa root folder[cite: 1]
+// I-serve ang mga static files mula sa root folder
 app.use(express.static(path.join(__dirname)));
 
-// Default data para sa laro[cite: 1]
+// Default data para sa laro
 let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
-let currentQuizMode = "multiple-choice"; // 'multiple-choice' o 'mixed'
+let currentQuizMode = "multiple-choice"; // 'multiple-choice', 'mixed', o 'long-essay'
 let isGameStarted = false;
 let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
 let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
@@ -21,7 +21,7 @@ let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'At
 let timerInterval = null;
 let serverPhotoArchive = [];
 
-// Default custom questions kung walang naka-insert[cite: 1]
+// Default custom questions
 let customQuestionsList = [
     {
         question: "Ayon sa Kautusang Pampamahalaan at Code of Ethics, ano ang pangunahing batayan ng pagpaparusa o pagdidisiplina ng isang guro sa mag-aaral?",
@@ -38,7 +38,7 @@ let customQuestionsList = [
 ];
 
 io.on('connection', (socket) => {
-    // Ipadala ang kasalukuyang state sa bagong pasok na client[cite: 1]
+    // Ipadala ang kasalukuyang state sa bagong pasok na client
     socket.emit('titleUpdated', currentAppTitle);
     socket.emit('quizModeUpdated', currentQuizMode);
     socket.emit('gameState', { isGameStarted });
@@ -47,19 +47,19 @@ io.on('connection', (socket) => {
     socket.emit('timerUpdate', groupTimers);
     socket.emit('photoArchiveUpdated', serverPhotoArchive);
 
-    // Baguhin ang App Title[cite: 1]
+    // Baguhin ang App Title
     socket.on('changeAppTitle', (newTitle) => {
         currentAppTitle = newTitle;
         io.emit('titleUpdated', currentAppTitle);
     });
 
-    // Baguhin ang Quiz Mode[cite: 1]
+    // Baguhin ang Quiz Mode
     socket.on('changeQuizMode', (mode) => {
         currentQuizMode = mode;
         io.emit('quizModeUpdated', currentQuizMode);
     });
 
-    // I-update ang mga tanong mula sa Plain Text Parser[cite: 1]
+    // I-update ang mga tanong mula sa Plain Text Parser
     socket.on('updatePlainQuestionsData', (questionsList) => {
         if (questionsList && questionsList.length > 0) {
             customQuestionsList = questionsList;
@@ -67,7 +67,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Pagrehistro ng Attorney Photo at pagsali[cite: 1]
+    // Pagrehistro ng Attorney Photo at pagsali
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
@@ -82,7 +82,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Pagsisimula ng Timer at Laro[cite: 1]
+    // Pagsisimula ng Timer at Laro
     socket.on('startTimer', () => {
         if (isGameStarted) return;
         isGameStarted = true;
@@ -109,7 +109,17 @@ io.on('connection', (socket) => {
         }, 1000);
     });
 
-    // Pag-set ng Timer Duration[cite: 1]
+    // Force Time's Up Handler (Inayos para gumana ang button sa monitor screen)
+    socket.on('forceTimeUp', () => {
+        if (timerInterval) clearInterval(timerInterval);
+        Object.keys(groupTimers).forEach(g => {
+            groupTimers[g] = 0;
+        });
+        io.emit('timerUpdate', groupTimers);
+        io.emit('timeUp');
+    });
+
+    // Pag-set ng Timer Duration
     socket.on('setTimerDuration', (seconds) => {
         Object.keys(groupTimers).forEach(g => {
             groupTimers[g] = seconds;
@@ -117,7 +127,7 @@ io.on('connection', (socket) => {
         io.emit('timerUpdate', groupTimers);
     });
 
-    // Pagsagot sa Tanong[cite: 1]
+    // Pagsagot sa Tanong
     socket.on('submitAnswer', ({ groupName, questionId, answer, answeredCount }) => {
         if (groupScores[groupName] !== undefined && !groupCompletedStatus[groupName]) {
             groupScores[groupName] = answeredCount;
@@ -136,7 +146,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // I-reset ang Laro[cite: 1]
+    // I-reset ang Laro
     socket.on('resetGame', () => {
         if (timerInterval) clearInterval(timerInterval);
         isGameStarted = false;
@@ -146,7 +156,7 @@ io.on('connection', (socket) => {
         io.emit('resetState');
     });
 
-    // Burahin ang Photo Archive[cite: 1]
+    // Burahin ang Photo Archive
     socket.on('clearPhotoArchive', () => {
         serverPhotoArchive = [];
         io.emit('photoArchiveUpdated', serverPhotoArchive);
