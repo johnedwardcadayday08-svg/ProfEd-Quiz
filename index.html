@@ -68,6 +68,23 @@
             overflow-y: auto !important;
         }
 
+        body.is-fullscreen .left-suspects-sidebar {
+            left: 42px !important;
+            top: 38% !important;
+        }
+
+        body.is-fullscreen .qr-code-wrapper {
+            right: 65px !important;
+            bottom: 60vh !important;
+            transform: scale(1.12);
+        }
+
+        body.is-fullscreen .attorney-buttons-container {
+            margin-top: 60px !important;
+            margin-bottom: 15px !important;
+            gap: 18px !important;
+        }
+
         .urgent-warning-glow {
             box-shadow: inset 0 0 50px rgba(244, 63, 94, 0.9), 0 0 30px rgba(244, 63, 94, 0.8);
             border: 3px solid #f43f5e !important;
@@ -1313,6 +1330,9 @@
                 setTimeout(() => {
                     document.getElementById('judge-welcome-overlay').style.display = 'none';
                     document.getElementById('role-select').classList.add('hidden');
+                    document.getElementById('side-profile').style.display = 'none';
+                    document.getElementById('qr-wrapper').style.display = 'none';
+                    document.getElementById('left-sidebar').style.display = 'none';
                     document.getElementById('teacher-view').classList.remove('hidden');
                 }, 1800);
             } else { document.getElementById('warning-modal').style.display = 'flex'; }
@@ -1349,6 +1369,9 @@
             setTimeout(() => {
                 document.getElementById('student-welcome-overlay').style.display = 'none';
                 document.getElementById('role-select').classList.add('hidden');
+                document.getElementById('side-profile').style.display = 'none';
+                document.getElementById('qr-wrapper').style.display = 'none';
+                document.getElementById('left-sidebar').style.display = 'none';
                 document.getElementById('student-view').classList.remove('hidden');
                 document.getElementById('group-title').innerText = `Dashboard: ${myGroup}`;
                 document.getElementById('floating-timer-badge').style.display = 'flex';
