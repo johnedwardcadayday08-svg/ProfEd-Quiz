@@ -68,11 +68,6 @@
             overflow-y: auto !important;
         }
 
-        body.is-fullscreen .left-suspects-sidebar {
-            left: 42px !important;
-            top: 38% !important;
-        }
-
         body.is-fullscreen .qr-code-wrapper {
             right: 65px !important;
             bottom: 60vh !important;
@@ -80,7 +75,7 @@
         }
 
         body.is-fullscreen .attorney-buttons-container {
-            margin-top: 60px !important;
+            margin-top: 50px !important;
             margin-bottom: 15px !important;
             gap: 18px !important;
         }
@@ -805,30 +800,7 @@
             animation: buttonPulseAnim 2.5s ease-in-out infinite, glowPulseEffect 3s ease-in-out infinite;
             text-shadow: 0 0 12px rgba(0,0,0,0.5);
             letter-spacing: 1px;
-        }
-
-        .left-suspects-sidebar {
-            position: fixed;
-            left: 14px;
-            top: 36%;
-            transform: translateY(-50%);
-            width: 175px;
-            background: rgba(15, 23, 42, 0.75);
-            border: 1.5px solid rgba(168, 85, 247, 0.5);
-            border-radius: 16px;
-            padding: 10px 6px;
-            z-index: 10;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
-        }
-
-        .suspect-sidebar-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            padding: 7px 5px;
-            margin-bottom: 7px;
-            text-align: center;
+            margin-top: 15px;
         }
 
         #camera-modal {
@@ -879,7 +851,6 @@
             transform: scaleX(-1);
         }
 
-        /* MALAKI, CENTERED AT AESTHETIC NA POP-UP SA JUDGE MONITOR */
         #judge-photo-popup {
             position: fixed !important;
             top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
@@ -1106,7 +1077,7 @@
             align-items: center;
             width: 100%;
             gap: 12px;
-            margin-top: 10px;
+            margin-top: 25px;
         }
 
         .attorney-buttons-container .group-btn {
@@ -1468,7 +1439,7 @@
         </div>
     </div>
 
-    <!-- ARCHIVE MODAL (WITH SELECT BUTTON TO DELETE SPECIFIC PHOTOS) -->
+    <!-- ARCHIVE MODAL -->
     <div class="modal-overlay" id="archive-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 850px; width: 95%;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">
@@ -1485,7 +1456,7 @@
         </div>
     </div>
 
-    <!-- SCORE HISTORY AUTH MODAL (PASSWORD: Quiz) -->
+    <!-- SCORE HISTORY AUTH MODAL -->
     <div class="modal-overlay" id="history-auth-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #38bdf8;">🔒 Score History Access</h3>
@@ -1509,7 +1480,7 @@
         </div>
     </div>
 
-    <!-- HISTORY VIEW MODAL (AESTHETIC & LARGE) -->
+    <!-- HISTORY VIEW MODAL -->
     <div class="modal-overlay" id="history-view-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 700px; width: 95%; padding: 30px;">
             <h3 id="history-view-title" style="color: #f472b6; font-size: 22px; margin-bottom: 15px; font-weight: 900;">📜 History Record</h3>
@@ -1565,7 +1536,7 @@
         <p>📱 SCAN TO JOIN</p>
     </div>
 
-    <!-- WELCOME / INSTRUCTIONS MODAL -->
+    <!-- WELCOME / INSTRUCTIONS MODAL (DYNAMIC CONTENT) -->
     <div class="modal-overlay" id="instructions-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(14px); padding: 12px; box-sizing: border-box;">
         <div class="modal-card instructions-responsive-box" style="max-width: 98vw; width: 100%; max-height: calc(100vh - 24px); border: 3px solid rgba(192, 132, 252, 0.95); border-radius: 24px; padding: clamp(14px, 2.5vh, 28px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
             <div>
@@ -1573,21 +1544,12 @@
                 <div class="inst-subtitle" id="inst-sub-title">Welcome to PROFED 5 GROUP 2 QUICK ACTIVITY!</div>
             </div>
             
-            <div class="inst-content-card">
+            <div class="inst-content-card" id="dynamic-inst-body">
                 <div>
                     <p style="margin: 0 0 6px 0; color: #38bdf8; font-weight: 900;"><strong>👨‍⚖️ Para sa Judge / Teacher:</strong></p>
                     <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700;">
                         <li style="margin-bottom: 4px;">Piliin ang <b style="color: #f472b6;">Judge Big Screen Monitor</b> at ilagay ang password.</li>
-                        <li>I-click ang <b style="color: #10b981;">Start Quiz</b> para magsimula ang timer ng bawat grupo at mag-unlock ang mga tanong.</li>
-                    </ul>
-                </div>
-
-                <div style="margin-top: 10px;">
-                    <p style="margin: 0 0 6px 0; color: #c084fc; font-weight: 900;"><strong>⚖️ Para sa Counsel / Students:</strong></p>
-                    <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700;">
-                        <li style="margin-bottom: 4px;">Pumili ng iyong nakatalagang grupo o mag-log-in.</li>
-                        <li style="margin-bottom: 4px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b>.</li>
-                        <li>Maghintay sa waiting screen. Sagutan nang mabilis at tama ang mga tanong! <b>Bawat tamang sagot = +5 Seconds Bonus Time! ⏱️✨</b></li>
+                        <li>I-click ang <b style="color: #10b981;">Start Quiz</b> para magsimula ang timer at mag-unlock ang mga tanong.</li>
                     </ul>
                 </div>
             </div>
@@ -1633,25 +1595,6 @@
             <h2 style="color: #d8b4fe; font-size: 18px; margin: 4px 0 12px 0;">Final Performance Review</h2>
             <div class="results-boxes-container" id="attorneys-results-list"></div>
             <button class="btn" style="width: 100%; margin-top: 10px; font-size: 15px; padding: 11px;" onclick="closeWinnerModal()">Close / View Full Screen Explanations</button>
-        </div>
-    </div>
-
-    <div class="left-suspects-sidebar" id="left-sidebar">
-        <p style="font-size: 10.5px; color: #cbd5e1; margin: 0 0 6px 0; font-weight: 700; text-align: center;">📋 Active Docket: 3 Suspects</p>
-        <div class="suspect-sidebar-card">
-            <div style="font-size: 15px;">👤</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect A</h4>
-            <p style="font-size: 8.5px; color: #94a3b8; margin: 0; line-height: 1.2;">Denied accessible training ramps (R.A. 7277)</p>
-        </div>
-        <div class="suspect-sidebar-card">
-            <div style="font-size: 15px;">🧑‍💼</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect B</h4>
-            <p style="font-size: 8.5px; color: #94a3b8; margin: 0; line-height: 1.2;">Complied with teacher code of ethics</p>
-        </div>
-        <div class="suspect-sidebar-card">
-            <div style="font-size: 15px;">🕵️‍♂️</div>
-            <h4 style="margin: 2px 0; color: #f3e8ff; font-size: 10px;">Suspect C</h4>
-            <p style="font-size: 8.5px; color: #94a3b8; margin: 0; line-height: 1.2;">Respected ancestral domains of IPs</p>
         </div>
     </div>
 
@@ -1705,7 +1648,7 @@
                 <button class="group-btn attorney-btn-4 animated-group-btn-4" onclick="selectGroup('Attorney 4')">Attorney 4</button>
             </div>
 
-            <div id="individual-button-wrapper" class="hidden" style="width: 100%; display: flex; justify-content: center; margin-top: 10px;">
+            <div id="individual-button-wrapper" class="hidden" style="width: 100%; display: flex; justify-content: center;">
                 <button class="giant-login-btn" onclick="selectIndividualLogin()">🔐 LOG-IN / JOIN QUIZ</button>
             </div>
         </div>
@@ -1736,7 +1679,7 @@
                 </div>
             </div>
 
-            <!-- INDIVIDUAL MONITOR LAYOUT (UNLIMITED PARTICIPANTS, SCROLLABLE & TOP 9 RANKINGS) -->
+            <!-- INDIVIDUAL MONITOR LAYOUT -->
             <div id="individual-monitor-layout" class="hidden">
                 <div class="header-bar">
                     <span style="font-size:15px; color:#38bdf8;">👥 Individual Participants Monitor (Unlimited)</span>
@@ -1813,7 +1756,6 @@
         let groupHistoryArchive = [];
         let individualHistoryArchive = [];
         let globalQuestionsList = [];
-        let shownPopups = {};
 
         const bgmAudio = new Audio('/suspense-bgm.mp3'); bgmAudio.loop = true; bgmAudio.volume = 0.85;
         const urgentAudio = new Audio('/urgent-thrill.mp3'); urgentAudio.loop = true; urgentAudio.volume = 0.95;
@@ -1829,15 +1771,45 @@
                 text: "https://profed-quiz-y6ly.onrender.com", width: 75, height: 75, colorDark: "#6b21a8", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
             });
             lockQuizUI();
+            updateInstructionsContent('group');
         });
 
         function closeInstructionsModal() { document.getElementById('instructions-modal').style.display = 'none'; }
         
+        function updateInstructionsContent(modeType) {
+            const bodyContainer = document.getElementById('dynamic-inst-body');
+            if (modeType === 'group') {
+                bodyContainer.innerHTML = `
+                    <div>
+                        <p style="margin: 0 0 6px 0; color: #38bdf8; font-weight: 900;"><strong>👨‍⚖️ By Group Mode (Attorneys 1-4):</strong></p>
+                        <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700; text-align: left;">
+                            <li style="margin-bottom: 4px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>).</li>
+                            <li style="margin-bottom: 4px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b> upang awtomatikong lumabas sa monitor ng judge.</li>
+                            <li>Maghintay habang nasa waiting screen hanggang i-click ng Judge ang Start Game. Sagutan nang tama at mabilis!</li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                bodyContainer.innerHTML = `
+                    <div>
+                        <p style="margin: 0 0 6px 0; color: #ec4899; font-weight: 900;"><strong>👥 Individual Mode (Unlimited Participants):</strong></p>
+                        <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700; text-align: left;">
+                            <li style="margin-bottom: 4px;">I-click ang malaking <b style="color: #38bdf8;">Log-in / Join Quiz</b> button sa unang pahina.</li>
+                            <li style="margin-bottom: 4px;">Ilagay ang iyong buong pangalan at kumuha ng selfie/litrato bago i-click ang <b style="color: #10b981;">Join Now</b>.</li>
+                            <li>Hintayin ang Start Game ng judge. Ang iyong iskor at ranggo ay mag-a-update sa real-time sa monitor screen!</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            document.getElementById('instructions-modal').style.display = 'flex';
+        }
+
         function openGameModeModal() { document.getElementById('game-mode-modal').style.display = 'flex'; }
         function closeGameModeModal() { document.getElementById('game-mode-modal').style.display = 'none'; }
         function selectGameModeType(modeType) {
             socket.emit('changeGameModeType', modeType);
             closeGameModeModal();
+            updateInstructionsContent(modeType);
         }
 
         socket.on('gameModeTypeUpdated', (modeType) => {
@@ -2061,18 +2033,6 @@ Explanation: RA 7277 ang Magna Carta for Disabled Persons.`;
             btnWrap.style.display = btnWrap.style.display === 'none' ? 'flex' : 'none';
         }
 
-        const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court!"';
-        let charIndex = 0;
-        function typeWriter() {
-            const target = document.getElementById('typewriter-text');
-            if (charIndex < judgeMessage.length) {
-                target.innerHTML = judgeMessage.substring(0, charIndex + 1);
-                charIndex++;
-                setTimeout(typeWriter, 35);
-            }
-        }
-        window.onload = () => typeWriter();
-
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => document.body.classList.add('is-fullscreen'));
@@ -2097,9 +2057,6 @@ Explanation: RA 7277 ang Magna Carta for Disabled Persons.`;
                 setTimeout(() => {
                     document.getElementById('judge-welcome-overlay').style.display = 'none';
                     document.getElementById('role-select').classList.add('hidden');
-                    document.getElementById('side-profile').style.display = 'none';
-                    document.getElementById('qr-wrapper').style.display = 'none';
-                    document.getElementById('judge-speech-box').style.display = 'none';
                     document.getElementById('teacher-view').classList.remove('hidden');
                 }, 1500);
             } else { document.getElementById('warning-modal').style.display = 'flex'; }
@@ -2161,9 +2118,6 @@ Explanation: RA 7277 ang Magna Carta for Disabled Persons.`;
             setTimeout(() => {
                 document.getElementById('student-welcome-overlay').style.display = 'none';
                 document.getElementById('role-select').classList.add('hidden');
-                document.getElementById('side-profile').style.display = 'none';
-                document.getElementById('qr-wrapper').style.display = 'none';
-                document.getElementById('judge-speech-box').style.display = 'none';
                 document.getElementById('student-view').classList.remove('hidden');
                 document.getElementById('floating-timer-badge').style.display = 'flex';
                 if(!isGameStarted) lockQuizUI(); else unlockQuizUI();
@@ -2204,7 +2158,6 @@ Explanation: RA 7277 ang Magna Carta for Disabled Persons.`;
             else renderIndividualMonitor();
         });
 
-        // REAL-TIME POP-UP NG LITRATO SA MONITOR NG JUDGE KASAMA ANG PANGALAN
         socket.on('showJudgePopupQueue', (queue) => {
             if (isJudgeRole && queue && queue.length > 0) {
                 let item = queue[0];
