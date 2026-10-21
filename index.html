@@ -1476,7 +1476,7 @@
     <div class="modal-overlay" id="insert-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left;">
             <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions</h3>
-            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">Para sa Essays: Ipasok ang Rubrics at Points/Score. Hindi na kailangan ng Answer Key o Explanation!</p>
+            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">Para sa Identification/Enumeration: Maglagay ng Answer: [Tamang Sagot]. May Done button na lalabas sa ibaba!</p>
             
             <textarea id="custom-questions-plaintext" class="modal-input" style="width: 100%; max-width: 100%; height: 260px; font-family: monospace; font-size: 12px; text-align: left;" placeholder="I-paste ang plain text questions dito..."></textarea>
 
@@ -2001,7 +2001,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
                 socket.emit('updatePlainQuestionsData', questionsList);
                 closeInsertModal();
-                alert(`Tagumpay! Awtomatikong nabasa ang ${questionsList.length} tanong/essays sa LAHAT ng screen! 🚀`);
+                alert(`Tagumpay! Awtomatikong nabasa ang ${questionsList.length} tanong sa LAHAT ng screen! 🚀`);
             } catch (err) {
                 alert("May error sa pagbasa ng text.");
             }
@@ -2082,10 +2082,11 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                             </div>
                             <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong essay dito..."></textarea>
                             <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerEssaySubmit(${idx}, '${qKey}')">Submit Essay & Auto-Grade 🚀</button>`;
-                    } else {
+                    } else { // Identification o Enumeration
                         inputFieldHTML = `
                             <div style="margin-top: 8px;">
-                                <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot..." autocomplete="off" onchange="submitMixedTextAns(${idx}, '${qKey}', this.value)" />
+                                <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot..." autocomplete="off" />
+                                <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerMixedTextSubmit(${idx}, '${qKey}')">Done & Submit 🚀</button>
                             </div>`;
                     }
                 }
@@ -2341,6 +2342,26 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         }
 
+        function triggerMixedTextSubmit(questionIndex, questionId) {
+            const textInput = document.getElementById(`input-${questionId}`);
+            if (!textInput) return;
+            const val = textInput.value;
+
+            if (!val || !val.trim()) {
+                alert("Mangyaring i-type muna ang iyong sagot!");
+                return;
+            }
+
+            submitMixedTextAns(questionIndex, questionId, val);
+
+            const btn = document.getElementById(`btn-done-${questionId}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Submitted ✔️";
+                btn.style.background = "rgba(148, 163, 184, 0.4)";
+            }
+        }
+
         function submitMixedTextAns(questionIndex, questionId, answerText) {
             if (!isGameStarted) return;
             if (!myGroup || answeredQuestions[questionId]) return;
@@ -2421,15 +2442,16 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         });
 
-        socket.on('answerFeedback', ({ isCorrect, questionId, answer, earnedPoints, maxPoints }) => {
+        socket.on('answerFeedback', ({ isCorrect, questionId, answer, earnedPoints, maxPoints, qType }) => {
             const answeredCount = Object.keys(answeredQuestions).length;
             if (answeredCount <= totalQuestionsCount) {
                 const popup = document.getElementById('feedback-popup');
                 if (popup) {
-                    if (earnedPoints !== undefined && maxPoints !== undefined) {
+                    if (qType === 'essay') {
                         popup.className = earnedPoints > 0 ? "feedback-correct" : "feedback-wrong";
                         popup.innerHTML = `📝 ESSAY GRADED!<br><span style="font-size:20px;">Score: ${earnedPoints} / ${maxPoints} Points</span>`;
                     } else {
+                        // Para sa Multiple Choice, True/False, Identification, at Enumeration: CORRECT o INCORRECT lamang!
                         popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
                         popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
                     }

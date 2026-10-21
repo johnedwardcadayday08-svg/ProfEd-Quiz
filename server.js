@@ -34,44 +34,49 @@ let customQuestionsList = [
     }
 ];
 
-// AUTOMATIC RUBRICS SCORING ENGINE FOR ESSAYS
-function evaluateEssayScore(essayText, criteriaText, maxPoints) {
-    if (!essayText || essayText.trim().length === 0) return 0;
+// MATALINONG SCORING ENGINE PARA SA ESSAY
+function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoints) {
+    if (!essayText || typeof essayText !== 'string') return 0;
 
-    let text = essayText.trim();
-    let wordCount = text.split(/\s+/).length;
-    let totalMax = maxPoints || 10;
+    let text = essayText.trim().toLowerCase();
+    if (text.length < 10) return 0; // Sobrang iksi o walang laman
 
-    let scorePercentage = 0;
+    let maxScore = maxPoints || 10;
+    let combinedContext = ((questionText || "") + " " + (criteriaText || "")).toLowerCase();
 
-    // 1. Length & Depth Check (35%)
-    if (wordCount >= 30) scorePercentage += 0.35;
-    else if (wordCount >= 15) scorePercentage += 0.25;
-    else scorePercentage += 0.15;
+    // Kunin ang mahahalagang mga salita (stop-word removal)
+    let words = combinedContext.match(/\b[a-zà-ÿ0-9]{4,}\b/gi) || [];
+    let stopWords = new Set(['e.g.', 'type', 'points', 'para', 'sa', 'mga', 'nang', 'maging', 'dahil', 'ayon', 'kundi', 'rubrics', 'criteria']);
+    let coreKeywords = Array.from(new Set(words.filter(w => !stopWords.has(w))));
 
-    // 2. Keyword & Concept Relevance (40%)
-    let lowerCriteria = (criteriaText || "").toLowerCase();
-    let lowerEssay = text.toLowerCase();
-    let keywords = lowerCriteria.match(/\b[a-zà-ÿ]{4,}\b/gi) || [];
-    
-    let matchedCount = 0;
-    keywords.forEach(kw => {
-        if (lowerEssay.includes(kw)) matchedCount++;
+    // 1. Tiyakin kung may kaugnayan ang sagot sa Tanong at Criteria
+    let matchCount = 0;
+    coreKeywords.forEach(kw => {
+        if (text.includes(kw)) matchCount++;
     });
 
-    if (keywords.length > 0) {
-        let matchRatio = matchedCount / keywords.length;
-        scorePercentage += Math.min(matchRatio * 0.40, 0.40);
-    } else {
-        scorePercentage += 0.35;
+    let relevanceRatio = coreKeywords.length > 0 ? (matchCount / coreKeywords.length) : 0.5;
+
+    // Kapag walang kaugnayan sa tanong o criteria, 0 puntos!
+    if (coreKeywords.length >= 3 && matchCount === 0) {
+        return 0;
     }
 
-    // 3. Coherence & Structure (25%)
-    if (text.includes('.') || text.includes(',')) scorePercentage += 0.25;
-    else scorePercentage += 0.15;
+    // 2. Pagtuon sa Haba at Lalim ng Paliwanag
+    let wordCount = text.split(/\s+/).length;
+    let lengthScoreRatio = 0;
+    if (wordCount >= 30) lengthScoreRatio = 1.0;
+    else if (wordCount >= 15) lengthScoreRatio = 0.7;
+    else if (wordCount >= 8) lengthScoreRatio = 0.4;
+    else lengthScoreRatio = 0.2;
 
-    let computedPoints = Math.round(scorePercentage * totalMax);
-    return Math.min(Math.max(computedPoints, 1), totalMax);
+    // Pagkukuwenta ng kabuuang porsyento ng puntos
+    let finalRatio = (relevanceRatio * 0.6) + (lengthScoreRatio * 0.4);
+
+    if (finalRatio < 0.25) return 0; // Pag hindi na-meet ang pamantayan
+
+    let computedPoints = Math.round(finalRatio * maxScore);
+    return Math.min(Math.max(computedPoints, 0), maxScore);
 }
 
 io.on('connection', (socket) => {
@@ -115,7 +120,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('startTimer', () => {
-        if (isGameStarted) return;
         isGameStarted = true;
         io.emit('gameState', { isGameStarted });
 
@@ -164,24 +168,33 @@ io.on('connection', (socket) => {
 
             if (qObj) {
                 if (qObj.type === 'essay') {
-                    earnedPoints = evaluateEssayScore(answer, qObj.rubrics || qObj.explanation, qObj.points || 10);
+                    earnedPoints = evaluateSmartEssayScore(answer, qObj.question, qObj.rubrics || qObj.explanation, qObj.points || 10);
                     isCorrect = earnedPoints > 0;
                 } else {
                     let cleanUserAns = String(answer).trim().toLowerCase();
                     let cleanCorrectAns = String(qObj.answer).trim().toLowerCase();
-                    if (cleanUserAns === cleanCorrectAns) {
+                    
+                    if (cleanUserAns === cleanCorrectAns || (cleanCorrectAns !== 'n/a' && cleanUserAns.includes(cleanCorrectAns))) {
                         isCorrect = true;
                         earnedPoints = qObj.points || 1;
                         if (groupTimers[groupName] !== undefined) {
-                            groupTimers[groupName] += 5;
+                            groupTimers[groupName] += 5; // Bonus time sa tamang sagot
                         }
                     } else {
                         earnedPoints = 0;
+                        isCorrect = false;
                     }
                 }
             }
 
-            socket.emit('answerFeedback', { isCorrect, questionId: `q${questionIndex + 1}`, answer, earnedPoints, maxPoints: qObj ? (qObj.points || 1) : 1 });
+            socket.emit('answerFeedback', { 
+                isCorrect, 
+                questionId: `q${questionIndex + 1}`, 
+                answer, 
+                earnedPoints, 
+                maxPoints: qObj ? (qObj.points || 1) : 1,
+                qType: qObj ? qObj.type : 'multiple-choice'
+            });
 
             groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
             
