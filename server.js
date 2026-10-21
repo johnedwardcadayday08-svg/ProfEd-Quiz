@@ -13,15 +13,14 @@ let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
 let currentQuizMode = "multiple-choice";
 let currentGameMode = "group";
 let isGameStarted = false;
-
 let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
 let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
 let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
 let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
-
-let individualParticipants = {};
 let timerInterval = null;
 let serverPhotoArchive = [];
+
+let individualParticipants = {};
 let groupScoreHistory = [];
 let individualScoreHistory = [];
 
@@ -42,22 +41,41 @@ let customQuestionsList = [
 
 function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoints) {
     if (!essayText || typeof essayText !== 'string') return 0;
+
     let text = essayText.trim().toLowerCase();
     if (text.length < 10) return 0;
+
     let maxScore = maxPoints || 10;
     let combinedContext = ((questionText || "") + " " + (criteriaText || "")).toLowerCase();
+
     let words = combinedContext.match(/\b[a-zà-ÿ0-9]{4,}\b/gi) || [];
     let stopWords = new Set(['e.g.', 'type', 'points', 'para', 'sa', 'mga', 'nang', 'maging', 'dahil', 'ayon', 'kundi', 'rubrics', 'criteria']);
     let coreKeywords = Array.from(new Set(words.filter(w => !stopWords.has(w))));
+
     let matchCount = 0;
-    coreKeywords.forEach(kw => { if (text.includes(kw)) matchCount++; });
+    coreKeywords.forEach(kw => {
+        if (text.includes(kw)) matchCount++;
+    });
+
     let relevanceRatio = coreKeywords.length > 0 ? (matchCount / coreKeywords.length) : 0.5;
-    if (coreKeywords.length >= 3 && matchCount === 0) return 0;
+
+    if (coreKeywords.length >= 3 && matchCount === 0) {
+        return 0;
+    }
+
     let wordCount = text.split(/\s+/).length;
-    let lengthScoreRatio = wordCount >= 30 ? 1.0 : (wordCount >= 15 ? 0.7 : (wordCount >= 8 ? 0.4 : 0.2));
+    let lengthScoreRatio = 0;
+    if (wordCount >= 30) lengthScoreRatio = 1.0;
+    else if (wordCount >= 15) lengthScoreRatio = 0.7;
+    else if (wordCount >= 8) lengthScoreRatio = 0.4;
+    else lengthScoreRatio = 0.2;
+
     let finalRatio = (relevanceRatio * 0.6) + (lengthScoreRatio * 0.4);
+
     if (finalRatio < 0.25) return 0;
-    return Math.min(Math.max(Math.round(finalRatio * maxScore), 0), maxScore);
+
+    let computedPoints = Math.round(finalRatio * maxScore);
+    return Math.min(Math.max(computedPoints, 0), maxScore);
 }
 
 io.on('connection', (socket) => {
@@ -98,11 +116,16 @@ io.on('connection', (socket) => {
         if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
             let photoId = Date.now() + Math.random().toString(36).substr(2, 5);
-            serverPhotoArchive.push({ id: photoId, groupName, photo, timestamp: new Date().toLocaleTimeString() });
+            serverPhotoArchive.push({
+                id: photoId,
+                groupName,
+                photo,
+                timestamp: new Date().toLocaleTimeString()
+            });
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
             io.emit('photoArchiveUpdated', serverPhotoArchive);
             io.emit('newAttorneyJoined', { groupName, photo });
-            socket.broadcast.emit('triggerJudgePopup', { groupName, photo });
+            io.emit('triggerJudgePopup', { groupName, photo });
         }
     });
 
@@ -111,36 +134,51 @@ io.on('connection', (socket) => {
             let pId = socket.id;
             individualParticipants[pId] = { id: pId, name: fullName, score: 0, photo: photo, completed: false, timer: 300 };
             let photoId = Date.now() + Math.random().toString(36).substr(2, 5);
-            serverPhotoArchive.push({ id: photoId, groupName: fullName, photo, timestamp: new Date().toLocaleTimeString() });
+            serverPhotoArchive.push({
+                id: photoId,
+                groupName: fullName,
+                photo,
+                timestamp: new Date().toLocaleTimeString()
+            });
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
             io.emit('photoArchiveUpdated', serverPhotoArchive);
-            socket.broadcast.emit('triggerJudgePopup', { groupName: fullName, photo });
+            io.emit('triggerJudgePopup', { groupName: fullName, photo });
         }
     });
 
     socket.on('startTimer', () => {
         isGameStarted = true;
         io.emit('gameState', { isGameStarted });
+
         if (timerInterval) clearInterval(timerInterval);
 
         timerInterval = setInterval(() => {
             let activeCount = 0;
             if (currentGameMode === 'group') {
                 Object.keys(groupTimers).forEach(g => {
-                    if (!groupCompletedStatus[g] && groupTimers[g] > 0) { groupTimers[g]--; activeCount++; }
+                    if (!groupCompletedStatus[g] && groupTimers[g] > 0) {
+                        groupTimers[g]--;
+                        activeCount++;
+                    }
                 });
                 io.emit('timerUpdate', groupTimers);
-                if (activeCount === 0 || Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g])) {
+
+                const allFinished = Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g]);
+                if (activeCount === 0 || allFinished) {
                     clearInterval(timerInterval);
                     io.emit('timeUp');
                 }
             } else {
                 Object.keys(individualParticipants).forEach(pId => {
                     let p = individualParticipants[pId];
-                    if (!p.completed && p.timer > 0) { p.timer--; activeCount++; }
+                    if (!p.completed && p.timer > 0) {
+                        p.timer--;
+                        activeCount++;
+                    }
                 });
                 io.emit('timerUpdate', groupTimers);
-                if (activeCount === 0 || (Object.keys(individualParticipants).length > 0 && Object.keys(individualParticipants).every(pId => individualParticipants[pId].timer <= 0 || individualParticipants[pId].completed))) {
+                const allIndivFinished = Object.keys(individualParticipants).length > 0 && Object.keys(individualParticipants).every(pId => individualParticipants[pId].timer <= 0 || individualParticipants[pId].completed);
+                if (activeCount === 0 || allIndivFinished) {
                     clearInterval(timerInterval);
                     io.emit('timeUp');
                 }
@@ -151,21 +189,28 @@ io.on('connection', (socket) => {
 
     socket.on('forceTimeUp', () => {
         if (timerInterval) clearInterval(timerInterval);
-        if (currentGameMode === 'group') Object.keys(groupTimers).forEach(g => { groupTimers[g] = 0; });
-        else Object.keys(individualParticipants).forEach(pId => { individualParticipants[pId].timer = 0; });
+        if (currentGameMode === 'group') {
+            Object.keys(groupTimers).forEach(g => { groupTimers[g] = 0; });
+        } else {
+            Object.keys(individualParticipants).forEach(pId => { individualParticipants[pId].timer = 0; });
+        }
         io.emit('timerUpdate', groupTimers);
         io.emit('timeUp');
     });
 
     socket.on('setTimerDuration', (seconds) => {
-        if (currentGameMode === 'group') Object.keys(groupTimers).forEach(g => { groupTimers[g] = seconds; });
-        else Object.keys(individualParticipants).forEach(pId => { individualParticipants[pId].timer = seconds; });
+        if (currentGameMode === 'group') {
+            Object.keys(groupTimers).forEach(g => { groupTimers[g] = seconds; });
+        } else {
+            Object.keys(individualParticipants).forEach(pId => { individualParticipants[pId].timer = seconds; });
+        }
         io.emit('timerUpdate', groupTimers);
     });
 
     socket.on('submitAnswer', ({ groupName, questionIndex, answer, answeredCount }) => {
         let qObj = customQuestionsList[questionIndex];
-        let earnedPoints = 0, isCorrect = false;
+        let earnedPoints = 0;
+        let isCorrect = false;
 
         if (qObj) {
             if (qObj.type === 'essay') {
@@ -174,8 +219,13 @@ io.on('connection', (socket) => {
             } else {
                 let cleanUserAns = String(answer).trim().toLowerCase();
                 let cleanCorrectAns = String(qObj.answer).trim().toLowerCase();
+                
                 if (cleanUserAns === cleanCorrectAns || (cleanCorrectAns !== 'n/a' && cleanUserAns.includes(cleanCorrectAns))) {
-                    isCorrect = true; earnedPoints = qObj.points || 1;
+                    isCorrect = true;
+                    earnedPoints = qObj.points || 1;
+                } else {
+                    earnedPoints = 0;
+                    isCorrect = false;
                 }
             }
         }
@@ -183,40 +233,74 @@ io.on('connection', (socket) => {
         let maxScoreTotal = customQuestionsList.reduce((acc, q) => acc + (q.points || 1), 0);
 
         if (currentGameMode === 'group' && groupName && groupScores[groupName] !== undefined && !groupCompletedStatus[groupName]) {
-            if (isCorrect && qObj.type !== 'essay' && groupTimers[groupName] !== undefined) groupTimers[groupName] += 5;
-            groupScores[groupName] += earnedPoints;
-
+            if (isCorrect && qObj.type !== 'essay' && groupTimers[groupName] !== undefined) {
+                groupTimers[groupName] += 5;
+            }
+            groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
+            
             if (answeredCount >= customQuestionsList.length) {
                 groupCompletedStatus[groupName] = true;
-                groupScoreHistory.push({ groupName, score: groupScores[groupName], maxScore: maxScoreTotal, date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString() });
+                groupScoreHistory.push({
+                    groupName,
+                    score: groupScores[groupName],
+                    maxScore: maxScoreTotal,
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString()
+                });
                 io.emit('scoreHistoryUpdated', { groupScoreHistory, individualScoreHistory });
             }
 
-            socket.emit('answerFeedback', { isCorrect, questionId: `q${questionIndex + 1}`, answer, earnedPoints, maxPoints: qObj ? (qObj.points || 1) : 1, qType: qObj ? qObj.type : 'multiple-choice' });
+            socket.emit('answerFeedback', { 
+                isCorrect, 
+                questionId: `q${questionIndex + 1}`, 
+                answer, 
+                earnedPoints, 
+                maxPoints: qObj ? (qObj.points || 1) : 1,
+                qType: qObj ? qObj.type : 'multiple-choice'
+            });
+
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
             io.emit('timerUpdate', groupTimers);
 
-            if (Object.keys(groupCompletedStatus).every(g => groupCompletedStatus[g])) {
+            const allCompleted = Object.keys(groupCompletedStatus).every(g => groupCompletedStatus[g]);
+            if (allCompleted) {
                 if (timerInterval) clearInterval(timerInterval);
                 io.emit('timeUp');
             }
         } else if (currentGameMode === 'individual' && socket.id && individualParticipants[socket.id]) {
             let p = individualParticipants[socket.id];
             if (!p.completed) {
-                if (isCorrect && qObj.type !== 'essay') p.timer += 5;
+                if (isCorrect && qObj.type !== 'essay') {
+                    p.timer += 5;
+                }
                 p.score += earnedPoints;
 
                 if (answeredCount >= customQuestionsList.length) {
                     p.completed = true;
-                    individualScoreHistory.push({ name: p.name, score: p.score, maxScore: maxScoreTotal, date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString() });
+                    individualScoreHistory.push({
+                        name: p.name,
+                        score: p.score,
+                        maxScore: maxScoreTotal,
+                        date: new Date().toLocaleDateString(),
+                        time: new Date().toLocaleTimeString()
+                    });
                     io.emit('scoreHistoryUpdated', { groupScoreHistory, individualScoreHistory });
                 }
 
-                socket.emit('answerFeedback', { isCorrect, questionId: `q${questionIndex + 1}`, answer, earnedPoints, maxPoints: qObj ? (qObj.points || 1) : 1, qType: qObj ? qObj.type : 'multiple-choice' });
+                socket.emit('answerFeedback', { 
+                    isCorrect, 
+                    questionId: `q${questionIndex + 1}`, 
+                    answer, 
+                    earnedPoints, 
+                    maxPoints: qObj ? (qObj.points || 1) : 1,
+                    qType: qObj ? qObj.type : 'multiple-choice'
+                });
+
                 io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
                 io.emit('timerUpdate', groupTimers);
 
-                if (Object.keys(individualParticipants).length > 0 && Object.keys(individualParticipants).every(pId => individualParticipants[pId].completed)) {
+                const allIndivCompleted = Object.keys(individualParticipants).length > 0 && Object.keys(individualParticipants).every(pId => individualParticipants[pId].completed);
+                if (allIndivCompleted) {
                     if (timerInterval) clearInterval(timerInterval);
                     io.emit('timeUp');
                 }
@@ -229,14 +313,18 @@ io.on('connection', (socket) => {
         isGameStarted = false;
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
-        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
+        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         individualParticipants = {};
         io.emit('resetState');
         io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, individualParticipants, gameMode: currentGameMode });
     });
 
-    socket.on('clearPhotoArchive', () => { serverPhotoArchive = []; io.emit('photoArchiveUpdated', serverPhotoArchive); });
+    socket.on('clearPhotoArchive', () => {
+        serverPhotoArchive = [];
+        io.emit('photoArchiveUpdated', serverPhotoArchive);
+    });
+
     socket.on('deleteSelectedPhotos', (photoIds) => {
         if (Array.isArray(photoIds)) {
             serverPhotoArchive = serverPhotoArchive.filter(item => !photoIds.includes(item.id));
@@ -246,4 +334,6 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => { console.log(`Server is running smoothly on port ${PORT}`); });
+server.listen(PORT, () => {
+    console.log(`Server is running smoothly on port ${PORT}`);
+});
