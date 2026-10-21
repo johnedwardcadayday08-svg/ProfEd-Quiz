@@ -1,6 +1,7 @@
 {
-  "name": "philippine-law-quiz",
+  "name": "profed-quiz-server",
   "version": "1.0.0",
+  "description": "Web server for ProfEd 5 Quick Activity",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

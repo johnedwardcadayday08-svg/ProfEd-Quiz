@@ -7,220 +7,150 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static(__dirname));
+// I-serve ang mga static files mula sa root folder
+app.use(express.static(path.join(__dirname)));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
+// Default data para sa laro
+let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
 let isGameStarted = false;
+let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
+let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
+let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
 let timerInterval = null;
-let customTimerDuration = 300; // Default 5 mins
-let appTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY"; 
+let serverPhotoArchive = [];
 
-let groupScores = {
-    'Attorney 1': 0,
-    'Attorney 2': 0,
-    'Attorney 3': 0,
-    'Attorney 4': 0
-};
-
-let groupTimers = {
-    'Attorney 1': 300,
-    'Attorney 2': 300,
-    'Attorney 3': 300,
-    'Attorney 4': 300
-};
-
-let attorneyPhotos = {
-    'Attorney 1': '',
-    'Attorney 2': '',
-    'Attorney 3': '',
-    'Attorney 4': ''
-};
-
-let photoArchive = [];
-
-let groupCompletedStatus = {
-    'Attorney 1': false,
-    'Attorney 2': false,
-    'Attorney 3': false,
-    'Attorney 4': false
-};
-
-let popupQueue = [];
-let currentQuestionsList = null; 
-
-let correctAnswers = {
-    q1: 'RA7277',
-    q2: 'RA7610',
-    q3: 'RA8371',
-    q4: 'CONST',
-    q5: 'RA7277',
-    q6: 'RA7836'
-};
+// Default custom questions kung walang naka-insert
+let customQuestionsList = [
+    {
+        question: "Ayon sa Kautusang Pampamahalaan at Code of Ethics, ano ang pangunahing batayan ng pagpaparusa o pagdidisiplina ng isang guro sa mag-aaral?",
+        options: {
+            A: "Pisikal na pananakit upang madaling matuto.",
+            B: "Pagpapahiya sa harap ng klase para magsilbing aral.",
+            C: "Nararapat, makatarungan, at naaayon sa batas na hakbang na naglalayong magturo at hindi manakit.",
+            D: "Pagbawas ng malaking marka nang walang sapat na batayan."
+        },
+        answer: "C",
+        explanation: "Ipinagbabawal sa mga guro ang corporal punishment o anumang uri ng pang-aabuso; ang disiplina ay dapat laging may paggalang sa dignidad ng bata."
+    }
+];
 
 io.on('connection', (socket) => {
+    // Ipadala ang kasalukuyang state sa bagong pasok na client
+    socket.emit('titleUpdated', currentAppTitle);
     socket.emit('gameState', { isGameStarted });
     socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
+    socket.emit('applyCustomQuestionsList', customQuestionsList);
     socket.emit('timerUpdate', groupTimers);
-    socket.emit('titleUpdated', appTitle);
-    socket.emit('photoArchiveUpdated', photoArchive);
+    socket.emit('photoArchiveUpdated', serverPhotoArchive);
 
-    if (currentQuestionsList) {
-        socket.emit('applyCustomQuestionsList', currentQuestionsList);
-    }
-
+    // Baguhin ang App Title
     socket.on('changeAppTitle', (newTitle) => {
-        if (newTitle && newTitle.trim()) {
-            appTitle = newTitle.trim();
-            io.emit('titleUpdated', appTitle);
+        currentAppTitle = newTitle;
+        io.emit('titleUpdated', currentAppTitle);
+    });
+
+    // I-update ang mga tanong mula sa Plain Text Parser
+    socket.on('updatePlainQuestionsData', (questionsList) => {
+        if (questionsList && questionsList.length > 0) {
+            customQuestionsList = questionsList;
+            io.emit('applyCustomQuestionsList', customQuestionsList);
         }
     });
 
-    socket.on('setTimerDuration', (seconds) => {
-        customTimerDuration = parseInt(seconds) || 300;
-        Object.keys(groupTimers).forEach(group => {
-            groupTimers[group] = customTimerDuration;
-        });
-        io.emit('timerUpdate', groupTimers);
-    });
-
-    socket.on('updatePlainQuestionsData', (questionsList) => {
-        let newAnswers = {};
-        questionsList.forEach((item, idx) => {
-            let qKey = `q${idx + 1}`;
-            newAnswers[qKey] = item.answer;
-        });
-
-        correctAnswers = newAnswers;
-        currentQuestionsList = questionsList;
-        io.emit('applyCustomQuestionsList', questionsList);
-    });
-
+    // Pagrehistro ng Attorney Photo at pagsali
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
-            
-            const now = new Date();
-            const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-            photoArchive.push({
+            serverPhotoArchive.push({
                 groupName,
                 photo,
-                timestamp: timeString
+                timestamp: new Date().toLocaleTimeString()
+            });
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
+            io.emit('photoArchiveUpdated', serverPhotoArchive);
+            io.emit('newAttorneyJoined', { groupName, photo });
+        }
+    });
+
+    // Pagsisimula ng Timer at Laro
+    socket.on('startTimer', () => {
+        if (isGameStarted) return;
+        isGameStarted = true;
+        io.emit('gameState', { isGameStarted });
+
+        if (timerInterval) clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
+            let activeCount = 0;
+            Object.keys(groupTimers).forEach(g => {
+                if (!groupCompletedStatus[g] && groupTimers[g] > 0) {
+                    groupTimers[g]--;
+                    activeCount++;
+                }
             });
 
-            popupQueue.push({ groupName, photo });
-            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
-            io.emit('showJudgePopupQueue', popupQueue);
-            io.emit('photoArchiveUpdated', photoArchive);
-        }
-    });
-
-    // ERASE ALL PHOTOS FROM ARCHIVE
-    socket.on('clearPhotoArchive', () => {
-        photoArchive = [];
-        io.emit('photoArchiveUpdated', photoArchive);
-    });
-
-    socket.on('startTimer', () => {
-        if (!isGameStarted) {
-            isGameStarted = true;
-            groupTimers = {
-                'Attorney 1': customTimerDuration,
-                'Attorney 2': customTimerDuration,
-                'Attorney 3': customTimerDuration,
-                'Attorney 4': customTimerDuration
-            };
-            
-            groupCompletedStatus = {
-                'Attorney 1': false,
-                'Attorney 2': false,
-                'Attorney 3': false,
-                'Attorney 4': false
-            };
-            
-            io.emit('gameState', { isGameStarted });
             io.emit('timerUpdate', groupTimers);
-            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
 
-            if (timerInterval) clearInterval(timerInterval);
-
-            timerInterval = setInterval(() => {
-                let allZero = true;
-                
-                Object.keys(groupTimers).forEach(group => {
-                    if (groupTimers[group] > 0) {
-                        groupTimers[group] -= 1;
-                        allZero = false;
-                    }
-                });
-
-                io.emit('timerUpdate', groupTimers);
-
-                if (allZero) {
-                    clearInterval(timerInterval);
-                    isGameStarted = false;
-                    io.emit('timeUp');
-                }
-            }, 1000);
-        }
-    });
-
-    socket.on('forceTimeUp', () => {
-        if (timerInterval) clearInterval(timerInterval);
-        isGameStarted = false;
-        io.emit('timeUp');
-    });
-
-    socket.on('submitAnswer', ({ groupName, questionId, answer, answeredCount }) => {
-        if (!isGameStarted) return;
-        
-        const correctAns = correctAnswers[questionId];
-        const isCorrect = (answer === correctAns);
-
-        if (isCorrect) {
-            groupScores[groupName] = (groupScores[groupName] || 0) + 1;
-            if (groupTimers[groupName] !== undefined) {
-                groupTimers[groupName] += 5;
-            } else {
-                groupTimers[groupName] = customTimerDuration + 5;
+            // Kung ang lahat ay tapos na o naubos na ang oras
+            const allFinished = Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g]);
+            if (activeCount === 0 || allFinished) {
+                clearInterval(timerInterval);
+                io.emit('timeUp');
             }
-        }
+        }, 1000);
+    });
 
-        if (answeredCount >= Object.keys(correctAnswers).length) {
-            groupCompletedStatus[groupName] = true;
-            io.emit('groupFinished', { groupName });
-        }
-
-        socket.emit('answerFeedback', { isCorrect, questionId, answer });
-        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
+    // Pag-set ng Timer Duration
+    socket.on('setTimerDuration', (seconds) => {
+        Object.keys(groupTimers).forEach(g => {
+            groupTimers[g] = seconds;
+        });
         io.emit('timerUpdate', groupTimers);
     });
 
+    // Pagsagot sa Tanong
+    socket.on('submitAnswer', ({ groupName, questionId, answer, answeredCount }) => {
+        // Maaari mong lagyan dito ng logic para i-check kung tama ang sagot laban sa customQuestionsList
+        // Sa kasalukuyan, binibilang nito ang iskor batay sa pagpasa ng sagot
+        if (groupScores[groupName] !== undefined && !groupCompletedStatus[groupName]) {
+            // Halimbawa: dagdag puntos kung sinagot
+            groupScores[groupName] = answeredCount;
+            
+            // I-check kung nasagot na lahat ng tanong ng grupo na ito
+            if (answeredCount >= customQuestionsList.length) {
+                groupCompletedStatus[groupName] = true;
+            }
+
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
+
+            // Kung tapos na ang lahat ng grupo
+            const allCompleted = Object.keys(groupCompletedStatus).every(g => groupCompletedStatus[g]);
+            if (allCompleted) {
+                if (timerInterval) clearInterval(timerInterval);
+                io.emit('timeUp');
+            }
+        }
+    });
+
+    // I-reset ang Laro
     socket.on('resetGame', () => {
         if (timerInterval) clearInterval(timerInterval);
         isGameStarted = false;
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
-        groupTimers = { 
-            'Attorney 1': customTimerDuration, 
-            'Attorney 2': customTimerDuration, 
-            'Attorney 3': customTimerDuration, 
-            'Attorney 4': customTimerDuration 
-        };
         groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
-        
-        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-        popupQueue = [];
-
+        groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
         io.emit('resetState');
-        io.emit('gameState', { isGameStarted });
-        io.emit('timerUpdate', groupTimers);
+    });
+
+    // Burahin ang Photo Archive
+    socket.on('clearPhotoArchive', () => {
+        serverPhotoArchive = [];
+        io.emit('photoArchiveUpdated', serverPhotoArchive);
     });
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running smoothly on port ${PORT}`);
 });
