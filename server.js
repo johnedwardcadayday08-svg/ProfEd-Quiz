@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname)));
 
 let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
 let currentQuizMode = "multiple-choice";
-let currentGameModeType = "group"; // 'group' o 'individual'
+let currentGameModeType = "group"; 
 let isGameStarted = false;
 
 let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
@@ -19,7 +19,7 @@ let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney
 let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
 let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
 
-let individualParticipants = {}; // { socketId: { fullname, score, photo, completed, timer } }
+let individualParticipants = {}; 
 
 let timerInterval = null;
 let serverPhotoArchive = [];
@@ -172,7 +172,7 @@ io.on('connection', (socket) => {
                         activeCount++;
                     }
                 });
-                io.emit('individualTimerUpdate', individualParticipants);
+                io.emit('timerUpdate', groupTimers);
                 const allFinished = Object.keys(individualParticipants).length === 0 || Object.values(individualParticipants).every(p => p.timer <= 0 || p.completed);
                 if (activeCount === 0 || allFinished) {
                     clearInterval(timerInterval);
@@ -189,7 +189,7 @@ io.on('connection', (socket) => {
             io.emit('timerUpdate', groupTimers);
         } else {
             Object.keys(individualParticipants).forEach(id => { individualParticipants[id].timer = 0; });
-            io.emit('individualTimerUpdate', individualParticipants);
+            io.emit('timerUpdate', groupTimers);
         }
         saveHistoriesAndFinish();
     });
@@ -200,7 +200,7 @@ io.on('connection', (socket) => {
             io.emit('timerUpdate', groupTimers);
         } else {
             Object.keys(individualParticipants).forEach(id => { individualParticipants[id].timer = seconds; });
-            io.emit('individualTimerUpdate', individualParticipants);
+            io.emit('timerUpdate', groupTimers);
         }
     });
 
