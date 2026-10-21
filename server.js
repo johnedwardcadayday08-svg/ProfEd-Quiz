@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
 
 let isGameStarted = false;
 let timerInterval = null;
+
 let groupScores = {
     'Attorney 1': 0,
     'Attorney 2': 0,
@@ -45,6 +46,8 @@ let groupCompletedStatus = {
 
 let popupQueue = [];
 
+// Nakatagong estado ng mga tanong para sa realtime sync sa lahat
+let currentQuestionsList = null; 
 let correctAnswers = {
     q1: 'RA7277',
     q2: 'RA7610',
@@ -59,14 +62,23 @@ io.on('connection', (socket) => {
     socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
     socket.emit('timerUpdate', groupTimers);
 
-    // Tanggapin ang plain text at awtomatikong i-parse sa server
+    // Kung may naisave nang bagong mga tanong, i-send agad sa bagong pasok na participant
+    if (currentQuestionsList) {
+        socket.emit('applyCustomQuestionsList', currentQuestionsList);
+    }
+
+    // Kapag may KAHIT ISANG nag-update ng plain text questions
     socket.on('updatePlainQuestionsData', (questionsList) => {
         let newAnswers = {};
         questionsList.forEach((item, idx) => {
             let qKey = `q${idx + 1}`;
             newAnswers[qKey] = item.answer;
         });
+
         correctAnswers = newAnswers;
+        currentQuestionsList = questionsList; // I-save sa memory ng server
+
+        // io.emit = Ipadala sa LAHAT ng nakakonektang participants nang sabay-sabay!
         io.emit('applyCustomQuestionsList', questionsList);
     });
 

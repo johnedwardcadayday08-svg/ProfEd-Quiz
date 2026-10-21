@@ -1001,8 +1001,8 @@
 
         .bar-chart-container { margin: 10px 0; background: rgba(15, 23, 42, 0.45); padding: 12px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
         .bar-label { width: 85px; font-weight: bold; font-size: 13px; color: #f3e8ff; }
-        .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 24px; border-radius: 9px; overflow: hidden; margin: 0 8px; }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 9px; }
+        .bar-track { flex-grow: 1; background: rgba(255, 255, 255, 0.25); height: 24px; border-radius: 99px; overflow: hidden; margin: 0 8px; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, #c084fc, #a855f7); width: 0%; transition: width 0.4s ease-in-out; border-radius: 99px; }
         .bar-score { font-weight: bold; width: 40px; text-align: right; font-size: 13.5px; color: #f3e8ff; }
 
         .question-card { 
@@ -1711,22 +1711,21 @@
             document.getElementById('instructions-modal').style.display = 'none';
         }
 
-        // DEFAULT SAMPLE PARA SA PLAIN TEXT MODAL
-        const defaultPlainSample = `Q: Aling batas ang Magna Carta of Women?
-A) Republic Act No. 9710
-B) Republic Act No. 7610
-C) Republic Act No. 9155
-D) Republic Act No. 10533
-Answer: A
-Explanation: Ang Republic Act No. 9710 ay ang Magna Carta of Women.
+        const defaultPlainSample = `Q: Aling teorya ni Lawrence Kohlberg ang tumutukoy sa antas kung saan ang pagpapasya ng bata ay nakabatay sa pag-iwas sa parusa at pagsunod sa ganti?
+A) Post-Conventional Level
+B) Conventional Level
+C) Pre-Conventional Level
+D) Universal Ethical Principles
+Answer: C
+Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng mga panlabas na kahihinatnan tulad ng parusa (Punishment and Obedience) at gantimpala.
 
-Q: Aling kategorya sa Bloom's Taxonomy ang pag-alala ng mga katotohanan?
-A) Applying
-B) Remembering
-C) Analyzing
-D) Evaluating
-Answer: B
-Explanation: Ang Remembering ang pinakamababang antas na nakatuon sa pag-alala.`;
+Q: Sa ILAW Framework ng Values Education, ano ang kinakatawan ng titik "A"?
+A) Action and Application
+B) Affective Dimension
+C) Academic Excellence
+D) Altruistic Values
+Answer: A
+Explanation: Sa ILAW Framework, ang "A" ay tumutukoy sa Action/Application o ang pagsasabuhay at paglalapat ng mga natutunang pagpapahalaga sa pang-araw-araw na buhay.`;
 
         function openInsertModal() {
             document.getElementById('insert-modal').style.display = 'flex';
@@ -1739,7 +1738,6 @@ Explanation: Ang Remembering ang pinakamababang antas na nakatuon sa pag-alala.`
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        // AWTOMATIKONG PARSER MULA SA PLAIN TEXT PATUNGO SA SYSTEM FORMAT
         function savePlainQuestions() {
             try {
                 const text = document.getElementById('custom-questions-plaintext').value;
@@ -1784,15 +1782,16 @@ Explanation: Ang Remembering ang pinakamababang antas na nakatuon sa pag-alala.`
                     return;
                 }
 
+                // I-send sa server ang converted Array para i-broadcast sa lahat
                 socket.emit('updatePlainQuestionsData', questionsList);
                 closeInsertModal();
-                alert("Tagumpay na na-update ang mga tanong sa lahat ng participants nang realtime! 🚀");
+                alert("Tagumpay na na-update ang mga tanong sa LAHAT ng participants nang realtime! 🚀");
             } catch (err) {
                 alert("May nakitang error sa pagbasa ng plain text. Paki-check po ang pagkakabuo.");
             }
         }
 
-        // AUTOMATIC BUILDER NG UI MULA SA PLAIN TEXT DATA
+        // AUTOMATIC REALTIME BUILDER NG UI MULA SA SERVER SYNC
         socket.on('applyCustomQuestionsList', (questionsList) => {
             totalQuestionsCount = questionsList.length;
             const quizContainer = document.getElementById('quiz-questions');
