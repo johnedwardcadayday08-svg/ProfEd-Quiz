@@ -7,6 +7,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
+
         :root {
             --primary: #8b5cf6;
             --primary-hover: #7c3aed;
@@ -1384,6 +1385,8 @@
         <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="Toggle">▲</button>
         
         <div class="top-controls-buttons" id="controls-button-wrapper">
+<button class="control-btn" style="background: linear-gradient(135deg, #06b6d4, #0891b2);" onclick="openGameModeModal()">🎮 Game Mode</button>
+            <button class="control-btn" style="background: linear-gradient(135deg, #84cc16, #65a30d);" onclick="openScoreHistoryAuthModal()">📊 Score History</button>
             <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
             <button class="control-btn quiz-mode-btn" onclick="openQuizModeModal()">🔀 Quiz Mode</button>
             <button class="control-btn title-btn" onclick="openTitleModal()">✏️ Change Title</button>
@@ -2704,6 +2707,225 @@ socket.on('newAttorneyJoined', ({ groupName, photo }) => {
             shownPopups = {};
             location.reload(); 
         });
+<!-- Game Mode Modal -->
+<div class="modal-overlay" id="game-mode-modal" style="display: none; z-index: 100010;">
+    <div class="modal-card" style="max-width: 450px;">
+        <h3 style="color: #38bdf8;">🎮 Select Game Mode</h3>
+        <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili ng paraan ng pagsali ng mga participants:</p>
+        <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin: 0 auto 15px auto;">
+            <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectGameMode('group')">1: BY GROUP (Attorney 1 - 4)</button>
+            <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #ec4899, #be185d);" onclick="selectGameMode('individual')">2: INDIVIDUAL (Unlimited)</button>
+        </div>
+        <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeGameModeModal()">Cancel</button>
+    </div>
+</div>
+
+<!-- Score History Password Modal -->
+<div class="modal-overlay" id="score-history-auth-modal" style="display: none; z-index: 100010;">
+    <div class="modal-card">
+        <h3 style="color: #84cc16;">🔒 Score History Archive</h3>
+        <p style="font-size:13px; color:#e2e8f0; margin-top:5px;">Please enter password to view score history:</p>
+        <input type="password" id="score-history-pass-input" class="modal-input" placeholder="Enter Password..." autocomplete="off" />
+        <div style="display:flex; gap:10px; justify-content:center; width: 100%;">
+            <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closeScoreHistoryAuthModal()">Cancel</button>
+            <button class="btn" style="width: 45%; margin:0; padding:10px; background: #84cc16;" onclick="verifyScoreHistoryPassword()">Access History 📊</button>
+        </div>
+    </div>
+</div>
+
+<!-- Score History Selection Modal -->
+<div class="modal-overlay" id="score-history-modal" style="display: none; z-index: 100010;">
+    <div class="modal-card" style="max-width: 500px;">
+        <h3 style="color: #84cc16;">📊 Select Score History Type</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin: 15px 0;">
+            <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #38bdf8, #0284c7);" onclick="openGroupScoreHistory()">1. Group Score History</button>
+            <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="openIndividualScoreHistory()">2. Individual Score History</button>
+        </div>
+        <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeScoreHistoryModal()">Close</button>
+    </div>
+</div>
+
+<!-- Detailed Score History View Modal -->
+<div class="modal-overlay" id="detailed-history-modal" style="display: none; z-index: 100020;">
+    <div class="modal-card" style="max-width: 700px; width: 95%; max-height: 85vh; overflow-y: auto;">
+        <h3 id="detailed-history-title" style="color: #84cc16; margin-top: 0;">Score History</h3>
+        <div id="detailed-history-content" style="margin: 15px 0; text-align: left; max-height: 400px; overflow-y: auto;"></div>
+        <button class="btn" style="background:var(--danger); width: 100%; margin-top:10px; padding:10px;" onclick="closeDetailedHistoryModal()">Back</button>
+    </div>
+</div>
+let currentMode = 'group'; 
+let individualFullName = '';
+
+function openGameModeModal() { document.getElementById('game-mode-modal').style.display = 'flex'; }
+function closeGameModeModal() { document.getElementById('game-mode-modal').style.display = 'none'; }
+
+function selectGameMode(mode) {
+    currentMode = mode;
+    closeGameModeModal();
+    const attorneyContainer = document.querySelector('.attorney-buttons-container');
+    
+    if (mode === 'individual') {
+        attorneyContainer.innerHTML = `
+            <div class="individual-login-container">
+                <h3 style="color: #f472b6; margin-top:0;">✨ Individual Participant Log-in ✨</h3>
+                <input type="text" id="indiv-fullname-input" class="modal-input" placeholder="Enter your full name..." autocomplete="off" style="max-width: 320px; margin: 10px 0;" />
+                <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); padding: 12px 24px; font-size: 15px;" onclick="startIndividualCapture()">Capture Selfie & Join 📷🚀</button>
+            </div>
+        `;
+        alert("Tagumpay! Na-set sa Individual Mode.");
+    } else {
+        location.reload(); 
+    }
+}
+
+async function startIndividualCapture() {
+    const nameInput = document.getElementById('indiv-fullname-input').value;
+    if (!nameInput || !nameInput.trim()) {
+        alert("Mangyaring ilagay muna ang iyong buong pangalan!");
+        return;
+    }
+    individualFullName = nameInput.trim();
+    selectGroup('Individual Participant'); 
+}
+
+function openScoreHistoryAuthModal() {
+    document.getElementById('score-history-auth-modal').style.display = 'flex';
+    document.getElementById('score-history-pass-input').focus();
+}
+function closeScoreHistoryAuthModal() { document.getElementById('score-history-auth-modal').style.display = 'none'; }
+
+function verifyScoreHistoryPassword() {
+    const pass = document.getElementById('score-history-pass-input').value;
+    closeScoreHistoryAuthModal();
+    if (pass === "Quiz") {
+        document.getElementById('score-history-modal').style.display = 'flex';
+    } else {
+        document.getElementById('warning-modal').style.display = 'flex';
+    }
+}
+function closeScoreHistoryModal() { document.getElementById('score-history-modal').style.display = 'none'; }
+function closeDetailedHistoryModal() { document.getElementById('detailed-history-modal').style.display = 'none'; }
+
+function openGroupScoreHistory() {
+    closeScoreHistoryModal();
+    const content = document.getElementById('detailed-history-content');
+    document.getElementById('detailed-history-title').innerText = "📊 Group Score History";
+    
+    let html = '';
+    ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(g => {
+        let sc = latestGroupScores[g] || 0;
+        html += `
+            <div class="history-item-card">
+                <div>
+                    <strong style="font-size: 16px; color: #38bdf8;">${g}</strong><br>
+                    <span style="font-size: 11.5px; color: #cbd5e1;">🕒 Date: ${new Date().toLocaleDateString()} | Time: ${new Date().toLocaleTimeString()}</span>
+                </div>
+                <div style="font-size: 18px; font-weight: bold; color: #84cc16;">${sc} / ${totalMaxScore} Points</div>
+            </div>
+        `;
+    });
+    content.innerHTML = html;
+    document.getElementById('detailed-history-modal').style.display = 'flex';
+}
+
+function openIndividualScoreHistory() {
+    closeScoreHistoryModal();
+    const content = document.getElementById('detailed-history-content');
+    document.getElementById('detailed-history-title').innerText = "📊 Individual Score History";
+    
+    let html = '';
+    let entries = Object.entries(window.currentIndividualScores || {});
+    if (entries.length === 0) {
+        html = `<p style="color:#cbd5e1; text-align:center;">Wala pang naitalang individual participants.</p>`;
+    } else {
+        entries.forEach(([name, score]) => {
+            html += `
+                <div class="history-item-card">
+                    <div>
+                        <strong style="font-size: 16px; color: #f472b6;">${name}</strong><br>
+                        <span style="font-size: 11.5px; color: #cbd5e1;">🕒 Date: ${new Date().toLocaleDateString()}</span>
+                    </div>
+                    <div style="font-size: 18px; font-weight: bold; color: #84cc16;">${score} Points</div>
+                </div>
+            `;
+        });
+    }
+    content.innerHTML = html;
+    document.getElementById('detailed-history-modal').style.display = 'flex';
+}
+
+function deleteArchivePhoto(index) {
+    if (confirm("Sigurado ka bang gusto mong burahin ang litratong ito mula sa archive?")) {
+        socket.emit('deleteArchivePhoto', index);
+    }
+}
+
+window.currentIndividualScores = {};
+socket.on('individualScoresUpdated', (scores) => {
+    window.currentIndividualScores = scores;
+    if (currentMode === 'individual' && isJudgeRole) {
+        renderIndividualMonitorLayout(scores);
+    }
+});
+
+function renderIndividualMonitorLayout(scoresObj) {
+    let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
+    const leftBox = document.querySelector('.judge-left-box');
+    const rightBox = document.querySelector('.judge-right-box');
+    
+    if (!leftBox || !rightBox) return;
+
+    let leftHtml = `<h3 style="color: #38bdf8; margin-top:0;">👥 All Participants Real-time List</h3><div style="max-height: 380px; overflow-y: auto; padding-right: 5px;">`;
+    sorted.forEach(([name, sc]) => {
+        leftHtml += `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.15);">
+                <span style="font-weight: bold; color: #f3e8ff;">${name}</span>
+                <span style="font-weight: bold; color: #34d399;">${sc} Pts</span>
+            </div>
+        `;
+    });
+    leftHtml += `</div>`;
+    leftBox.innerHTML = leftHtml;
+
+    let top3 = sorted.slice(0, 3);
+    let next6 = sorted.slice(3, 9);
+
+    let rightHtml = `
+        <div class="animated-rank-title">👑 Top Rankings (Top 1-9) 🏛️</div>
+        <div style="display: flex; justify-content: space-around; width: 100%; margin: 10px 0; align-items: flex-end; height: 140px;">
+    `;
+    
+    for (let i = 0; i < 3; i++) {
+        let p = top3[i];
+        let name = p ? p[0] : `Top ${i+1} (Empty)`;
+        let sc = p ? p[1] : 0;
+        let heights = ['110px', '85px', '65px'];
+        rightHtml += `
+            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                <span style="font-size: 10px; font-weight: bold; color: #f472b6;">Rank ${i+1}</span>
+                <div style="width: 45px; height: ${heights[i]}; background: linear-gradient(180deg, #c084fc, #7c3aed); border-radius: 8px 8px 0 0; display:flex; align-items:center; justify-content:center; box-shadow: 0 0 15px rgba(168,85,247,0.7);">
+                    <span style="font-size: 11px; font-weight: bold; color: white;">${sc}</span>
+                </div>
+                <span style="font-size: 10px; font-weight: bold; margin-top: 4px; text-align: center; color: #fff; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+            </div>
+        `;
+    }
+    rightHtml += `</div><div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%;">`;
+
+    for (let i = 0; i < 6; i++) {
+        let p = next6[i];
+        let name = p ? p[0] : `Participant`;
+        let sc = p ? p[1] : 0;
+        rightHtml += `
+            <div style="display: flex; flex-direction: column; align-items: center; width: 30%;">
+                <img src="/logo.png" class="glow-circle-avatar" alt="Avatar" />
+                <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name} (${sc})</span>
+            </div>
+        `;
+    }
+    rightHtml += `</div>`;
+    rightBox.innerHTML = rightHtml;
+}
     </script>
 </body>
 </html>
