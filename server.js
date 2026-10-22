@@ -80,6 +80,67 @@ function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoint
 }
 
 io.on('connection', (socket) => {
+// --- BAGONG FEATURE: INDIVIDUAL PARTICIPANTS AT SCORE HISTORY ---
+let individualParticipants = {}; // { socketId: { fullName, groupName, photo, score } }
+let individualScores = {};       // { fullName: score }
+let individualHistoryArchive = []; // [{ fullName, score, date, time }]
+let groupHistoryArchive = [];     // [{ groupName, score, date, time }]
+
+socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
+    if (fullName) {
+        individualParticipants[socket.id] = {
+            fullName: fullName.trim(),
+            photo: photo || '',
+            score: 0,
+            timestamp: new Date().toLocaleTimeString(),
+            date: new Date().toLocaleDateString()
+        };
+        individualScores[fullName.trim()] = 0;
+        
+        // I-broadcast ang updated individual participants at scores
+        io.emit('individualParticipantsUpdated', individualParticipants);
+        io.emit('individualScoresUpdated', individualScores);
+    }
+});
+
+socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer, answeredCount }, callback) => {
+    let qObj = customQuestionsList[questionIndex];
+    let earnedPoints = 0;
+    let isCorrect = false;
+
+    if (qObj) {
+        if (qObj.type === 'essay') {
+            earnedPoints = evaluateSmartEssayScore(answer, qObj.question, qObj.rubrics || qObj.explanation, qObj.points || 10);
+            isCorrect = earnedPoints > 0;
+        } else {
+            let cleanUserAns = String(answer).trim().toLowerCase();
+            let cleanCorrectAns = String(qObj.answer).trim().toLowerCase();
+            if (cleanUserAns === cleanCorrectAns || (cleanCorrectAns !== 'n/a' && cleanUserAns.includes(cleanCorrectAns))) {
+                isCorrect = true;
+                earnedPoints = qObj.points || 1;
+            }
+        }
+    }
+
+    if (individualParticipants[socket.id]) {
+        individualParticipants[socket.id].score = (individualParticipants[socket.id].score || 0) + earnedPoints;
+        individualScores[individualParticipants[socket.id].fullName] = individualParticipants[socket.id].score;
+    }
+
+    io.emit('individualParticipantsUpdated', individualParticipants);
+    io.emit('individualScoresUpdated', individualScores);
+
+    if (typeof callback === 'function') {
+        callback({ isCorrect, earnedPoints, maxPoints: qObj ? (qObj.points || 1) : 1 });
+    }
+});
+
+socket.on('deleteArchivePhoto', (index) => {
+    if (serverPhotoArchive && serverPhotoArchive[index] !== undefined) {
+        serverPhotoArchive.splice(index, 1);
+        io.emit('photoArchiveUpdated', serverPhotoArchive);
+    }
+});
     socket.emit('titleUpdated', currentAppTitle);
     socket.emit('quizModeUpdated', currentQuizMode);
     socket.emit('gameState', { isGameStarted });
@@ -219,26 +280,6 @@ io.on('connection', (socket) => {
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
-// Clear participant photos and rankings from the monitor only
-attorneyPhotos = {
-    'Attorney 1': '',
-    'Attorney 2': '',
-    'Attorney 3': '',
-    'Attorney 4': ''
-};
-
-individualParticipants = {};
-individualScores = {};
-individualAnsweredQuestions = {};
-
-io.emit('updateState', {
-    groupScores,
-    photos: attorneyPhotos,
-    completedStatus: groupCompletedStatus
-});
-
-io.emit('individualParticipantsUpdated', []);
-io.emit('individualScoresUpdated', {});
 // Clear participant photos and rankings from the monitor only
 attorneyPhotos = {
     'Attorney 1': '',
