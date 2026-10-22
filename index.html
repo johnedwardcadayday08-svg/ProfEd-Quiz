@@ -44,6 +44,42 @@
     margin-top: 4px !important;
 }
 
+/* Individual Mode Monitor Fit para sa Fullscreen (Walang Scroll) */
+body.is-fullscreen .judge-main-layout {
+    display: grid !important;
+    grid-template-columns: 1.15fr 0.85fr !important;
+    gap: 12px !important;
+    height: calc(100vh - 100px) !important;
+    overflow: hidden !important;
+    align-items: stretch !important;
+    margin-bottom: 0 !important;
+}
+
+body.is-fullscreen .judge-left-box,
+body.is-fullscreen .judge-right-box {
+    height: 100% !important;
+    max-height: calc(100vh - 100px) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+}
+
+body.is-fullscreen .indiv-top3-container {
+    height: 150px !important;
+    margin: 8px 0 !important;
+}
+
+body.is-fullscreen .indiv-grid-6 {
+    gap: 8px !important;
+    padding: 4px !important;
+}
+
+body.is-fullscreen .glow-circle-avatar-large {
+    width: 48px !important;
+    height: 48px !important;
+}
+
 /* Pinalaki at ginagawang buo ang espasyo ng kanan na box sa Individual Mode Monitor */
 .indiv-top3-container {
     display: flex;
@@ -175,23 +211,6 @@
             flex-direction: column;
             height: calc(100vh - 85px);
             box-sizing: border-box;
-        }
-
-        body.is-fullscreen .judge-main-layout {
-            display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
-            gap: 20px;
-            flex: 1;
-            align-items: stretch;
-            margin-bottom: 10px;
-        }
-
-        body.is-fullscreen .judge-left-box,
-        body.is-fullscreen .judge-right-box {
-            height: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            box-sizing: border-box !important;
         }
 
         body.is-fullscreen .bar-chart-container {
@@ -1353,31 +1372,6 @@
             border-radius: 16px !important;
         }
 
-        .attorney-timer-badge {
-            background: rgba(16, 185, 129, 0.25);
-            border: 1.5px solid #10b981;
-            color: #6ee7b7;
-            font-size: 13px;
-            font-weight: 800;
-            padding: 3px 9px;
-            border-radius: 12px;
-            margin-left: auto;
-            flex-shrink: 0;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s ease;
-        }
-        .attorney-timer-badge.urgent-badge {
-            background: rgba(244, 63, 94, 0.3);
-            border-color: #f43f5e;
-            color: #fda4af;
-            box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
-            animation: badgePulse 0.8s infinite alternate;
-        }
-        @keyframes badgePulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
-        }
-
         #judge-notification-banner {
             position: fixed;
             top: 20px;
@@ -1833,17 +1827,22 @@
             
             <div class="judge-main-layout">
                 <div class="judge-left-box">
-                    <div class="header-bar">
-                        <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings</span>
-                        <div id="judge-timer-display-box" style="font-size:13px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981;">⏱️ Timer: 05:00</div>
-                        <div>
-                            <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
-                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                            <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
+                    <div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 10px; padding: 10px 15px;">
+                        <span style="font-size:14px; color:#c084fc; white-space: nowrap;">⚖️ Court Proceedings</span>
+                        
+                        <!-- Aesthetic Horizontal Line Timer -->
+                        <div id="judge-timer-display-box" style="font-size:13px; font-weight: 800; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:4px 14px; border-radius:12px; border:1.5px solid #10b981; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(16,185,129,0.3);">
+                            ⏱️ Timer: <span id="judge-timer-text-val">05:00</span>
+                        </div>
+
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <button class="btn" style="padding: 6px 12px; font-size: 12px; margin:0;" onclick="startTimer()">Start Quiz</button>
+                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 12px; font-size: 12px; margin:0;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                            <button class="btn" style="background:var(--danger); padding: 6px 12px; font-size: 12px; margin:0;" onclick="resetGame()">Reset Game</button>
                         </div>
                     </div>
 
-                    <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard & Group Timers</h3>
+                    <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard & Group Status</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
                 </div>
 
@@ -1931,18 +1930,22 @@
             closeGameModeModal();
             socket.emit('setGameMode', mode);
             applyGameModeUI(mode);
+
+            // Lalabas lamang ang kaukulang instructions modal kapag pinindot ang mode
+            if (mode === 'individual') {
+                const indivInstModal = document.getElementById('individual-instructions-modal');
+                if (indivInstModal) indivInstModal.style.display = 'flex';
+            } else {
+                const groupInstModal = document.getElementById('instructions-modal');
+                if (groupInstModal) groupInstModal.style.display = 'flex';
+            }
         }
 
         function applyGameModeUI(mode) {
             currentMode = mode;
             const attorneyContainer = document.querySelector('.attorney-buttons-container');
-            const indivInstModal = document.getElementById('individual-instructions-modal');
-            const groupInstModal = document.getElementById('instructions-modal');
 
             if (mode === 'individual') {
-                if (indivInstModal) indivInstModal.style.display = 'flex';
-                if (groupInstModal) groupInstModal.style.display = 'none';
-
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
                         <div class="individual-login-container">
@@ -1953,9 +1956,6 @@
                     `;
                 }
             } else {
-                if (indivInstModal) indivInstModal.style.display = 'none';
-                if (groupInstModal) groupInstModal.style.display = 'flex';
-
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
                         <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
@@ -1980,14 +1980,17 @@
             shownPopups = {};
             
             if (isJudgeRole) {
-                return; // Mananatili ang judge sa monitor screen kapag nag-reset
+                return; // Mananatili ang judge sa monitor screen nang hindi nagpapakita ng instructions
             }
 
             if (currentMode === 'individual') {
                 document.getElementById('role-select').classList.remove('hidden');
+                document.getElementById('student-view').classList.add('hidden');
                 applyGameModeUI('individual');
             } else {
-                location.reload(); 
+                document.getElementById('role-select').classList.remove('hidden');
+                document.getElementById('student-view').classList.add('hidden');
+                applyGameModeUI('group');
             }
         });
 
@@ -2526,7 +2529,15 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         function handleSurrender() { 
             attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
             shownPopups = {};
-            location.reload(); 
+            socket.emit('resetGame');
+            document.getElementById('student-view').classList.add('hidden');
+            document.getElementById('teacher-view').classList.add('hidden');
+            document.getElementById('role-select').classList.remove('hidden');
+            document.getElementById('side-profile').style.display = 'flex';
+            document.getElementById('qr-wrapper').style.display = 'flex';
+            document.getElementById('left-sidebar').style.display = 'block';
+            document.getElementById('judge-speech-box').style.display = 'flex';
+            document.getElementById('main-container').style.background = 'var(--card-bg-transparent)';
         }
 
         function selectRole(role) {
@@ -2878,11 +2889,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             sortedGroups.forEach(([group, score]) => {
                 let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
-                let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
-                let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
-                let tSecs = (tSeconds % 60).toString().padStart(2, '0');
-                let timeText = `${tMins}:${tSecs}`;
-                let isUrgent = tSeconds <= 15 && tSeconds > 0;
                 let isCompleted = groupCompletedStatus[group];
 
                 chartHTML += `
@@ -2891,7 +2897,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                         <div class="bar-label">${group}</div>
                         <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
                         <div class="bar-score">${score}/${totalMaxScore}</div>
-                        <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
                     </div>
                 `;
             });
@@ -2986,9 +2991,9 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             document.getElementById('student-timer').innerText = fullTimeStr;
             document.getElementById('floating-timer-text').innerText = timeStr;
 
-            const judgeTimerBox = document.getElementById('judge-timer-display-box');
-            if (judgeTimerBox) {
-                judgeTimerBox.innerText = `⏱️ Timer: ${timeStr}`;
+            const timerTextVal = document.getElementById('judge-timer-text-val');
+            if (timerTextVal) {
+                timerTextVal.innerText = timeStr;
             }
 
             const floatBadge = document.getElementById('floating-timer-badge');
@@ -3020,6 +3025,24 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
                 if (popup && titleEl && imgEl) {
                     titleEl.innerText = `${groupName} entered the court! ⚖️`;
+                    imgEl.src = photo;
+                    popup.style.display = 'flex';
+
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        });
+
+        socket.on('newIndividualJoinedData', ({ fullName, photo }) => {
+            if (isJudgeRole && photo) {
+                const popup = document.getElementById('judge-photo-popup');
+                const titleEl = document.getElementById('judge-popup-title');
+                const imgEl = document.getElementById('judge-popup-img');
+
+                if (popup && titleEl && imgEl) {
+                    titleEl.innerText = `${fullName} entered the court! ✨`;
                     imgEl.src = photo;
                     popup.style.display = 'flex';
 
@@ -3139,13 +3162,15 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             let tSecs = (tSeconds % 60).toString().padStart(2, '0');
 
             let leftHtml = `
-                <div class="header-bar">
-                    <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings (Individual)</span>
-                    <span id="judge-timer-display-box" style="font-size:13px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981;">⏱️ Timer: ${tMins}:${tSecs}</span>
-                    <div>
-                        <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
-                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                        <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
+                <div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 10px; padding: 10px 15px;">
+                    <span style="font-size:14px; color:#c084fc; white-space: nowrap;">⚖️ Court Proceedings (Individual)</span>
+                    <div id="judge-timer-display-box" style="font-size:13px; font-weight: 800; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:4px 14px; border-radius:12px; border:1.5px solid #10b981; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(16,185,129,0.3);">
+                        ⏱️ Timer: <span id="judge-timer-text-val">${tMins}:${tSecs}</span>
+                    </div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button class="btn" style="padding: 6px 12px; font-size: 12px; margin:0;" onclick="startTimer()">Start Quiz</button>
+                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 12px; font-size: 12px; margin:0;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                        <button class="btn" style="background:var(--danger); padding: 6px 12px; font-size: 12px; margin:0;" onclick="resetGame()">Reset Game</button>
                     </div>
                 </div>
                 <h3 style="color: #38bdf8; margin: 10px 0 8px 0;">👥 All Participants Real-time List</h3>
