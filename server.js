@@ -294,25 +294,40 @@ io.on('connection', (socket) => {
     });
 
     socket.on('resetGame', () => {
-        if (timerInterval) clearInterval(timerInterval);
-        isGameStarted = false;
-        groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
-        groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
-        groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
-        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-        individualParticipants = {};
-        individualScores = {};
+    isGameStarted = false;
+    
+    // I-reset ang mga timers sa default (hal. 300 seconds)
+    if (typeof groupTimers === 'object') {
+        Object.keys(groupTimers).forEach(g => {
+            groupTimers[g] = 300;
+        });
+    }
 
-        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
-        io.emit('individualParticipantsUpdated', {});
-        io.emit('individualScoresUpdated', {});
-        io.emit('resetState');
-    });
+    // I-reset ang mga scores at mga nakaraang litrato
+    if (typeof groupScores === 'object') {
+        Object.keys(groupScores).forEach(g => {
+            groupScores[g] = 0;
+            if (attorneyPhotos) attorneyPhotos[g] = '';
+            if (groupCompletedStatus) groupCompletedStatus[g] = false;
+        });
+    }
 
-    socket.on('clearPhotoArchive', () => {
-        serverPhotoArchive = [];
-        io.emit('photoArchiveUpdated', serverPhotoArchive);
-    });
+    if (typeof judgePopupQueue !== 'undefined') {
+        judgePopupQueue = [];
+    }
+
+    // I-broadcast ang pag-reset sa lahat nang HINDI nagti-trigger ng instruction modal
+    io.emit('resetState');
+    io.emit('gameState', { isGameStarted: false });
+    
+    if (typeof groupScores !== 'undefined' && typeof attorneyPhotos !== 'undefined') {
+        io.emit('updateState', { 
+            groupScores, 
+            photos: attorneyPhotos, 
+            completedStatus: groupCompletedStatus, 
+            mode: typeof currentGlobalMode !== 'undefined' ? currentGlobalMode : 'group' 
+        });
+    }
 });
 
 const PORT = process.env.PORT || 3000;
