@@ -7,7 +7,6 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-
         :root {
             --primary: #8b5cf6;
             --primary-hover: #7c3aed;
@@ -1595,7 +1594,7 @@
                 <div style="margin-top: 10px;">
                     <p style="margin: 0 0 6px 0; color: #c084fc; font-weight: 900;"><strong>⚖️ Para sa Counsel / Students:</strong></p>
                     <ul style="margin: 0; padding-left: 24px; color: #ffffff; font-weight: 700;">
-                        <li style="margin-bottom: 4px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>).</li>
+                        <li style="margin-bottom: 4px;">Pumili ng iyong nakatalagang grupo (<b style="color: #f3e8ff;">Attorney 1 - 4</b>) o Individual Mode.</li>
                         <li style="margin-bottom: 4px;">Kumuha ng litrato gamit ang camera at i-click ang <b style="color: #10b981;">Join Now</b>.</li>
                         <li>Maghintay sa waiting screen. Sagutan nang mabilis at tama ang mga tanong! <b>Bawat tamang sagot = +5 Seconds Bonus Time! ⏱️✨</b></li>
                     </ul>
@@ -1862,26 +1861,53 @@
         socket.on('groupHistoryUpdated', (history) => { groupHistoryList = history; });
         socket.on('individualHistoryUpdated', (history) => { individualHistoryList = history; });
 
-        // 1. Kapag pinindot ang Individual Mode button, mag-a-appear ang instructions modal
+        function openGameModeModal() { 
+            document.getElementById('game-mode-modal').style.display = 'flex'; 
+        }
+
+        function closeGameModeModal() { 
+            document.getElementById('game-mode-modal').style.display = 'none'; 
+        }
+
+        // 1. Kapag pinindot ang Game Mode button
         function selectGameMode(mode) {
             currentMode = mode;
             closeGameModeModal();
+            socket.emit('setGameMode', mode);
+            applyGameModeUI(mode);
+        }
+
+        function applyGameModeUI(mode) {
+            currentMode = mode;
             const attorneyContainer = document.querySelector('.attorney-buttons-container');
             
             if (mode === 'individual') {
                 document.getElementById('individual-instructions-modal').style.display = 'flex';
                 
-                attorneyContainer.innerHTML = `
-                    <div class="individual-login-container">
-                        <h3 style="color: #f472b6; margin-top:0;">✨ Individual Participant Log-in ✨</h3>
-                        <input type="text" id="indiv-fullname-input" class="modal-input" placeholder="Enter your full name..." autocomplete="off" style="max-width: 320px; margin: 10px 0;" />
-                        <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); padding: 12px 24px; font-size: 15px;" onclick="startIndividualCapture()">Capture Selfie & Join 📷🚀</button>
-                    </div>
-                `;
+                if (attorneyContainer) {
+                    attorneyContainer.innerHTML = `
+                        <div class="individual-login-container">
+                            <h3 style="color: #f472b6; margin-top:0;">✨ Individual Participant Log-in ✨</h3>
+                            <input type="text" id="indiv-fullname-input" class="modal-input" placeholder="Enter your full name..." autocomplete="off" style="max-width: 320px; margin: 10px 0;" />
+                            <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); padding: 12px 24px; font-size: 15px;" onclick="startIndividualCapture()">Capture Selfie & Join 📷🚀</button>
+                        </div>
+                    `;
+                }
             } else {
-                location.reload(); 
+                if (attorneyContainer) {
+                    attorneyContainer.innerHTML = `
+                        <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
+                        <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
+                        <button class="group-btn attorney-btn-3 animated-group-btn-3" onclick="selectGroup('Attorney 3')">Attorney 3</button>
+                        <button class="group-btn attorney-btn-4 animated-group-btn-4" onclick="selectGroup('Attorney 4')">Attorney 4</button>
+                    `;
+                }
             }
         }
+
+        socket.on('gameModeUpdated', (mode) => {
+            applyGameModeUI(mode);
+        });
 
         function closeIndividualInstructionsModal() {
             document.getElementById('individual-instructions-modal').style.display = 'none';
@@ -1894,7 +1920,7 @@
             
             if (currentMode === 'individual') {
                 document.getElementById('role-select').classList.remove('hidden');
-                selectGameMode('individual');
+                applyGameModeUI('individual');
             } else {
                 location.reload(); 
             }
@@ -1919,7 +1945,7 @@
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span style="font-size: 16px; font-weight: bold; color: #84cc16;">${item.score} Pts</span>
-                                <button class="btn" style="background: #f43f5e; padding: 6px 10px; font-size: 11px; margin:0;" onclick="socket.emit('deleteGroupHistoryItem', ${item.id})">Select & Delete</button>
+                                <button class="btn" style="background: #f43f5e; padding: 6px 10px; font-size: 11px; margin:0;" onclick="socket.emit('deleteGroupHistoryItem', '${item.id}')">Select & Delete</button>
                             </div>
                         </div>
                     `;
@@ -1947,7 +1973,7 @@
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span style="font-size: 16px; font-weight: bold; color: #84cc16;">${item.score} Pts</span>
-                                <button class="btn" style="background: #f43f5e; padding: 6px 10px; font-size: 11px; margin:0;" onclick="socket.emit('deleteIndividualHistoryItem', ${item.id})">Select & Delete</button>
+                                <button class="btn" style="background: #f43f5e; padding: 6px 10px; font-size: 11px; margin:0;" onclick="socket.emit('deleteIndividualHistoryItem', '${item.id}')">Select & Delete</button>
                             </div>
                         </div>
                     `;
@@ -2732,10 +2758,15 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         });
 
-        socket.on('updateState', ({ groupScores, photos, completedStatus }) => {
+        socket.on('updateState', ({ groupScores, photos, completedStatus, mode }) => {
             latestGroupScores = groupScores;
             if (photos) attorneyPhotos = photos;
             if (completedStatus) groupCompletedStatus = completedStatus;
+
+            if (mode) {
+                currentMode = mode;
+                applyGameModeUI(mode);
+            }
 
             if (currentMode === 'group') {
                 renderScoreboardAndPodium();
