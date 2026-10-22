@@ -1375,6 +1375,58 @@
             border-radius: 10px;
             margin-top: 4px;
         }
+
+        .delete-photo-btn {
+            background: linear-gradient(135deg, #f43f5e, #be123c);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+            margin-top: 8px;
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
+            transition: all 0.2s ease;
+        }
+        .delete-photo-btn:hover { transform: scale(1.05); }
+
+        .individual-login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(56, 189, 248, 0.2));
+            border: 2.5px solid rgba(192, 132, 252, 0.8);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .glow-circle-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 2.5px solid #f472b6;
+            object-fit: cover;
+            box-shadow: 0 0 15px rgba(244, 114, 182, 0.8);
+            animation: glowPulseEffect 3s ease-in-out infinite;
+        }
+
+        .history-item-card {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1.5px solid rgba(132, 204, 22, 0.6);
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 12px rgba(132, 204, 22, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #f3e8ff;
+        }
     </style>
 </head>
 <body>
@@ -1385,7 +1437,7 @@
         <button class="toggle-controls-btn" id="toggle-arrow-btn" onclick="toggleTopControls()" title="Toggle">▲</button>
         
         <div class="top-controls-buttons" id="controls-button-wrapper">
-<button class="control-btn" style="background: linear-gradient(135deg, #06b6d4, #0891b2);" onclick="openGameModeModal()">🎮 Game Mode</button>
+            <button class="control-btn" style="background: linear-gradient(135deg, #06b6d4, #0891b2);" onclick="openGameModeModal()">🎮 Game Mode</button>
             <button class="control-btn" style="background: linear-gradient(135deg, #84cc16, #65a30d);" onclick="openScoreHistoryAuthModal()">📊 Score History</button>
             <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
             <button class="control-btn quiz-mode-btn" onclick="openQuizModeModal()">🔀 Quiz Mode</button>
@@ -1625,6 +1677,53 @@
             <h3 style="color: #f87171; font-size: 18px;">🚫 ACCESS DENIED</h3>
             <p style="font-size:14.5px; font-weight:bold; color:#fca5a5; margin: 15px 0;">You are a criminal trying to steal someone's private property!</p>
             <button class="btn" style="background:var(--danger); padding:10px 20px;" onclick="closeWarningModal()">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- Game Mode Modal -->
+    <div class="modal-overlay" id="game-mode-modal" style="display: none; z-index: 100010;">
+        <div class="modal-card" style="max-width: 450px;">
+            <h3 style="color: #38bdf8;">🎮 Select Game Mode</h3>
+            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili ng paraan ng pagsali ng mga participants:</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin: 0 auto 15px auto;">
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectGameMode('group')">1: BY GROUP (Attorney 1 - 4)</button>
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #ec4899, #be185d);" onclick="selectGameMode('individual')">2: INDIVIDUAL (Unlimited)</button>
+            </div>
+            <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeGameModeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Score History Password Modal -->
+    <div class="modal-overlay" id="score-history-auth-modal" style="display: none; z-index: 100010;">
+        <div class="modal-card">
+            <h3 style="color: #84cc16;">🔒 Score History Archive</h3>
+            <p style="font-size:13px; color:#e2e8f0; margin-top:5px;">Please enter password to view score history:</p>
+            <input type="password" id="score-history-pass-input" class="modal-input" placeholder="Enter Password..." autocomplete="off" />
+            <div style="display:flex; gap:10px; justify-content:center; width: 100%;">
+                <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closeScoreHistoryAuthModal()">Cancel</button>
+                <button class="btn" style="width: 45%; margin:0; padding:10px; background: #84cc16;" onclick="verifyScoreHistoryPassword()">Access History 📊</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score History Selection Modal -->
+    <div class="modal-overlay" id="score-history-modal" style="display: none; z-index: 100010;">
+        <div class="modal-card" style="max-width: 500px;">
+            <h3 style="color: #84cc16;">📊 Select Score History Type</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin: 15px 0;">
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #38bdf8, #0284c7);" onclick="openGroupScoreHistory()">1. Group Score History</button>
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="openIndividualScoreHistory()">2. Individual Score History</button>
+            </div>
+            <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeScoreHistoryModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Detailed Score History View Modal -->
+    <div class="modal-overlay" id="detailed-history-modal" style="display: none; z-index: 100020;">
+        <div class="modal-card" style="max-width: 700px; width: 95%; max-height: 85vh; overflow-y: auto;">
+            <h3 id="detailed-history-title" style="color: #84cc16; margin-top: 0;">Score History</h3>
+            <div id="detailed-history-content" style="margin: 15px 0; text-align: left; max-height: 400px; overflow-y: auto;"></div>
+            <button class="btn" style="background:var(--danger); width: 100%; margin-top:10px; padding:10px;" onclick="closeDetailedHistoryModal()">Back</button>
         </div>
     </div>
 
@@ -1873,12 +1972,13 @@
             }
 
             let html = '';
-            serverPhotoArchive.forEach(item => {
+            serverPhotoArchive.forEach((item, index) => {
                 html += `
                     <div class="archive-item">
                         <img src="${item.photo || '/logo.png'}" alt="${item.groupName}">
                         <p>${item.groupName}</p>
                         <span>🕒 ${item.timestamp}</span>
+                        <button class="delete-photo-btn" onclick="deleteArchivePhoto(${index})">🗑️ Delete Photo</button>
                     </div>
                 `;
             });
@@ -2293,7 +2393,12 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
         function confirmJoinNow() {
             document.getElementById('camera-modal').style.display = 'none';
-            socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
+            
+            if (currentMode === 'individual') {
+                socket.emit('registerIndividualParticipant', { fullName: individualFullName, photo: capturedDataUrl });
+            } else {
+                socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
+            }
 
             const studentWelcome = document.getElementById('student-welcome-overlay');
             studentWelcome.style.display = 'flex';
@@ -2306,7 +2411,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 document.getElementById('left-sidebar').style.display = 'none';
                 document.getElementById('judge-speech-box').style.display = 'none';
                 document.getElementById('student-view').classList.remove('hidden');
-                document.getElementById('group-title').innerText = `Dashboard: ${myGroup}`;
+                document.getElementById('group-title').innerText = currentMode === 'individual' ? `Dashboard: ${individualFullName}` : `Dashboard: ${myGroup}`;
                 document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
                 
                 document.getElementById('floating-timer-badge').style.display = 'flex';
@@ -2325,11 +2430,18 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
         function submitAns(questionIndex, questionId, answer) {
             if (!isGameStarted) return;
-            if (!myGroup || answeredQuestions[questionId]) return;
+            if (answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
             
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer, answeredCount });
+
+            if (currentMode === 'individual') {
+                socket.emit('submitIndividualAnswer', { fullName: individualFullName, questionIndex, answer, answeredCount }, (res) => {
+                    handleIndividualFeedback(res, questionId, answer);
+                });
+            } else {
+                socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer, answeredCount });
+            }
             
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
@@ -2341,6 +2453,23 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     popup.className = "feedback-correct";
                     popup.innerHTML = "Wait for the results!";
                     popup.style.display = "block";
+                }
+            }
+        }
+
+        function handleIndividualFeedback(res, questionId, answer) {
+            if (!res) return;
+            const popup = document.getElementById('feedback-popup');
+            if (popup) {
+                popup.className = res.isCorrect ? "feedback-correct" : "feedback-wrong";
+                popup.innerHTML = res.isCorrect ? `✔ CORRECT! (+${res.earnedPoints} Pts)` : "✖ INCORRECT!";
+                popup.style.display = "block";
+                setTimeout(() => { popup.style.display = "none"; }, 2000);
+            }
+            if (questionId && answer) {
+                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
+                if (targetLabel) {
+                    targetLabel.classList.add(res.isCorrect ? "option-correct" : "option-wrong");
                 }
             }
         }
@@ -2367,12 +2496,19 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
         function submitMixedTextAns(questionIndex, questionId, answerText) {
             if (!isGameStarted) return;
-            if (!myGroup || answeredQuestions[questionId]) return;
+            if (answeredQuestions[questionId]) return;
             if (!answerText || !answerText.trim()) return;
             
             answeredQuestions[questionId] = true;
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: answerText, answeredCount });
+
+            if (currentMode === 'individual') {
+                socket.emit('submitIndividualAnswer', { fullName: individualFullName, questionIndex, answer: answerText, answeredCount }, (res) => {
+                    handleIndividualFeedback(res, questionId, answerText);
+                });
+            } else {
+                socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: answerText, answeredCount });
+            }
             
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
@@ -2413,11 +2549,18 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
         function submitEssayAns(questionIndex, questionId, essayText) {
             if (!isGameStarted) return;
-            if (!myGroup || answeredQuestions[questionId]) return;
+            if (answeredQuestions[questionId]) return;
 
             answeredQuestions[questionId] = true;
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: essayText, answeredCount });
+
+            if (currentMode === 'individual') {
+                socket.emit('submitIndividualAnswer', { fullName: individualFullName, questionIndex, answer: essayText, answeredCount }, (res) => {
+                    handleIndividualFeedback(res, questionId, essayText);
+                });
+            } else {
+                socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: essayText, answeredCount });
+            }
 
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
@@ -2454,7 +2597,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                         popup.className = earnedPoints > 0 ? "feedback-correct" : "feedback-wrong";
                         popup.innerHTML = `📝 ESSAY GRADED!<br><span style="font-size:20px;">Score: ${earnedPoints} / ${maxPoints} Points</span>`;
                     } else {
-                        // Para sa Multiple Choice, True/False, Identification, at Enumeration: CORRECT o INCORRECT lamang!
                         popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
                         popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
                     }
@@ -2475,7 +2617,9 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             if (photos) attorneyPhotos = photos;
             if (completedStatus) groupCompletedStatus = completedStatus;
 
-            renderScoreboardAndPodium();
+            if (currentMode === 'group') {
+                renderScoreboardAndPodium();
+            }
 
             if (myGroup && groupScores[myGroup] !== undefined) {
                 document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / ${totalMaxScore}`;
@@ -2598,7 +2742,9 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 unlockQuizUI();
             }
 
-            renderScoreboardAndPodium();
+            if (currentMode === 'group') {
+                renderScoreboardAndPodium();
+            }
 
             let mins = Math.floor(myTimer / 60).toString().padStart(2, '0');
             let secs = (myTimer % 60).toString().padStart(2, '0');
@@ -2629,7 +2775,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         });
 
-socket.on('newAttorneyJoined', ({ groupName, photo }) => {
+        socket.on('newAttorneyJoined', ({ groupName, photo }) => {
             if (isJudgeRole && photo) {
                 const popup = document.getElementById('judge-photo-popup');
                 const titleEl = document.getElementById('judge-popup-title');
@@ -2707,225 +2853,181 @@ socket.on('newAttorneyJoined', ({ groupName, photo }) => {
             shownPopups = {};
             location.reload(); 
         });
-<!-- Game Mode Modal -->
-<div class="modal-overlay" id="game-mode-modal" style="display: none; z-index: 100010;">
-    <div class="modal-card" style="max-width: 450px;">
-        <h3 style="color: #38bdf8;">🎮 Select Game Mode</h3>
-        <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili ng paraan ng pagsali ng mga participants:</p>
-        <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin: 0 auto 15px auto;">
-            <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectGameMode('group')">1: BY GROUP (Attorney 1 - 4)</button>
-            <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #ec4899, #be185d);" onclick="selectGameMode('individual')">2: INDIVIDUAL (Unlimited)</button>
-        </div>
-        <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeGameModeModal()">Cancel</button>
-    </div>
-</div>
 
-<!-- Score History Password Modal -->
-<div class="modal-overlay" id="score-history-auth-modal" style="display: none; z-index: 100010;">
-    <div class="modal-card">
-        <h3 style="color: #84cc16;">🔒 Score History Archive</h3>
-        <p style="font-size:13px; color:#e2e8f0; margin-top:5px;">Please enter password to view score history:</p>
-        <input type="password" id="score-history-pass-input" class="modal-input" placeholder="Enter Password..." autocomplete="off" />
-        <div style="display:flex; gap:10px; justify-content:center; width: 100%;">
-            <button class="btn" style="background:var(--danger); width: 45%; margin:0; padding:10px;" onclick="closeScoreHistoryAuthModal()">Cancel</button>
-            <button class="btn" style="width: 45%; margin:0; padding:10px; background: #84cc16;" onclick="verifyScoreHistoryPassword()">Access History 📊</button>
-        </div>
-    </div>
-</div>
+        // --- NEW GAME MODES & SCORE HISTORY FUNCTIONS ---
+        let currentMode = 'group'; 
+        let individualFullName = '';
 
-<!-- Score History Selection Modal -->
-<div class="modal-overlay" id="score-history-modal" style="display: none; z-index: 100010;">
-    <div class="modal-card" style="max-width: 500px;">
-        <h3 style="color: #84cc16;">📊 Select Score History Type</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin: 15px 0;">
-            <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #38bdf8, #0284c7);" onclick="openGroupScoreHistory()">1. Group Score History</button>
-            <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="openIndividualScoreHistory()">2. Individual Score History</button>
-        </div>
-        <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeScoreHistoryModal()">Close</button>
-    </div>
-</div>
+        function openGameModeModal() { document.getElementById('game-mode-modal').style.display = 'flex'; }
+        function closeGameModeModal() { document.getElementById('game-mode-modal').style.display = 'none'; }
 
-<!-- Detailed Score History View Modal -->
-<div class="modal-overlay" id="detailed-history-modal" style="display: none; z-index: 100020;">
-    <div class="modal-card" style="max-width: 700px; width: 95%; max-height: 85vh; overflow-y: auto;">
-        <h3 id="detailed-history-title" style="color: #84cc16; margin-top: 0;">Score History</h3>
-        <div id="detailed-history-content" style="margin: 15px 0; text-align: left; max-height: 400px; overflow-y: auto;"></div>
-        <button class="btn" style="background:var(--danger); width: 100%; margin-top:10px; padding:10px;" onclick="closeDetailedHistoryModal()">Back</button>
-    </div>
-</div>
-let currentMode = 'group'; 
-let individualFullName = '';
-
-function openGameModeModal() { document.getElementById('game-mode-modal').style.display = 'flex'; }
-function closeGameModeModal() { document.getElementById('game-mode-modal').style.display = 'none'; }
-
-function selectGameMode(mode) {
-    currentMode = mode;
-    closeGameModeModal();
-    const attorneyContainer = document.querySelector('.attorney-buttons-container');
-    
-    if (mode === 'individual') {
-        attorneyContainer.innerHTML = `
-            <div class="individual-login-container">
-                <h3 style="color: #f472b6; margin-top:0;">✨ Individual Participant Log-in ✨</h3>
-                <input type="text" id="indiv-fullname-input" class="modal-input" placeholder="Enter your full name..." autocomplete="off" style="max-width: 320px; margin: 10px 0;" />
-                <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); padding: 12px 24px; font-size: 15px;" onclick="startIndividualCapture()">Capture Selfie & Join 📷🚀</button>
-            </div>
-        `;
-        alert("Tagumpay! Na-set sa Individual Mode.");
-    } else {
-        location.reload(); 
-    }
-}
-
-async function startIndividualCapture() {
-    const nameInput = document.getElementById('indiv-fullname-input').value;
-    if (!nameInput || !nameInput.trim()) {
-        alert("Mangyaring ilagay muna ang iyong buong pangalan!");
-        return;
-    }
-    individualFullName = nameInput.trim();
-    selectGroup('Individual Participant'); 
-}
-
-function openScoreHistoryAuthModal() {
-    document.getElementById('score-history-auth-modal').style.display = 'flex';
-    document.getElementById('score-history-pass-input').focus();
-}
-function closeScoreHistoryAuthModal() { document.getElementById('score-history-auth-modal').style.display = 'none'; }
-
-function verifyScoreHistoryPassword() {
-    const pass = document.getElementById('score-history-pass-input').value;
-    closeScoreHistoryAuthModal();
-    if (pass === "Quiz") {
-        document.getElementById('score-history-modal').style.display = 'flex';
-    } else {
-        document.getElementById('warning-modal').style.display = 'flex';
-    }
-}
-function closeScoreHistoryModal() { document.getElementById('score-history-modal').style.display = 'none'; }
-function closeDetailedHistoryModal() { document.getElementById('detailed-history-modal').style.display = 'none'; }
-
-function openGroupScoreHistory() {
-    closeScoreHistoryModal();
-    const content = document.getElementById('detailed-history-content');
-    document.getElementById('detailed-history-title').innerText = "📊 Group Score History";
-    
-    let html = '';
-    ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(g => {
-        let sc = latestGroupScores[g] || 0;
-        html += `
-            <div class="history-item-card">
-                <div>
-                    <strong style="font-size: 16px; color: #38bdf8;">${g}</strong><br>
-                    <span style="font-size: 11.5px; color: #cbd5e1;">🕒 Date: ${new Date().toLocaleDateString()} | Time: ${new Date().toLocaleTimeString()}</span>
-                </div>
-                <div style="font-size: 18px; font-weight: bold; color: #84cc16;">${sc} / ${totalMaxScore} Points</div>
-            </div>
-        `;
-    });
-    content.innerHTML = html;
-    document.getElementById('detailed-history-modal').style.display = 'flex';
-}
-
-function openIndividualScoreHistory() {
-    closeScoreHistoryModal();
-    const content = document.getElementById('detailed-history-content');
-    document.getElementById('detailed-history-title').innerText = "📊 Individual Score History";
-    
-    let html = '';
-    let entries = Object.entries(window.currentIndividualScores || {});
-    if (entries.length === 0) {
-        html = `<p style="color:#cbd5e1; text-align:center;">Wala pang naitalang individual participants.</p>`;
-    } else {
-        entries.forEach(([name, score]) => {
-            html += `
-                <div class="history-item-card">
-                    <div>
-                        <strong style="font-size: 16px; color: #f472b6;">${name}</strong><br>
-                        <span style="font-size: 11.5px; color: #cbd5e1;">🕒 Date: ${new Date().toLocaleDateString()}</span>
+        function selectGameMode(mode) {
+            currentMode = mode;
+            closeGameModeModal();
+            const attorneyContainer = document.querySelector('.attorney-buttons-container');
+            
+            if (mode === 'individual') {
+                attorneyContainer.innerHTML = `
+                    <div class="individual-login-container">
+                        <h3 style="color: #f472b6; margin-top:0;">✨ Individual Participant Log-in ✨</h3>
+                        <input type="text" id="indiv-fullname-input" class="modal-input" placeholder="Enter your full name..." autocomplete="off" style="max-width: 320px; margin: 10px 0;" />
+                        <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); padding: 12px 24px; font-size: 15px;" onclick="startIndividualCapture()">Capture Selfie & Join 📷🚀</button>
                     </div>
-                    <div style="font-size: 18px; font-weight: bold; color: #84cc16;">${score} Points</div>
-                </div>
-            `;
+                `;
+                alert("Tagumpay! Na-set sa Individual Mode.");
+            } else {
+                location.reload(); 
+            }
+        }
+
+        async function startIndividualCapture() {
+            const nameInput = document.getElementById('indiv-fullname-input').value;
+            if (!nameInput || !nameInput.trim()) {
+                alert("Mangyaring ilagay muna ang iyong buong pangalan!");
+                return;
+            }
+            individualFullName = nameInput.trim();
+            selectGroup('Individual Participant'); 
+        }
+
+        function openScoreHistoryAuthModal() {
+            document.getElementById('score-history-auth-modal').style.display = 'flex';
+            document.getElementById('score-history-pass-input').focus();
+        }
+        function closeScoreHistoryAuthModal() { document.getElementById('score-history-auth-modal').style.display = 'none'; }
+
+        function verifyScoreHistoryPassword() {
+            const pass = document.getElementById('score-history-pass-input').value;
+            closeScoreHistoryAuthModal();
+            if (pass === "Quiz") {
+                document.getElementById('score-history-modal').style.display = 'flex';
+            } else {
+                document.getElementById('warning-modal').style.display = 'flex';
+            }
+        }
+        function closeScoreHistoryModal() { document.getElementById('score-history-modal').style.display = 'none'; }
+        function closeDetailedHistoryModal() { document.getElementById('detailed-history-modal').style.display = 'none'; }
+
+        function openGroupScoreHistory() {
+            closeScoreHistoryModal();
+            const content = document.getElementById('detailed-history-content');
+            document.getElementById('detailed-history-title').innerText = "📊 Group Score History";
+            
+            let html = '';
+            ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(g => {
+                let sc = latestGroupScores[g] || 0;
+                html += `
+                    <div class="history-item-card">
+                        <div>
+                            <strong style="font-size: 16px; color: #38bdf8;">${g}</strong><br>
+                            <span style="font-size: 11.5px; color: #cbd5e1;">🕒 Date: ${new Date().toLocaleDateString()} | Time: ${new Date().toLocaleTimeString()}</span>
+                        </div>
+                        <div style="font-size: 18px; font-weight: bold; color: #84cc16;">${sc} / ${totalMaxScore} Points</div>
+                    </div>
+                `;
+            });
+            content.innerHTML = html;
+            document.getElementById('detailed-history-modal').style.display = 'flex';
+        }
+
+        function openIndividualScoreHistory() {
+            closeScoreHistoryModal();
+            const content = document.getElementById('detailed-history-content');
+            document.getElementById('detailed-history-title').innerText = "📊 Individual Score History";
+            
+            let html = '';
+            let entries = Object.entries(window.currentIndividualScores || {});
+            if (entries.length === 0) {
+                html = `<p style="color:#cbd5e1; text-align:center;">Wala pang naitalang individual participants.</p>`;
+            } else {
+                entries.forEach(([name, score]) => {
+                    html += `
+                        <div class="history-item-card">
+                            <div>
+                                <strong style="font-size: 16px; color: #f472b6;">${name}</strong><br>
+                                <span style="font-size: 11.5px; color: #cbd5e1;">🕒 Date: ${new Date().toLocaleDateString()}</span>
+                            </div>
+                            <div style="font-size: 18px; font-weight: bold; color: #84cc16;">${score} Points</div>
+                        </div>
+                    `;
+                });
+            }
+            content.innerHTML = html;
+            document.getElementById('detailed-history-modal').style.display = 'flex';
+        }
+
+        function deleteArchivePhoto(index) {
+            if (confirm("Sigurado ka bang gusto mong burahin ang litratong ito mula sa archive?")) {
+                socket.emit('deleteArchivePhoto', index);
+            }
+        }
+
+        window.currentIndividualScores = {};
+        socket.on('individualScoresUpdated', (scores) => {
+            window.currentIndividualScores = scores;
+            if (currentMode === 'individual' && isJudgeRole) {
+                renderIndividualMonitorLayout(scores);
+            }
         });
-    }
-    content.innerHTML = html;
-    document.getElementById('detailed-history-modal').style.display = 'flex';
-}
 
-function deleteArchivePhoto(index) {
-    if (confirm("Sigurado ka bang gusto mong burahin ang litratong ito mula sa archive?")) {
-        socket.emit('deleteArchivePhoto', index);
-    }
-}
+        function renderIndividualMonitorLayout(scoresObj) {
+            let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
+            const leftBox = document.querySelector('.judge-left-box');
+            const rightBox = document.querySelector('.judge-right-box');
+            
+            if (!leftBox || !rightBox) return;
 
-window.currentIndividualScores = {};
-socket.on('individualScoresUpdated', (scores) => {
-    window.currentIndividualScores = scores;
-    if (currentMode === 'individual' && isJudgeRole) {
-        renderIndividualMonitorLayout(scores);
-    }
-});
+            let leftHtml = `<h3 style="color: #38bdf8; margin-top:0;">👥 All Participants Real-time List</h3><div style="max-height: 380px; overflow-y: auto; padding-right: 5px;">`;
+            sorted.forEach(([name, sc]) => {
+                leftHtml += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.15);">
+                        <span style="font-weight: bold; color: #f3e8ff;">${name}</span>
+                        <span style="font-weight: bold; color: #34d399;">${sc} Pts</span>
+                    </div>
+                `;
+            });
+            leftHtml += `</div>`;
+            leftBox.innerHTML = leftHtml;
 
-function renderIndividualMonitorLayout(scoresObj) {
-    let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
-    const leftBox = document.querySelector('.judge-left-box');
-    const rightBox = document.querySelector('.judge-right-box');
-    
-    if (!leftBox || !rightBox) return;
+            let top3 = sorted.slice(0, 3);
+            let next6 = sorted.slice(3, 9);
 
-    let leftHtml = `<h3 style="color: #38bdf8; margin-top:0;">👥 All Participants Real-time List</h3><div style="max-height: 380px; overflow-y: auto; padding-right: 5px;">`;
-    sorted.forEach(([name, sc]) => {
-        leftHtml += `
-            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.15);">
-                <span style="font-weight: bold; color: #f3e8ff;">${name}</span>
-                <span style="font-weight: bold; color: #34d399;">${sc} Pts</span>
-            </div>
-        `;
-    });
-    leftHtml += `</div>`;
-    leftBox.innerHTML = leftHtml;
+            let rightHtml = `
+                <div class="animated-rank-title">👑 Top Rankings (Top 1-9) 🏛️</div>
+                <div style="display: flex; justify-content: space-around; width: 100%; margin: 10px 0; align-items: flex-end; height: 140px;">
+            `;
+            
+            for (let i = 0; i < 3; i++) {
+                let p = top3[i];
+                let name = p ? p[0] : `Top ${i+1} (Empty)`;
+                let sc = p ? p[1] : 0;
+                let heights = ['110px', '85px', '65px'];
+                rightHtml += `
+                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                        <span style="font-size: 10px; font-weight: bold; color: #f472b6;">Rank ${i+1}</span>
+                        <div style="width: 45px; height: ${heights[i]}; background: linear-gradient(180deg, #c084fc, #7c3aed); border-radius: 8px 8px 0 0; display:flex; align-items:center; justify-content:center; box-shadow: 0 0 15px rgba(168,85,247,0.7);">
+                            <span style="font-size: 11px; font-weight: bold; color: white;">${sc}</span>
+                        </div>
+                        <span style="font-size: 10px; font-weight: bold; margin-top: 4px; text-align: center; color: #fff; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                    </div>
+                `;
+            }
+            rightHtml += `</div><div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%;">`;
 
-    let top3 = sorted.slice(0, 3);
-    let next6 = sorted.slice(3, 9);
-
-    let rightHtml = `
-        <div class="animated-rank-title">👑 Top Rankings (Top 1-9) 🏛️</div>
-        <div style="display: flex; justify-content: space-around; width: 100%; margin: 10px 0; align-items: flex-end; height: 140px;">
-    `;
-    
-    for (let i = 0; i < 3; i++) {
-        let p = top3[i];
-        let name = p ? p[0] : `Top ${i+1} (Empty)`;
-        let sc = p ? p[1] : 0;
-        let heights = ['110px', '85px', '65px'];
-        rightHtml += `
-            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                <span style="font-size: 10px; font-weight: bold; color: #f472b6;">Rank ${i+1}</span>
-                <div style="width: 45px; height: ${heights[i]}; background: linear-gradient(180deg, #c084fc, #7c3aed); border-radius: 8px 8px 0 0; display:flex; align-items:center; justify-content:center; box-shadow: 0 0 15px rgba(168,85,247,0.7);">
-                    <span style="font-size: 11px; font-weight: bold; color: white;">${sc}</span>
-                </div>
-                <span style="font-size: 10px; font-weight: bold; margin-top: 4px; text-align: center; color: #fff; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-            </div>
-        `;
-    }
-    rightHtml += `</div><div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%;">`;
-
-    for (let i = 0; i < 6; i++) {
-        let p = next6[i];
-        let name = p ? p[0] : `Participant`;
-        let sc = p ? p[1] : 0;
-        rightHtml += `
-            <div style="display: flex; flex-direction: column; align-items: center; width: 30%;">
-                <img src="/logo.png" class="glow-circle-avatar" alt="Avatar" />
-                <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name} (${sc})</span>
-            </div>
-        `;
-    }
-    rightHtml += `</div>`;
-    rightBox.innerHTML = rightHtml;
-}
+            for (let i = 0; i < 6; i++) {
+                let p = next6[i];
+                let name = p ? p[0] : `Participant`;
+                let sc = p ? p[1] : 0;
+                rightHtml += `
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 30%;">
+                        <img src="/logo.png" class="glow-circle-avatar" alt="Avatar" />
+                        <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name} (${sc})</span>
+                    </div>
+                `;
+            }
+            rightHtml += `</div>`;
+            rightBox.innerHTML = rightHtml;
+        }
     </script>
 </body>
 </html>
