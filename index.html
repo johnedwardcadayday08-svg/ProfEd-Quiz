@@ -44,42 +44,6 @@
     margin-top: 4px !important;
 }
 
-/* Individual Mode Monitor Fit para sa Fullscreen (Walang Scroll sa Dashboard) */
-body.is-fullscreen .judge-main-layout {
-    display: grid !important;
-    grid-template-columns: 1.15fr 0.85fr !important;
-    gap: 12px !important;
-    height: calc(100vh - 100px) !important;
-    overflow: hidden !important;
-    align-items: stretch !important;
-    margin-bottom: 0 !important;
-}
-
-body.is-fullscreen .judge-left-box,
-body.is-fullscreen .judge-right-box {
-    height: 100% !important;
-    max-height: calc(100vh - 100px) !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    box-sizing: border-box !important;
-}
-
-body.is-fullscreen .indiv-top3-container {
-    height: 150px !important;
-    margin: 8px 0 !important;
-}
-
-body.is-fullscreen .indiv-grid-6 {
-    gap: 8px !important;
-    padding: 4px !important;
-}
-
-body.is-fullscreen .glow-circle-avatar-large {
-    width: 48px !important;
-    height: 48px !important;
-}
-
 /* Pinalaki at ginagawang buo ang espasyo ng kanan na box sa Individual Mode Monitor */
 .indiv-top3-container {
     display: flex;
@@ -206,13 +170,28 @@ body.is-fullscreen .glow-circle-avatar-large {
             min-height: 100px !important;
         }
 
-        /* Pinapayagan lamang ang scrolling sa teacher view pagkatapos lumabas ang review section */
         body.is-fullscreen #teacher-view {
             display: flex;
             flex-direction: column;
             height: calc(100vh - 85px);
-            overflow-y: auto !important;
             box-sizing: border-box;
+        }
+
+        body.is-fullscreen .judge-main-layout {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 20px;
+            flex: 1;
+            align-items: stretch;
+            margin-bottom: 10px;
+        }
+
+        body.is-fullscreen .judge-left-box,
+        body.is-fullscreen .judge-right-box {
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            box-sizing: border-box !important;
         }
 
         body.is-fullscreen .bar-chart-container {
@@ -966,15 +945,14 @@ body.is-fullscreen .glow-circle-avatar-large {
 
         #review-section {
             margin-top: 25px; 
-            background: rgba(15, 23, 42, 0.95);
-            border: 2px solid rgba(168, 85, 247, 0.8); 
-            padding: 20px;
-            border-radius: 20px; 
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid rgba(168, 85, 247, 0.6); 
+            padding: 25px;
+            border-radius: 22px; 
             display: none;
             width: 100%;
             box-sizing: border-box;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
-            flex-shrink: 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
 
         .horizontal-explanations-grid {
@@ -1090,29 +1068,13 @@ body.is-fullscreen .glow-circle-avatar-large {
             justify-content: space-between; 
             align-items: center; 
             background: rgba(15, 23, 42, 0.45); 
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 12px; 
-            border-radius: 14px; 
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            padding: 12px 18px; 
+            border-radius: 16px; 
             margin-bottom: 15px; 
             font-weight: bold; 
             font-size: 16px; 
             color: #f3e8ff;
-        }
-
-        /* Well-proportioned buttons sa Monitor Header Bar */
-        .header-bar .btn {
-            white-space: nowrap !important;
-            padding: 6px 10px !important;
-            font-size: 11.5px !important;
-            font-weight: 700 !important;
-            border-radius: 10px !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
-            transition: transform 0.2s ease, opacity 0.2s ease !important;
-            margin: 0 !important;
-        }
-        .header-bar .btn:hover {
-            transform: scale(1.03);
-            opacity: 0.95;
         }
 
         .bar-chart-container { margin: 10px 0; background: rgba(15, 23, 42, 0.45); padding: 12px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
@@ -1389,6 +1351,31 @@ body.is-fullscreen .glow-circle-avatar-large {
             font-weight: 900 !important;
             margin-top: 6px !important;
             border-radius: 16px !important;
+        }
+
+        .attorney-timer-badge {
+            background: rgba(16, 185, 129, 0.25);
+            border: 1.5px solid #10b981;
+            color: #6ee7b7;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 12px;
+            margin-left: auto;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
+        }
+        .attorney-timer-badge.urgent-badge {
+            background: rgba(244, 63, 94, 0.3);
+            border-color: #f43f5e;
+            color: #fda4af;
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+            animation: badgePulse 0.8s infinite alternate;
+        }
+        @keyframes badgePulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
         }
 
         #judge-notification-banner {
@@ -1846,18 +1833,17 @@ body.is-fullscreen .glow-circle-avatar-large {
             
             <div class="judge-main-layout">
                 <div class="judge-left-box">
-                    <!-- Inalis na ang timer sa tabi ng buttons sa Group Mode monitor -->
-                    <div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 10px 14px;">
-                        <span style="font-size:14px; color:#c084fc; font-weight: 800; white-space: nowrap;">⚖️ Court Proceedings</span>
-
-                        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                            <button class="btn" style="padding: 6px 12px; font-size: 12px; margin:0;" onclick="startTimer()">Start Quiz</button>
-                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 12px; font-size: 12px; margin:0;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                            <button class="btn" style="background:var(--danger); padding: 6px 12px; font-size: 12px; margin:0;" onclick="resetGame()">Reset Game</button>
+                    <div class="header-bar">
+                        <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings</span>
+                        <div id="judge-timer-display-box" style="font-size:13px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981;">⏱️ Timer: 05:00</div>
+                        <div>
+                            <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
+                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                            <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
                         </div>
                     </div>
 
-                    <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard & Group Status</h3>
+                    <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard & Group Timers</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
                 </div>
 
@@ -1945,21 +1931,18 @@ body.is-fullscreen .glow-circle-avatar-large {
             closeGameModeModal();
             socket.emit('setGameMode', mode);
             applyGameModeUI(mode);
-
-            if (mode === 'individual') {
-                const indivInstModal = document.getElementById('individual-instructions-modal');
-                if (indivInstModal) indivInstModal.style.display = 'flex';
-            } else {
-                const groupInstModal = document.getElementById('instructions-modal');
-                if (groupInstModal) groupInstModal.style.display = 'flex';
-            }
         }
 
         function applyGameModeUI(mode) {
             currentMode = mode;
             const attorneyContainer = document.querySelector('.attorney-buttons-container');
+            const indivInstModal = document.getElementById('individual-instructions-modal');
+            const groupInstModal = document.getElementById('instructions-modal');
 
             if (mode === 'individual') {
+                if (indivInstModal) indivInstModal.style.display = 'flex';
+                if (groupInstModal) groupInstModal.style.display = 'none';
+
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
                         <div class="individual-login-container">
@@ -1970,6 +1953,9 @@ body.is-fullscreen .glow-circle-avatar-large {
                     `;
                 }
             } else {
+                if (indivInstModal) indivInstModal.style.display = 'none';
+                if (groupInstModal) groupInstModal.style.display = 'flex';
+
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
                         <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
@@ -1992,34 +1978,16 @@ body.is-fullscreen .glow-circle-avatar-large {
         socket.on('resetState', () => { 
             attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
             shownPopups = {};
-            answeredQuestions = {};
-            isGameStarted = false;
-
-            const winnerModal = document.getElementById('winner-modal');
-            if (winnerModal) winnerModal.style.display = 'none';
-
-            const reviewSec = document.getElementById('review-section');
-            if (reviewSec) reviewSec.style.display = 'none';
             
             if (isJudgeRole) {
-                if (currentMode === 'individual') {
-                    window.currentIndividualScores = {};
-                    renderIndividualMonitorLayout({});
-                } else {
-                    latestGroupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
-                    renderScoreboardAndPodium();
-                }
-                return; 
+                return; // Mananatili ang judge sa monitor screen kapag nag-reset
             }
 
             if (currentMode === 'individual') {
                 document.getElementById('role-select').classList.remove('hidden');
-                document.getElementById('student-view').classList.add('hidden');
                 applyGameModeUI('individual');
             } else {
-                document.getElementById('role-select').classList.remove('hidden');
-                document.getElementById('student-view').classList.add('hidden');
-                applyGameModeUI('group');
+                location.reload(); 
             }
         });
 
@@ -2128,6 +2096,7 @@ body.is-fullscreen .glow-circle-avatar-large {
             });
             lockQuizUI();
 
+            // Siguraduhing nakatago ang parehong instructions modal sa simula ng pagbukas ng link
             const groupInstModal = document.getElementById('instructions-modal');
             const indivInstModal = document.getElementById('individual-instructions-modal');
             if (groupInstModal) groupInstModal.style.display = 'none';
@@ -2557,15 +2526,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         function handleSurrender() { 
             attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
             shownPopups = {};
-            socket.emit('resetGame');
-            document.getElementById('student-view').classList.add('hidden');
-            document.getElementById('teacher-view').classList.add('hidden');
-            document.getElementById('role-select').classList.remove('hidden');
-            document.getElementById('side-profile').style.display = 'flex';
-            document.getElementById('qr-wrapper').style.display = 'flex';
-            document.getElementById('left-sidebar').style.display = 'block';
-            document.getElementById('judge-speech-box').style.display = 'flex';
-            document.getElementById('main-container').style.background = 'var(--card-bg-transparent)';
+            location.reload(); 
         }
 
         function selectRole(role) {
@@ -2601,6 +2562,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     document.getElementById('teacher-view').classList.remove('hidden');
                     document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
 
+                    // Awtomatikong i-render ang tamang monitor screen batay sa kasalukuyang mode
                     if (currentMode === 'individual') {
                         renderIndividualMonitorLayout(window.currentIndividualScores || {});
                     } else {
@@ -2687,11 +2649,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
         function startTimer() { socket.emit('startTimer'); }
         function forceTimeUp() { socket.emit('forceTimeUp'); }
-        function resetGame() { 
-            if (confirm("Sigurado ka bang gusto mong i-reset ang laro para sa lahat?")) {
-                socket.emit('resetGame'); 
-            }
-        }
+        function resetGame() { socket.emit('resetGame'); }
 
         function submitAns(questionIndex, questionId, answer) {
             if (!isGameStarted) return;
@@ -2920,6 +2878,11 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             sortedGroups.forEach(([group, score]) => {
                 let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
+                let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
+                let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
+                let tSecs = (tSeconds % 60).toString().padStart(2, '0');
+                let timeText = `${tMins}:${tSecs}`;
+                let isUrgent = tSeconds <= 15 && tSeconds > 0;
                 let isCompleted = groupCompletedStatus[group];
 
                 chartHTML += `
@@ -2928,6 +2891,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                         <div class="bar-label">${group}</div>
                         <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
                         <div class="bar-score">${score}/${totalMaxScore}</div>
+                        <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
                     </div>
                 `;
             });
@@ -3022,9 +2986,9 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             document.getElementById('student-timer').innerText = fullTimeStr;
             document.getElementById('floating-timer-text').innerText = timeStr;
 
-            const timerTextVal = document.getElementById('judge-timer-text-val');
-            if (timerTextVal) {
-                timerTextVal.innerText = timeStr;
+            const judgeTimerBox = document.getElementById('judge-timer-display-box');
+            if (judgeTimerBox) {
+                judgeTimerBox.innerText = `⏱️ Timer: ${timeStr}`;
             }
 
             const floatBadge = document.getElementById('floating-timer-badge');
@@ -3056,24 +3020,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
                 if (popup && titleEl && imgEl) {
                     titleEl.innerText = `${groupName} entered the court! ⚖️`;
-                    imgEl.src = photo;
-                    popup.style.display = 'flex';
-
-                    setTimeout(() => {
-                        popup.style.display = 'none';
-                    }, 3000);
-                }
-            }
-        });
-
-        socket.on('newIndividualJoinedData', ({ fullName, photo }) => {
-            if (isJudgeRole && photo) {
-                const popup = document.getElementById('judge-photo-popup');
-                const titleEl = document.getElementById('judge-popup-title');
-                const imgEl = document.getElementById('judge-popup-img');
-
-                if (popup && titleEl && imgEl) {
-                    titleEl.innerText = `${fullName} entered the court! ✨`;
                     imgEl.src = photo;
                     popup.style.display = 'flex';
 
@@ -3193,29 +3139,23 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             let tSecs = (tSeconds % 60).toString().padStart(2, '0');
 
             let leftHtml = `
-                <div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 6px; padding: 8px 12px;">
-                    <span style="font-size:13px; color:#c084fc; font-weight: 800; white-space: nowrap;">⚖️ Court Proceedings</span>
-                    
-                    <!-- Countdown badge lamang (walang salitang "Timer:") -->
-                    <div id="judge-timer-display-box" style="font-size:13px; font-weight: 900; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:4px 10px; border-radius:10px; border:1.5px solid #10b981; white-space: nowrap; box-shadow: 0 0 8px rgba(16,185,129,0.3);">
-                        ⏱️ <span id="judge-timer-text-val">${tMins}:${tSecs}</span>
-                    </div>
-
-                    <div style="display: flex; gap: 5px; align-items: center;">
-                        <button class="btn" style="padding: 5px 10px; font-size: 11.5px; margin:0;" onclick="startTimer()">Start Quiz</button>
-                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 5px 10px; font-size: 11.5px; margin:0;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                        <button class="btn" style="background:var(--danger); padding: 5px 10px; font-size: 11.5px; margin:0;" onclick="resetGame()">Reset Game</button>
+                <div class="header-bar">
+                    <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings (Individual)</span>
+                    <span id="judge-timer-display-box" style="font-size:13px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981;">⏱️ Timer: ${tMins}:${tSecs}</span>
+                    <div>
+                        <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
+                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                        <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
                     </div>
                 </div>
-                <h3 style="color: #38bdf8; margin: 8px 0 6px 0; font-size: 14px;">👥 All Participants Real-time List</h3>
-                <div style="flex: 1; overflow-y: auto; padding-right: 4px; max-height: calc(100% - 90px);">
+                <h3 style="color: #38bdf8; margin: 10px 0 8px 0;">👥 All Participants Real-time List</h3>
+                <div style="max-height: 380px; overflow-y: auto; padding-right: 5px;">
             `;
-            
             sorted.forEach(([name, sc]) => {
                 leftHtml += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.15);">
-                        <span style="font-weight: bold; color: #f3e8ff; font-size: 12.5px;">${name}</span>
-                        <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.15);">
+                        <span style="font-weight: bold; color: #f3e8ff;">${name}</span>
+                        <span style="font-weight: bold; color: #34d399;">${sc} Pts</span>
                     </div>
                 `;
             });
@@ -3226,12 +3166,12 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             let next6 = sorted.slice(3, 9);
 
             let rightHtml = `
-                <div class="animated-rank-title" style="font-size: 15px;">👑 Top Rankings (Top 1-9) 🏛️</div>
-                <div class="animated-rank-subtitle" style="font-size: 11px; margin-bottom: 6px;">Individual Mode Leaderboard</div>
+                <div class="animated-rank-title">👑 Top Rankings (Top 1-9) 🏛️</div>
+                <div class="animated-rank-subtitle">Individual Mode Leaderboard</div>
                 <div class="indiv-top3-container">
             `;
             
-            const heights = ['130px', '100px', '75px'];
+            const heights = ['150px', '120px', '90px'];
             const colors = [
                 'linear-gradient(180deg, #f472b6, #a855f7)', 
                 'linear-gradient(180deg, #38bdf8, #2563eb)', 
@@ -3244,11 +3184,11 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 let sc = p ? p[1] : 0;
                 rightHtml += `
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                        <span style="font-size: 10px; font-weight: bold; color: #f472b6; margin-bottom: 2px;">Rank ${i+1}</span>
+                        <span style="font-size: 11px; font-weight: bold; color: #f472b6; margin-bottom: 4px;">Rank ${i+1}</span>
                         <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
-                            <span style="font-size: 14px; font-weight: bold; color: white;">${sc}</span>
+                            <span style="font-size: 16px; font-weight: bold; color: white;">${sc}</span>
                         </div>
-                        <span style="font-size: 10.5px; font-weight: bold; margin-top: 4px; text-align: center; color: #fff; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                        <span style="font-size: 11px; font-weight: bold; margin-top: 6px; text-align: center; color: #fff; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
                     </div>
                 `;
             }
@@ -3259,10 +3199,10 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 let name = p ? p[0] : `Participant`;
                 let sc = p ? p[1] : 0;
                 rightHtml += `
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px;">
                         <img src="/logo.png" class="glow-circle-avatar-large" alt="Avatar" />
-                        <span style="font-size: 9.5px; font-weight: bold; margin-top: 3px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-                        <span style="font-size: 9px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
+                        <span style="font-size: 10px; font-weight: bold; margin-top: 4px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                        <span style="font-size: 9.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
                     </div>
                 `;
             }
