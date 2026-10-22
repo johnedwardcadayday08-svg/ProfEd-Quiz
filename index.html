@@ -1343,6 +1343,109 @@
         .individual-name-input::placeholder{color:#cbd5e1}
         @media(max-width:700px){#individual-monitor{grid-template-columns:1fr}.top-nine-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.individual-list{max-height:38vh}.individual-login-btn{min-height:120px}}
 
+        /* Landing screen: keep the first page fixed to the viewport with no scrolling. */
+        body:has(#role-select:not(.hidden)) {
+            height: 100vh;
+            height: 100dvh;
+            min-height: 0;
+            overflow: hidden !important;
+            padding: clamp(5px, 1vh, 10px);
+        }
+        body:has(#role-select:not(.hidden)) #main-container {
+            width: 100%;
+            max-width: 1550px;
+            height: calc(100vh - 2 * clamp(5px, 1vh, 10px));
+            height: calc(100dvh - 2 * clamp(5px, 1vh, 10px));
+            min-height: 0;
+            max-height: calc(100dvh - 2 * clamp(5px, 1vh, 10px));
+            margin: 0 auto;
+            padding: clamp(7px, 1.2vh, 14px) clamp(10px, 2vw, 24px);
+            box-sizing: border-box;
+            overflow: hidden !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: clamp(2px, .5vh, 6px);
+        }
+        body:has(#role-select:not(.hidden)) #role-select {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
+            justify-content: center;
+            gap: clamp(2px, .5vh, 6px);
+            padding: 0;
+        }
+        body:has(#role-select:not(.hidden)) .feature-mode-panel {
+            flex: 0 0 auto;
+            margin: 0 0 clamp(2px, .5vh, 6px);
+        }
+        body:has(#role-select:not(.hidden)) .feature-mode-btn {
+            padding: clamp(7px, 1.2vh, 11px) clamp(13px, 2vw, 20px);
+            font-size: clamp(13px, 1.8vh, 16px);
+        }
+        body:has(#role-select:not(.hidden)) .feature-mode-options {
+            flex: 0 0 auto;
+            margin: 0 0 clamp(2px, .5vh, 6px);
+        }
+        body:has(#role-select:not(.hidden)) .app-logo {
+            width: auto !important;
+            height: clamp(42px, 9vh, 82px) !important;
+            max-width: 28vw;
+            object-fit: contain;
+        }
+        body:has(#role-select:not(.hidden)) #display-main-title {
+            font-size: clamp(17px, 3vh, 30px) !important;
+            line-height: 1.12;
+            margin: 0 0 clamp(2px, .5vh, 6px) !important;
+        }
+        body:has(#role-select:not(.hidden)) #role-select > p {
+            margin: 0 0 clamp(3px, .7vh, 7px) !important;
+            font-size: clamp(11px, 1.8vh, 14px) !important;
+        }
+        body:has(#role-select:not(.hidden)) #role-select > .btn {
+            margin: 0 auto clamp(3px, .7vh, 8px) !important;
+            padding: clamp(8px, 1.5vh, 13px) clamp(12px, 2vw, 24px) !important;
+            font-size: clamp(12px, 1.8vh, 15px) !important;
+        }
+        body:has(#role-select:not(.hidden)) #role-select > h3 {
+            margin: 0 0 3px !important;
+            font-size: clamp(12px, 1.9vh, 15px) !important;
+        }
+        body:has(#role-select:not(.hidden)) #mode-instructions {
+            margin: 0 auto clamp(3px, .6vh, 7px) !important;
+            font-size: clamp(10px, 1.55vh, 13px) !important;
+            line-height: 1.2;
+        }
+        body:has(#role-select:not(.hidden)) .attorney-buttons-container {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: clamp(5px, 1vh, 10px);
+            width: min(100%, 680px);
+            margin: 0 auto;
+        }
+        body:has(#role-select:not(.hidden)) .attorney-buttons-container .group-btn {
+            min-width: 0;
+            min-height: clamp(35px, 6.5vh, 56px);
+            padding: clamp(6px, 1vh, 10px) 8px !important;
+            font-size: clamp(12px, 1.9vh, 16px) !important;
+            line-height: 1.1;
+            box-sizing: border-box;
+        }
+        body:has(#role-select:not(.hidden)) .individual-login-btn {
+            min-height: clamp(48px, 8vh, 78px);
+            padding: clamp(8px, 1.5vh, 14px) 12px;
+            margin: 4px auto 0;
+            font-size: clamp(15px, 2.5vh, 24px);
+        }
+        @media (max-height: 620px) {
+            body:has(#role-select:not(.hidden)) .app-logo { height: 38px !important; }
+            body:has(#role-select:not(.hidden)) #display-main-title { font-size: clamp(16px, 2.6vh, 22px) !important; }
+            body:has(#role-select:not(.hidden)) .attorney-buttons-container .group-btn { min-height: 32px; }
+        }
+        @media (max-width: 520px) {
+            body:has(#role-select:not(.hidden)) #main-container { padding: 7px 10px; }
+            body:has(#role-select:not(.hidden)) #display-main-title { font-size: clamp(16px, 3vh, 24px) !important; }
+        }
     </style>
 </head>
 <body>
@@ -1620,6 +1723,11 @@
     </div>
 
     <div class="container" id="main-container">
+        <div class="feature-mode-panel"><button class="feature-mode-btn" onclick="toggleGameModeOptions()">🎮 Game Mode</button></div>
+        <div class="feature-mode-options" id="game-mode-options">
+            <button onclick="setGameMode('group')">👥 By Group</button>
+            <button onclick="setGameMode('individual')">🧑 Individual</button>
+        </div>
         <div id="role-select">
             <div style="text-align:center; margin-bottom: 4px;">
                 <img src="/logo.png" alt="Logo" class="app-logo">
@@ -1628,11 +1736,6 @@
             <p style="text-align:center; margin: 4px 0 10px 0; font-size: 14px; color: #e9d5ff;">Select your mode to begin:</p>
             <button class="btn animated-main-btn" style="margin-bottom: 12px;" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             <h3 style="text-align:center; margin-bottom: 6px; color: #f472b6; font-size: 15px;">Join as:</h3>
-            <div class="feature-mode-panel"><button class="feature-mode-btn" onclick="toggleGameModeOptions()">🎮 Game Mode</button></div>
-            <div class="feature-mode-options" id="game-mode-options">
-                <button onclick="setGameMode('group')">👥 By Group</button>
-                <button onclick="setGameMode('individual')">🧑 Individual</button>
-            </div>
             <div id="mode-instructions" style="max-width:850px;margin:0 auto 10px;text-align:center;color:#e9d5ff;font-size:13px;">By Group: pumili ng Attorney 1–4, kumuha ng larawan, at pindutin ang Join Now.</div>
             <div class="attorney-buttons-container">
                 <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
