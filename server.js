@@ -219,6 +219,26 @@ io.on('connection', (socket) => {
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
+// Clear participant photos and rankings from the monitor only
+attorneyPhotos = {
+    'Attorney 1': '',
+    'Attorney 2': '',
+    'Attorney 3': '',
+    'Attorney 4': ''
+};
+
+individualParticipants = {};
+individualScores = {};
+individualAnsweredQuestions = {};
+
+io.emit('updateState', {
+    groupScores,
+    photos: attorneyPhotos,
+    completedStatus: groupCompletedStatus
+});
+
+io.emit('individualParticipantsUpdated', []);
+io.emit('individualScoresUpdated', {});
         io.emit('resetState');
     });
 
