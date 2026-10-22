@@ -11,22 +11,20 @@ app.use(express.static(path.join(__dirname)));
 
 let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
 let currentQuizMode = "multiple-choice";
-let currentGameMode = "group"; // "group" o "individual"
+let currentGameMode = "group"; 
 let isGameStarted = false;
 
-// Group & Individual State Storage
 let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
 let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
 let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
 let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
 
-let individualParticipants = {}; // { socketId: { fullName, photo, score, completed, timestamp } }
+let individualParticipants = {};
 
 let timerInterval = null;
 let serverPhotoArchive = [];
 let groupScoreHistory = [];
 let individualScoreHistory = [];
-
 let judgePopupQueue = [];
 
 let customQuestionsList = [
@@ -105,8 +103,9 @@ io.on('connection', (socket) => {
             attorneyPhotos[groupName] = photo;
             let timeStr = new Date().toLocaleTimeString();
             let dateStr = new Date().toLocaleDateString();
+            let uniqueId = 'photo_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
             serverPhotoArchive.push({
-                id: 'photo_' + Date.now() + Math.random().toString(36.substring(2, 7)),
+                id: uniqueId,
                 groupName,
                 photo,
                 timestamp: `${dateStr} ${timeStr}`
@@ -131,8 +130,9 @@ io.on('connection', (socket) => {
             io.emit('showJudgePopupQueue', judgePopupQueue);
             let timeStr = new Date().toLocaleTimeString();
             let dateStr = new Date().toLocaleDateString();
+            let uniqueId = 'photo_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
             serverPhotoArchive.push({
-                id: 'photo_' + Date.now() + Math.random().toString(36.substring(2, 7)),
+                id: uniqueId,
                 groupName: fullName,
                 photo,
                 timestamp: `${dateStr} ${timeStr}`
@@ -165,7 +165,6 @@ io.on('connection', (socket) => {
                     io.emit('timeUp');
                 }
             } else {
-                // Individual mode global timer or check
                 io.emit('timerUpdate', groupTimers);
             }
         }, 1000);
