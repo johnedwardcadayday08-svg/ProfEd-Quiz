@@ -19,6 +19,10 @@ let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'At
 let timerInterval = null;
 let serverPhotoArchive = [];
 
+// Persistent History Archives na hindi mawawala kahit i-restart
+let groupScoreHistoryArchive = [];
+let individualScoreHistoryArchive = [];
+
 let customQuestionsList = [
     {
         question: "Ayon sa Kautusang Pampamahalaan at Code of Ethics, ano ang pangunahing batayan ng pagpaparusa o pagdidisiplina ng isang guro sa mag-aaral?",
@@ -60,7 +64,6 @@ function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoint
 io.on('connection', (socket) => {
     let individualParticipants = {}; 
     let individualScores = {};       
-    let groupHistoryArchive = [];     
 
     socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
         if (fullName) {
@@ -99,14 +102,39 @@ io.on('connection', (socket) => {
         if (individualParticipants[socket.id]) {
             individualParticipants[socket.id].score = (individualParticipants[socket.id].score || 0) + earnedPoints;
             individualScores[individualParticipants[socket.id].fullName] = individualParticipants[socket.id].score;
+            
+            // I-update o i-save sa Individual History Archive
+            let existingIndex = individualScoreHistoryArchive.findIndex(item => item.fullName === individualParticipants[socket.id].fullName);
+            if (existingIndex >= 0) {
+                individualScoreHistoryArchive[existingIndex].score = individualParticipants[socket.id].score;
+            } else {
+                individualScoreHistoryArchive.push({
+                    id: Date.now() + Math.random(),
+                    fullName: individualParticipants[socket.id].fullName,
+                    score: individualParticipants[socket.id].score,
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString()
+                });
+            }
         }
 
         io.emit('individualParticipantsUpdated', individualParticipants);
         io.emit('individualScoresUpdated', individualScores);
+        io.emit('individualHistoryUpdated', individualScoreHistoryArchive);
 
         if (typeof callback === 'function') {
             callback({ isCorrect, earnedPoints, maxPoints: qObj ? (qObj.points || 1) : 1 });
         }
+    });
+
+    socket.on('deleteGroupHistoryItem', (id) => {
+        groupScoreHistoryArchive = groupScoreHistoryArchive.filter(item => item.id !== id);
+        io.emit('groupHistoryUpdated', groupScoreHistoryArchive);
+    });
+
+    socket.on('deleteIndividualHistoryItem', (id) => {
+        individualScoreHistoryArchive = individualScoreHistoryArchive.filter(item => item.id !== id);
+        io.emit('individualHistoryUpdated', individualScoreHistoryArchive);
     });
 
     socket.on('deleteArchivePhoto', (index) => {
@@ -123,6 +151,8 @@ io.on('connection', (socket) => {
     socket.emit('applyCustomQuestionsList', customQuestionsList);
     socket.emit('timerUpdate', groupTimers);
     socket.emit('photoArchiveUpdated', serverPhotoArchive);
+    socket.emit('groupHistoryUpdated', groupScoreHistoryArchive);
+    socket.emit('individualHistoryUpdated', individualScoreHistoryArchive);
 
     socket.on('changeAppTitle', (newTitle) => {
         currentAppTitle = newTitle;
@@ -225,12 +255,28 @@ io.on('connection', (socket) => {
             });
 
             groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
+            
+            // I-save o i-update sa Group History Archive
+            let gHistIndex = groupScoreHistoryArchive.findIndex(item => item.groupName === groupName);
+            if (gHistIndex >= 0) {
+                groupScoreHistoryArchive[gHistIndex].score = groupScores[groupName];
+            } else {
+                groupScoreHistoryArchive.push({
+                    id: Date.now() + Math.random(),
+                    groupName: groupName,
+                    score: groupScores[groupName],
+                    date: new Date().toLocaleDateString(),
+                    time: new Date().toLocaleTimeString()
+                });
+            }
+
             if (answeredCount >= customQuestionsList.length) {
                 groupCompletedStatus[groupName] = true;
             }
 
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus });
             io.emit('timerUpdate', groupTimers);
+            io.emit('groupHistoryUpdated', groupScoreHistoryArchive);
 
             const allCompleted = Object.keys(groupCompletedStatus).every(g => groupCompletedStatus[g]);
             if (allCompleted) {
