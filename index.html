@@ -1343,23 +1343,64 @@
         .individual-name-input::placeholder{color:#cbd5e1}
         @media(max-width:700px){#individual-monitor{grid-template-columns:1fr}.top-nine-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.individual-list{max-height:38vh}.individual-login-btn{min-height:120px}}
 
-        /* Only prevent page scrolling while the original role-selection screen is visible. */
+        /* Keep the first screen within the viewport without changing the original layout order. */
         body:has(#role-select:not(.hidden)) {
             height: 100vh;
             height: 100dvh;
+            min-height: 0 !important;
             overflow: hidden !important;
+            justify-content: center;
         }
         body:has(#role-select:not(.hidden)) #main-container {
+            width: min(100% - 24px, 1550px);
             max-height: calc(100vh - 24px);
             max-height: calc(100dvh - 24px);
+            margin: 0 auto !important;
+            box-sizing: border-box;
             overflow: hidden;
         }
-        /* Compact only the newly added Game Mode control; preserve original element styling. */
-        .feature-mode-panel { margin: 2px 0 4px; }
-        .feature-mode-btn { padding: 8px 14px; }
-        @media (max-height: 700px) {
-            body:has(#role-select:not(.hidden)) .feature-mode-panel { margin: 1px 0 2px; }
-            body:has(#role-select:not(.hidden)) .feature-mode-btn { padding: 6px 12px; }
+        /* Only tighten spacing and button proportions on the first screen when needed. */
+        body:has(#role-select:not(.hidden)) #role-select { gap: 0; }
+        body:has(#role-select:not(.hidden)) #role-select > div:first-child { margin-bottom: 2px !important; }
+        body:has(#role-select:not(.hidden)) .app-logo {
+            width: clamp(48px, 10vh, 85px);
+            height: clamp(48px, 10vh, 85px);
+        }
+        body:has(#role-select:not(.hidden)) .animated-header-title {
+            font-size: clamp(16px, 3.2vh, 24px);
+            line-height: 1.15;
+            margin: clamp(3px, 1vh, 10px) 0 5px;
+        }
+        body:has(#role-select:not(.hidden)) .animated-main-btn {
+            padding: clamp(8px, 1.8vh, 16px) clamp(14px, 2.8vw, 36px) !important;
+            font-size: clamp(13px, 2.4vh, 18px) !important;
+            margin: 4px auto 7px !important;
+        }
+        body:has(#role-select:not(.hidden)) .feature-mode-panel { margin: 2px 0 4px; }
+        body:has(#role-select:not(.hidden)) .feature-mode-btn {
+            padding: clamp(6px, 1.3vh, 10px) clamp(12px, 2vw, 18px);
+            font-size: clamp(12px, 2vh, 15px);
+        }
+        body:has(#role-select:not(.hidden)) .feature-mode-options { margin: 4px 0 6px; }
+        body:has(#role-select:not(.hidden)) .attorney-buttons-container {
+            gap: clamp(5px, 1.2vh, 12px);
+            margin-top: 6px;
+        }
+        body:has(#role-select:not(.hidden)) .attorney-buttons-container .group-btn {
+            padding: clamp(8px, 1.8vh, 17px) clamp(8px, 1.4vw, 12px);
+            font-size: clamp(12px, 2.2vh, 16px);
+            min-width: 0;
+        }
+        body:has(#role-select:not(.hidden)) #individual-login-btn {
+            min-height: 0;
+            padding: clamp(12px, 2.5vh, 24px) 12px;
+            font-size: clamp(16px, 3vh, 28px);
+        }
+        @media (max-height: 650px) {
+            body:has(#role-select:not(.hidden)) #main-container { padding-top: 10px; padding-bottom: 10px; }
+            body:has(#role-select:not(.hidden)) .app-logo { width: 46px; height: 46px; }
+            body:has(#role-select:not(.hidden)) .animated-header-title { font-size: 16px; }
+            body:has(#role-select:not(.hidden)) #role-select h3 { margin-top: 2px !important; }
         }
     </style>
 </head>
@@ -1651,7 +1692,6 @@
                 <button onclick="setGameMode('group')">👥 By Group</button>
                 <button onclick="setGameMode('individual')">🧑 Individual</button>
             </div>
-            <div id="mode-instructions" style="max-width:850px;margin:0 auto 10px;text-align:center;color:#e9d5ff;font-size:13px;">By Group: pumili ng Attorney 1–4, kumuha ng larawan, at pindutin ang Join Now.</div>
             <div class="attorney-buttons-container">
                 <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
                 <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
@@ -2514,7 +2554,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
     let scoreHistoryCache = [];
     const individualScores = {};
     const individualParticipants = {};
-    const modeInstructions = document.getElementById('mode-instructions');
 
     window.escapeHtml = window.escapeHtml || function(value) {
         return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -2532,14 +2571,12 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
         if(mode==='individual'){
             groupButtons.style.display='none';
             individualButton.style.display='block';
-            modeInstructions.textContent='Individual: pindutin ang Log-in, ilagay ang buong pangalan, kumuha ng selfie, at Join Now. Bawat participant ay may sariling score at ranking.';
             document.getElementById('individual-monitor').style.display='grid';
             document.querySelector('.judge-main-layout').style.display='none';
             renderIndividualMonitor();
         } else {
             groupButtons.style.display='';
             individualButton.style.display='none';
-            modeInstructions.textContent='By Group: pumili ng Attorney 1–4, kumuha ng larawan, at pindutin ang Join Now. Ang score ay pinagsama-sama ayon sa grupo.';
             document.getElementById('individual-monitor').style.display='none';
             document.querySelector('.judge-main-layout').style.display='';
         }
@@ -2608,11 +2645,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
         if(groupButtons&&individualButton){
             groupButtons.style.display=selectedGameMode==='individual'?'none':'';
             individualButton.style.display=selectedGameMode==='individual'?'block':'none';
-        }
-        if(modeInstructions){
-            modeInstructions.textContent=selectedGameMode==='individual'
-                ?'Individual: pindutin ang Log-in, ilagay ang buong pangalan, kumuha ng selfie, at Join Now. Bawat participant ay may sariling score at ranking.'
-                :'By Group: pumili ng Attorney 1–4, kumuha ng larawan, at pindutin ang Join Now. Ang score ay pinagsama-sama ayon sa grupo.';
         }
         const layout=document.querySelector('.judge-main-layout');
         const monitor=document.getElementById('individual-monitor');
