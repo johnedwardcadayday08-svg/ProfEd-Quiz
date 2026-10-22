@@ -7,7 +7,26 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// Middleware para sa static files (suportado ang public folder o root folder)
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname));
+
+// Explicit route para maiwasan ang "Cannot GET /" error
+app.get('/', (req, res) => {
+    let publicPath = path.join(__dirname, 'public', 'index.html');
+    let rootPath = path.join(__dirname, 'index.html');
+    
+    // Unang hahanapin sa public folder, kung wala ay sa root folder
+    res.sendFile(publicPath, (err) => {
+        if (err) {
+            res.sendFile(rootPath, (err2) => {
+                if (err2) {
+                    res.status(404).send("Error: Hindi makita ang index.html file mo. Siguraduhing nailagay ito sa tamang folder.");
+                }
+            });
+        }
+    });
+});
 
 // Persistent Memory
 let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
