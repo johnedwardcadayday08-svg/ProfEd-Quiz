@@ -1396,27 +1396,6 @@
             padding: clamp(12px, 2.5vh, 24px) 12px;
             font-size: clamp(16px, 3vh, 28px);
         }
-        @media (min-width: 701px) {
-            body:has(#role-select:not(.hidden)) .attorney-buttons-container .group-btn {
-                padding-top: clamp(17px, 2.4vh, 24px);
-                padding-bottom: clamp(17px, 2.4vh, 24px);
-            }
-        }
-        @media (max-width: 700px) {
-            body:has(#role-select:not(.hidden)) .attorney-buttons-container {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                align-items: stretch;
-                gap: clamp(6px, 1.2vh, 10px);
-            }
-            body:has(#role-select:not(.hidden)) .attorney-buttons-container .group-btn {
-                width: 100%;
-                max-width: none;
-                padding: clamp(10px, 1.7vh, 16px) 5px;
-                font-size: clamp(12px, 2.1vh, 15px);
-                white-space: normal;
-            }
-        }
         @media (max-height: 650px) {
             body:has(#role-select:not(.hidden)) #main-container { padding-top: 10px; padding-bottom: 10px; }
             body:has(#role-select:not(.hidden)) .app-logo { width: 46px; height: 46px; }
@@ -1437,7 +1416,6 @@
             <button class="control-btn archive-btn" id="score-history-btn" onclick="openScoreHistoryAuth()">📊 Score History 🔒</button>
             <button class="control-btn title-btn" onclick="openTitleModal()">✏️ Change Title</button>
             <button class="control-btn timer-btn" onclick="openTimerModal()">⏱️ Set Timer</button>
-            <button class="control-btn insert-btn" onclick="openQuizModeModal()">🧩 Quiz Mode</button>
             <button class="control-btn insert-btn" onclick="openInsertModal()">➕ Insert Questions</button>
             <button class="control-btn archive-btn" onclick="openArchiveAuthModal()">🖼️ Picture Archive</button>
             <button class="control-btn surrender-btn" onclick="handleSurrender()">🏳️ Surrender</button>
@@ -1535,22 +1513,6 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="quiz-mode-modal" style="display:none;z-index:100015;">
-        <div class="modal-card" style="max-width:650px;width:95%;text-align:center;">
-            <h3 style="color:#38bdf8;margin-top:0;">🧩 Select Quiz Mode</h3>
-            <p style="color:#cbd5e1;font-size:13px;">Piliin ang uri ng tanong. Gagana ito sa Group at Individual mode.</p>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;">
-                <button class="btn" onclick="setQuizMode('mc')">🔘 Pure Multiple Choice</button>
-                <button class="btn" onclick="setQuizMode('mc-enum')">📝 Multiple Choice + Enumeration</button>
-                <button class="btn" onclick="setQuizMode('mc-ident')">🔎 Multiple Choice + Identification</button>
-                <button class="btn" onclick="setQuizMode('mc-essay')">✍️ Multiple Choice + Essay</button>
-                <button class="btn" onclick="setQuizMode('mixed')">📚 Mixed: All Types</button>
-            </div>
-            <p id="quiz-mode-current-label" style="color:#a7f3d0;font-weight:800;margin:12px 0;">Current mode: Pure Multiple Choice</p>
-            <button class="btn" style="background:var(--danger);width:100%;" onclick="closeQuizModeModal()">Close</button>
-        </div>
-    </div>
-
     <div class="modal-overlay" id="insert-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left;">
             <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions</h3>
@@ -1626,20 +1588,6 @@
             </div>
 
             <button class="btn animated-main-btn inst-btn" onclick="closeInstructionsModal()">Gets Ko Na! 🚀✨</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="individual-instructions-modal" style="display:none;z-index:100012;">
-        <div class="modal-card" style="max-width:620px;width:95%;text-align:left;">
-            <h3 style="color:#38bdf8;text-align:center;margin-top:0;">🧑 Individual Mode — How to Play</h3>
-            <ol style="color:#f8fafc;line-height:1.7;padding-left:24px;">
-                <li>I-click ang <b>Log-in / Join Individual</b>.</li>
-                <li>Ilagay ang iyong buong pangalan at kumuha ng selfie.</li>
-                <li>I-click ang <b>Join Now</b> para makapasok sa quiz.</li>
-                <li>Hintayin ang Judge na pindutin ang <b>Start Quiz</b>.</li>
-                <li>Ang bawat tamang sagot ay may <b>+1 point</b>; makikita ang score sa iyong screen at sa live ranking.</li>
-            </ol>
-            <button class="btn" style="width:100%;" onclick="closeIndividualInstructions()">Okay, let's play</button>
         </div>
     </div>
 
@@ -1835,9 +1783,6 @@
         let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         let totalQuestionsCount = 0;
-        let currentQuizMode = 'mc';
-        window.currentGameMode = 'group';
-        window.customQuestionMap = {};
         let capturedDataUrl = '';
         let mediaStream = null;
         let serverPhotoArchive = [];
@@ -1980,139 +1925,157 @@
             if (deleteSelected) deleteSelected.style.display = 'inline-block';
         }
 
-        const defaultPlainSample = `Type: Multiple Choice
-Q: Aling teorya ni Lawrence Kohlberg ang tumutukoy sa antas kung saan ang pagpapasya ng bata ay nakabatay sa pag-iwas sa parusa at pagsunod sa ganti?
+        const defaultPlainSample = `Q: Aling teorya ni Lawrence Kohlberg ang tumutukoy sa antas kung saan ang pagpapasya ng bata ay nakabatay sa pag-iwas sa parusa at pagsunod sa ganti?
 A) Post-Conventional Level
 B) Conventional Level
 C) Pre-Conventional Level
 D) Universal Ethical Principles
 Answer: C
-Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng mga panlabas na kahihinatnan tulad ng parusa at gantimpala.`;
+Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng mga panlabas na kahihinatnan tulad ng parusa (Punishment and Obedience) at gantimpala.`;
 
-        const quizModeNames = {
-            'mc': 'Pure Multiple Choice',
-            'mc-enum': 'Multiple Choice + Enumeration',
-            'mc-ident': 'Multiple Choice + Identification',
-            'mc-essay': 'Multiple Choice + Essay',
-            'mixed': 'Mixed: All Types'
-        };
-        function openQuizModeModal(){
-            const modal=document.getElementById('quiz-mode-modal');
-            if(modal) modal.style.display='flex';
-            updateQuizModeLabel();
-        }
-        function closeQuizModeModal(){const modal=document.getElementById('quiz-mode-modal');if(modal)modal.style.display='none';}
-        function updateQuizModeLabel(){const label=document.getElementById('quiz-mode-current-label');if(label)label.textContent='Current mode: '+(quizModeNames[currentQuizMode]||quizModeNames.mc);}
-        function setQuizMode(mode){
-            if(!quizModeNames[mode])return;
-            currentQuizMode=mode;
-            socket.emit('setQuizMode',mode);
-            updateQuizModeLabel();
-            closeQuizModeModal();
-            alert('Quiz Mode updated: '+quizModeNames[mode]+'. I-paste ang questions na may tamang Type at Answer/Rubric sa Insert Questions.');
-        }
         function openInsertModal() {
             document.getElementById('insert-modal').style.display = 'flex';
             if (!document.getElementById('custom-questions-plaintext').value) {
                 document.getElementById('custom-questions-plaintext').value = defaultPlainSample;
             }
         }
-        function closeInsertModal() { document.getElementById('insert-modal').style.display = 'none'; }
 
-        function normalizeQuestionType(raw, hasOptions, rubric, answer) {
-            const t=String(raw||'').toLowerCase();
-            if (/essay|sanaysay/.test(t) || rubric) return 'essay';
-            if (/enumeration|enumerate|listahan/.test(t)) return 'enumeration';
-            if (/identification|identify|pagkilala/.test(t)) return 'identification';
-            if (/multiple.?choice|mcq|choice/.test(t) || hasOptions) return 'mc';
-            if(currentQuizMode==='mc-enum')return 'enumeration';
-            if(currentQuizMode==='mc-ident')return 'identification';
-            if(currentQuizMode==='mc-essay')return 'essay';
-            return 'mc';
+        function closeInsertModal() {
+            document.getElementById('insert-modal').style.display = 'none';
         }
-        function allowedTypesForMode(mode){
-            if(mode==='mc')return ['mc'];
-            if(mode==='mc-enum')return ['mc','enumeration'];
-            if(mode==='mc-ident')return ['mc','identification'];
-            if(mode==='mc-essay')return ['mc','essay'];
-            return ['mc','enumeration','identification','essay'];
-        }
+
+        // BULLETPROOF UNICODE & CUSTOM FONT TOLERANT QUESTION PARSER
         function savePlainQuestions() {
             try {
-                const rawInput=document.getElementById('custom-questions-plaintext').value;
-                if(!rawInput||!rawInput.trim()){alert('Mangyaring maglagay ng text ng mga tanong.');return;}
-                const cleanText=rawInput.replace(/♡|♥/g,'o').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/\r\n/g,'\n').replace(/\r/g,'\n').trim();
-                const rawBlocks=cleanText.split(/(?=^\s*(?:Type\s*:[^\n]*\n)?\s*(?:Q|Question)\s*\d*\s*[:.)-])/im);
-                const questionsList=[];
-                rawBlocks.forEach(block=>{
-                    const lines=block.split('\n').map(s=>s.trim()).filter(Boolean);
-                    if(!lines.length)return;
-                    let qText='', rawType='', options={}, answer='', explanation='', rubric='', currentField='';
-                    lines.forEach(line=>{
-                        if(/^(?:Type)\s*:/i.test(line)){rawType=line.replace(/^Type\s*:/i,'').trim();currentField='type';}
-                        else if(/^(?:Q|Question)\s*\d*\s*[:.)-]/i.test(line)){qText=line.replace(/^(?:Q|Question)\s*\d*\s*[:.)-]/i,'').trim();currentField='question';}
-                        else if(/^[A-D][).:-]/i.test(line)){const key=line.charAt(0).toUpperCase();options[key]=line.substring(2).trim();currentField='option';}
-                        else if(/^Answer\s*:/i.test(line)){answer=line.replace(/^Answer\s*:/i,'').trim();currentField='answer';}
-                        else if(/^(?:Explanation|Exp)\s*:/i.test(line)){explanation=line.replace(/^(?:Explanation|Exp)\s*:/i,'').trim();currentField='explanation';}
-                        else if(/^(?:Rubric|Rubrics|Criteria|Scoring Criteria)\s*:/i.test(line)){rubric=line.replace(/^(?:Rubric|Rubrics|Criteria|Scoring Criteria)\s*:/i,'').trim();currentField='rubric';}
-                        else if(currentField==='rubric'){rubric+=(rubric?'\n':'')+line;}
-                        else if(currentField==='explanation'){explanation+=(explanation?' ':'')+line;}
-                        else if(currentField==='question'){qText+=(qText?' ':'')+line;}
+                let rawInput = document.getElementById('custom-questions-plaintext').value;
+                if (!rawInput || !rawInput.trim()) {
+                    alert("Mangyaring maglagay ng text ng mga tanong.");
+                    return;
+                }
+
+                // Linisin ang custom font artifacts (tulad ng heart symbol '♡' pabalik sa 'o'/'O')
+                let cleanText = rawInput
+                    .replace(/♡/g, 'o')
+                    .replace(/♥/g, 'o')
+                    .replace(/[\u201C\u201D]/g, '"')
+                    .replace(/[\u2018\u2019]/g, "'")
+                    .replace(/\r\n/g, '\n')
+                    .replace(/\r/g, '\n')
+                    .trim();
+
+                // Hatiin sa bawat block ng tanong
+                let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
+                
+                let questionsList = [];
+
+                rawBlocks.forEach(block => {
+                    let trimmedBlock = block.trim();
+                    if (!trimmedBlock) return;
+
+                    let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
+                    
+                    let qText = "";
+                    let options = {};
+                    let answer = "";
+                    let explanation = "";
+
+                    lines.forEach(line => {
+                        // Match Question Line
+                        if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
+                            qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
+                        } 
+                        // Match Option Lines (A), B), C), D) o A., B., C., D.)
+                        else if (/^[A-D][\)\.\:\-]/i.test(line)) {
+                            let optKey = line.charAt(0).toUpperCase();
+                            let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
+                            options[optKey] = optVal;
+                        } 
+                        // Match Answer Line
+                        else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
+                            let rawAns = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim().toUpperCase();
+                            let match = rawAns.match(/[A-D]/);
+                            if (match) answer = match[0];
+                        } 
+                        // Match Explanation Line
+                        else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
+                            explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
+                        }
                     });
-                    if(!qText)return;
-                    const type=normalizeQuestionType(rawType,Object.keys(options).length>0,rubric,answer);
-                    if(type==='mc') { const answerLetter=String(answer).match(/^[A-D](?=$|[\s).:-])/i); if(answerLetter) answer=answerLetter[0].toUpperCase(); }
-                    const allowed=allowedTypesForMode(currentQuizMode);
-                    if(!allowed.includes(type)) throw new Error(`Ang tanong "${qText.slice(0,45)}..." ay ${type}, na hindi kasama sa ${quizModeNames[currentQuizMode]}.`);
-                    if(type==='mc' && (!Object.keys(options).length || !answer)) throw new Error(`Multiple Choice question needs options A-D and Answer: A/B/C/D. Tanong: ${qText}`);
-                    if(type==='essay' && !rubric) throw new Error(`Kailangan ng Rubric: para sa essay question: ${qText}`);
-                    if((type==='identification'||type==='enumeration')&&!answer) throw new Error(`Kailangan ng Answer: para sa ${type} question: ${qText}`);
-                    questionsList.push({question:qText,type,options,answer,explanation:explanation||'',rubric});
+
+                    if (qText && Object.keys(options).length > 0 && answer) {
+                        questionsList.push({
+                            question: qText,
+                            options: options,
+                            answer: answer,
+                            explanation: explanation || "Walang nakasaad na paliwanag."
+                        });
+                    }
                 });
-                if(!questionsList.length){alert('Hindi nabasa ang questions. Gumamit ng Q: at Answer:; para sa essay, isama ang Type: Essay at Rubric:.');return;}
-                socket.emit('updatePlainQuestionsData',questionsList);
+
+                if (questionsList.length === 0) {
+                    alert("Hindi pa rin nabasa. Siguraduhing may 'Q:' sa simula at 'Answer: A/B/C/D' sa bawat tanong.");
+                    return;
+                }
+
+                socket.emit('updatePlainQuestionsData', questionsList);
                 closeInsertModal();
-                alert(`Tagumpay! ${questionsList.length} tanong ang na-update sa lahat ng screen.`);
-            } catch(err) { alert(err.message||'May error sa pagbasa ng text.'); }
+                alert(`Tagumpay! ${questionsList.length} tanong ang na-update sa LAHAT ng screen! 🚀`);
+            } catch (err) {
+                alert("May error sa pagbasa ng text mula sa cellphone.");
+            }
         }
 
-        function escapeForHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-        function submitTextAnswer(questionId){
-            const field=document.getElementById(`answer-${questionId}`);
-            if(field)submitAns(questionId,field.value.trim());
-        }
         socket.on('applyCustomQuestionsList', (questionsList) => {
-            totalQuestionsCount=questionsList.length;
-            const quizContainer=document.getElementById('quiz-questions');
-            const reviewGrid=document.getElementById('review-explanations-grid');
-            window.customQuestionMap={};
-            let questionsHTML='', reviewHTML='';
-            questionsList.forEach((q,idx)=>{
-                const qNum=idx+1, qKey=`q${qNum}`, type=q.type||'mc';
-                window.customQuestionMap[qKey]=q;
-                let responseHTML='';
-                if(type==='mc'){
-                    let optionsHTML='';
-                    Object.keys(q.options||{}).forEach(optKey=>{
-                        optionsHTML+=`<label id="lbl-${qKey}-${optKey}"><input type="radio" name="${qKey}" value="${escapeForHtml(optKey)}" onchange="submitAns('${qKey}','${escapeForHtml(optKey)}')"> ${escapeForHtml(optKey)}) ${escapeForHtml(q.options[optKey])}</label>`;
-                    });
-                    responseHTML=`<div class="options">${optionsHTML}</div>`;
-                } else {
-                    const isEssay=type==='essay';
-                    responseHTML=`<div style="display:grid;gap:8px;margin-top:10px;">
-                        ${isEssay?`<textarea id="answer-${qKey}" rows="5" maxlength="5000" placeholder="Isulat ang iyong essay answer..." style="width:100%;box-sizing:border-box;padding:12px;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(192,132,252,.6);"></textarea>`:`<input id="answer-${qKey}" type="text" maxlength="2000" placeholder="${type==='enumeration'?'Ihiwalay ang mga sagot gamit ang comma o semicolon':'I-type ang iyong sagot'}" style="width:100%;box-sizing:border-box;padding:12px;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(192,132,252,.6);">`}
-                        <button class="btn" style="margin:0;" onclick="submitTextAnswer('${qKey}')">Submit Answer</button>
-                    </div>`;
-                }
-                const kindLabel={mc:'Multiple Choice',enumeration:'Enumeration',identification:'Identification',essay:'Essay'}[type]||type;
-                questionsHTML+=`<div class="question-card" id="card-${qKey}"><p><b>Q${qNum} (${kindLabel}):</b> ${escapeForHtml(q.question)}</p>${responseHTML}<div class="explanation-box" id="exp-${qKey}"><b>🔍 Explanation:</b> ${escapeForHtml(q.explanation||'Walang nakasaad na paliwanag.')}</div></div>`;
-                const keyText=type==='essay'?`Rubric: ${q.rubric||'Walang rubric'}`:`Tamang sagot: ${q.answer||''}`;
-                reviewHTML+=`<div class="explanation-card-item"><p style="font-weight:bold;color:#38bdf8;margin-top:0;">Q${qNum} (${kindLabel}): ${escapeForHtml(q.question)}</p><p style="font-size:12.5px;color:#ecfdf5;background:rgba(16,185,129,.15);padding:8px;border-radius:8px;border-left:3px solid #10b981;"><b>${keyText}</b><br>${escapeForHtml(q.explanation||'')}</p></div>`;
+            totalQuestionsCount = questionsList.length;
+            const quizContainer = document.getElementById('quiz-questions');
+            const reviewGrid = document.getElementById('review-explanations-grid');
+            
+            let questionsHTML = '';
+            let reviewHTML = '';
+
+            questionsList.forEach((q, idx) => {
+                let qNum = idx + 1;
+                let qKey = `q${qNum}`;
+
+                let optionsHTML = '';
+                Object.keys(q.options).forEach(optKey => {
+                    optionsHTML += `
+                        <label id="lbl-${qKey}-${optKey}">
+                            <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> 
+                            ${optKey}) ${q.options[optKey]}
+                        </label>
+                    `;
+                });
+
+                questionsHTML += `
+                    <div class="question-card" id="card-${qKey}">
+                        <p><b>Q${qNum}:</b> ${q.question}</p>
+                        <div class="options">
+                            ${optionsHTML}
+                        </div>
+                        <div class="explanation-box" id="exp-${qKey}">
+                            <b>🔍 Detalyadong Paliwanag:</b> ${q.explanation}
+                        </div>
+                    </div>
+                `;
+
+                reviewHTML += `
+                    <div class="explanation-card-item">
+                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q${qNum}: ${q.question}</p>
+                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;">
+                            <b>Tamang Sagot (${q.answer}):</b> ${q.explanation}
+                        </p>
+                    </div>
+                `;
             });
-            if(quizContainer)quizContainer.innerHTML=questionsHTML;
-            if(reviewGrid)reviewGrid.innerHTML=reviewHTML;
-            answeredQuestions={};
-            if(myGroup&&document.getElementById('group-score-display'))document.getElementById('group-score-display').innerText=`Score: 0 / ${totalQuestionsCount}`;
+
+            if (quizContainer) quizContainer.innerHTML = questionsHTML;
+            if (reviewGrid) reviewGrid.innerHTML = reviewHTML;
+
+            answeredQuestions = {};
+            if (myGroup && latestGroupScores[myGroup] !== undefined) {
+                document.getElementById('group-score-display').innerText = `Score: 0 / ${totalQuestionsCount}`;
+            }
         });
 
         function disableAllRadioInputs(disable) {
@@ -2315,21 +2278,25 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
         function resetGame() { socket.emit('resetGame'); }
 
         function submitAns(questionId, answer) {
-            if (!isGameStarted || !myGroup || answeredQuestions[questionId]) return;
-            if (answer === undefined || answer === null || String(answer).trim() === '') { alert('Maglagay muna ng sagot.'); return; }
+            if (!isGameStarted) return;
+            if (!myGroup || answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
-            const payload={groupName:myGroup,questionId,answer:String(answer),mode:window.currentGameMode||'group'};
-            if((window.currentGameMode||'group')==='individual'){
-                socket.emit('submitIndividualAnswer',{id:myGroup,questionId,answer:String(answer)});
-            } else {
-                socket.emit('submitAnswer',payload);
+            
+            const answeredCount = Object.keys(answeredQuestions).length;
+            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer, answeredCount });
+            
+            const expBox = document.getElementById(`exp-${questionId}`);
+            if (expBox) expBox.style.display = "block";
+
+            if (answeredCount >= totalQuestionsCount) {
+                lockQuizUI();
+                const popup = document.getElementById('feedback-popup');
+                if (popup) {
+                    popup.className = "feedback-correct";
+                    popup.innerHTML = "Wait for the results!";
+                    popup.style.display = "block";
+                }
             }
-            const expBox=document.getElementById(`exp-${questionId}`);
-            if(expBox)expBox.style.display='block';
-            const field=document.getElementById(`answer-${questionId}`);
-            if(field)field.disabled=true;
-            document.querySelectorAll(`#card-${questionId} input[type="radio"]`).forEach(el=>el.disabled=true);
-            document.querySelectorAll(`#card-${questionId} button`).forEach(el=>el.disabled=true);
         }
 
         socket.on('gameState', ({ isGameStarted: started }) => {
@@ -2338,6 +2305,25 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 unlockQuizUI();
             } else {
                 lockQuizUI();
+            }
+        });
+
+        socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
+            const answeredCount = Object.keys(answeredQuestions).length;
+            if (answeredCount < totalQuestionsCount) {
+                const popup = document.getElementById('feedback-popup');
+                if (popup) {
+                    popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
+                    popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
+                    popup.style.display = "block";
+                    setTimeout(() => { popup.style.display = "none"; }, 1500);
+                }
+            }
+            if (questionId && answer) {
+                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
+                if (targetLabel) {
+                    targetLabel.classList.add(isCorrect ? "option-correct" : "option-wrong");
+                }
             }
         });
 
@@ -2578,13 +2564,11 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
     };
     window.setGameMode = function(mode){
         selectedGameMode=mode;
-        window.currentGameMode=mode;
         socket.emit('setGameMode', mode);
         const groupButtons=document.querySelector('.attorney-buttons-container');
         const individualButton=document.getElementById('individual-login-btn');
         document.getElementById('game-mode-options').style.display='none';
         if(mode==='individual'){
-            const instructions=document.getElementById('individual-instructions-modal');if(instructions)instructions.style.display='flex';
             groupButtons.style.display='none';
             individualButton.style.display='block';
             document.getElementById('individual-monitor').style.display='grid';
@@ -2646,10 +2630,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
         Object.keys(individualScores).forEach(k=>delete individualScores[k]);
         Object.assign(individualScores,scores||{});
         renderIndividualMonitor();
-        if(window.currentGameMode==='individual' && myGroup && Object.prototype.hasOwnProperty.call(individualScores,myGroup)){
-            const scoreEl=document.getElementById('group-score-display');
-            if(scoreEl)scoreEl.innerText=`Score: ${Number(individualScores[myGroup]||0)} / ${totalQuestionsCount}`;
-        }
     });
     socket.on('scoreHistoryUpdated', history=>{
         scoreHistoryCache=history||[];
@@ -2660,7 +2640,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
     });
     socket.on('gameModeUpdated', mode=>{
         selectedGameMode=mode==='individual'?'individual':'group';
-        window.currentGameMode=selectedGameMode;
         const groupButtons=document.querySelector('.attorney-buttons-container');
         const individualButton=document.getElementById('individual-login-btn');
         if(groupButtons&&individualButton){
@@ -2675,19 +2654,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             if(selectedGameMode==='individual')renderIndividualMonitor();
         }
     });
-    socket.on('quizModeUpdated', mode=>{
-        currentQuizMode=mode||'mc';
-        updateQuizModeLabel();
-    });
-    socket.on('answerFeedback', ({isCorrect,questionId,answer,score,correctAnswer,matchedCriteria})=>{
-        const popup=document.getElementById('feedback-popup');
-        if(popup){popup.className=isCorrect?'feedback-correct':'feedback-wrong';popup.innerHTML=isCorrect?`✔ CORRECT! (+1 POINT${score!==undefined?`; SCORE: ${score}`:''})`:'✖ INCORRECT!';popup.style.display='block';setTimeout(()=>{popup.style.display='none';},1800);}
-        if(questionId){const card=document.getElementById(`card-${questionId}`);if(card){card.querySelectorAll('input,textarea,button').forEach(el=>el.disabled=true);}}
-        if(answer!==undefined && window.customQuestionMap && window.customQuestionMap[questionId] && window.customQuestionMap[questionId].type==='mc'){
-            const target=document.getElementById(`lbl-${questionId}-${answer}`);if(target)target.classList.add(isCorrect?'option-correct':'option-wrong');
-        }
-    });
-
     socket.on('individualJoinPopup', participant=>{
         if(!isJudgeRole || !participant) return;
         const popup=document.getElementById('judge-photo-popup');
@@ -2757,10 +2723,17 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
         if(confirm(`Burahin ang ${ids.length} napiling litrato?`))socket.emit('deletePhotoArchiveItems',ids);
     };
 
-    // Use the shared server-validated scoring handler for both Group and Individual modes.
-    const sharedSubmitAns=window.submitAns;
-    window.submitAns=function(questionId,answer){ return sharedSubmitAns(questionId,answer); };
-    window.closeIndividualInstructions=function(){const modal=document.getElementById('individual-instructions-modal');if(modal)modal.style.display='none';};
+    // In individual mode, use participant identity as the scoring key.
+    const originalSubmitAns=window.submitAns;
+    window.submitAns=function(questionId,answer){
+        if(selectedGameMode!=='individual') return originalSubmitAns(questionId,answer);
+        if(!isGameStarted||!myGroup||answeredQuestions[questionId])return;
+        answeredQuestions[questionId]=true;
+        const answeredCount=Object.keys(answeredQuestions).length;
+        socket.emit('submitIndividualAnswer',{id:myGroup,questionId,answer,answeredCount});
+        const expBox=document.getElementById(`exp-${questionId}`);if(expBox)expBox.style.display='block';
+        if(answeredCount>=totalQuestionsCount)lockQuizUI();
+    };
 })();
 </script>
 
