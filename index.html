@@ -242,6 +242,7 @@
         .title-btn { background: linear-gradient(135deg, rgba(56, 189, 248, 0.85), rgba(2, 132, 199, 0.85)); }
         .archive-btn { background: linear-gradient(135deg, rgba(245, 158, 11, 0.85), rgba(217, 119, 6, 0.85)); }
         .timer-btn { background: linear-gradient(135deg, rgba(236, 72, 153, 0.85), rgba(190, 24, 93, 0.85)); }
+        .quiz-mode-btn { background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(79, 70, 229, 0.85)); }
 
         .law-bg-element {
             position: fixed;
@@ -1026,6 +1027,65 @@
         }
         .options label input { margin-right: 10px; transform: scale(1.2); accent-color: #38bdf8; flex-shrink: 0; }
 
+        .mixed-input-field {
+            width: 100%;
+            max-width: 100%;
+            padding: 10px 14px;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid rgba(56, 189, 248, 0.5);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .essay-textarea-field {
+            width: 100%;
+            max-width: 100%;
+            height: 120px;
+            padding: 12px;
+            margin-top: 8px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1.5px solid rgba(192, 132, 252, 0.6);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        .essay-done-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 13.5px;
+            padding: 10px 18px;
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            transition: all 0.2s ease;
+        }
+        .essay-done-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        .rubrics-badge-box {
+            background: rgba(168, 85, 247, 0.18);
+            border: 1.5px dashed rgba(192, 132, 252, 0.7);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-top: 8px;
+            font-size: 12.5px;
+            color: #f3e8ff;
+        }
+
         #student-view-wrapper {
             position: relative;
             width: 100%;
@@ -1266,7 +1326,6 @@
             100% { opacity: 1; transform: translate(-50%, 0); }
         }
 
-        /* BIGGER PICTURE ARCHIVE GRID & IMAGES */
         .archive-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1315,93 +1374,6 @@
             border-radius: 10px;
             margin-top: 4px;
         }
-
-        /* Additive styles for requested game modes, individual ranking and history */
-        .feature-mode-panel{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 0 12px}
-        .feature-mode-btn{border:1px solid rgba(255,255,255,.35);border-radius:14px;padding:12px 18px;color:#fff;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#8b5cf6,#0284c7);box-shadow:0 0 18px rgba(168,85,247,.45);animation:glowPulseEffect 3s infinite}
-        .feature-mode-options{display:none;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0 14px}
-        .feature-mode-options button{border:1px solid rgba(255,255,255,.3);border-radius:12px;padding:10px 16px;background:linear-gradient(135deg,#a855f7,#0e7490);color:white;font-weight:800;cursor:pointer}
-        .individual-login-btn{display:none;width:100%;min-height:150px;max-width:880px;margin:8px auto;padding:30px 20px;font-size:clamp(24px,4vw,42px);border-radius:24px;border:2px solid rgba(255,255,255,.45);color:#fff;font-weight:900;background:linear-gradient(135deg,#0e7490,#7c3aed,#be185d);box-shadow:0 0 30px rgba(56,189,248,.45);animation:buttonPulseAnim 2.5s infinite}
-        .feature-modal-card{max-width:1000px!important;width:95%!important;max-height:90vh;overflow:auto}
-        .history-list{display:grid;gap:10px;margin-top:14px;text-align:left}
-        .history-entry{padding:15px;border-radius:16px;background:linear-gradient(135deg,rgba(30,41,59,.94),rgba(76,29,149,.58));border:1px solid rgba(192,132,252,.6);box-shadow:0 0 18px rgba(168,85,247,.2)}
-        .history-entry strong{font-size:18px;color:#f5d0fe}
-        #individual-monitor{display:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;width:100%;margin-top:12px}
-        .individual-monitor-box{background:rgba(15,23,42,.78);border:1.5px solid rgba(192,132,252,.55);border-radius:18px;padding:16px;min-width:0;box-shadow:0 0 20px rgba(168,85,247,.2)}
-        .individual-list{max-height:65vh;overflow:auto;display:grid;gap:8px}
-        .individual-row{display:flex;align-items:center;gap:10px;padding:9px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
-        .individual-row img{width:48px;height:48px;object-fit:cover;border-radius:50%;border:2px solid #c084fc;flex-shrink:0}
-        .individual-row .ind-name{flex:1;overflow-wrap:anywhere;font-weight:800}
-        .top-nine-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-        .top-nine-card{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px 5px;border-radius:15px;background:rgba(30,41,59,.8);border:1px solid rgba(192,132,252,.55);min-width:0;overflow-wrap:anywhere}
-        .top-nine-card.top-three{min-height:150px;box-shadow:0 0 18px rgba(56,189,248,.22)}
-        .top-nine-card.top-three img{width:76px;height:76px;border-radius:50%;object-fit:cover;border:3px solid #facc15}
-        .top-nine-card.top-rest img{width:58px;height:58px;border-radius:50%;object-fit:cover;border:3px solid #c084fc}
-        .top-nine-card .rank-name{font-size:12px;font-weight:800;margin-top:5px}
-        .top-nine-card .rank-score{font-size:12px;color:#bae6fd;font-weight:900}
-        .individual-name-input{display:none;width:100%;box-sizing:border-box;padding:12px 14px;margin:8px 0;background:rgba(255,255,255,.12);border:1px solid rgba(192,132,252,.7);border-radius:12px;color:#fff;font-size:16px}
-        .individual-name-input::placeholder{color:#cbd5e1}
-        @media(max-width:700px){#individual-monitor{grid-template-columns:1fr}.top-nine-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.individual-list{max-height:38vh}.individual-login-btn{min-height:120px}}
-
-        /* Keep the first screen within the viewport without changing the original layout order. */
-        body:has(#role-select:not(.hidden)) {
-            height: 100vh;
-            height: 100dvh;
-            min-height: 0 !important;
-            overflow: hidden !important;
-            justify-content: center;
-        }
-        body:has(#role-select:not(.hidden)) #main-container {
-            width: min(100% - 24px, 1550px);
-            max-height: calc(100vh - 24px);
-            max-height: calc(100dvh - 24px);
-            margin: 0 auto !important;
-            box-sizing: border-box;
-            overflow: hidden;
-        }
-        /* Only tighten spacing and button proportions on the first screen when needed. */
-        body:has(#role-select:not(.hidden)) #role-select { gap: 0; }
-        body:has(#role-select:not(.hidden)) #role-select > div:first-child { margin-bottom: 2px !important; }
-        body:has(#role-select:not(.hidden)) .app-logo {
-            width: clamp(48px, 10vh, 85px);
-            height: clamp(48px, 10vh, 85px);
-        }
-        body:has(#role-select:not(.hidden)) .animated-header-title {
-            font-size: clamp(16px, 3.2vh, 24px);
-            line-height: 1.15;
-            margin: clamp(3px, 1vh, 10px) 0 5px;
-        }
-        body:has(#role-select:not(.hidden)) .animated-main-btn {
-            padding: clamp(8px, 1.8vh, 16px) clamp(14px, 2.8vw, 36px) !important;
-            font-size: clamp(13px, 2.4vh, 18px) !important;
-            margin: 4px auto 7px !important;
-        }
-        body:has(#role-select:not(.hidden)) .feature-mode-panel { margin: 2px 0 4px; }
-        body:has(#role-select:not(.hidden)) .feature-mode-btn {
-            padding: clamp(6px, 1.3vh, 10px) clamp(12px, 2vw, 18px);
-            font-size: clamp(12px, 2vh, 15px);
-        }
-        body:has(#role-select:not(.hidden)) .feature-mode-options { margin: 4px 0 6px; }
-        body:has(#role-select:not(.hidden)) .attorney-buttons-container {
-            gap: clamp(5px, 1.2vh, 12px);
-            margin-top: 6px;
-        }
-        body:has(#role-select:not(.hidden)) .attorney-buttons-container .group-btn {
-            padding: clamp(8px, 1.8vh, 17px) clamp(8px, 1.4vw, 12px);
-            font-size: clamp(12px, 2.2vh, 16px);
-            min-width: 0;
-        }
-        body:has(#role-select:not(.hidden)) #individual-login-btn {
-            min-height: 0;
-            padding: clamp(12px, 2.5vh, 24px) 12px;
-            font-size: clamp(16px, 3vh, 28px);
-        }
-        @media (max-height: 650px) {
-            body:has(#role-select:not(.hidden)) #main-container { padding-top: 10px; padding-bottom: 10px; }
-            body:has(#role-select:not(.hidden)) .app-logo { width: 46px; height: 46px; }
-            body:has(#role-select:not(.hidden)) .animated-header-title { font-size: 16px; }
-            body:has(#role-select:not(.hidden)) #role-select h3 { margin-top: 2px !important; }
-        }
     </style>
 </head>
 <body>
@@ -1413,7 +1385,7 @@
         
         <div class="top-controls-buttons" id="controls-button-wrapper">
             <button class="control-btn" id="fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
-            <button class="control-btn archive-btn" id="score-history-btn" onclick="openScoreHistoryAuth()">📊 Score History 🔒</button>
+            <button class="control-btn quiz-mode-btn" onclick="openQuizModeModal()">🔀 Quiz Mode</button>
             <button class="control-btn title-btn" onclick="openTitleModal()">✏️ Change Title</button>
             <button class="control-btn timer-btn" onclick="openTimerModal()">⏱️ Set Timer</button>
             <button class="control-btn insert-btn" onclick="openInsertModal()">➕ Insert Questions</button>
@@ -1424,6 +1396,21 @@
 
     <div id="floating-timer-badge">
         <span id="floating-timer-text">05:00</span>
+    </div>
+
+    <div class="modal-overlay" id="quiz-mode-modal" style="display: none; z-index: 100010;">
+        <div class="modal-card" style="max-width: 450px;">
+            <h3 style="color: #c084fc;">🔀 Select Quiz Mode</h3>
+            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Pumili kung anong uri ng pagsusulit ang ipapatupad sa lahat ng participants:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin: 0 auto 15px auto;">
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #38bdf8, #0284c7);" onclick="selectQuizMode('multiple-choice')">1: PURE MULTIPLE CHOICE</button>
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #a855f7, #7c3aed);" onclick="selectQuizMode('mixed')">2: MIXED (MC, ID, ENUM, T/F, SHORT ESSAY)</button>
+                <button class="btn" style="margin:0; padding:12px; background: linear-gradient(135deg, #ec4899, #be185d);" onclick="selectQuizMode('long-essay')">3: LONG ESSAY</button>
+            </div>
+
+            <button class="btn" style="background:var(--danger); width: 100%; margin:0; padding:10px;" onclick="closeQuizModeModal()">Cancel</button>
+        </div>
     </div>
 
     <div class="modal-overlay" id="title-modal" style="display: none; z-index: 100010;">
@@ -1469,15 +1456,11 @@
         </div>
     </div>
 
-    <!-- PICTURE ARCHIVE DISPLAY MODAL WITH ERASE EMOJI BUTTON & EXTRA LARGE PHOTOS -->
     <div class="modal-overlay" id="archive-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 850px; width: 95%;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">
                 <h3 style="color: #f59e0b; margin:0; font-size: 20px;">🖼️ Saved Participants Picture Archive</h3>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-                    <button id="delete-selected-archive-btn" class="btn" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);margin:0;padding:8px 12px;font-size:13px;" onclick="deleteSelectedArchive()">☑️ Delete Selected</button>
-                    <button class="btn" style="background: linear-gradient(135deg, #f43f5e, #be123c); margin: 0; padding: 8px 14px; font-size: 13px;" onclick="confirmEraseAllArchive()" title="Erase All Photos">🗑️ Erase All</button>
-                </div>
+                <button class="btn" style="background: linear-gradient(135deg, #f43f5e, #be123c); margin: 0; padding: 8px 14px; font-size: 13px;" onclick="confirmEraseAllArchive()" title="Erase All Photos">🗑️ Erase All</button>
             </div>
             
             <p style="font-size: 12px; color: #cbd5e1; margin: 10px 0 0 0; text-align: left;">Awtomatikong nakatago rito ang lahat ng mga nakaraang kinuhang litrato kasama ang oras at petsa:</p>
@@ -1490,33 +1473,10 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="score-history-auth-modal" style="display:none;z-index:100020;">
-        <div class="modal-card">
-            <h3 style="color:#c084fc;">🔒 Confidential Score History</h3>
-            <p style="color:#cbd5e1;font-size:13px;">Enter the password to view previous scores.</p>
-            <input id="score-history-pass-input" class="modal-input" type="password" placeholder="Enter Password" onkeyup="if(event.key==='Enter')verifyScoreHistoryPassword()" autocomplete="off" />
-            <div style="display:flex;gap:10px;justify-content:center;">
-                <button class="btn" onclick="closeScoreHistoryAuth()">Cancel</button>
-                <button class="btn" onclick="verifyScoreHistoryPassword()">Unlock</button>
-            </div>
-        </div>
-    </div>
-    <div class="modal-overlay" id="score-history-modal" style="display:none;z-index:100020;">
-        <div class="modal-card feature-modal-card">
-            <h2>📊 Confidential Score History</h2>
-            <div class="feature-mode-options" id="score-history-options" style="display:flex;">
-                <button onclick="renderScoreHistory('group')">👥 Group Score History</button>
-                <button onclick="renderScoreHistory('individual')">🧑 Individual Score History</button>
-            </div>
-            <div id="score-history-list" class="history-list"><p>Select a history type above.</p></div>
-            <button class="btn" style="width:100%;margin-top:16px;" onclick="closeScoreHistoryModal()">Close</button>
-        </div>
-    </div>
-
     <div class="modal-overlay" id="insert-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left;">
             <h3 style="color: #38bdf8; text-align: center; margin-top: 0;">➕ Insert Plain Text Questions</h3>
-            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">I-paste ang mga tanong nang direkta. Sundin ang format na Q:, A), B), C), D), Answer:, at Explanation:</p>
+            <p style="font-size: 12px; color: #cbd5e1; text-align: center; margin-bottom: 12px;">Para sa Identification/Enumeration: Maglagay ng Answer: [Tamang Sagot]. May Done button na lalabas sa ibaba!</p>
             
             <textarea id="custom-questions-plaintext" class="modal-input" style="width: 100%; max-width: 100%; height: 260px; font-family: monospace; font-size: 12px; text-align: left;" placeholder="I-paste ang plain text questions dito..."></textarea>
 
@@ -1595,7 +1555,6 @@
         <div class="camera-box">
             <h3 style="color: #f472b6; margin: 0 0 4px 0; font-size: 19px;"> Say Hi! 👋💖</h3>
             <p style="font-size: 12.5px; color: #e2e8f0; margin: 0 0 10px 0;">Smile for the court camera! ✨📸</p>
-            <input id="individual-fullname" class="individual-name-input" type="text" maxlength="100" placeholder="Enter your full name" autocomplete="name" />
             <video id="webcam-video" autoplay playsinline></video>
             <canvas id="webcam-canvas" class="hidden"></canvas>
             <img id="captured-preview" class="hidden" />
@@ -1679,7 +1638,7 @@
     </div>
 
     <div class="container" id="main-container">
-<div id="role-select">
+        <div id="role-select">
             <div style="text-align:center; margin-bottom: 4px;">
                 <img src="/logo.png" alt="Logo" class="app-logo">
             </div>
@@ -1687,18 +1646,12 @@
             <p style="text-align:center; margin: 4px 0 10px 0; font-size: 14px; color: #e9d5ff;">Select your mode to begin:</p>
             <button class="btn animated-main-btn" style="margin-bottom: 12px;" onclick="selectRole('teacher')">📺 Judge Big Screen Monitor</button>
             <h3 style="text-align:center; margin-bottom: 6px; color: #f472b6; font-size: 15px;">Join as:</h3>
-            <div class="feature-mode-panel"><button class="feature-mode-btn" onclick="toggleGameModeOptions()">🎮 Game Mode</button></div>
-            <div class="feature-mode-options" id="game-mode-options">
-                <button onclick="setGameMode('group')">👥 By Group</button>
-                <button onclick="setGameMode('individual')">🧑 Individual</button>
-            </div>
             <div class="attorney-buttons-container">
                 <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
                 <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
                 <button class="group-btn attorney-btn-3 animated-group-btn-3" onclick="selectGroup('Attorney 3')">Attorney 3</button>
                 <button class="group-btn attorney-btn-4 animated-group-btn-4" onclick="selectGroup('Attorney 4')">Attorney 4</button>
             </div>
-            <button id="individual-login-btn" class="individual-login-btn" onclick="selectGroup('Individual')">🔐 LOG-IN / JOIN INDIVIDUAL</button>
         </div>
 
         <div id="teacher-view" class="hidden">
@@ -1737,16 +1690,6 @@
                     </div>
                 </div>
             </div>
-            <div id="individual-monitor">
-                <div class="individual-monitor-box">
-                    <h2>👥 Individual Participants & Scores</h2>
-                    <div id="individual-live-list" class="individual-list"></div>
-                </div>
-                <div class="individual-monitor-box">
-                    <h2>🏆 Top 1–9 Live Ranking</h2>
-                    <div id="individual-top-nine" class="top-nine-grid"></div>
-                </div>
-            </div>
         </div>
 
         <div id="student-view" class="hidden">
@@ -1777,15 +1720,18 @@
         let myGroup = null;
         let isJudgeRole = false;
         let isGameStarted = false;
+        let currentQuizMode = 'multiple-choice';
         let answeredQuestions = {};
         let latestGroupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
         let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         let totalQuestionsCount = 0;
+        let totalMaxScore = 0;
         let capturedDataUrl = '';
         let mediaStream = null;
         let serverPhotoArchive = [];
+        let globalQuestionsList = [];
 
         let shownPopups = {};
 
@@ -1843,6 +1789,22 @@
             initAudio();
             document.getElementById('instructions-modal').style.display = 'none';
         }
+
+        function openQuizModeModal() { document.getElementById('quiz-mode-modal').style.display = 'flex'; }
+        function closeQuizModeModal() { document.getElementById('quiz-mode-modal').style.display = 'none'; }
+        function selectQuizMode(mode) {
+            socket.emit('changeQuizMode', mode);
+            closeQuizModeModal();
+            let modeTitle = mode === 'mixed' ? 'MIXED' : (mode === 'long-essay' ? 'LONG ESSAY' : 'PURE MULTIPLE CHOICE');
+            alert(`Tagumpay! Na-set ang Quiz Mode sa: ${modeTitle}! 🔀`);
+        }
+
+        socket.on('quizModeUpdated', (mode) => {
+            currentQuizMode = mode;
+            if (globalQuestionsList.length > 0) {
+                renderQuestionsUI(globalQuestionsList);
+            }
+        });
 
         function openTitleModal() { document.getElementById('title-modal').style.display = 'flex'; }
         function closeTitleModal() { document.getElementById('title-modal').style.display = 'none'; }
@@ -1908,30 +1870,30 @@
             }
 
             let html = '';
-            serverPhotoArchive.forEach((item, index) => {
+            serverPhotoArchive.forEach(item => {
                 html += `
-                    <div class="archive-item" style="position:relative;">
-                        <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin:5px;color:#fef3c7;font-weight:800;">
-                            <input type="checkbox" class="archive-select-checkbox" value="${item.id || index}" style="width:18px;height:18px;accent-color:#a855f7;"> Select
-                        </label>
-                        <img src="${item.photo || '/logo.png'}" alt="${escapeHtml(item.fullName || item.groupName)}">
-                        <p>${escapeHtml(item.fullName || item.groupName)}</p>
-                        <span>🕒 ${escapeHtml(item.timestamp || '')}</span>
+                    <div class="archive-item">
+                        <img src="${item.photo || '/logo.png'}" alt="${item.groupName}">
+                        <p>${item.groupName}</p>
+                        <span>🕒 ${item.timestamp}</span>
                     </div>
                 `;
             });
             container.innerHTML = html;
-            const deleteSelected = document.getElementById('delete-selected-archive-btn');
-            if (deleteSelected) deleteSelected.style.display = 'inline-block';
         }
 
-        const defaultPlainSample = `Q: Aling teorya ni Lawrence Kohlberg ang tumutukoy sa antas kung saan ang pagpapasya ng bata ay nakabatay sa pag-iwas sa parusa at pagsunod sa ganti?
+        const defaultPlainSample = `Q: Ipaliwanag ang kahalagahan ng Code of Ethics sa propesyonal na pagtuturo.
+Type: Essay
+Rubrics: Nilalaman (5 pts), Organisasyon (3 pts), Gramatika (2 pts)
+Points: 10
+
+Q: Aling teorya ni Lawrence Kohlberg ang tumutukoy sa antas kung saan ang pagpapasya ng bata ay nakabatay sa pag-iwas sa parusa?
 A) Post-Conventional Level
 B) Conventional Level
 C) Pre-Conventional Level
 D) Universal Ethical Principles
 Answer: C
-Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng mga panlabas na kahihinatnan tulad ng parusa (Punishment and Obedience) at gantimpala.`;
+Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`;
 
         function openInsertModal() {
             document.getElementById('insert-modal').style.display = 'flex';
@@ -1944,7 +1906,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        // BULLETPROOF UNICODE & CUSTOM FONT TOLERANT QUESTION PARSER
         function savePlainQuestions() {
             try {
                 let rawInput = document.getElementById('custom-questions-plaintext').value;
@@ -1953,7 +1914,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     return;
                 }
 
-                // Linisin ang custom font artifacts (tulad ng heart symbol '♡' pabalik sa 'o'/'O')
                 let cleanText = rawInput
                     .replace(/♡/g, 'o')
                     .replace(/♥/g, 'o')
@@ -1963,9 +1923,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     .replace(/\r/g, '\n')
                     .trim();
 
-                // Hatiin sa bawat block ng tanong
                 let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
-                
                 let questionsList = [];
 
                 rawBlocks.forEach(block => {
@@ -1975,58 +1933,89 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
                     
                     let qText = "";
+                    let qType = "multiple-choice";
                     let options = {};
                     let answer = "";
                     let explanation = "";
+                    let rubrics = "";
+                    let points = 1;
 
                     lines.forEach(line => {
-                        // Match Question Line
                         if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
                             qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
                         } 
-                        // Match Option Lines (A), B), C), D) o A., B., C., D.)
+                        else if (/^Type[\s:\-\)\.]/i.test(line)) {
+                            let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
+                            if (tVal.includes('essay')) qType = 'essay';
+                            else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
+                            else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
+                            else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
+                            else qType = 'multiple-choice';
+                        }
+                        else if (/^Rubrics?[\s:\-\)\.]/i.test(line) || /^Criteria[\s:\-\)\.]/i.test(line)) {
+                            rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
+                            qType = 'essay';
+                        }
+                        else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
+                            let ptsMatch = line.match(/\d+/);
+                            if (ptsMatch) points = parseInt(ptsMatch[0], 10);
+                        }
                         else if (/^[A-D][\)\.\:\-]/i.test(line)) {
                             let optKey = line.charAt(0).toUpperCase();
                             let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
                             options[optKey] = optVal;
                         } 
-                        // Match Answer Line
                         else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
-                            let rawAns = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim().toUpperCase();
-                            let match = rawAns.match(/[A-D]/);
-                            if (match) answer = match[0];
+                            answer = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim();
                         } 
-                        // Match Explanation Line
                         else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
                             explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
                         }
                     });
 
-                    if (qText && Object.keys(options).length > 0 && answer) {
+                    if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText)) {
+                        if (Object.keys(options).length === 0 && !answer) {
+                            qType = 'essay';
+                            if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kelebanse ng sagot.";
+                            if (points === 1) points = 10;
+                        }
+                    }
+
+                    if (qText) {
                         questionsList.push({
                             question: qText,
+                            type: qType,
                             options: options,
-                            answer: answer,
-                            explanation: explanation || "Walang nakasaad na paliwanag."
+                            answer: answer || "N/A (Essay/Constructed Response)",
+                            explanation: explanation || (rubrics ? `Criteria for Judging: ${rubrics}` : "Walang nakasaad na paliwanag."),
+                            rubrics: rubrics,
+                            points: points
                         });
                     }
                 });
 
                 if (questionsList.length === 0) {
-                    alert("Hindi pa rin nabasa. Siguraduhing may 'Q:' sa simula at 'Answer: A/B/C/D' sa bawat tanong.");
+                    alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
                     return;
                 }
 
                 socket.emit('updatePlainQuestionsData', questionsList);
                 closeInsertModal();
-                alert(`Tagumpay! ${questionsList.length} tanong ang na-update sa LAHAT ng screen! 🚀`);
+                alert(`Tagumpay! Awtomatikong nabasa ang ${questionsList.length} tanong sa LAHAT ng screen! 🚀`);
             } catch (err) {
-                alert("May error sa pagbasa ng text mula sa cellphone.");
+                alert("May error sa pagbasa ng text.");
             }
         }
 
         socket.on('applyCustomQuestionsList', (questionsList) => {
+            globalQuestionsList = questionsList;
+            renderQuestionsUI(questionsList);
+        });
+
+        function renderQuestionsUI(questionsList) {
             totalQuestionsCount = questionsList.length;
+            totalMaxScore = questionsList.reduce((acc, q) => acc + (q.points || 1), 0);
+            
             const quizContainer = document.getElementById('quiz-questions');
             const reviewGrid = document.getElementById('review-explanations-grid');
             
@@ -2037,24 +2026,77 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                 let qNum = idx + 1;
                 let qKey = `q${qNum}`;
 
-                let optionsHTML = '';
-                Object.keys(q.options).forEach(optKey => {
-                    optionsHTML += `
-                        <label id="lbl-${qKey}-${optKey}">
-                            <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns('${qKey}', '${optKey}')"> 
-                            ${optKey}) ${q.options[optKey]}
-                        </label>
+                let inputFieldHTML = '';
+                let effectiveMode = currentQuizMode;
+
+                if (effectiveMode === 'multiple-choice') {
+                    let opts = q.options && Object.keys(q.options).length > 0 ? q.options : { A: "Option A", B: "Option B", C: "Option C", D: "Option D" };
+                    let optionsHTML = '';
+                    Object.keys(opts).forEach(optKey => {
+                        optionsHTML += `
+                            <label id="lbl-${qKey}-${optKey}">
+                                <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns(${idx}, '${qKey}', '${optKey}')"> 
+                                ${optKey}) ${opts[optKey]}
+                            </label>
+                        `;
+                    });
+                    inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
+                } 
+                else if (effectiveMode === 'long-essay' || q.type === 'essay') {
+                    inputFieldHTML = `
+                        <div class="rubrics-badge-box">
+                            📌 <b>Criteria for Judging:</b> ${q.rubrics || 'Nilalaman at Kaangkupan ng Sagot'}<br>
+                            🎯 <b>Total Points:</b> ${q.points || 10} Points
+                        </div>
+                        <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong kumpletong sagot dito..."></textarea>
+                        <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerEssaySubmit(${idx}, '${qKey}')">Submit Essay & Auto-Grade 🚀</button>
                     `;
-                });
+                }
+                else {
+                    if (q.type === 'multiple-choice' && q.options && Object.keys(q.options).length > 0) {
+                        let optionsHTML = '';
+                        Object.keys(q.options).forEach(optKey => {
+                            optionsHTML += `
+                                <label id="lbl-${qKey}-${optKey}">
+                                    <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns(${idx}, '${qKey}', '${optKey}')"> 
+                                    ${optKey}) ${q.options[optKey]}
+                                </label>
+                            `;
+                        });
+                        inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
+                    } else if (q.type === 'true-false') {
+                        inputFieldHTML = `
+                            <div class="options">
+                                <label id="lbl-${qKey}-True">
+                                    <input type="radio" name="${qKey}" value="True" onchange="submitAns(${idx}, '${qKey}', 'True')"> A) True / Tama
+                                </label>
+                                <label id="lbl-${qKey}-False">
+                                    <input type="radio" name="${qKey}" value="False" onchange="submitAns(${idx}, '${qKey}', 'False')"> B) False / Mali
+                                </label>
+                            </div>`;
+                    } else if (q.type === 'essay') {
+                        inputFieldHTML = `
+                            <div class="rubrics-badge-box">
+                                📌 <b>Criteria / Rubrics:</b> ${q.rubrics || 'Kabuuan ng Kaisipan at Grammar'}<br>
+                                🎯 <b>Max Score:</b> ${q.points || 10} Points
+                            </div>
+                            <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong essay dito..."></textarea>
+                            <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerEssaySubmit(${idx}, '${qKey}')">Submit Essay & Auto-Grade 🚀</button>`;
+                    } else { // Identification o Enumeration
+                        inputFieldHTML = `
+                            <div style="margin-top: 8px;">
+                                <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot..." autocomplete="off" />
+                                <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerMixedTextSubmit(${idx}, '${qKey}')">Done & Submit 🚀</button>
+                            </div>`;
+                    }
+                }
 
                 questionsHTML += `
                     <div class="question-card" id="card-${qKey}">
-                        <p><b>Q${qNum}:</b> ${q.question}</p>
-                        <div class="options">
-                            ${optionsHTML}
-                        </div>
+                        <p><b>Q${qNum}:</b> ${q.question} <span style="font-size: 12px; color: #f472b6;">(${q.points || 1} pts)</span></p>
+                        ${inputFieldHTML}
                         <div class="explanation-box" id="exp-${qKey}">
-                            <b>🔍 Detalyadong Paliwanag:</b> ${q.explanation}
+                            <b>🔍 Paliwanag / Rubrics:</b> ${q.explanation}
                         </div>
                     </div>
                 `;
@@ -2063,7 +2105,8 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                     <div class="explanation-card-item">
                         <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q${qNum}: ${q.question}</p>
                         <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;">
-                            <b>Tamang Sagot (${q.answer}):</b> ${q.explanation}
+                            <b>Batayan / Tamang Sagot:</b> ${q.answer}<br>
+                            <b>Detaye:</b> ${q.explanation}
                         </p>
                     </div>
                 `;
@@ -2074,12 +2117,12 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
 
             answeredQuestions = {};
             if (myGroup && latestGroupScores[myGroup] !== undefined) {
-                document.getElementById('group-score-display').innerText = `Score: 0 / ${totalQuestionsCount}`;
+                document.getElementById('group-score-display').innerText = `Score: 0 / ${totalMaxScore}`;
             }
-        });
+        }
 
         function disableAllRadioInputs(disable) {
-            const inputs = document.querySelectorAll('#quiz-questions input[type="radio"]');
+            const inputs = document.querySelectorAll('#quiz-questions input[type="radio"], #quiz-questions input[type="text"], #quiz-questions textarea, #quiz-questions button');
             inputs.forEach(input => {
                 input.disabled = disable;
             });
@@ -2277,16 +2320,107 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
         function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { socket.emit('resetGame'); }
 
-        function submitAns(questionId, answer) {
+        function submitAns(questionIndex, questionId, answer) {
             if (!isGameStarted) return;
             if (!myGroup || answeredQuestions[questionId]) return;
             answeredQuestions[questionId] = true;
             
             const answeredCount = Object.keys(answeredQuestions).length;
-            socket.emit('submitAnswer', { groupName: myGroup, questionId, answer, answeredCount });
+            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer, answeredCount });
             
             const expBox = document.getElementById(`exp-${questionId}`);
             if (expBox) expBox.style.display = "block";
+
+            if (answeredCount >= totalQuestionsCount) {
+                lockQuizUI();
+                const popup = document.getElementById('feedback-popup');
+                if (popup) {
+                    popup.className = "feedback-correct";
+                    popup.innerHTML = "Wait for the results!";
+                    popup.style.display = "block";
+                }
+            }
+        }
+
+        function triggerMixedTextSubmit(questionIndex, questionId) {
+            const textInput = document.getElementById(`input-${questionId}`);
+            if (!textInput) return;
+            const val = textInput.value;
+
+            if (!val || !val.trim()) {
+                alert("Mangyaring i-type muna ang iyong sagot!");
+                return;
+            }
+
+            submitMixedTextAns(questionIndex, questionId, val);
+
+            const btn = document.getElementById(`btn-done-${questionId}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Submitted ✔️";
+                btn.style.background = "rgba(148, 163, 184, 0.4)";
+            }
+        }
+
+        function submitMixedTextAns(questionIndex, questionId, answerText) {
+            if (!isGameStarted) return;
+            if (!myGroup || answeredQuestions[questionId]) return;
+            if (!answerText || !answerText.trim()) return;
+            
+            answeredQuestions[questionId] = true;
+            const answeredCount = Object.keys(answeredQuestions).length;
+            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: answerText, answeredCount });
+            
+            const expBox = document.getElementById(`exp-${questionId}`);
+            if (expBox) expBox.style.display = "block";
+
+            const textInput = document.getElementById(`input-${questionId}`);
+            if (textInput) textInput.disabled = true;
+
+            if (answeredCount >= totalQuestionsCount) {
+                lockQuizUI();
+                const popup = document.getElementById('feedback-popup');
+                if (popup) {
+                    popup.className = "feedback-correct";
+                    popup.innerHTML = "Wait for the results!";
+                    popup.style.display = "block";
+                }
+            }
+        }
+
+        function triggerEssaySubmit(questionIndex, questionId) {
+            const txtArea = document.getElementById(`textarea-${questionId}`);
+            if (!txtArea) return;
+            const val = txtArea.value;
+
+            if (!val || !val.trim()) {
+                alert("Mangyaring isulat muna ang iyong essay bago pindutin ang Submit!");
+                return;
+            }
+
+            submitEssayAns(questionIndex, questionId, val);
+
+            const btn = document.getElementById(`btn-done-${questionId}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Submitted & Evaluated ✔️";
+                btn.style.background = "rgba(148, 163, 184, 0.4)";
+            }
+        }
+
+        function submitEssayAns(questionIndex, questionId, essayText) {
+            if (!isGameStarted) return;
+            if (!myGroup || answeredQuestions[questionId]) return;
+
+            answeredQuestions[questionId] = true;
+            const answeredCount = Object.keys(answeredQuestions).length;
+            socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: essayText, answeredCount });
+
+            const expBox = document.getElementById(`exp-${questionId}`);
+            if (expBox) expBox.style.display = "block";
+
+            const txtArea = document.getElementById(`textarea-${questionId}`);
+            if (txtArea) txtArea.disabled = true;
 
             if (answeredCount >= totalQuestionsCount) {
                 lockQuizUI();
@@ -2308,15 +2442,21 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             }
         });
 
-        socket.on('answerFeedback', ({ isCorrect, questionId, answer }) => {
+        socket.on('answerFeedback', ({ isCorrect, questionId, answer, earnedPoints, maxPoints, qType }) => {
             const answeredCount = Object.keys(answeredQuestions).length;
-            if (answeredCount < totalQuestionsCount) {
+            if (answeredCount <= totalQuestionsCount) {
                 const popup = document.getElementById('feedback-popup');
                 if (popup) {
-                    popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-                    popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
+                    if (qType === 'essay') {
+                        popup.className = earnedPoints > 0 ? "feedback-correct" : "feedback-wrong";
+                        popup.innerHTML = `📝 ESSAY GRADED!<br><span style="font-size:20px;">Score: ${earnedPoints} / ${maxPoints} Points</span>`;
+                    } else {
+                        // Para sa Multiple Choice, True/False, Identification, at Enumeration: CORRECT o INCORRECT lamang!
+                        popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
+                        popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
+                    }
                     popup.style.display = "block";
-                    setTimeout(() => { popup.style.display = "none"; }, 1500);
+                    setTimeout(() => { popup.style.display = "none"; }, 2000);
                 }
             }
             if (questionId && answer) {
@@ -2335,7 +2475,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             renderScoreboardAndPodium();
 
             if (myGroup && groupScores[myGroup] !== undefined) {
-                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / ${totalQuestionsCount}`;
+                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / ${totalMaxScore}`;
             }
         });
 
@@ -2357,7 +2497,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             
             let chartHTML = '';
             sortedGroups.forEach(([group, score]) => {
-                let percentage = totalQuestionsCount > 0 ? (score / totalQuestionsCount) * 100 : 0;
+                let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
                 let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
@@ -2371,7 +2511,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                         <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
                         <div class="bar-label">${group}</div>
                         <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
-                        <div class="bar-score">${score}/${totalQuestionsCount}</div>
+                        <div class="bar-score">${score}/${totalMaxScore}</div>
                         <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
                     </div>
                 `;
@@ -2381,14 +2521,14 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
 
             let podiumHTML = '';
             sortedGroups.forEach(([group, score], idx) => {
-                let heightPercent = totalQuestionsCount > 0 ? Math.max((score / totalQuestionsCount) * 100, 8) : 8;
+                let heightPercent = totalMaxScore > 0 ? Math.max((score / totalMaxScore) * 100, 8) : 8;
                 let photoSrc = attorneyPhotos[group] || '/logo.png';
                 let isCompleted = groupCompletedStatus[group];
                 
                 let gradientBg = '';
-                if (totalQuestionsCount > 0 && score >= Math.ceil(totalQuestionsCount * 0.8)) {
+                if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
                     gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
-                } else if (totalQuestionsCount > 0 && score >= Math.ceil(totalQuestionsCount * 0.5)) {
+                } else if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.5)) {
                     gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
                 } else {
                     gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
@@ -2514,12 +2654,12 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
                 const score = latestGroupScores[attorney] || 0;
                 const photoSrc = attorneyPhotos[attorney] || '/logo.png';
-                if (totalQuestionsCount > 0 && score >= Math.ceil(totalQuestionsCount * 0.8)) {
+                if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
                     resultsHTML += `
                         <div class="result-box-card result-box-innocent">
                             <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
                             <div>
-                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalQuestionsCount} Points</h4>
+                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalMaxScore} Points</h4>
                                 <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
                             </div>
                         </div>`;
@@ -2528,7 +2668,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
                         <div class="result-box-card result-box-failing">
                             <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
                             <div>
-                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalQuestionsCount} Points</h4>
+                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalMaxScore} Points</h4>
                                 <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
                             </div>
                         </div>`;
@@ -2547,195 +2687,5 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ng bata ay ginagabayan ng 
             location.reload(); 
         });
     </script>
-
-<script>
-(function(){
-    let selectedGameMode = 'group';
-    let scoreHistoryCache = [];
-    const individualScores = {};
-    const individualParticipants = {};
-
-    window.escapeHtml = window.escapeHtml || function(value) {
-        return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-    };
-    window.toggleGameModeOptions = function(){
-        const el=document.getElementById('game-mode-options');
-        el.style.display=el.style.display==='flex'?'none':'flex';
-    };
-    window.setGameMode = function(mode){
-        selectedGameMode=mode;
-        socket.emit('setGameMode', mode);
-        const groupButtons=document.querySelector('.attorney-buttons-container');
-        const individualButton=document.getElementById('individual-login-btn');
-        document.getElementById('game-mode-options').style.display='none';
-        if(mode==='individual'){
-            groupButtons.style.display='none';
-            individualButton.style.display='block';
-            document.getElementById('individual-monitor').style.display='grid';
-            document.querySelector('.judge-main-layout').style.display='none';
-            renderIndividualMonitor();
-        } else {
-            groupButtons.style.display='';
-            individualButton.style.display='none';
-            document.getElementById('individual-monitor').style.display='none';
-            document.querySelector('.judge-main-layout').style.display='';
-        }
-    };
-    const originalSelectGroup=window.selectGroup;
-    window.selectGroup=async function(groupName){
-        if(selectedGameMode==='individual'){
-            if(groupName!=='Individual') groupName='Individual';
-            myGroup='Individual';
-            const nameInput=document.getElementById('individual-fullname');
-            nameInput.style.display='block';
-            nameInput.value='';
-        } else {
-            const nameInput=document.getElementById('individual-fullname');
-            nameInput.style.display='none';
-        }
-        await originalSelectGroup(groupName);
-    };
-    const originalConfirmJoinNow=window.confirmJoinNow;
-    window.confirmJoinNow=function(){
-        if(selectedGameMode==='individual'){
-            const fullName=document.getElementById('individual-fullname').value.trim();
-            if(!fullName){alert('Pakilagay ang iyong buong pangalan bago mag-Join Now.');return;}
-            if(!capturedDataUrl){alert('Kumuha muna ng selfie bago mag-Join Now.');return;}
-            const uniqueKey='participant_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
-            myGroup=uniqueKey;
-            document.getElementById('camera-modal').style.display='none';
-            socket.emit('registerIndividualParticipant',{id:uniqueKey,fullName,photo:capturedDataUrl});
-            document.getElementById('student-welcome-overlay').style.display='flex';
-            setTimeout(()=>{
-                document.getElementById('student-welcome-overlay').style.display='none';
-                document.getElementById('role-select').classList.add('hidden');
-                ['side-profile','qr-wrapper','left-sidebar','judge-speech-box'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
-                document.getElementById('student-view').classList.remove('hidden');
-                document.getElementById('group-title').innerText=`Individual Dashboard: ${fullName}`;
-                document.getElementById('main-container').style.background='var(--card-bg-solid)';
-                document.getElementById('floating-timer-badge').style.display='flex';
-                if(!isGameStarted) lockQuizUI(); else unlockQuizUI();
-            },1200);
-            return;
-        }
-        originalConfirmJoinNow();
-    };
-
-    socket.on('individualParticipantsUpdated', participants=>{
-        Object.keys(individualParticipants).forEach(k=>delete individualParticipants[k]);
-        (participants||[]).forEach(p=>individualParticipants[p.id]=p);
-        renderIndividualMonitor();
-    });
-    socket.on('individualScoresUpdated', scores=>{
-        Object.keys(individualScores).forEach(k=>delete individualScores[k]);
-        Object.assign(individualScores,scores||{});
-        renderIndividualMonitor();
-    });
-    socket.on('scoreHistoryUpdated', history=>{
-        scoreHistoryCache=history||[];
-        if(document.getElementById('score-history-modal').style.display==='flex'){
-            const activeType=document.getElementById('score-history-list').dataset.historyType||'group';
-            renderScoreHistory(activeType);
-        }
-    });
-    socket.on('gameModeUpdated', mode=>{
-        selectedGameMode=mode==='individual'?'individual':'group';
-        const groupButtons=document.querySelector('.attorney-buttons-container');
-        const individualButton=document.getElementById('individual-login-btn');
-        if(groupButtons&&individualButton){
-            groupButtons.style.display=selectedGameMode==='individual'?'none':'';
-            individualButton.style.display=selectedGameMode==='individual'?'block':'none';
-        }
-        const layout=document.querySelector('.judge-main-layout');
-        const monitor=document.getElementById('individual-monitor');
-        if(isJudgeRole&&layout&&monitor){
-            layout.style.display=selectedGameMode==='individual'?'none':'';
-            monitor.style.display=selectedGameMode==='individual'?'grid':'none';
-            if(selectedGameMode==='individual')renderIndividualMonitor();
-        }
-    });
-    socket.on('individualJoinPopup', participant=>{
-        if(!isJudgeRole || !participant) return;
-        const popup=document.getElementById('judge-photo-popup');
-        document.getElementById('judge-popup-title').innerText=`${participant.fullName} joined! ✨`;
-        document.getElementById('judge-popup-img').src=participant.photo||'/logo.png';
-        popup.style.display='flex';
-        popup.style.opacity='1';
-        popup.style.pointerEvents='auto';
-    });
-    // Keep the real-time join photo visible until judge dismisses it or resets the game.
-    const popupCard=document.querySelector('#judge-photo-popup .judge-popup-card');
-    if(popupCard){
-        const dismiss=document.createElement('button');
-        dismiss.className='btn';
-        dismiss.textContent='Close Photo';
-        dismiss.onclick=()=>{document.getElementById('judge-photo-popup').style.display='none';};
-        popupCard.appendChild(dismiss);
-    }
-    socket.on('resetState',()=>{
-        const popup=document.getElementById('judge-photo-popup');
-        if(popup) popup.style.display='none';
-        Object.keys(individualScores).forEach(k=>individualScores[k]=0);
-        renderIndividualMonitor();
-    });
-
-    function renderIndividualMonitor(){
-        const list=document.getElementById('individual-live-list');
-        const top=document.getElementById('individual-top-nine');
-        if(!list||!top)return;
-        const people=Object.values(individualParticipants).map(p=>({...p,score:Number(individualScores[p.id]||p.score||0)})).sort((a,b)=>b.score-a.score);
-        list.innerHTML=people.length?people.map(p=>`<div class="individual-row"><img src="${p.photo||'/logo.png'}" alt=""><span class="ind-name">${escapeHtml(p.fullName)}</span><strong>${p.score}/${totalQuestionsCount||0}</strong></div>`).join(''):'<p style="color:#94a3b8;">Wala pang participants. Lalabas dito ang mga pangalan at score.</p>';
-        const slots=[];
-        for(let i=0;i<9;i++){
-            const p=people[i];
-            const topThree=i<3;
-            slots.push(`<div class="top-nine-card ${topThree?'top-three':'top-rest'}"><span style="font-weight:900;color:#f0abfc;">TOP ${i+1}</span><img src="${p&&p.photo?p.photo:'/logo.png'}" alt="Rank ${i+1}"><div class="rank-name">${p?escapeHtml(p.fullName):'Waiting for participant'}</div><div class="rank-score">${p?p.score:0}/${totalQuestionsCount||0}</div></div>`);
-        }
-        top.innerHTML=slots.join('');
-    }
-
-    window.openScoreHistoryAuth=function(){
-        document.getElementById('score-history-pass-input').value='';
-        document.getElementById('score-history-auth-modal').style.display='flex';
-        document.getElementById('score-history-pass-input').focus();
-    };
-    window.closeScoreHistoryAuth=function(){document.getElementById('score-history-auth-modal').style.display='none';};
-    window.closeScoreHistoryModal=function(){document.getElementById('score-history-modal').style.display='none';};
-    window.verifyScoreHistoryPassword=function(){
-        const pass=document.getElementById('score-history-pass-input').value;
-        closeScoreHistoryAuth();
-        if(pass==='Quiz'){
-            socket.emit('requestScoreHistory');
-            document.getElementById('score-history-modal').style.display='flex';
-            renderScoreHistory('group');
-        } else document.getElementById('warning-modal').style.display='flex';
-    };
-    window.renderScoreHistory=function(type){
-        const container=document.getElementById('score-history-list');
-        container.dataset.historyType=type;
-        const entries=scoreHistoryCache.filter(e=>type==='individual'?e.mode==='individual':e.mode!=='individual');
-        if(!entries.length){container.innerHTML='<p style="color:#cbd5e1;">Wala pang naka-save na score history para sa category na ito.</p>';return;}
-        container.innerHTML=entries.slice().reverse().map(e=>`<div class="history-entry"><strong>${escapeHtml(e.name||e.groupName||'Participant')}</strong><div style="font-size:18px;font-weight:900;color:#67e8f9;margin:5px 0;">${Number(e.score||0)}/${Number(e.total||totalQuestionsCount||0)}</div><div style="font-size:12px;color:#cbd5e1;">📅 ${escapeHtml(e.dateTime||'Date unavailable')}</div></div>`).join('');
-    };
-    window.deleteSelectedArchive=function(){
-        const ids=[...document.querySelectorAll('.archive-select-checkbox:checked')].map(el=>el.value);
-        if(!ids.length){alert('Pumili muna ng litrato na buburahin.');return;}
-        if(confirm(`Burahin ang ${ids.length} napiling litrato?`))socket.emit('deletePhotoArchiveItems',ids);
-    };
-
-    // In individual mode, use participant identity as the scoring key.
-    const originalSubmitAns=window.submitAns;
-    window.submitAns=function(questionId,answer){
-        if(selectedGameMode!=='individual') return originalSubmitAns(questionId,answer);
-        if(!isGameStarted||!myGroup||answeredQuestions[questionId])return;
-        answeredQuestions[questionId]=true;
-        const answeredCount=Object.keys(answeredQuestions).length;
-        socket.emit('submitIndividualAnswer',{id:myGroup,questionId,answer,answeredCount});
-        const expBox=document.getElementById(`exp-${questionId}`);if(expBox)expBox.style.display='block';
-        if(answeredCount>=totalQuestionsCount)lockQuizUI();
-    };
-})();
-</script>
-
 </body>
 </html>
