@@ -2626,6 +2626,34 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         });
 
+socket.on('timerUpdate', (data) => {
+            // ... (mga kasunod na code ng timerUpdate) ...
+        }); // <--- DITO NAGTAPOS ANG TIMERUPDATE
+
+        // ---> ILAGAY MO DITO SA GITNA:
+        socket.on('newAttorneyJoined', ({ groupName, photo }) => {
+            if (isJudgeRole && photo) {
+                const popup = document.getElementById('judge-photo-popup');
+                const titleEl = document.getElementById('judge-popup-title');
+                const imgEl = document.getElementById('judge-popup-img');
+
+                if (popup && titleEl && imgEl) {
+                    titleEl.innerText = `${groupName} entered the court! ⚖️`;
+                    imgEl.src = photo;
+                    popup.style.display = 'flex';
+
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        });
+
+        socket.on('timeUp', () => { // <--- DITO NAGSISIMULA ANG TIMEUP NA MAKIKITA SA SCREEN MO
+            bgmAudio.pause();
+            urgentAudio.pause();
+            // ...
+
         socket.on('timeUp', () => {
             bgmAudio.pause();
             urgentAudio.pause();
