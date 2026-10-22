@@ -1817,6 +1817,22 @@
         <p class="judge-speech-text" id="typewriter-text"></p>
     </div>
 
+<!-- INDIVIDUAL MODE INSTRUCTIONS MODAL (Aesthetic Design) -->
+<div class="modal-overlay" id="individual-instructions-modal" style="display: none; z-index: 100025;">
+    <div class="modal-card" style="max-width: 500px; border: 3px solid #ec4899; background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99));">
+        <h3 style="color: #f472b6; font-size: 24px; font-weight: 900;">✨ INDIVIDUAL MODE INSTRUCTIONS ✨</h3>
+        <div style="text-align: left; font-size: 14px; color: #f3e8ff; margin: 15px 0; line-height: 1.6; background: rgba(15, 23, 42, 0.6); padding: 15px; border-radius: 14px; border: 1.5px solid rgba(236, 72, 153, 0.4);">
+            <p><b>🎯 Paano Maglaro (Individual Mode):</b></p>
+            <ul style="padding-left: 20px; margin: 5px 0;">
+                <li>I-type ang iyong buong pangalan at kumuha ng magandang selfie gamit ang camera.</li>
+                <li>Sagutan ang mga tanong nang mabilis at tama para umangat sa Live Top Rankings (Top 1-9).</li>
+                <li>Ang iyong score ay mase-save nang awtomatiko sa Individual Score History kasama ang date at time.</li>
+            </ul>
+        </div>
+        <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #ec4899, #be185d); width: 100%; margin: 0; padding: 12px;" onclick="closeIndividualInstructionsModal()">Simulan ang Laro! 🚀</button>
+    </div>
+</div>
+
     <script>
         const socket = io();
         let myGroup = null;
@@ -1836,6 +1852,144 @@
         let globalQuestionsList = [];
 
         let shownPopups = {};
+
+// 1. Kapag pinindot ang Individual Mode button, mag-a-appear ang instructions modal
+function selectGameMode(mode) {
+    currentMode = mode;
+    closeGameModeModal();
+    const attorneyContainer = document.querySelector('.attorney-buttons-container');
+    
+    if (mode === 'individual') {
+        // Magpakita muna ng Aesthetic Instructions Modal para sa Individual Mode
+        document.getElementById('individual-instructions-modal').style.display = 'flex';
+        
+        attorneyContainer.innerHTML = `
+            <div class="individual-login-container">
+                <h3 style="color: #f472b6; margin-top:0;">✨ Individual Participant Log-in ✨</h3>
+                <input type="text" id="indiv-fullname-input" class="modal-input" placeholder="Enter your full name..." autocomplete="off" style="max-width: 320px; margin: 10px 0;" />
+                <button class="btn animated-main-btn" style="background: linear-gradient(135deg, #10b981, #059669); padding: 12px 24px; font-size: 15px;" onclick="startIndividualCapture()">Capture Selfie & Join 📷🚀</button>
+            </div>
+        `;
+    } else {
+        location.reload(); 
+    }
+}
+
+function closeIndividualInstructionsModal() {
+    document.getElementById('individual-instructions-modal').style.display = 'none';
+}
+
+// 2. Real-time Game Mode retention kapag nag-reset o nag-surrender
+socket.on('resetState', () => { 
+    attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+    shownPopups = {};
+    
+    // Panatilihin sa Realtime kung anong mode ang huling ginamit (Group o Individual)
+    if (currentMode === 'individual') {
+        // I-reapply ang individual interface state
+        document.getElementById('role-select').classList.remove('hidden');
+        selectGameMode('individual');
+    } else {
+        location.reload(); 
+    }
+});
+
+// 3. Score History na may Select / Delete button (Hindi nawawala kahit i-restart)
+let groupHistoryData = [];
+let individualHistoryData = [];
+
+socket.on('groupHistoryUpdated', (historyList) => {
+    groupHistoryData = historyList;
+});
+
+socket.on('individualHistoryUpdated', (historyList) => {
+    individualHistoryData = historyList;
+});
+
+function openGroupScoreHistory() {
+    closeScoreHistoryModal();
+    const content = document.getElementById('detailed-history-content');
+    document.getElementById('detailed-history-title').innerText = "📊 Group Score History (Na-save)";
+    
+    let html = '';
+    if (!groupHistoryData || groupHistoryData.length === 0) {
+        // Default fallback kung walang pa-history pero kinuha sa active scores
+        ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(g => {
+            let sc = latestGroupScores[g] || 0;
+            html += `
+                <div class="history-item-card" id="history-group-${g}">
+                    <div>
+                        <strong style="font-size: 16px; color: #38bdf8;">${g}</strong><br>
+                        <span style="font-size: 11.5px; color: #cbd5e1;">🕒 Date: ${new Date().toLocaleDateString()} | Time: ${new Date().toLocaleTimeString()}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 16px; font-weight: bold; color: #84cc16;">${sc} Pts</span>
+                        <button class="btn" style="background: #f43f5e; padding: 6px 10px; font-size: 11px; margin:0;" onclick="deleteGroupHistory('${g}')">Select & Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+    } else {
+        groupHistoryData.forEach((item) => {
+            html += `
+                <div class="history-item-card">
+                    <div>
+                        <strong style="font-size: 16px; color: #38bdf8;">${item.groupName}</strong><br>
+                        <span style="font-size: 11.5px; color: #cbd5e1;">🕒 Date: ${item.date} | Time: ${item.time}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 16px; font-weight: bold; color: #84cc16;">${item.score} Pts</span>
+                        <button class="btn" style="background: #f43f5e; padding: 6px 10px; font-size: 11px; margin:0;" onclick="socket.emit('deleteGroupHistoryItem', ${item.id})">Select & Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    content.innerHTML = html;
+    document.getElementById('detailed-history-modal').style.display = 'flex';
+}
+
+function openIndividualScoreHistory() {
+    closeScoreHistoryModal();
+    const content = document.getElementById('detailed-history-content');
+    document.getElementById('detailed-history-title').innerText = "📊 Individual Score History (Na-save)";
+    
+    let html = '';
+    let entries = Object.entries(window.currentIndividualScores || {});
+    if (entries.length === 0) {
+        html = `<p style="color:#cbd5e1; text-align:center;">Wala pang naitalang individual participants.</p>`;
+    } else {
+        entries.forEach(([name, score]) => {
+            html += `
+                <div class="history-item-card">
+                    <div>
+                        <strong style="font-size: 16px; color: #f472b6;">${name}</strong><br>
+                        <span style="font-size: 11.5px; color: #cbd5e1;">🕒 Date: ${new Date().toLocaleDateString()} | Time: ${new Date().toLocaleTimeString()}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 16px; font-weight: bold; color: #84cc16;">${score} Pts</span>
+                        <button class="btn" style="background: #f43f5e; padding: 6px 10px; font-size: 11px; margin:0;" onclick="deleteIndividualScore('${name}')">Select & Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    content.innerHTML = html;
+    document.getElementById('detailed-history-modal').style.display = 'flex';
+}
+
+function deleteGroupHistory(groupName) {
+    if (confirm(`Sigurado ka bang gusto mong idelete ang score history ni ${groupName}?`)) {
+        document.getElementById(`history-group-${groupName}`).remove();
+    }
+}
+
+function deleteIndividualScore(name) {
+    if (confirm(`Sigurado ka bang gusto mong idelete ang score record ni ${name}?`)) {
+        delete window.currentIndividualScores[name];
+        openIndividualScoreHistory(); // I-refresh ang view
+    }
+}
 
         const bgmAudio = new Audio('/suspense-bgm.mp3');
         bgmAudio.loop = true;
