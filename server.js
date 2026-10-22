@@ -293,17 +293,15 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('resetGame', () => {
+socket.on('resetGame', () => {
     isGameStarted = false;
     
-    // I-reset ang mga timers sa default (hal. 300 seconds)
     if (typeof groupTimers === 'object') {
         Object.keys(groupTimers).forEach(g => {
             groupTimers[g] = 300;
         });
     }
 
-    // I-reset ang mga scores at mga nakaraang litrato
     if (typeof groupScores === 'object') {
         Object.keys(groupScores).forEach(g => {
             groupScores[g] = 0;
@@ -316,7 +314,6 @@ io.on('connection', (socket) => {
         judgePopupQueue = [];
     }
 
-    // I-broadcast ang pag-reset sa lahat nang HINDI nagti-trigger ng instruction modal
     io.emit('resetState');
     io.emit('gameState', { isGameStarted: false });
     
