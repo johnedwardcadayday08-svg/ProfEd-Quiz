@@ -293,39 +293,40 @@ io.on('connection', (socket) => {
         }
     });
 
-socket.on('resetGame', () => {
-    isGameStarted = false;
-    
-    if (typeof groupTimers === 'object') {
-        Object.keys(groupTimers).forEach(g => {
-            groupTimers[g] = 300;
-        });
-    }
+    socket.on('resetGame', () => {
+        isGameStarted = false;
+        
+        if (typeof groupTimers === 'object') {
+            Object.keys(groupTimers).forEach(g => {
+                groupTimers[g] = 300;
+            });
+        }
 
-    if (typeof groupScores === 'object') {
-        Object.keys(groupScores).forEach(g => {
-            groupScores[g] = 0;
-            if (attorneyPhotos) attorneyPhotos[g] = '';
-            if (groupCompletedStatus) groupCompletedStatus[g] = false;
-        });
-    }
+        if (typeof groupScores === 'object') {
+            Object.keys(groupScores).forEach(g => {
+                groupScores[g] = 0;
+                if (attorneyPhotos) attorneyPhotos[g] = '';
+                if (groupCompletedStatus) groupCompletedStatus[g] = false;
+            });
+        }
 
-    if (typeof judgePopupQueue !== 'undefined') {
-        judgePopupQueue = [];
-    }
+        if (typeof judgePopupQueue !== 'undefined') {
+            judgePopupQueue = [];
+        }
 
-    io.emit('resetState');
-    io.emit('gameState', { isGameStarted: false });
-    
-    if (typeof groupScores !== 'undefined' && typeof attorneyPhotos !== 'undefined') {
-        io.emit('updateState', { 
-            groupScores, 
-            photos: attorneyPhotos, 
-            completedStatus: groupCompletedStatus, 
-            mode: typeof currentGlobalMode !== 'undefined' ? currentGlobalMode : 'group' 
-        });
-    }
-});
+        io.emit('resetState');
+        io.emit('gameState', { isGameStarted: false });
+        
+        if (typeof groupScores !== 'undefined' && typeof attorneyPhotos !== 'undefined') {
+            io.emit('updateState', { 
+                groupScores, 
+                photos: attorneyPhotos, 
+                completedStatus: groupCompletedStatus, 
+                mode: typeof currentGlobalMode !== 'undefined' ? currentGlobalMode : 'group' 
+            });
+        }
+    });
+}); // <--- ITO ANG NAGPAPASARA SA io.on('connection', ...) NA KULANG KANINA!
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
