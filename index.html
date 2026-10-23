@@ -2034,33 +2034,20 @@ body.individual-mode-active, html {
         }
 
         // Lalabas LAMANG ang instructions kapag pinindot ang Group o Individual button
-        function selectGameMode(mode) {
+       function selectGameMode(mode) {
             currentMode = mode;
             closeGameModeModal();
             socket.emit('setGameMode', mode);
-            applyGameModeUI(mode, true); // True para ipakita ang instructions kapag pinindot ang button
+            
+            // Huwag kusang galawin ang instructions dito para hindi ito biglang lumabas o mawala
+            applyGameModeUI(mode, false); 
         }
 
-        function applyGameModeUI(mode, showAlerts = false) {
+function applyGameModeUI(mode, showAlerts = false) {
             currentMode = mode;
             const attorneyContainer = document.querySelector('.attorney-buttons-container');
-            const indivInstModal = document.getElementById('individual-instructions-modal');
-            const groupInstModal = document.getElementById('instructions-modal');
-
-            // Kapag unang load (showAlerts = false), HINDI natin bubuksan ang instruction modals
-            if (showAlerts) {
-                if (mode === 'individual') {
-                    if (indivInstModal) indivInstModal.style.display = 'flex';
-                    if (groupInstModal) groupInstModal.style.display = 'none';
-                } else {
-                    if (indivInstModal) indivInstModal.style.display = 'none';
-                    if (groupInstModal) groupInstModal.style.display = 'flex';
-                }
-            } else {
-                if (indivInstModal) indivInstModal.style.display = 'none';
-                if (groupInstModal) groupInstModal.style.display = 'none';
-            }
-
+            
+            // Tinitiyak natin na HINDI kusang magbubukas ang modals dito para hindi maistorbo ang user
             if (mode === 'individual') {
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
@@ -2075,7 +2062,7 @@ body.individual-mode-active, html {
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
                         <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
-                        <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
+                        <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 3</button>
                         <button class="group-btn attorney-btn-3 animated-group-btn-3" onclick="selectGroup('Attorney 3')">Attorney 3</button>
                         <button class="group-btn attorney-btn-4 animated-group-btn-4" onclick="selectGroup('Attorney 4')">Attorney 4</button>
                     `;
@@ -2092,13 +2079,7 @@ body.individual-mode-active, html {
         });
 
         // Realtime Reset Listener para sa Reset at Surrender na hinding-hindi magpapakita ng instructions
-        socket.on('resetState', () => {
-            const indivInstModal = document.getElementById('individual-instructions-modal');
-            const groupInstModal = document.getElementById('instructions-modal');
-            if (indivInstModal) indivInstModal.style.display = 'none';
-            if (groupInstModal) groupInstModal.style.display = 'none';
-        });
-        
+
         function openGroupScoreHistory() {
             closeScoreHistoryModal();
             const content = document.getElementById('detailed-history-content');
