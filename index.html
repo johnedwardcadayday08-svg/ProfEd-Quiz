@@ -7,6 +7,17 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
+/* I-center ang Individual at Group Instructions modal sa gitna ng screen */
+#individualInstructionModal, 
+#instructionModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    text-align: center;
+}
 /* Itaas pa ang individual login box malapit sa "Join as:" at alisin ang scrolling */
 .individual-login-container {
     display: flex !important;
@@ -318,6 +329,12 @@
         .archive-btn { background: linear-gradient(135deg, rgba(245, 158, 11, 0.85), rgba(217, 119, 6, 0.85)); }
         .timer-btn { background: linear-gradient(135deg, rgba(236, 72, 153, 0.85), rgba(190, 24, 93, 0.85)); }
         .quiz-mode-btn { background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(79, 70, 229, 0.85)); }
+
+/* Itago ang pangkalahatang timer sa itaas kapag nasa Group Mode */
+body[data-mode="group"] .top-timer-container,
+body.group-mode .top-timer-box {
+    display: none !important;
+}
 
         .law-bg-element {
             position: fixed;
@@ -1926,23 +1943,35 @@
             document.getElementById('game-mode-modal').style.display = 'none'; 
         }
 
+        // Lalabas LAMANG ang instructions kapag pinindot ang Group o Individual button
         function selectGameMode(mode) {
             currentMode = mode;
             closeGameModeModal();
             socket.emit('setGameMode', mode);
-            applyGameModeUI(mode);
+            applyGameModeUI(mode, true); // True para ipakita ang instructions kapag pinindot ang button
         }
 
-        function applyGameModeUI(mode) {
+        function applyGameModeUI(mode, showAlerts = false) {
             currentMode = mode;
             const attorneyContainer = document.querySelector('.attorney-buttons-container');
             const indivInstModal = document.getElementById('individual-instructions-modal');
             const groupInstModal = document.getElementById('instructions-modal');
 
-            if (mode === 'individual') {
-                if (indivInstModal) indivInstModal.style.display = 'flex';
+            // Kapag unang load (showAlerts = false), HINDI natin bubuksan ang instruction modals
+            if (showAlerts) {
+                if (mode === 'individual') {
+                    if (indivInstModal) indivInstModal.style.display = 'flex';
+                    if (groupInstModal) groupInstModal.style.display = 'none';
+                } else {
+                    if (indivInstModal) indivInstModal.style.display = 'none';
+                    if (groupInstModal) groupInstModal.style.display = 'flex';
+                }
+            } else {
+                if (indivInstModal) indivInstModal.style.display = 'none';
                 if (groupInstModal) groupInstModal.style.display = 'none';
+            }
 
+            if (mode === 'individual') {
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
                         <div class="individual-login-container">
@@ -1953,9 +1982,6 @@
                     `;
                 }
             } else {
-                if (indivInstModal) indivInstModal.style.display = 'none';
-                if (groupInstModal) groupInstModal.style.display = 'flex';
-
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
                         <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
@@ -1967,30 +1993,22 @@
             }
         }
 
-        socket.on('gameModeUpdated', (mode) => {
-            applyGameModeUI(mode);
+        // Pag-load ng page, isara muna ang lahat ng modals para First Page ang makita
+        document.addEventListener('DOMContentLoaded', () => {
+            const indivInstModal = document.getElementById('individual-instructions-modal');
+            const groupInstModal = document.getElementById('instructions-modal');
+            if (indivInstModal) indivInstModal.style.display = 'none';
+            if (groupInstModal) groupInstModal.style.display = 'none';
         });
 
-        function closeIndividualInstructionsModal() {
-            document.getElementById('individual-instructions-modal').style.display = 'none';
-        }
-
-        socket.on('resetState', () => { 
-            attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-            shownPopups = {};
-            
-            if (isJudgeRole) {
-                return; // Mananatili ang judge sa monitor screen kapag nag-reset
-            }
-
-            if (currentMode === 'individual') {
-                document.getElementById('role-select').classList.remove('hidden');
-                applyGameModeUI('individual');
-            } else {
-                location.reload(); 
-            }
+        // Realtime Reset Listener para sa Reset at Surrender na hinding-hindi magpapakita ng instructions
+        socket.on('resetState', () => {
+            const indivInstModal = document.getElementById('individual-instructions-modal');
+            const groupInstModal = document.getElementById('instructions-modal');
+            if (indivInstModal) indivInstModal.style.display = 'none';
+            if (groupInstModal) groupInstModal.style.display = 'none';
         });
-
+        
         function openGroupScoreHistory() {
             closeScoreHistoryModal();
             const content = document.getElementById('detailed-history-content');
