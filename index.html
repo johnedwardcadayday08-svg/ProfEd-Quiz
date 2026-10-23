@@ -121,13 +121,19 @@
     overflow-x: auto;
 }
 
-/* Pag-lock sa Individual Monitor layout para magkasya sa screen nang walang general scroll */
-body.individual-mode-active, html {
-    height: 100vh;
-    margin: 0;
-    overflow: hidden;
+/* Tiyaking sakto ang sukat ng mga box sa monitor kapag Individual Mode */
+body.individual-mode-active .judge-main-layout {
+    grid-template-columns: 1fr 1.1fr !important;
+    gap: 12px !important;
+    align-items: stretch !important;
 }
 
+body.individual-mode-active .judge-left-box,
+body.individual-mode-active .judge-right-box {
+    padding: 12px 14px !important;
+    max-height: calc(100vh - 110px) !important;
+    box-sizing: border-box !important;
+}
 .individual-main-container {
     height: 100vh;
     display: flex;
@@ -2205,9 +2211,14 @@ body.individual-mode-active, html {
             if (indivInstModal) indivInstModal.style.display = 'none';
         });
 
-        function closeInstructionsModal() {
+       function closeInstructionsModal() {
             initAudio();
             document.getElementById('instructions-modal').style.display = 'none';
+        }
+
+        function closeIndividualInstructionsModal() {
+            initAudio();
+            document.getElementById('individual-instructions-modal').style.display = 'none';
         }
 
         function openQuizModeModal() { document.getElementById('quiz-mode-modal').style.display = 'flex'; }
@@ -3098,7 +3109,8 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
             const judgeTimerBox = document.getElementById('judge-timer-display-box');
             if (judgeTimerBox) {
-                judgeTimerBox.innerText = `⏱️ Timer: ${timeStr}`;
+                // Tinanggal ang salitang "Timer:" para sa Individual/Group mode o pinalitan ng tamang format
+                judgeTimerBox.innerText = currentMode === 'individual' ? `${timeStr}` : `⏱️ Timer: ${timeStr}`;
             }
 
             const floatBadge = document.getElementById('floating-timer-badge');
