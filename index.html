@@ -1120,19 +1120,65 @@ body.group-mode .top-timer-box {
             }
         }
 
-        .header-bar { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: rgba(15, 23, 42, 0.45); 
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            padding: 12px 18px; 
-            border-radius: 16px; 
-            margin-bottom: 15px; 
-            font-weight: bold; 
-            font-size: 16px; 
-            color: #f3e8ff;
-        }
+        /* I-update ang header bar para sa iisang line ng buttons at timer */
+.header-bar { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-wrap: nowrap !important;
+    background: rgba(15, 23, 42, 0.45); 
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 8px 14px; 
+    border-radius: 14px; 
+    margin-bottom: 10px; 
+    font-weight: bold; 
+    font-size: 14px; 
+    color: #f3e8ff;
+    gap: 8px;
+}
+
+/* Individual Mode Monitor compact sizing & strict no-scroll */
+body.individual-mode-active, html {
+    height: 100vh;
+    margin: 0;
+    overflow: hidden !important;
+}
+
+.indiv-top3-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    width: 100%;
+    height: 130px !important;
+    margin: 4px 0 8px 0 !important;
+}
+
+.indiv-rank-bar {
+    width: 50px !important;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
+}
+
+.indiv-grid-6 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px !important;
+    width: 100%;
+    padding: 4px !important;
+    box-sizing: border-box;
+}
+
+.glow-circle-avatar-large {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50%;
+    border: 2px solid #f472b6;
+    object-fit: cover;
+    box-shadow: 0 0 12px rgba(244, 114, 182, 0.9);
+}
 
         .bar-chart-container { margin: 10px 0; background: rgba(15, 23, 42, 0.45); padding: 12px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.25); }
         .bar-label { width: 85px; font-weight: bold; font-size: 13px; color: #f3e8ff; }
@@ -3191,7 +3237,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         });
 
-        function renderIndividualMonitorLayout(scoresObj) {
+function renderIndividualMonitorLayout(scoresObj) {
             let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
             const leftBox = document.querySelector('.judge-left-box');
             const rightBox = document.querySelector('.judge-right-box');
@@ -3204,22 +3250,23 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
             let leftHtml = `
                 <div class="header-bar">
-                    <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings (Individual)</span>
-                    <span id="judge-timer-display-box" style="font-size:13px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981;">⏱️ Timer: ${tMins}:${tSecs}</span>
-                    <div>
-                        <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
-                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                        <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
+                    <span style="font-size:13.5px; color:#c084fc; white-space:nowrap;">⚖️ Court Proceedings</span>
+                    <div id="judge-timer-display-box" style="font-size:13.5px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981; white-space:nowrap;">${tMins}:${tSecs}</div>
+                    <div style="display:flex; flex-direction:row; align-items:center; gap:4px; flex-wrap:nowrap;">
+                        <button class="btn" style="padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="startTimer()">Start Quiz</button>
+                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                        <button class="btn" style="background:var(--danger); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="resetGame()">Reset Game</button>
                     </div>
                 </div>
-                <h3 style="color: #38bdf8; margin: 10px 0 8px 0;">👥 All Participants Real-time List</h3>
-                <div style="max-height: 380px; overflow-y: auto; padding-right: 5px;">
+                <h3 style="color: #38bdf8; margin: 6px 0; font-size: 13.5px;">👥 All Participants Real-time List</h3>
+                <div style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
             `;
+
             sorted.forEach(([name, sc]) => {
                 leftHtml += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.15);">
-                        <span style="font-weight: bold; color: #f3e8ff;">${name}</span>
-                        <span style="font-weight: bold; color: #34d399;">${sc} Pts</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.15);">
+                        <span style="font-weight: bold; color: #f3e8ff; font-size: 12.5px;">${name}</span>
+                        <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
                     </div>
                 `;
             });
@@ -3230,12 +3277,12 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             let next6 = sorted.slice(3, 9);
 
             let rightHtml = `
-                <div class="animated-rank-title">👑 Top Rankings (Top 1-9) 🏛️</div>
-                <div class="animated-rank-subtitle">Individual Mode Leaderboard</div>
+                <div class="animated-rank-title" style="font-size: 15px;">👑 Top Rankings (Top 1-9) 🏛️</div>
+                <div class="animated-rank-subtitle" style="font-size: 11px; margin-bottom: 4px;">Individual Mode Leaderboard</div>
                 <div class="indiv-top3-container">
             `;
             
-            const heights = ['150px', '120px', '90px'];
+            const heights = ['105px', '82px', '62px'];
             const colors = [
                 'linear-gradient(180deg, #f472b6, #a855f7)', 
                 'linear-gradient(180deg, #38bdf8, #2563eb)', 
@@ -3248,11 +3295,11 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 let sc = p ? p[1] : 0;
                 rightHtml += `
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                        <span style="font-size: 11px; font-weight: bold; color: #f472b6; margin-bottom: 4px;">Rank ${i+1}</span>
+                        <span style="font-size: 10px; font-weight: bold; color: #f472b6; margin-bottom: 2px;">Rank ${i+1}</span>
                         <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
-                            <span style="font-size: 16px; font-weight: bold; color: white;">${sc}</span>
+                            <span style="font-size: 13px; font-weight: bold; color: white;">${sc}</span>
                         </div>
-                        <span style="font-size: 11px; font-weight: bold; margin-top: 6px; text-align: center; color: #fff; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                        <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; color: #fff; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
                     </div>
                 `;
             }
@@ -3263,10 +3310,10 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 let name = p ? p[0] : `Participant`;
                 let sc = p ? p[1] : 0;
                 rightHtml += `
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
                         <img src="/logo.png" class="glow-circle-avatar-large" alt="Avatar" />
-                        <span style="font-size: 10px; font-weight: bold; margin-top: 4px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-                        <span style="font-size: 9.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
+                        <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                        <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
                     </div>
                 `;
             }
