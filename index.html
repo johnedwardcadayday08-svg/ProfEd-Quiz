@@ -7,6 +7,20 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
+/* I-center ang Individual Instructions modal */
+#individualInstructionModal, 
+.instruction-modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    text-align: center;
+}
 /* Itaas pa ang individual login box malapit sa "Join as:" at alisin ang scrolling */
 .individual-login-container {
     display: flex !important;
@@ -1833,14 +1847,15 @@
             
             <div class="judge-main-layout">
                 <div class="judge-left-box">
-                    <div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 8px;">
-    <span style="font-size:15px; color:#c084fc; white-space: nowrap;">⚖️ Court Proceedings</span>
-    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: nowrap;">
-        <button class="btn" style="padding: 6px 12px; font-size: 13px; margin: 0;" onclick="startTimer()">Start Quiz</button>
-        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 12px; font-size: 13px; margin: 0;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-        <button class="btn" style="background:var(--danger); padding: 6px 12px; font-size: 13px; margin: 0;" onclick="resetGame()">Reset Game</button>
-    </div>
-</div>
+                    <div class="header-bar">
+                        <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings</span>
+                        <div id="judge-timer-display-box" style="font-size:13px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981;">⏱️ Timer: 05:00</div>
+                        <div>
+                            <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
+                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                            <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
+                        </div>
+                    </div>
 
                     <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard & Group Timers</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
@@ -1890,6 +1905,61 @@
     </div>
 
     <script>
+// 1. Pagbukas ng link -> Unang page (Land Screen) ang lalabas, HUWAG ang instructions
+document.addEventListener('DOMContentLoaded', () => {
+    // Siguraduhing tago ang parehong instruction modals sa pag-load
+    const groupModal = document.getElementById('instructionModal');
+    const indModal = document.getElementById('individualInstructionModal');
+    if (groupModal) groupModal.style.display = 'none';
+    if (indModal) indModal.style.display = 'none';
+
+    // Ipakita ang Main/First Landing Selection Page
+    const firstPage = document.getElementById('firstPageContainer') || document.getElementById('modeSelectionPage');
+    if (firstPage) firstPage.style.display = 'block';
+});
+
+// 2. Lalabas LAMANG ang instructions kapag PININDOT ang Group o Individual Mode button
+function selectGroupMode() {
+    socket.emit('setGameMode', 'group');
+    const groupModal = document.getElementById('instructionModal');
+    if (groupModal) groupModal.style.display = 'flex';
+}
+
+function selectIndividualMode() {
+    socket.emit('setGameMode', 'individual');
+    const indModal = document.getElementById('individualInstructionModal');
+    if (indModal) indModal.style.display = 'flex';
+}
+
+// 3. Pag pinindot ang Surrender Button -> Bumalik sa First Page nang walang Instruction Modal
+function handleSurrender() {
+    // Itago ang mga laro at modals
+    const groupModal = document.getElementById('instructionModal');
+    const indModal = document.getElementById('individualInstructionModal');
+    if (groupModal) groupModal.style.display = 'none';
+    if (indModal) indModal.style.display = 'none';
+
+    // Itago ang quiz screens at ipakita ang First Page
+    const quizArea = document.getElementById('quizArea');
+    if (quizArea) quizArea.style.display = 'none';
+
+    const firstPage = document.getElementById('firstPageContainer') || document.getElementById('modeSelectionPage');
+    if (firstPage) firstPage.style.display = 'block';
+}
+
+// 4. Socket Listeners para sa Realtime Reset
+socket.on('resetState', () => {
+    // Huwag magpakita ng instruction modal
+    const groupModal = document.getElementById('instructionModal');
+    const indModal = document.getElementById('individualInstructionModal');
+    if (groupModal) groupModal.style.display = 'none';
+    if (indModal) indModal.style.display = 'none';
+
+    // I-reset ang mga lokal na larawan, timers, at ranking/score displays
+    clearAllPhotosUI();
+    resetTimersUI();
+    clearRankingsUI();
+});
         const socket = io();
         let myGroup = null;
         let isJudgeRole = false;
