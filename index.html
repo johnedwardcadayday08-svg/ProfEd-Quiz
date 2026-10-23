@@ -7,92 +7,70 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-/* I-center ang Individual at Group Instructions modal sa gitna ng screen */
-#individualInstructionModal, 
-#instructionModal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10000;
-    text-align: center;
-}
-/* Itaas pa ang individual login box malapit sa "Join as:" at alisin ang scrolling */
-.individual-login-container {
+
+/* --- PAG-AAYOS SA INDIVIDUAL MODE LAYOUT AT SINGLE-LINE BUTTONS --- */
+
+/* Ginagawang iisang linya at kasya sa layout ang mga buttons at elements sa Header Bar */
+.judge-left-box .header-bar {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
     align-items: center !important;
-    width: 100% !important;
-    max-width: 380px !important;
-    margin: -5px auto 0 auto !important;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(56, 189, 248, 0.25)) !important;
-    border: 2px solid rgba(192, 132, 252, 0.8) !important;
-    border-radius: 16px !important;
-    padding: 10px 14px !important;
-    box-shadow: 0 0 18px rgba(168, 85, 247, 0.4) !important;
-    backdrop-filter: blur(10px) !important;
-    box-sizing: border-box !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    padding: 8px 12px !important;
+}
+
+.judge-left-box .header-bar > div {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 5px !important;
+    flex-wrap: nowrap !important;
+}
+
+/* Pagpapaganda at pagtatago ng salitang "Timer" - Countdown Number na lang mismo */
+#judge-timer-display-box {
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    color: #6ee7b7 !important;
+    background: rgba(16, 185, 129, 0.25) !important;
+    padding: 3px 8px !important;
+    border-radius: 8px !important;
+    border: 1.5px solid #10b981 !important;
+    white-space: nowrap !important;
+}
+
+/* Pag-lock sa screen kapag naka-fullscreen o active ang individual mode (walang pangkalahatang scroll) */
+body.is-fullscreen, body.individual-mode-active {
     overflow: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
 }
 
-.individual-login-container h3 {
-    font-size: 14px !important;
-    margin: 0 0 4px 0 !important;
-    color: #f472b6 !important;
-}
-
-.individual-login-container .modal-input {
-    margin: 4px 0 !important;
-    padding: 6px 10px !important;
-    font-size: 13px !important;
-    max-width: 260px !important;
-}
-
-.individual-login-container .btn {
-    padding: 8px 16px !important;
-    font-size: 13px !important;
-    margin-top: 4px !important;
-}
-
-/* Pinalaki at ginagawang buo ang espasyo ng kanan na box sa Individual Mode Monitor */
+/* Nililimitahan ang laki ng boxes para magkasya lahat sa screen nang hindi napuputol */
 .indiv-top3-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    width: 100%;
-    height: 220px;
-    margin: 15px 0 20px 0;
-}
-
-.indiv-rank-bar {
-    width: 65px;
-    border-radius: 12px 12px 0 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 20px rgba(168, 85, 247, 0.8);
-    transition: all 0.4s ease;
+    height: 140px !important;
+    margin: 5px 0 10px 0 !important;
 }
 
 .indiv-grid-6 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
+    gap: 8px !important;
+    padding: 4px !important;
 }
 
 .glow-circle-avatar-large {
-    width: 65px !important;
-    height: 65px !important;
-    border-radius: 50%;
-    border: 3px solid #f472b6;
-    object-fit: cover;
-    box-shadow: 0 0 18px rgba(244, 114, 182, 0.9);
-    animation: glowPulseEffect 3s ease-in-out infinite;
+    width: 42px !important;
+    height: 42px !important;
 }
+
+/* Pinapayagan LANG ang scroll sa mismong Real-time Participants box sa kanang/kaliwang bahagi kapag madami ang pangalan */
+.realtime-participants-scroll {
+    max-height: 260px !important;
+    overflow-y: auto !important;
+    padding-right: 4px;
+}
+
         :root {
             --primary: #8b5cf6;
             --primary-hover: #7c3aed;
@@ -3052,7 +3030,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
             const judgeTimerBox = document.getElementById('judge-timer-display-box');
             if (judgeTimerBox) {
-                judgeTimerBox.innerText = `⏱️ Timer: ${timeStr}`;
+                judgeTimerBox.innerText = timeStr;
             }
 
             const floatBadge = document.getElementById('floating-timer-badge');
@@ -3191,7 +3169,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         });
 
-        function renderIndividualMonitorLayout(scoresObj) {
+function renderIndividualMonitorLayout(scoresObj) {
             let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
             const leftBox = document.querySelector('.judge-left-box');
             const rightBox = document.querySelector('.judge-right-box');
@@ -3202,30 +3180,79 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
             let tSecs = (tSeconds % 60).toString().padStart(2, '0');
 
+            // Header Bar: Single line buttons at Countdown Number na lang mismo (walang "Timer:")
             let leftHtml = `
                 <div class="header-bar">
-                    <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings (Individual)</span>
-                    <span id="judge-timer-display-box" style="font-size:13px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981;">⏱️ Timer: ${tMins}:${tSecs}</span>
-                    <div>
-                        <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
-                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                        <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
+                    <span style="font-size:13.5px; color:#c084fc; white-space:nowrap;">⚖️ Court Proceedings</span>
+                    <div id="judge-timer-display-box">${tMins}:${tSecs}</div>
+                    <div style="display:flex; flex-direction:row; align-items:center; gap:4px; flex-wrap:nowrap;">
+                        <button class="btn" style="padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="startTimer()">Start Quiz</button>
+                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                        <button class="btn" style="background:var(--danger); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="resetGame()">Reset Game</button>
                     </div>
                 </div>
-                <h3 style="color: #38bdf8; margin: 10px 0 8px 0;">👥 All Participants Real-time List</h3>
-                <div style="max-height: 380px; overflow-y: auto; padding-right: 5px;">
+                <h3 style="color: #38bdf8; margin: 6px 0; font-size: 13.5px;">👥 All Participants Real-time List</h3>
+                <div class="realtime-participants-scroll">
             `;
+
             sorted.forEach(([name, sc]) => {
                 leftHtml += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.15);">
-                        <span style="font-weight: bold; color: #f3e8ff;">${name}</span>
-                        <span style="font-weight: bold; color: #34d399;">${sc} Pts</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.15);">
+                        <span style="font-weight: bold; color: #f3e8ff; font-size: 12.5px;">${name}</span>
+                        <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
                     </div>
                 `;
             });
             leftHtml += `</div>`;
             leftBox.innerHTML = leftHtml;
 
+            let top3 = sorted.slice(0, 3);
+            let next6 = sorted.slice(3, 9);
+
+            let rightHtml = `
+                <div class="animated-rank-title" style="font-size: 15px;">👑 Top Rankings (Top 1-9) 🏛️</div>
+                <div class="animated-rank-subtitle" style="font-size: 11px; margin-bottom: 4px;">Individual Mode Leaderboard</div>
+                <div class="indiv-top3-container" style="height: 135px; margin: 4px 0 8px 0;">
+            `;
+            
+            const heights = ['105px', '82px', '62px'];
+            const colors = [
+                'linear-gradient(180deg, #f472b6, #a855f7)', 
+                'linear-gradient(180deg, #38bdf8, #2563eb)', 
+                'linear-gradient(180deg, #34d399, #059669)'
+            ];
+
+            for (let i = 0; i < 3; i++) {
+                let p = top3[i];
+                let name = p ? p[0] : `Top ${i+1}`;
+                let sc = p ? p[1] : 0;
+                rightHtml += `
+                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                        <span style="font-size: 10px; font-weight: bold; color: #f472b6; margin-bottom: 2px;">Rank ${i+1}</span>
+                        <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]}; width: 48px;">
+                            <span style="font-size: 13px; font-weight: bold; color: white;">${sc}</span>
+                        </div>
+                        <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; color: #fff; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                    </div>
+                `;
+            }
+            rightHtml += `</div><div class="indiv-grid-6" style="gap: 6px; padding: 2px;">`;
+
+            for (let i = 0; i < 6; i++) {
+                let p = next6[i];
+                let name = p ? p[0] : `Participant`;
+                let sc = p ? p[1] : 0;
+                rightHtml += `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
+                        <img src="/logo.png" class="glow-circle-avatar-large" style="width: 40px !important; height: 40px !important;" alt="Avatar" />
+                        <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                        <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
+                    </div>
+                `;
+            }
+            rightHtml += `</div>`;
+            rightBox.innerHTML = rightHtml;
+        }
             let top3 = sorted.slice(0, 3);
             let next6 = sorted.slice(3, 9);
 
