@@ -2684,14 +2684,14 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         function startTimer() { socket.emit('startTimer'); }
         function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { 
-    socket.emit('resetGame'); 
+            socket.emit('resetGame'); 
 
-    // Idinagdag para mawala at maitago ang explanation / review section kapag nag-reset
-    const reviewSec = document.getElementById('review-section');
-    if (reviewSec) {
-        reviewSec.style.display = "none";
-    }
-}
+            // Idinagdag para mawala at maitago ang explanation / review section kapag nag-reset
+            const reviewSec = document.getElementById('review-section');
+            if (reviewSec) {
+                reviewSec.style.display = "none";
+            }
+        }
 
         function submitAns(questionIndex, questionId, answer) {
             if (!isGameStarted) return;
@@ -3169,7 +3169,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         });
 
-function renderIndividualMonitorLayout(scoresObj) {
+        function renderIndividualMonitorLayout(scoresObj) {
             let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
             const leftBox = document.querySelector('.judge-left-box');
             const rightBox = document.querySelector('.judge-right-box');
@@ -3247,53 +3247,6 @@ function renderIndividualMonitorLayout(scoresObj) {
                         <img src="/logo.png" class="glow-circle-avatar-large" style="width: 40px !important; height: 40px !important;" alt="Avatar" />
                         <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
                         <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
-                    </div>
-                `;
-            }
-            rightHtml += `</div>`;
-            rightBox.innerHTML = rightHtml;
-        
-            let top3 = sorted.slice(0, 3);
-            let next6 = sorted.slice(3, 9);
-
-            let rightHtml = `
-                <div class="animated-rank-title">👑 Top Rankings (Top 1-9) 🏛️</div>
-                <div class="animated-rank-subtitle">Individual Mode Leaderboard</div>
-                <div class="indiv-top3-container">
-            `;
-            
-            const heights = ['150px', '120px', '90px'];
-            const colors = [
-                'linear-gradient(180deg, #f472b6, #a855f7)', 
-                'linear-gradient(180deg, #38bdf8, #2563eb)', 
-                'linear-gradient(180deg, #34d399, #059669)'
-            ];
-
-            for (let i = 0; i < 3; i++) {
-                let p = top3[i];
-                let name = p ? p[0] : `Top ${i+1}`;
-                let sc = p ? p[1] : 0;
-                rightHtml += `
-                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                        <span style="font-size: 11px; font-weight: bold; color: #f472b6; margin-bottom: 4px;">Rank ${i+1}</span>
-                        <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
-                            <span style="font-size: 16px; font-weight: bold; color: white;">${sc}</span>
-                        </div>
-                        <span style="font-size: 11px; font-weight: bold; margin-top: 6px; text-align: center; color: #fff; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-                    </div>
-                `;
-            }
-            rightHtml += `</div><div class="indiv-grid-6">`;
-
-            for (let i = 0; i < 6; i++) {
-                let p = next6[i];
-                let name = p ? p[0] : `Participant`;
-                let sc = p ? p[1] : 0;
-                rightHtml += `
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px;">
-                        <img src="/logo.png" class="glow-circle-avatar-large" alt="Avatar" />
-                        <span style="font-size: 10px; font-weight: bold; margin-top: 4px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-                        <span style="font-size: 9.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
                     </div>
                 `;
             }
