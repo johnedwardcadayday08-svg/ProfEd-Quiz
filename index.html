@@ -108,6 +108,46 @@
             touch-action: manipulation;
         }
 
+/* --- DAGDAG PARA SA SINGLE-LINE BUTTONS AT NO-SCROLL LAYOUT --- */
+
+/* Ginagawang iisang line ang mga buttons sa group at individual monitor */
+.monitor-buttons-row, .controls-container, .button-group-inline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 10px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Pag-lock sa Individual Monitor layout para magkasya sa screen nang walang general scroll */
+body.individual-mode-active, html {
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.individual-main-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+/* I-allow lang ang scrolling sa loob ng Realtime List box kapag madami na ang names */
+.realtime-list-container {
+    max-height: 50vh;
+    overflow-y: auto !important;
+}
+
+/* I-allow ang scrolling sa explanation box kapag lumabas na ito */
+.explanation-container {
+    overflow-y: auto !important;
+    max-height: 25vh;
+}
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), 
@@ -1850,16 +1890,14 @@ body.group-mode .top-timer-box {
             
             <div class="judge-main-layout">
                 <div class="judge-left-box">
-                    <div class="header-bar">
-                        <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings</span>
-                        <div id="judge-timer-display-box" style="font-size:13px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981;">⏱️ Timer: 05:00</div>
-                        <div>
-                            <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
-                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                            <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
-                        </div>
-                    </div>
-
+                   <div class="header-bar">
+    <span style="font-size:15px; color:#c084fc;">⚖️ Court Proceedings</span>
+    <div>
+        <button class="btn" style="padding: 8px 14px; font-size: 13px;" onclick="startTimer()">Start Quiz</button>
+        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 8px 14px; font-size: 13px;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+        <button class="btn" style="background:var(--danger); padding: 8px 14px; font-size: 13px;" onclick="resetGame()">Reset Game</button>
+    </div>
+</div>
                     <h3 style="margin: 5px 0 10px 0; color: #e9d5ff; font-size: 15.5px;">Live Scoreboard & Group Timers</h3>
                     <div class="bar-chart-container" id="bar-chart"></div>
                 </div>
@@ -2667,7 +2705,15 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
         function startTimer() { socket.emit('startTimer'); }
         function forceTimeUp() { socket.emit('forceTimeUp'); }
-        function resetGame() { socket.emit('resetGame'); }
+        function resetGame() { 
+    socket.emit('resetGame'); 
+
+    // Idinagdag para mawala at maitago ang explanation / review section kapag nag-reset
+    const reviewSec = document.getElementById('review-section');
+    if (reviewSec) {
+        reviewSec.style.display = "none";
+    }
+}
 
         function submitAns(questionIndex, questionId, answer) {
             if (!isGameStarted) return;
