@@ -18,6 +18,27 @@
     z-index: 10000;
     text-align: center;
 }
+
+/* Siguraduhing ang mga nakatagong modal ay hindi nakaharang sa pagpindot */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+/* Kapag naka-display flex ang modal, saka lang ito pwedeng pindutin */
+.modal-overlay[style*="display: flex"] {
+    pointer-events: auto !important;
+}
+
 /* Itaas pa ang individual login box malapit sa "Join as:" at alisin ang scrolling */
 .individual-login-container {
     display: flex !important;
@@ -240,11 +261,39 @@ body.individual-mode-active, html {
             top: 38% !important;
         }
 
-        body.is-fullscreen .qr-code-wrapper {
-            right: 65px !important;
-            bottom: 60vh !important;
-            transform: scale(1.12);
-        }
+      .qr-code-wrapper {
+    position: fixed !important;
+    right: 35px !important;
+    bottom: 55vh !important;
+    z-index: 999 !important;
+    background: rgba(30, 41, 59, 0.85) !important;
+    border: 2px solid rgba(192, 132, 252, 0.7) !important;
+    padding: 8px !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+#qrcode {
+    padding: 6px !important;
+    background: #ffffff !important;
+    border-radius: 8px !important;
+    display: block !important;
+}
+
+.qr-code-wrapper p {
+    margin: 4px 0 0 0 !important;
+    font-size: 10px !important;
+    font-weight: bold !important;
+    color: #f3e8ff !important;
+    letter-spacing: 0.5px !important;
+}
 
         body.is-fullscreen .attorney-buttons-container {
             margin-top: 60px !important;
