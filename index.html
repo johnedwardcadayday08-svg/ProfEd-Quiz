@@ -55,45 +55,86 @@
     margin-top: 4px !important;
 }
 
-/* Pinalaki at ginagawang buo ang espasyo ng kanan na box sa Individual Mode Monitor */
+/* Siguraduhing stable at pantay ang laki ng mga pangunahing box */
+.judge-left-box, .judge-right-box {
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+    height: 100% !important;
+}
+
+/* Header bar layout na naka-fix ang height para hindi gumalaw kapag nagbago ang timer */
+.header-bar { 
+    display: flex !important; 
+    justify-content: space-between !important; 
+    align-items: center !important; 
+    flex-wrap: nowrap !important;
+    background: rgba(15, 23, 42, 0.45); 
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 8px 12px !important; 
+    border-radius: 14px; 
+    margin-bottom: 10px; 
+    font-weight: bold; 
+    font-size: 13.5px; 
+    color: #f3e8ff;
+    gap: 6px;
+    height: 48px !important; /* Fixed height para iwas sa pagbabago ng laki */
+    box-sizing: border-box !important;
+}
+
+/* Listahan ng participants sa kaliwang box */
+.realtime-participants-scroll {
+    flex: 1 !important;
+    max-height: calc(100vh - 220px) !important;
+    overflow-y: auto !important;
+    padding-right: 4px;
+}
+
+/* Layout sa kanang box (Top Rankings) */
 .indiv-top3-container {
     display: flex;
     justify-content: space-around;
     align-items: flex-end;
     width: 100%;
-    height: 220px;
-    margin: 15px 0 20px 0;
+    height: 140px !important;
+    margin: 10px 0 15px 0 !important;
 }
 
 .indiv-rank-bar {
-    width: 65px;
-    border-radius: 12px 12px 0 0;
+    width: 58px !important;
+    border-radius: 10px 10px 0 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 20px rgba(168, 85, 247, 0.8);
-    transition: all 0.4s ease;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
 }
 
+/* Pagpapalaki at pagpapababa ng mga avatar circles sa Top 4-9 para magamit ang espasyo */
 .indiv-grid-6 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px 10px !important;
+    width: 100% !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+    margin-top: auto !important; /* Ibababa nang sakto sa kanang box */
 }
 
 .glow-circle-avatar-large {
-    width: 65px !important;
-    height: 65px !important;
+    width: 52px !important;
+    height: 52px !important;
     border-radius: 50%;
-    border: 3px solid #f472b6;
+    border: 2.5px solid #f472b6;
     object-fit: cover;
-    box-shadow: 0 0 18px rgba(244, 114, 182, 0.9);
-    animation: glowPulseEffect 3s ease-in-out infinite;
+    box-shadow: 0 0 14px rgba(244, 114, 182, 0.85);
 }
-        :root {
+
+/* Hiwalay na modal/box para sa Explanation para hindi maapektuhan ang monitor layout */
+#review-section {
+    margin-top: 15px !important;
+    position: relative !important;
+    z-index: 100 !important;
+}        :root {
             --primary: #8b5cf6;
             --primary-hover: #7c3aed;
             --success: #10b981;
@@ -2205,10 +2246,18 @@ body.individual-mode-active, html {
             if (indivInstModal) indivInstModal.style.display = 'none';
         });
 
-        function closeInstructionsModal() {
-            initAudio();
-            document.getElementById('instructions-modal').style.display = 'none';
-        }
+       // Huwag ilagay ang pagtatago sa anumang automatic timer/event update.
+// Ito lamang ang mga function na dapat mag-close ng instructions:
+
+function closeInstructionsModal() {
+    initAudio();
+    document.getElementById('instructions-modal').style.display = 'none';
+}
+
+function closeIndividualInstructionsModal() {
+    initAudio();
+    document.getElementById('individual-instructions-modal').style.display = 'none';
+}
 
         function openQuizModeModal() { document.getElementById('quiz-mode-modal').style.display = 'flex'; }
         function closeQuizModeModal() { document.getElementById('quiz-mode-modal').style.display = 'none'; }
@@ -3068,43 +3117,28 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         }
 
         socket.on('timerUpdate', (data) => {
-            if (typeof data === 'object' && data !== null) {
-                Object.keys(data).forEach(g => {
-                    groupTimers[g] = data[g];
-                });
-            }
+    if (typeof data === 'object' && data !== null) {
+        Object.keys(data).forEach(g => {
+            groupTimers[g] = data[g];
+        });
+    }
 
-            let myTimer = myGroup && groupTimers[myGroup] !== undefined ? groupTimers[myGroup] : (groupTimers['Attorney 1'] || 300);
-            
-            const answeredCount = Object.keys(answeredQuestions).length;
+    let myTimer = myGroup && groupTimers[myGroup] !== undefined ? groupTimers[myGroup] : (groupTimers['Attorney 1'] || 300);
+    let mins = Math.floor(myTimer / 60).toString().padStart(2, '0');
+    let secs = (myTimer % 60).toString().padStart(2, '0');
+    let timeStr = `${mins}:${secs}`;
+    
+    // I-update lang ang mismong countdown na string (e.g. 05:00)
+    const judgeTimerBox = document.getElementById('judge-timer-display-box');
+    if (judgeTimerBox) {
+        judgeTimerBox.innerText = timeStr;
+    }
 
-            if (!isGameStarted) {
-                lockQuizUI();
-            } else if (answeredCount < totalQuestionsCount) {
-                unlockQuizUI();
-            }
-
-            if (currentMode === 'group' && isJudgeRole) {
-                renderScoreboardAndPodium();
-            }
-
-            let mins = Math.floor(myTimer / 60).toString().padStart(2, '0');
-            let secs = (myTimer % 60).toString().padStart(2, '0');
-            let timeStr = `${mins}:${secs}`;
-            let fullTimeStr = `Time Left: ${mins}:${secs}`;
-            
-            document.getElementById('student-timer').innerText = fullTimeStr;
-            document.getElementById('floating-timer-text').innerText = timeStr;
-
-            const judgeTimerBox = document.getElementById('judge-timer-display-box');
-            if (judgeTimerBox) {
-                judgeTimerBox.innerText = `⏱️ Timer: ${timeStr}`;
-            }
-
-            const floatBadge = document.getElementById('floating-timer-badge');
-            if (myTimer <= 15 && myTimer > 0) {
-                document.body.classList.add('urgent-warning-glow');
-                if (floatBadge) floatBadge.classList.add('urgent-red');
+    const floatBadge = document.getElementById('floating-timer-text');
+    if (floatBadge) {
+        floatBadge.innerText = timeStr;
+    }
+});
 
                 bgmAudio.pause();
                 if (urgentAudio.paused) {
@@ -3238,88 +3272,88 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         });
 
 function renderIndividualMonitorLayout(scoresObj) {
-            let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
-            const leftBox = document.querySelector('.judge-left-box');
-            const rightBox = document.querySelector('.judge-right-box');
-            
-            if (!leftBox || !rightBox) return;
+    let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
+    const leftBox = document.querySelector('.judge-left-box');
+    const rightBox = document.querySelector('.judge-right-box');
+    
+    if (!leftBox || !rightBox) return;
 
-            let tSeconds = groupTimers['Attorney 1'] !== undefined ? groupTimers['Attorney 1'] : 300;
-            let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
-            let tSecs = (tSeconds % 60).toString().padStart(2, '0');
+    let tSeconds = groupTimers['Attorney 1'] !== undefined ? groupTimers['Attorney 1'] : 300;
+    let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
+    let tSecs = (tSeconds % 60).toString().padStart(2, '0');
 
-            let leftHtml = `
-                <div class="header-bar">
-                    <span style="font-size:13.5px; color:#c084fc; white-space:nowrap;">⚖️ Court Proceedings</span>
-                    <div id="judge-timer-display-box" style="font-size:13.5px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981; white-space:nowrap;">${tMins}:${tSecs}</div>
-                    <div style="display:flex; flex-direction:row; align-items:center; gap:4px; flex-wrap:nowrap;">
-                        <button class="btn" style="padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="startTimer()">Start Quiz</button>
-                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                        <button class="btn" style="background:var(--danger); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="resetGame()">Reset Game</button>
-                    </div>
+    let leftHtml = `
+        <div class="header-bar">
+            <span style="font-size:13.5px; color:#c084fc; white-space:nowrap;">⚖️ Court Proceedings</span>
+            <div id="judge-timer-display-box" style="font-size:13.5px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:4px 10px; border-radius:8px; border:1px solid #10b981; font-weight:800; white-space:nowrap;">${tMins}:${tSecs}</div>
+            <div style="display:flex; flex-direction:row; align-items:center; gap:4px; flex-wrap:nowrap;">
+                <button class="btn" style="padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="startTimer()">Start Quiz</button>
+                <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                <button class="btn" style="background:var(--danger); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="resetGame()">Reset Game</button>
+            </div>
+        </div>
+        <h3 style="color: #38bdf8; margin: 6px 0 8px 0; font-size: 14px;">👥 All Participants Real-time List</h3>
+        <div class="realtime-participants-scroll">
+    `;
+
+    sorted.forEach(([name, sc]) => {
+        leftHtml += `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.15);">
+                <span style="font-weight: bold; color: #f3e8ff; font-size: 13px;">${name}</span>
+                <span style="font-weight: bold; color: #34d399; font-size: 13px;">${sc} Pts</span>
+            </div>
+        `;
+    });
+    leftHtml += `</div>`;
+    leftBox.innerHTML = leftHtml;
+
+    let top3 = sorted.slice(0, 3);
+    let next6 = sorted.slice(3, 9);
+
+    let rightHtml = `
+        <div class="animated-rank-title" style="font-size: 16px;">👑 Top Rankings (Top 1-9) 🏛️</div>
+        <div class="animated-rank-subtitle" style="font-size: 11.5px; margin-bottom: 6px;">Individual Mode Leaderboard</div>
+        <div class="indiv-top3-container">
+    `;
+    
+    const heights = ['110px', '88px', '68px'];
+    const colors = [
+        'linear-gradient(180deg, #f472b6, #a855f7)', 
+        'linear-gradient(180deg, #38bdf8, #2563eb)', 
+        'linear-gradient(180deg, #34d399, #059669)'
+    ];
+
+    for (let i = 0; i < 3; i++) {
+        let p = top3[i];
+        let name = p ? p[0] : `Top ${i+1}`;
+        let sc = p ? p[1] : 0;
+        rightHtml += `
+            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                <span style="font-size: 11px; font-weight: bold; color: #f472b6; margin-bottom: 3px;">Rank ${i+1}</span>
+                <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
+                    <span style="font-size: 14px; font-weight: bold; color: white;">${sc}</span>
                 </div>
-                <h3 style="color: #38bdf8; margin: 6px 0; font-size: 13.5px;">👥 All Participants Real-time List</h3>
-                <div style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
-            `;
+                <span style="font-size: 10.5px; font-weight: bold; margin-top: 4px; text-align: center; color: #fff; max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+            </div>
+        `;
+    }
+    rightHtml += `</div><div class="indiv-grid-6">`;
 
-            sorted.forEach(([name, sc]) => {
-                leftHtml += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.15);">
-                        <span style="font-weight: bold; color: #f3e8ff; font-size: 12.5px;">${name}</span>
-                        <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
-                    </div>
-                `;
-            });
-            leftHtml += `</div>`;
-            leftBox.innerHTML = leftHtml;
-
-            let top3 = sorted.slice(0, 3);
-            let next6 = sorted.slice(3, 9);
-
-            let rightHtml = `
-                <div class="animated-rank-title" style="font-size: 15px;">👑 Top Rankings (Top 1-9) 🏛️</div>
-                <div class="animated-rank-subtitle" style="font-size: 11px; margin-bottom: 4px;">Individual Mode Leaderboard</div>
-                <div class="indiv-top3-container">
-            `;
-            
-            const heights = ['105px', '82px', '62px'];
-            const colors = [
-                'linear-gradient(180deg, #f472b6, #a855f7)', 
-                'linear-gradient(180deg, #38bdf8, #2563eb)', 
-                'linear-gradient(180deg, #34d399, #059669)'
-            ];
-
-            for (let i = 0; i < 3; i++) {
-                let p = top3[i];
-                let name = p ? p[0] : `Top ${i+1}`;
-                let sc = p ? p[1] : 0;
-                rightHtml += `
-                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                        <span style="font-size: 10px; font-weight: bold; color: #f472b6; margin-bottom: 2px;">Rank ${i+1}</span>
-                        <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
-                            <span style="font-size: 13px; font-weight: bold; color: white;">${sc}</span>
-                        </div>
-                        <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; color: #fff; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-                    </div>
-                `;
-            }
-            rightHtml += `</div><div class="indiv-grid-6">`;
-
-            for (let i = 0; i < 6; i++) {
-                let p = next6[i];
-                let name = p ? p[0] : `Participant`;
-                let sc = p ? p[1] : 0;
-                rightHtml += `
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
-                        <img src="/logo.png" class="glow-circle-avatar-large" alt="Avatar" />
-                        <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-                        <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
-                    </div>
-                `;
-            }
-            rightHtml += `</div>`;
-            rightBox.innerHTML = rightHtml;
-        }
+    for (let i = 0; i < 6; i++) {
+        let p = next6[i];
+        let name = p ? p[0] : `Participant`;
+        let sc = p ? p[1] : 0;
+        rightHtml += `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
+                <img src="/logo.png" class="glow-circle-avatar-large" alt="Avatar" />
+                <span style="font-size: 10px; font-weight: bold; margin-top: 3px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                <span style="font-size: 9px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
+            </div>
+        `;
+    }
+    rightHtml += `</div>`;
+    rightBox.innerHTML = rightHtml;
+}
     </script>
 </body>
 </html>
