@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname)));
 
 let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
 let currentQuizMode = "multiple-choice";
-let currentMode = "group";
+let currentMode = "group"; // 'group' or 'individual'
 let isGameStarted = false;
 let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
 let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
@@ -20,6 +20,7 @@ let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'At
 let timerInterval = null;
 let serverPhotoArchive = [];
 
+// Persistent History Archives
 let groupScoreHistoryArchive = [];
 let individualScoreHistoryArchive = [];
 let individualParticipants = {}; 
@@ -79,26 +80,8 @@ io.on('connection', (socket) => {
 
     socket.on('setGameMode', (mode) => {
         currentMode = mode;
-        isGameStarted = false;
-        if (timerInterval) clearInterval(timerInterval);
-
-        Object.keys(groupTimers).forEach(g => { groupTimers[g] = 300; });
-        Object.keys(groupScores).forEach(g => {
-            groupScores[g] = 0;
-            attorneyPhotos[g] = '';
-            groupCompletedStatus[g] = false;
-        });
-
-        individualParticipants = {};
-        individualScores = {};
-
         io.emit('gameModeUpdated', currentMode);
-        io.emit('resetState');
-        io.emit('gameState', { isGameStarted: false });
-        io.emit('timerUpdate', groupTimers);
         io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
-        io.emit('individualParticipantsUpdated', individualParticipants);
-        io.emit('individualScoresUpdated', individualScores);
     });
 
     socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
@@ -311,27 +294,26 @@ io.on('connection', (socket) => {
     });
 
     socket.on('resetGame', () => {
-        isGameStarted = false;
         if (timerInterval) clearInterval(timerInterval);
-
-        Object.keys(groupTimers).forEach(g => { groupTimers[g] = 300; });
-        Object.keys(groupScores).forEach(g => {
-            groupScores[g] = 0;
-            attorneyPhotos[g] = '';
-            groupCompletedStatus[g] = false;
-        });
-
+        isGameStarted = false;
+        groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
+        groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
+        groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
+        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         individualParticipants = {};
         individualScores = {};
 
-        io.emit('resetState');
-        io.emit('gameState', { isGameStarted: false });
-        io.emit('timerUpdate', groupTimers);
         io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
-        io.emit('individualParticipantsUpdated', individualParticipants);
-        io.emit('individualScoresUpdated', individualScores);
+        io.emit('individualParticipantsUpdated', {});
+        io.emit('individualScoresUpdated', {});
+        io.emit('resetState');
     });
-}); // <--- ITO ANG TAMANG PAGPASARA SA io.on('connection') NA KULANG SA server_3.js MO!
+
+    socket.on('clearPhotoArchive', () => {
+        serverPhotoArchive = [];
+        io.emit('photoArchiveUpdated', serverPhotoArchive);
+    });
+});
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
