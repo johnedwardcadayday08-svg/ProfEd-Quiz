@@ -34,11 +34,25 @@
     z-index: 99999;
 }
 
-/* Kapag naka-display flex ang modal, saka lang ito pwedeng pindutin */
-.modal-overlay[style*="display: flex"] {
+/* Siguraduhing hindi humaharang ang mga modal kapag nakatago */
+.modal-overlay {
+    pointer-events: none !important;
+}
+
+/* Magiging clickable lamang kapag bukas o naka-display flex */
+.modal-overlay[style*="display: flex"],
+.modal-overlay[style*="display: block"] {
     pointer-events: auto !important;
 }
 
+/* Tiyaking laging aktibo para sa pagpindot ang mga buttons at controls */
+.top-controls-glass-box,
+.control-btn,
+.btn,
+button {
+    pointer-events: auto !important;
+    z-index: 100006 !important;
+}
 /* Itaas pa ang individual login box malapit sa "Join as:" at alisin ang scrolling */
 .individual-login-container {
     display: flex !important;
@@ -261,7 +275,7 @@ body.individual-mode-active, html {
             top: 38% !important;
         }
 
-      .qr-code-wrapper {
+     .qr-code-wrapper {
     position: fixed !important;
     right: 35px !important;
     bottom: 55vh !important;
@@ -1117,36 +1131,36 @@ body.group-mode .top-timer-box {
             text-align: left;
         }
 
-        .judge-speech-container {
-            position: relative;
-            z-index: 3;
-            max-width: 820px;
-            margin: 6px auto 10px auto;
-            background: rgba(15, 23, 42, 0.65);
-            border: 1.5px solid rgba(168, 85, 247, 0.5);
-            padding: 8px 16px;
-            border-radius: 16px;
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+.judge-speech-container {
+    position: relative !important;
+    z-index: 3 !important;
+    max-width: 820px;
+    margin: 6px auto 10px auto;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1.5px solid rgba(168, 85, 247, 0.5);
+    padding: 8px 16px;
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    display: flex !important;
+    align-items: center;
+    gap: 15px;
+}
 
-        .judge-speech-avatar {
-            font-size: 26px;
-            background: rgba(168, 85, 247, 0.2);
-            padding: 5px 9px;
-            border-radius: 50%;
-            border: 1px solid rgba(168, 85, 247, 0.5);
-            flex-shrink: 0;
-        }
+.judge-speech-avatar {
+    font-size: 26px;
+    background: rgba(168, 85, 247, 0.2);
+    padding: 5px 9px;
+    border-radius: 50%;
+    border: 1px solid rgba(168, 85, 247, 0.5);
+    flex-shrink: 0;
+}
 
-        .judge-speech-text {
-            font-size: 13px;
-            color: #f3e8ff;
-            line-height: 1.35;
-            margin: 0;
-        }
+.judge-speech-text {
+    font-size: 13px;
+    color: #f3e8ff;
+    line-height: 1.35;
+    margin: 0;
+}
 
         h2 { font-size: 19px; color: #e9d5ff; text-align: center; }
         h3 { font-size: 15px; margin: 8px 0; }
@@ -2682,20 +2696,26 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         }
 
-        const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, review your statutes carefully before time runs out!"';
-        let charIndex = 0;
+const judgeMessage = '<strong>Judge Ej\'s Chambers:</strong> "Order in the court! Counsel, review your statutes carefully before time runs out!"';
+let charIndex = 0;
 
-        function typeWriter() {
-            const target = document.getElementById('typewriter-text');
-            if (charIndex < judgeMessage.length) {
-                target.innerHTML = judgeMessage.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
-                charIndex++;
-                setTimeout(typeWriter, 35);
-            } else {
-                target.innerHTML = judgeMessage;
-            }
+function typeWriter() {
+    const target = document.getElementById('typewriter-text');
+    if (target) {
+        if (charIndex < judgeMessage.length) {
+            target.innerHTML = judgeMessage.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
+            charIndex++;
+            setTimeout(typeWriter, 35);
+        } else {
+            target.innerHTML = judgeMessage;
         }
-        window.onload = () => typeWriter();
+    }
+}
+
+// Patakbuhin pag-load ng page
+window.addEventListener('load', () => {
+    typeWriter();
+});
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
@@ -3403,6 +3423,11 @@ function renderIndividualMonitorLayout(scoresObj) {
     rightHtml += `</div>`;
     rightBox.innerHTML = rightHtml;
 }
+
+<div class="judge-speech-container" id="judge-speech-box">
+    <div class="judge-speech-avatar">👨‍⚖️</div>
+    <p class="judge-speech-text" id="typewriter-text"></p>
+</div>
     </script>
 </body>
 </html>
