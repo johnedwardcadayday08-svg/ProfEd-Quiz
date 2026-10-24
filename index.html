@@ -2404,7 +2404,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-       function savePlainQuestions() {
+function savePlainQuestions() {
     try {
         let rawInput = document.getElementById('custom-questions-plaintext').value;
         if (!rawInput || !rawInput.trim()) {
@@ -2417,24 +2417,27 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             .replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'")
             .replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
 
-        let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question|\d+[\.\)\-]|[A-Z][\.\)\-])\s+)/i);
+        // Pinahusay na paghahati (split) gamit ang Regex para makilala ang bawat Q., Question:, o numerong tanong
+        let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q[\.\:]|Question[\.\:]|\bPart\b|\d+[\.\)\-]|[A-Z][\.\)\-])\s+)/i);
         let questionsList = [];
 
         rawBlocks.forEach(block => {
             let trimmedBlock = block.trim();
-            if (!trimmedBlock) return;
+            if (!trimmedBlock || /^\bPart\b/i.test(trimmedBlock)) return; // Lampasan ang mga headings tulad ng Part II. ESSAY
 
             let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
             let qText = "", qType = "multiple-choice", options = {}, answer = "", explanation = "", rubrics = "", points = 1;
 
             lines.forEach(line => {
+                // Pagkuha ng mismong tanong
                 if (/^(?:Q|Question)?[\s\d\.\-\)]+[:\-\)\.]?\s*/i.test(line) && !qText && !/^[A-D][\)\.\:\-]/i.test(line)) {
                     qText = line.replace(/^(?:Q|Question)?[\s\d\.\-\)]+[:\-\)\.]?\s*/i, '').trim();
                     if (!qText) qText = line;
-                } else if (!qText) {
+                } else if (!qText && !/^Answer:|^Type:|^Rubrics:|^Points:/i.test(line)) {
                     qText = line;
                 }
 
+                // Pagsusuri ng Type, Rubrics, Points, Choices, Answer, at Explanation
                 if (/^Type[\s:\-\)\.]/i.test(line)) {
                     let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
                     if (tVal.includes('essay')) qType = 'essay';
@@ -2459,18 +2462,19 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 }
             });
 
-            if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText)) {
+            // Auto-detect kung Essay base sa rubrics o nilalaman nito
+            if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText) || /paano/i.test(qText)) {
                 if (Object.keys(options).length === 0 && !answer) {
                     qType = 'essay';
-                    if (!rubrics) rubrics = "Nilalaman at Organisasyon.";
-                    if (points === 1) points = 10;
+                    if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kahulugan.";
+                    if (points === 1) points = 3; // default points kung may essay
                 }
             }
 
             if (qText) {
                 questionsList.push({
                     question: qText, type: qType, options: options,
-                    answer: answer || "N/A", explanation: explanation || (rubrics ? `Criteria: ${rubrics}` : "Walang nakasaad na paliwanag."),
+                    answer: answer || "N/A", explanation: explanation || (rubrics ? `Rubrics: ${rubrics}` : "Walang nakasaad na paliwanag."),
                     rubrics: rubrics, points: points
                 });
             }
@@ -2483,7 +2487,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
         socket.emit('updatePlainQuestionsData', questionsList);
         closeInsertModal();
-        alert(`Tagumpay! Awtomatikong nabasa ang ${questionsList.length} tanong sa LAHAT ng screen! 🚀`);
+        alert(`Tagumpay! Nabasa at nailagay ang ${questionsList.length} tanong sa LAHAT ng screen! 🚀`);
     } catch (err) {
         alert("May error sa pagbasa ng text.");
     }
