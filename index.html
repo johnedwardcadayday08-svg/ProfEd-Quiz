@@ -687,10 +687,17 @@ body.group-mode .top-timer-box {
             will-change: transform;
         }
 
-        .glowing-frame.completed-frame {
-            background: linear-gradient(135deg, #10b981, #34d399) !important;
-            box-shadow: 0 0 22px rgba(16, 185, 129, 0.9) !important;
-        }
+        /* Kapag natapos na ang grupo, magiging neon green ang paligid ng bilog */
+.glowing-frame.completed-frame {
+    background: linear-gradient(135deg, #10b981, #34d399) !important;
+    box-shadow: 0 0 22px rgba(16, 185, 129, 0.9) !important;
+}
+
+/* Avatar Border sa left mini-scoreboard */
+.attorney-avatar-mini.completed-avatar {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.8) !important;
+}
 
         .glowing-frame img {
             width: 100%;
@@ -2829,12 +2836,25 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         function startTimer() { socket.emit('startTimer'); }
         function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { 
+    // Baguhin/Linisin ang mga naka-save na larawan ng participants
+    attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+    shownPopups = {};
+
     socket.emit('resetGame'); 
 
-    // Idinagdag para mawala at maitago ang explanation / review section kapag nag-reset
+    // Itago ang review section kapag nag-reset
     const reviewSec = document.getElementById('review-section');
     if (reviewSec) {
         reviewSec.style.display = "none";
+    }
+
+    // I-update ang UI ng monitor upang bumalik sa default/blankong litrato
+    if (isJudgeRole) {
+        if (currentMode === 'individual') {
+            renderIndividualMonitorLayout({});
+        } else {
+            renderScoreboardAndPodium();
+        }
     }
 }
 
@@ -3045,77 +3065,87 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         });
 
-        socket.on('groupFinished', ({ groupName }) => {
-            if (isJudgeRole) {
-                const banner = document.getElementById('judge-notification-banner');
-                if (banner) {
-                    banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
-                    banner.style.display = 'block';
-                    setTimeout(() => {
-                        banner.style.display = 'none';
-                    }, 3000);
-                }
-            }
-        });
+socket.on('groupFinished', ({ groupName }) => {
+    // Awtomatikong ipapasok na tapos na ang grupo
+    groupCompletedStatus[groupName] = true;
 
-        function renderScoreboardAndPodium() {
-            const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
-            
-            let chartHTML = '';
-            sortedGroups.forEach(([group, score]) => {
-                let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
-                let photoSrc = attorneyPhotos[group] || '/logo.png';
-                let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
-                let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
-                let tSecs = (tSeconds % 60).toString().padStart(2, '0');
-                let timeText = `${tMins}:${tSecs}`;
-                let isUrgent = tSeconds <= 15 && tSeconds > 0;
-                let isCompleted = groupCompletedStatus[group];
+    if (isJudgeRole) {
+        // I-re-render agad ang podium para magkulay green ang bilog
+        renderScoreboardAndPodium();
 
-                chartHTML += `
-                    <div class="bar-row">
-                        <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
-                        <div class="bar-label">${group}</div>
-                        <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
-                        <div class="bar-score">${score}/${totalMaxScore}</div>
-                        <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
-                    </div>
-                `;
-            });
-            const barChart = document.getElementById('bar-chart');
-            if (barChart) barChart.innerHTML = chartHTML;
-
-            let podiumHTML = '';
-            sortedGroups.forEach(([group, score], idx) => {
-                let heightPercent = totalMaxScore > 0 ? Math.max((score / totalMaxScore) * 100, 8) : 8;
-                let photoSrc = attorneyPhotos[group] || '/logo.png';
-                let isCompleted = groupCompletedStatus[group];
-                
-                let gradientBg = '';
-                if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
-                    gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
-                } else if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.5)) {
-                    gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
-                } else {
-                    gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
-                }
-
-                podiumHTML += `
-                    <div class="podium-col">
-                        <div class="rank-label-badge">Top ${idx + 1}</div>
-                        <div class="rank-bar-track">
-                            <div class="rank-bar-fill" style="height: ${heightPercent}%; background: ${gradientBg};"></div>
-                        </div>
-                        <div class="glowing-frame ${isCompleted ? 'completed-frame' : ''}">
-                            <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
-                        </div>
-                        <div class="animated-attorney-label">${group}</div>
-                    </div>
-                `;
-            });
-            const podiumDisplay = document.getElementById('podium-display');
-            if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
+        const banner = document.getElementById('judge-notification-banner');
+        if (banner) {
+            banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
+            banner.style.display = 'block';
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 3000);
         }
+    }
+});
+function renderScoreboardAndPodium() {
+    const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
+    
+    let chartHTML = '';
+    sortedGroups.forEach(([group, score]) => {
+        let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
+        let photoSrc = attorneyPhotos[group] || '/logo.png';
+        let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
+        let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
+        let tSecs = (tSeconds % 60).toString().padStart(2, '0');
+        let timeText = `${tMins}:${tSecs}`;
+        let isUrgent = tSeconds <= 15 && tSeconds > 0;
+        
+        // Tinitingnan kung tapos na ang grupo
+        let isCompleted = groupCompletedStatus[group];
+
+        chartHTML += `
+            <div class="bar-row">
+                <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
+                <div class="bar-label">${group} ${isCompleted ? '✔️' : ''}</div>
+                <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
+                <div class="bar-score">${score}/${totalMaxScore}</div>
+                <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
+            </div>
+        `;
+    });
+    const barChart = document.getElementById('bar-chart');
+    if (barChart) barChart.innerHTML = chartHTML;
+
+    let podiumHTML = '';
+    sortedGroups.forEach(([group, score], idx) => {
+        let heightPercent = totalMaxScore > 0 ? Math.max((score / totalMaxScore) * 100, 8) : 8;
+        let photoSrc = attorneyPhotos[group] || '/logo.png';
+        
+        // Tinitingnan kung tapos na ang grupo
+        let isCompleted = groupCompletedStatus[group];
+        
+        let gradientBg = '';
+        if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
+            gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
+        } else if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.5)) {
+            gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
+        } else {
+            gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
+        }
+
+        podiumHTML += `
+            <div class="podium-col">
+                <div class="rank-label-badge">Top ${idx + 1}</div>
+                <div class="rank-bar-track">
+                    <div class="rank-bar-fill" style="height: ${heightPercent}%; background: ${gradientBg};"></div>
+                </div>
+                <!-- Lalagyan ng completed-frame class kapag tapos na -->
+                <div class="glowing-frame ${isCompleted ? 'completed-frame' : ''}">
+                    <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
+                </div>
+                <div class="animated-attorney-label">${group} ${isCompleted ? '🟢' : ''}</div>
+            </div>
+        `;
+    });
+    const podiumDisplay = document.getElementById('podium-display');
+    if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
+}
 
         socket.on('showJudgePopupQueue', (queue) => {
             if (isJudgeRole) {
