@@ -2898,11 +2898,67 @@ socket.on('updateState', (state) => {
             }
         }
 
-socket.on('quizStarted', () => {
+// === REAL-TIME GAME STATE SYNC ===
+        socket.on('gameState', (data) => {
+            if (data && data.isGameStarted) {
+                isGameStarted = true;
+                unlockQuizUI();
+            } else {
+                isGameStarted = false;
+                lockQuizUI();
+            }
+        });
+
+        socket.on('quizStarted', () => {
             isGameStarted = true;
             unlockQuizUI();
         });
 
+        // === REAL-TIME FEEDBACK POP-UP (TAMA / MALI) ===
+        socket.on('answerFeedback', (data) => {
+            const popup = document.getElementById('feedback-popup');
+            if (!popup) return;
+
+            if (data.isCorrect) {
+                popup.className = "feedback-correct";
+                popup.innerText = `✨ Tama! +${data.earnedPoints} Pts 🎉`;
+            } else {
+                popup.className = "feedback-wrong";
+                popup.innerText = `❌ Mali! (${data.earnedPoints} Pts)`;
+            }
+
+            popup.style.display = "block";
+            
+            // Awtomatikong mawawala ang pop-up pagkaraan ng 1.5 segundo
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 1500);
+        });
+
+        // === REAL-TIME SUBMIT ANSWER FUNCTION ===
+        function submitAns(qIndex, qKey, selectedValue) {
+            if (answeredQuestions[qKey]) return; // Iwas double submit
+            answeredQuestions[qKey] = selectedValue;
+
+            // I-disable ang mga radio button para sa tanong na ito
+            const radios = document.querySelectorAll(`input[name="${qKey}"]`);
+            radios.forEach(r => r.disabled = true);
+
+            // I-emit sa server ang sagot para mag-update ang scores sa real-time
+            if (currentMode === 'individual') {
+                socket.emit('submitIndividualAnswer', {
+                    fullName: individualFullName,
+                    questionIndex: qIndex,
+                    answer: selectedValue
+                });
+            } else {
+                socket.emit('submitAnswer', {
+                    groupName: myGroup,
+                    questionIndex: qIndex,
+                    answer: selectedValue
+                });
+            }
+        }
         socket.on('resetState', () => {
             if (typeof answeredQuestions !== 'undefined') answeredQuestions = {};
             if (typeof isGameStarted !== 'undefined') isGameStarted = false;
