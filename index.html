@@ -2833,7 +2833,10 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }, 1800);
         }
 
-        function startTimer() { socket.emit('startTimer'); }
+        function startTimer() { 
+            socket.emit('startQuiz'); 
+            socket.emit('startTimer'); 
+        }
         function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { 
             attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
@@ -2855,6 +2858,11 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 }
             }
         }
+
+socket.on('quizStarted', () => {
+            isGameStarted = true;
+            unlockQuizUI();
+        });
 
         socket.on('resetState', () => {
             if (typeof answeredQuestions !== 'undefined') answeredQuestions = {};
