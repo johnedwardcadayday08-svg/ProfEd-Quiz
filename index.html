@@ -2084,6 +2084,37 @@ body.individual-mode-active, html {
             applyGameModeUI(mode, true); 
         }
 
+// --- IDAGDAG ITO SA CLIENT-SIDE SCRIPT (FRONTEND HTML) ---
+        
+        // Kapag nag-reset ang laro, i-reset ang status pero huwag burahin ang mga tanong
+        socket.on('resetState', () => {
+            if (typeof answeredQuestions !== 'undefined') answeredQuestions = {};
+            if (typeof isGameStarted !== 'undefined') isGameStarted = false;
+            
+            // Isara ang mga modals kung nakabukas man
+            const reviewSec = document.getElementById('review-section');
+            if (reviewSec) reviewSec.style.display = "none";
+            
+            const winnerModal = document.getElementById('winner-modal');
+            if (winnerModal) winnerModal.style.display = "none";
+
+            if (typeof lockQuizUI === 'function') {
+                lockQuizUI();
+            }
+        });
+
+        // Tinitiyak na laging lumalabas at nananatili ang mga tanong sa screen ng participants
+        socket.on('applyCustomQuestionsList', (questionsList) => {
+            if (questionsList && questionsList.length > 0) {
+                if (typeof globalQuestionsList !== 'undefined') {
+                    globalQuestionsList = questionsList;
+                }
+                if (typeof renderQuestionsUI === 'function') {
+                    renderQuestionsUI(questionsList);
+                }
+            }
+        });
+
 function applyGameModeUI(mode, showAlerts = false) {
             currentMode = mode;
             const attorneyContainer = document.querySelector('.attorney-buttons-container');
