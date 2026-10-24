@@ -257,9 +257,17 @@ io.on('connection', (socket) => {
         }
     });
 
+// === REAL-TIME START QUIZ & TIMER ===
+    socket.on('startQuiz', () => {
+        isGameStarted = true;
+        io.emit('quizStarted');
+        io.emit('gameState', { isGameStarted: true });
+    });
+
     socket.on('startTimer', () => {
         isGameStarted = true;
-        io.emit('gameState', { isGameStarted });
+        io.emit('quizStarted');
+        io.emit('gameState', { isGameStarted: true });
         if (timerInterval) clearInterval(timerInterval);
 
         timerInterval = setInterval(() => {
@@ -270,7 +278,15 @@ io.on('connection', (socket) => {
                     activeCount++;
                 }
             });
+            // Real-time broadcast ng timer sa LAHAT ng devices
             io.emit('timerUpdate', groupTimers);
+            const allFinished = Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g]);
+            if (activeCount === 0 || allFinished) {
+                clearInterval(timerInterval);
+                io.emit('timeUp');
+            }
+        }, 1000);
+    });            io.emit('timerUpdate', groupTimers);
             const allFinished = Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g]);
             if (activeCount === 0 || allFinished) {
                 clearInterval(timerInterval);
