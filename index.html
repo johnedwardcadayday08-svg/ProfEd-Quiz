@@ -2404,7 +2404,8 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        function savePlainQuestions() {
+       
+function savePlainQuestions() {
             try {
                 let rawInput = document.getElementById('custom-questions-plaintext').value;
                 if (!rawInput || !rawInput.trim()) {
@@ -2421,7 +2422,8 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     .replace(/\r/g, '\n')
                     .trim();
 
-                let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
+                // Flexible parser: Hinahati ang bawat tanong anuman ang gamiting numero o titik sa simula (Q1, 1., Tanong 1, etc.)
+                let rawBlocks = cleanText.split(/(?=(?:^|\n)\s*(?:[Qq]\.?\s*\d+|[Tt]anong\s*\d+|\d+[\.\)\-]|[A-Z]\.))\s*/);
                 let questionsList = [];
 
                 rawBlocks.forEach(block => {
@@ -2438,54 +2440,82 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     let rubrics = "";
                     let points = 1;
 
-                    lines.forEach(line => {
-                        if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
-                            qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
-                        } 
-                        else if (/^Type[\s:\-\)\.]/i.test(line)) {
-                            let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
+                    // Kunin ang total points kung nakalagay sa parentheses tulad ng "(2 points)" o "(3 points)"
+                    let firstLine = lines[0] || "";
+                    let ptsMatch = firstLine.match(/\((\d+)\s*(?:points?|pts?)\)/i);
+                    if (ptsMatch) {
+                        points = parseInt(ptsMatch[1], 10);
+                    }
+
+                    lines.forEach((line, index) => {
+                        // Alisin ang numbering sa simula ng tanong
+                        if (index === 0) {
+                            qText = line
+                                .replace(/^(?:[Qq](?:uestion)?\.?\s*\d+|[Tt]anong\s*\d+|\d+[\.\)\-])\s*/i, '')
+                                .replace(/\s*\(\d+\s*(?:points?|pts?)\)/i, '')
+                                .trim();
+                            return;
+                        }
+
+                        let lowerLine = line.toLowerCase();
+
+                        // Pagbabasa ng Type
+                        if (/^type[\s:\-\)\.]/i.test(line)) {
+                            let tVal = line.replace(/^type[\s:\-\)\.]/i, '').trim().toLowerCase();
                             if (tVal.includes('essay')) qType = 'essay';
                             else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
-                            else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
-                            else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
+                            else if (tVal.includes('enum')) qType = 'enumeration';
+                            else if (tVal.includes('true') || tVal.includes('false')) qType = 'true-false';
                             else qType = 'multiple-choice';
                         }
-                        else if (/^Rubrics?[\s:\-\)\.]/i.test(line) || /^Criteria[\s:\-\)\.]/i.test(line)) {
-                            rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
+                        // Pagbabasa ng Rubrics o Criteria
+                        else if (/^(?:rubrics?|criteria|batayan)[\s:\-\)\.]/i.test(line)) {
+                            rubrics = line.replace(/^(?:rubrics?|criteria|batayan)[\s:\-\)\.]/i, '').trim();
                             qType = 'essay';
                         }
-                        else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
-                            let ptsMatch = line.match(/\d+/);
-                            if (ptsMatch) points = parseInt(ptsMatch[0], 10);
+                        // Pagbabasa ng Points kung hiwalay na linya
+                        else if (/^(?:points?|score|pts)[\s:\-\)\.]/i.test(line)) {
+                            let pMatch = line.match(/\d+/);
+                            if (pMatch) points = parseInt(pMatch[0], 10);
                         }
-                        else if (/^[A-D][\)\.\:\-]/i.test(line)) {
+                        // Pagbabasa ng Multiple Choice Options (A, B, C, D o a), b), c), d))
+                        else if /^[a-dA-D][\)\.\:\-]\s*/.test(line)) {
                             let optKey = line.charAt(0).toUpperCase();
-                            let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
+                            let optVal = line.substring(1).replace(/^[\)\.\:\-]\s*/, '').trim();
                             options[optKey] = optVal;
-                        } 
-                        else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
-                            answer = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim();
-                        } 
-                        else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
-                            explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
+                        }
+                        // Pagbabasa ng Answer Key (Answer:, Sagot:, Key:)
+                        else if (/^(?:ans(?:wer)?|sagot|key)[\s:\-\)\.]/i.test(line)) {
+                            answer = line.replace(/^(?:ans(?:wer)?|sagot|key)[\s:\-\)\.]/i, '').trim();
+                        }
+                        // Pagbabasa ng Explanation (Explanation:, Paliwanag:, Expl:)
+                        else if (/^(?:exp(?:lanation)?|paliwanag)[\s:\-\)\.]/i.test(line)) {
+                            explanation = line.replace(/^(?:exp(?:lanation)?|paliwanag)[\s:\-\)\.]/i, '').trim();
+                        }
+                        else {
+                            // Kung wala sa nabanggit, maaaring bahagi ito ng tanong o karagdagang detalye
+                            if (!answer && Object.keys(options).length === 0) {
+                                qText += " " + line;
+                            }
                         }
                     });
 
-                    if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText)) {
+                    // Awtomatikong magiging Essay kung may rubrics o mahabang tanong na walang choices
+                    if (rubrics || /essay/i.test(qText) || /ipaliwanag/i.test(qText) || /how/i.test(qText) || /bakit/i.test(qText) || /paano/i.test(qText)) {
                         if (Object.keys(options).length === 0 && !answer) {
                             qType = 'essay';
-                            if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kelebanse ng sagot.";
-                            if (points === 1) points = 10;
+                            if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kaangkupan ng Sagot.";
+                            if (points === 1 && qText.length > 50) points = 5;
                         }
                     }
 
                     if (qText) {
                         questionsList.push({
-                            question: qText,
+                            question: qText.trim(),
                             type: qType,
                             options: options,
-                            answer: answer || "N/A (Essay/Constructed Response)",
-                            explanation: explanation || (rubrics ? `Criteria for Judging: ${rubrics}` : "Walang nakasaad na paliwanag."),
+                            answer: answer || "N/A (Constructed Response)",
+                            explanation: explanation || (rubrics ? `Rubrics/Criteria: ${rubrics}` : "Walang nakasaad na paliwanag."),
                             rubrics: rubrics,
                             points: points
                         });
@@ -2493,15 +2523,15 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 });
 
                 if (questionsList.length === 0) {
-                    alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
+                    alert("Hindi nabasa ang mga tanong. Subukang ayusin ang pormat.");
                     return;
                 }
 
                 socket.emit('updatePlainQuestionsData', questionsList);
                 closeInsertModal();
-                alert(`Tagumpay! Awtomatikong nabasa ang ${questionsList.length} tanong sa LAHAT ng screen! 🚀`);
+                alert(`Tagumpay! Nabasa at nailapat ang ${questionsList.length} tanong nang awtomatiko sa LAHAT ng screen! 🚀`);
             } catch (err) {
-                alert("May error sa pagbasa ng text.");
+                alert("May error sa pagbasa ng text. Siguraduhing maayos ang pagkakayari.");
             }
         }
 
