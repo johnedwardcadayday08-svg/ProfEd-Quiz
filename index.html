@@ -2836,253 +2836,128 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         function startTimer() { socket.emit('startTimer'); }
         function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { 
-    // Baguhin/Linisin ang mga naka-save na larawan ng participants
-    attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-    shownPopups = {};
+            attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+            shownPopups = {};
+            groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
 
-    socket.emit('resetGame'); 
+            socket.emit('resetGame'); 
 
-    // Itago ang review section kapag nag-reset
-    const reviewSec = document.getElementById('review-section');
-    if (reviewSec) {
-        reviewSec.style.display = "none";
-    }
-
-    // I-update ang UI ng monitor upang bumalik sa default/blankong litrato
-    if (isJudgeRole) {
-        if (currentMode === 'individual') {
-            renderIndividualMonitorLayout({});
-        } else {
-            renderScoreboardAndPodium();
-        }
-    }
-}
-
-        function submitAns(questionIndex, questionId, answer) {
-            if (!isGameStarted) return;
-            if (answeredQuestions[questionId]) return;
-            answeredQuestions[questionId] = true;
-            
-            const answeredCount = Object.keys(answeredQuestions).length;
-
-            if (currentMode === 'individual') {
-                socket.emit('submitIndividualAnswer', { fullName: individualFullName, questionIndex, answer, answeredCount }, (res) => {
-                    handleIndividualFeedback(res, questionId, answer);
-                });
-            } else {
-                socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer, answeredCount });
-            }
-            
-            const expBox = document.getElementById(`exp-${questionId}`);
-            if (expBox) expBox.style.display = "block";
-
-            if (answeredCount >= totalQuestionsCount) {
-                lockQuizUI();
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    popup.className = "feedback-correct";
-                    popup.innerHTML = "Wait for the results!";
-                    popup.style.display = "block";
-                }
-            }
-        }
-
-        function handleIndividualFeedback(res, questionId, answer) {
-            if (!res) return;
-            const popup = document.getElementById('feedback-popup');
-            if (popup) {
-                popup.className = res.isCorrect ? "feedback-correct" : "feedback-wrong";
-                popup.innerHTML = res.isCorrect ? `✔ CORRECT! (+${res.earnedPoints} Pts)` : "✖ INCORRECT!";
-                popup.style.display = "block";
-                setTimeout(() => { popup.style.display = "none"; }, 2000);
-            }
-            if (questionId && answer) {
-                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
-                if (targetLabel) {
-                    targetLabel.classList.add(res.isCorrect ? "option-correct" : "option-wrong");
-                }
-            }
-        }
-
-        function triggerMixedTextSubmit(questionIndex, questionId) {
-            const textInput = document.getElementById(`input-${questionId}`);
-            if (!textInput) return;
-            const val = textInput.value;
-
-            if (!val || !val.trim()) {
-                alert("Mangyaring i-type muna ang iyong sagot!");
-                return;
-            }
-
-            submitMixedTextAns(questionIndex, questionId, val);
-
-            const btn = document.getElementById(`btn-done-${questionId}`);
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = "Submitted ✔️";
-                btn.style.background = "rgba(148, 163, 184, 0.4)";
-            }
-        }
-
-        function submitMixedTextAns(questionIndex, questionId, answerText) {
-            if (!isGameStarted) return;
-            if (answeredQuestions[questionId]) return;
-            if (!answerText || !answerText.trim()) return;
-            
-            answeredQuestions[questionId] = true;
-            const answeredCount = Object.keys(answeredQuestions).length;
-
-            if (currentMode === 'individual') {
-                socket.emit('submitIndividualAnswer', { fullName: individualFullName, questionIndex, answer: answerText, answeredCount }, (res) => {
-                    handleIndividualFeedback(res, questionId, answerText);
-                });
-            } else {
-                socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: answerText, answeredCount });
-            }
-            
-            const expBox = document.getElementById(`exp-${questionId}`);
-            if (expBox) expBox.style.display = "block";
-
-            const textInput = document.getElementById(`input-${questionId}`);
-            if (textInput) textInput.disabled = true;
-
-            if (answeredCount >= totalQuestionsCount) {
-                lockQuizUI();
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    popup.className = "feedback-correct";
-                    popup.innerHTML = "Wait for the results!";
-                    popup.style.display = "block";
-                }
-            }
-        }
-
-        function triggerEssaySubmit(questionIndex, questionId) {
-            const txtArea = document.getElementById(`textarea-${questionId}`);
-            if (!txtArea) return;
-            const val = txtArea.value;
-
-            if (!val || !val.trim()) {
-                alert("Mangyaring isulat muna ang iyong essay bago pindutin ang Submit!");
-                return;
-            }
-
-            submitEssayAns(questionIndex, questionId, val);
-
-            const btn = document.getElementById(`btn-done-${questionId}`);
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = "Submitted & Evaluated ✔️";
-                btn.style.background = "rgba(148, 163, 184, 0.4)";
-            }
-        }
-
-        function submitEssayAns(questionIndex, questionId, essayText) {
-            if (!isGameStarted) return;
-            if (answeredQuestions[questionId]) return;
-
-            answeredQuestions[questionId] = true;
-            const answeredCount = Object.keys(answeredQuestions).length;
-
-            if (currentMode === 'individual') {
-                socket.emit('submitIndividualAnswer', { fullName: individualFullName, questionIndex, answer: essayText, answeredCount }, (res) => {
-                    handleIndividualFeedback(res, questionId, essayText);
-                });
-            } else {
-                socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: essayText, answeredCount });
-            }
-
-            const expBox = document.getElementById(`exp-${questionId}`);
-            if (expBox) expBox.style.display = "block";
-
-            const txtArea = document.getElementById(`textarea-${questionId}`);
-            if (txtArea) txtArea.disabled = true;
-
-            if (answeredCount >= totalQuestionsCount) {
-                lockQuizUI();
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    popup.className = "feedback-correct";
-                    popup.innerHTML = "Wait for the results!";
-                    popup.style.display = "block";
-                }
-            }
-        }
-
-        socket.on('gameState', ({ isGameStarted: started }) => {
-            isGameStarted = started;
-            if (isGameStarted) {
-                unlockQuizUI();
-            } else {
-                lockQuizUI();
-            }
-        });
-
-        socket.on('answerFeedback', ({ isCorrect, questionId, answer, earnedPoints, maxPoints, qType }) => {
-            const answeredCount = Object.keys(answeredQuestions).length;
-            if (answeredCount <= totalQuestionsCount) {
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    if (qType === 'essay') {
-                        popup.className = earnedPoints > 0 ? "feedback-correct" : "feedback-wrong";
-                        popup.innerHTML = `📝 ESSAY GRADED!<br><span style="font-size:20px;">Score: ${earnedPoints} / ${maxPoints} Points</span>`;
-                    } else {
-                        popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-                        popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
-                    }
-                    popup.style.display = "block";
-                    setTimeout(() => { popup.style.display = "none"; }, 2000);
-                }
-            }
-            if (questionId && answer) {
-                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
-                if (targetLabel) {
-                    targetLabel.classList.add(isCorrect ? "option-correct" : "option-wrong");
-                }
-            }
-        });
-
-        socket.on('updateState', ({ groupScores, photos, completedStatus, mode }) => {
-            latestGroupScores = groupScores;
-            if (photos) attorneyPhotos = photos;
-            if (completedStatus) groupCompletedStatus = completedStatus;
-
-            if (mode) {
-                currentMode = mode;
-                applyGameModeUI(mode);
+            const reviewSec = document.getElementById('review-section');
+            if (reviewSec) {
+                reviewSec.style.display = "none";
             }
 
             if (isJudgeRole) {
                 if (currentMode === 'individual') {
-                    renderIndividualMonitorLayout(window.currentIndividualScores || {});
+                    renderIndividualMonitorLayout({});
                 } else {
                     renderScoreboardAndPodium();
                 }
             }
+        }
 
-            if (myGroup && groupScores[myGroup] !== undefined) {
-                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / ${totalMaxScore}`;
+        socket.on('resetState', () => {
+            if (typeof answeredQuestions !== 'undefined') answeredQuestions = {};
+            if (typeof isGameStarted !== 'undefined') isGameStarted = false;
+            
+            attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+            shownPopups = {};
+            groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
+
+            const reviewSec = document.getElementById('review-section');
+            if (reviewSec) reviewSec.style.display = "none";
+            
+            const winnerModal = document.getElementById('winner-modal');
+            if (winnerModal) winnerModal.style.display = "none";
+
+            if (typeof lockQuizUI === 'function') {
+                lockQuizUI();
+            }
+
+            if (isJudgeRole) {
+                if (currentMode === 'individual') {
+                    renderIndividualMonitorLayout({});
+                } else {
+                    renderScoreboardAndPodium();
+                }
             }
         });
 
-socket.on('groupFinished', ({ groupName }) => {
-    // Awtomatikong ipapasok na tapos na ang grupo
-    groupCompletedStatus[groupName] = true;
+        function renderScoreboardAndPodium() {
+            const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
+            
+            let chartHTML = '';
+            sortedGroups.forEach(([group, score]) => {
+                let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
+                let photoSrc = attorneyPhotos[group] || '/logo.png';
+                let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
+                let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
+                let tSecs = (tSeconds % 60).toString().padStart(2, '0');
+                let timeText = `${tMins}:${tSecs}`;
+                let isUrgent = tSeconds <= 15 && tSeconds > 0;
+                let isCompleted = groupCompletedStatus[group];
 
-    if (isJudgeRole) {
-        // I-re-render agad ang podium para magkulay green ang bilog
-        renderScoreboardAndPodium();
+                chartHTML += `
+                    <div class="bar-row">
+                        <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
+                        <div class="bar-label">${group} ${isCompleted ? '✔️' : ''}</div>
+                        <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
+                        <div class="bar-score">${score}/${totalMaxScore}</div>
+                        <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
+                    </div>
+                `;
+            });
+            const barChart = document.getElementById('bar-chart');
+            if (barChart) barChart.innerHTML = chartHTML;
 
-        const banner = document.getElementById('judge-notification-banner');
-        if (banner) {
-            banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
-            banner.style.display = 'block';
-            setTimeout(() => {
-                banner.style.display = 'none';
-            }, 3000);
+            let podiumHTML = '';
+            sortedGroups.forEach(([group, score], idx) => {
+                let heightPercent = totalMaxScore > 0 ? Math.max((score / totalMaxScore) * 100, 8) : 8;
+                let photoSrc = attorneyPhotos[group] || '/logo.png';
+                let isCompleted = groupCompletedStatus[group];
+                
+                let gradientBg = '';
+                if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
+                    gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
+                } else if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.5)) {
+                    gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
+                } else {
+                    gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
+                }
+
+                podiumHTML += `
+                    <div class="podium-col">
+                        <div class="rank-label-badge">Top ${idx + 1}</div>
+                        <div class="rank-bar-track">
+                            <div class="rank-bar-fill" style="height: ${heightPercent}%; background: ${gradientBg};"></div>
+                        </div>
+                        <div class="glowing-frame ${isCompleted ? 'completed-frame' : ''}">
+                            <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
+                        </div>
+                        <div class="animated-attorney-label">${group} ${isCompleted ? '🟢' : ''}</div>
+                    </div>
+                `;
+            });
+            const podiumDisplay = document.getElementById('podium-display');
+            if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
         }
-    }
-});
+
+        socket.on('groupFinished', ({ groupName }) => {
+            groupCompletedStatus[groupName] = true;
+
+            if (isJudgeRole) {
+                renderScoreboardAndPodium();
+
+                const banner = document.getElementById('judge-notification-banner');
+                if (banner) {
+                    banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
+                    banner.style.display = 'block';
+                    setTimeout(() => {
+                        banner.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        });
 function renderScoreboardAndPodium() {
     const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
     
