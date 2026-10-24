@@ -2258,18 +2258,27 @@ function applyGameModeUI(mode, showAlerts = false) {
             }
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initAudio();
-            new QRCode(document.getElementById("qrcode"), {
-                text: "https://profed-quiz-y6ly.onrender.com",
-                width: 75,
-                height: 75,
-                colorDark: "#6b21a8",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            lockQuizUI();
+window.addEventListener('DOMContentLoaded', () => {
+    initAudio();
+    new QRCode(document.getElementById("qrcode"), {
+        text: window.location.href,
+        width: 75, height: 75,
+        colorDark: "#6b21a8", colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+    lockQuizUI();
 
+    // Awtomatikong binabasa ang mga na-save na tanong mula sa localStorage
+    let savedQ = localStorage.getItem('myCustomQuizQuestions');
+    if (savedQ) {
+        try {
+            let parsedQ = JSON.parse(savedQ);
+            if (parsedQ && parsedQ.length > 0) {
+                socket.emit('updatePlainQuestionsData', parsedQ);
+            }
+        } catch(e) {}
+    }
+});
             // Siguraduhing nakatago ang parehong instructions modal sa simula ng pagbukas ng link
             const groupInstModal = document.getElementById('instructions-modal');
             const indivInstModal = document.getElementById('individual-instructions-modal');
@@ -2417,19 +2426,18 @@ function savePlainQuestions() {
             .replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'")
             .replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
 
-        // Pinahusay na paghahati (split) gamit ang Regex para makilala ang bawat Q., Question:, o numerong tanong
+        // Pinahusay na paghahati para mabasa LAHAT ng tanong kahit magkakaiba ang format
         let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q[\.\:]|Question[\.\:]|\bPart\b|\d+[\.\)\-]|[A-Z][\.\)\-])\s+)/i);
         let questionsList = [];
 
         rawBlocks.forEach(block => {
             let trimmedBlock = block.trim();
-            if (!trimmedBlock || /^\bPart\b/i.test(trimmedBlock)) return; // Lampasan ang mga headings tulad ng Part II. ESSAY
+            if (!trimmedBlock || /^\bPart\b/i.test(trimmedBlock)) return;
 
             let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
             let qText = "", qType = "multiple-choice", options = {}, answer = "", explanation = "", rubrics = "", points = 1;
 
             lines.forEach(line => {
-                // Pagkuha ng mismong tanong
                 if (/^(?:Q|Question)?[\s\d\.\-\)]+[:\-\)\.]?\s*/i.test(line) && !qText && !/^[A-D][\)\.\:\-]/i.test(line)) {
                     qText = line.replace(/^(?:Q|Question)?[\s\d\.\-\)]+[:\-\)\.]?\s*/i, '').trim();
                     if (!qText) qText = line;
@@ -2437,7 +2445,6 @@ function savePlainQuestions() {
                     qText = line;
                 }
 
-                // Pagsusuri ng Type, Rubrics, Points, Choices, Answer, at Explanation
                 if (/^Type[\s:\-\)\.]/i.test(line)) {
                     let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
                     if (tVal.includes('essay')) qType = 'essay';
@@ -2462,12 +2469,11 @@ function savePlainQuestions() {
                 }
             });
 
-            // Auto-detect kung Essay base sa rubrics o nilalaman nito
             if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText) || /paano/i.test(qText)) {
                 if (Object.keys(options).length === 0 && !answer) {
                     qType = 'essay';
-                    if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kahulugan.";
-                    if (points === 1) points = 3; // default points kung may essay
+                    if (!rubrics) rubrics = "Nilalaman at Organisasyon.";
+                    if (points === 1) points = 3;
                 }
             }
 
@@ -2484,6 +2490,9 @@ function savePlainQuestions() {
             alert("Hindi nabasa ang mga tanong. Pakisuri ang format.");
             return;
         }
+
+        // ⭐ ISINAVE SA LOCALSTORAGE PARA HINDI MAWALA KAHIT MAG-RESET O SURRENDER
+        localStorage.setItem('myCustomQuizQuestions', JSON.stringify(questionsList));
 
         socket.emit('updatePlainQuestionsData', questionsList);
         closeInsertModal();
