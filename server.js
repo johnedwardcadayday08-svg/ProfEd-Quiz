@@ -40,45 +40,34 @@ let globalQuestionsList = [
     }
 ];
 
-// ==========================================
-// HELPER 1: Pang-linis ng Text (Case-insensitive & Space Tolerance)
-// ==========================================
 function normalizeText(text) {
     if (!text) return "";
     return text
         .toString()
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, ' ')       // Ginagawang iisang space ang maramihang spaces
-        .replace(/[^\w\s]/gi, ''); // Tinatanggal ang mga espesyal na karakter/bantas
+        .replace(/\s+/g, ' ')       
+        .replace(/[^\w\s]/gi, ''); 
 }
 
-// ==========================================
-// HELPER 2: Smart Answer & Essay Checker
-// ==========================================
 function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
     const normUser = normalizeText(userAnswer);
     const normCorrect = normalizeText(correctAnswerKey);
 
     if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
-    // A. Kapag HINDI Essay (Multiple Choice, True/False, Identification, Enumeration)
     if (questionType !== 'essay') {
-        // Tamang-tama ang salita (kahit iba ang capital/small letters o spaces)
         if (normUser === normCorrect) {
             return { isCorrect: true, earnedPoints: maxPoints };
         }
-        // Kung napasama ang tamang keyword
         if (normCorrect.length > 2 && normUser.includes(normCorrect)) {
             return { isCorrect: true, earnedPoints: maxPoints };
         }
         return { isCorrect: false, earnedPoints: 0 };
     }
 
-    // B. Kapag ESSAY (Smart Consideration batay sa Keywords/Content)
     const keywords = normCorrect.split(' ').filter(word => word.length > 3);
     
-    // Kapag walang piho na key answer, basta may nai-type na essay (10+ characters)
     if (keywords.length === 0) {
         return normUser.length >= 10 
             ? { isCorrect: true, earnedPoints: maxPoints } 
@@ -95,40 +84,14 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
     const matchRatio = matchedCount / keywords.length;
 
     if (matchRatio >= 0.5) {
-        // High Consideration: Perfect score
         return { isCorrect: true, earnedPoints: maxPoints };
     } else if (matchRatio >= 0.2 || normUser.length >= 15) {
-        // Consideration / Partial Points
         const partial = Math.max(1, Math.ceil(maxPoints * 0.7));
         return { isCorrect: true, earnedPoints: partial };
     } else {
-        // Effort points para sa nag-essay
         const effortPts = Math.max(1, Math.floor(maxPoints * 0.3));
         return { isCorrect: false, earnedPoints: effortPts };
     }
-}
-
-function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoints) {
-    if (!essayText || typeof essayText !== 'string') return 0;
-    let text = essayText.trim().toLowerCase();
-    if (text.length < 10) return 0;
-    let maxScore = maxPoints || 10;
-    let combinedContext = ((questionText || "") + " " + (criteriaText || "")).toLowerCase();
-    let words = combinedContext.match(/\b[a-zà-ÿ0-9]{4,}\b/gi) || [];
-    let stopWords = new Set(['e.g.', 'type', 'points', 'para', 'sa', 'mga', 'nang', 'maging', 'dahil', 'ayon', 'kundi', 'rubrics', 'criteria']);
-    let coreKeywords = Array.from(new Set(words.filter(w => !stopWords.has(w))));
-
-    let matchCount = 0;
-    coreKeywords.forEach(kw => { if (text.includes(kw)) matchCount++; });
-    let relevanceRatio = coreKeywords.length > 0 ? (matchCount / coreKeywords.length) : 0.5;
-    if (coreKeywords.length >= 3 && matchCount === 0) return 0;
-
-    let wordCount = text.split(/\s+/).length;
-    let lengthScoreRatio = wordCount >= 30 ? 1.0 : (wordCount >= 15 ? 0.7 : (wordCount >= 8 ? 0.4 : 0.2));
-    let finalRatio = (relevanceRatio * 0.6) + (lengthScoreRatio * 0.4);
-    if (finalRatio < 0.25) return 0;
-    let computedPoints = Math.round(finalRatio * maxScore);
-    return Math.min(Math.max(computedPoints, 0), maxScore);
 }
 
 io.on('connection', (socket) => {
@@ -145,7 +108,6 @@ io.on('connection', (socket) => {
     socket.emit('individualParticipantsUpdated', individualParticipants);
     socket.emit('individualScoresUpdated', individualScores);
 
-    // 1. SET GAME MODE HANDLER
     socket.on('setGameMode', (mode) => {
         currentMode = mode;
         isGameStarted = false;
@@ -186,7 +148,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // === SUBMIT INDIVIDUAL ANSWER ===
     socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
         const question = globalQuestionsList[questionIndex];
         if (!question) return;
@@ -257,7 +218,6 @@ io.on('connection', (socket) => {
         }
     });
 
- // === REAL-TIME START QUIZ & TIMER ===
     socket.on('startQuiz', () => {
         isGameStarted = true;
         io.emit('quizStarted');
@@ -278,7 +238,6 @@ io.on('connection', (socket) => {
                     activeCount++;
                 }
             });
-            // Real-time broadcast ng timer sa LAHAT ng devices
             io.emit('timerUpdate', groupTimers);
             const allFinished = Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g]);
             if (activeCount === 0 || allFinished) {
@@ -300,8 +259,7 @@ io.on('connection', (socket) => {
         io.emit('timerUpdate', groupTimers);
     });
 
-    // === SUBMIT GROUP ANSWER ===
-   socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
+    socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
         const question = globalQuestionsList[questionIndex];
         if (!question) return;
 
@@ -311,7 +269,6 @@ io.on('connection', (socket) => {
             groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
         }
 
-        // I-send pabalik ang feedback sa sumagot na participant
         socket.emit('answerFeedback', {
             isCorrect: result.isCorrect,
             earnedPoints: result.earnedPoints,
@@ -321,7 +278,6 @@ io.on('connection', (socket) => {
             qType: question.type
         });
 
-        // I-broadcast sa lahat (lalo na sa Judge monitor) ang bagong iskor
         io.emit('updateState', { 
             groupScores, 
             photos: attorneyPhotos, 
@@ -330,14 +286,15 @@ io.on('connection', (socket) => {
         });
     });
 
-    // === RESET GAME (Preserving Questions in Realtime) ===
     socket.on('resetGame', () => {
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
+        groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
+        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
         individualScores = {};
         isGameStarted = false;
 
         io.emit('resetState');
-        io.emit('applyCustomQuestionsList', globalQuestionsList); // Siguraduhing naibabalik ang mga tanong
+        io.emit('applyCustomQuestionsList', globalQuestionsList);
         io.emit('gameState', { isGameStarted: false });
         io.emit('timerUpdate', groupTimers);
         io.emit('updateState', {
