@@ -2147,7 +2147,7 @@ function applyGameModeUI(mode, showAlerts = false) {
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
                         <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
-                        <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 3</button>
+                        <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
                         <button class="group-btn attorney-btn-3 animated-group-btn-3" onclick="selectGroup('Attorney 3')">Attorney 3</button>
                         <button class="group-btn attorney-btn-4 animated-group-btn-4" onclick="selectGroup('Attorney 4')">Attorney 4</button>
                     `;
@@ -2258,27 +2258,18 @@ function applyGameModeUI(mode, showAlerts = false) {
             }
         });
 
-window.addEventListener('DOMContentLoaded', () => {
-    initAudio();
-    new QRCode(document.getElementById("qrcode"), {
-        text: window.location.href,
-        width: 75, height: 75,
-        colorDark: "#6b21a8", colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
-    });
-    lockQuizUI();
+        window.addEventListener('DOMContentLoaded', () => {
+            initAudio();
+            new QRCode(document.getElementById("qrcode"), {
+                text: "https://profed-quiz-y6ly.onrender.com",
+                width: 75,
+                height: 75,
+                colorDark: "#6b21a8",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            lockQuizUI();
 
-    // Awtomatikong binabasa ang mga na-save na tanong mula sa localStorage
-    let savedQ = localStorage.getItem('myCustomQuizQuestions');
-    if (savedQ) {
-        try {
-            let parsedQ = JSON.parse(savedQ);
-            if (parsedQ && parsedQ.length > 0) {
-                socket.emit('updatePlainQuestionsData', parsedQ);
-            }
-        } catch(e) {}
-    }
-});
             // Siguraduhing nakatago ang parehong instructions modal sa simula ng pagbukas ng link
             const groupInstModal = document.getElementById('instructions-modal');
             const indivInstModal = document.getElementById('individual-instructions-modal');
@@ -2413,94 +2404,106 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-function savePlainQuestions() {
-    try {
-        let rawInput = document.getElementById('custom-questions-plaintext').value;
-        if (!rawInput || !rawInput.trim()) {
-            alert("Mangyaring maglagay ng text ng mga tanong.");
-            return;
-        }
-
-        let cleanText = rawInput
-            .replace(/♡/g, 'o').replace(/♥/g, 'o')
-            .replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'")
-            .replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
-
-        // Pinahusay na paghahati para mabasa LAHAT ng tanong kahit magkakaiba ang format
-        let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q[\.\:]|Question[\.\:]|\bPart\b|\d+[\.\)\-]|[A-Z][\.\)\-])\s+)/i);
-        let questionsList = [];
-
-        rawBlocks.forEach(block => {
-            let trimmedBlock = block.trim();
-            if (!trimmedBlock || /^\bPart\b/i.test(trimmedBlock)) return;
-
-            let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
-            let qText = "", qType = "multiple-choice", options = {}, answer = "", explanation = "", rubrics = "", points = 1;
-
-            lines.forEach(line => {
-                if (/^(?:Q|Question)?[\s\d\.\-\)]+[:\-\)\.]?\s*/i.test(line) && !qText && !/^[A-D][\)\.\:\-]/i.test(line)) {
-                    qText = line.replace(/^(?:Q|Question)?[\s\d\.\-\)]+[:\-\)\.]?\s*/i, '').trim();
-                    if (!qText) qText = line;
-                } else if (!qText && !/^Answer:|^Type:|^Rubrics:|^Points:/i.test(line)) {
-                    qText = line;
+        function savePlainQuestions() {
+            try {
+                let rawInput = document.getElementById('custom-questions-plaintext').value;
+                if (!rawInput || !rawInput.trim()) {
+                    alert("Mangyaring maglagay ng text ng mga tanong.");
+                    return;
                 }
 
-                if (/^Type[\s:\-\)\.]/i.test(line)) {
-                    let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
-                    if (tVal.includes('essay')) qType = 'essay';
-                    else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
-                    else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
-                    else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
-                    else qType = 'multiple-choice';
-                } else if (/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i.test(line)) {
-                    rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
-                    qType = 'essay';
-                } else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
-                    let ptsMatch = line.match(/\d+/);
-                    if (ptsMatch) points = parseInt(ptsMatch[0], 10);
-                } else if (/^[A-D][\)\.\:\-]/i.test(line)) {
-                    let optKey = line.charAt(0).toUpperCase();
-                    let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
-                    options[optKey] = optVal;
-                } else if (/^(?:Ans(?:wer)?|Key|Tamang\s+Sagot)[\s:\-\)\.]/i.test(line)) {
-                    answer = line.replace(/^(?:Ans(?:wer)?|Key|Tamang\s+Sagot)[\s:\-\)\.]/i, '').trim();
-                } else if (/^(?:Exp(?:lanation)?|Rationale|Note)[\s:\-\)\.]/i.test(line)) {
-                    explanation = line.replace(/^(?:Exp(?:lanation)?|Rationale|Note)[\s:\-\)\.]/i, '').trim();
-                }
-            });
+                let cleanText = rawInput
+                    .replace(/♡/g, 'o')
+                    .replace(/♥/g, 'o')
+                    .replace(/[\u201C\u201D]/g, '"')
+                    .replace(/[\u2018\u2019]/g, "'")
+                    .replace(/\r\n/g, '\n')
+                    .replace(/\r/g, '\n')
+                    .trim();
 
-            if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText) || /paano/i.test(qText)) {
-                if (Object.keys(options).length === 0 && !answer) {
-                    qType = 'essay';
-                    if (!rubrics) rubrics = "Nilalaman at Organisasyon.";
-                    if (points === 1) points = 3;
-                }
-            }
+                let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
+                let questionsList = [];
 
-            if (qText) {
-                questionsList.push({
-                    question: qText, type: qType, options: options,
-                    answer: answer || "N/A", explanation: explanation || (rubrics ? `Rubrics: ${rubrics}` : "Walang nakasaad na paliwanag."),
-                    rubrics: rubrics, points: points
+                rawBlocks.forEach(block => {
+                    let trimmedBlock = block.trim();
+                    if (!trimmedBlock) return;
+
+                    let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
+                    
+                    let qText = "";
+                    let qType = "multiple-choice";
+                    let options = {};
+                    let answer = "";
+                    let explanation = "";
+                    let rubrics = "";
+                    let points = 1;
+
+                    lines.forEach(line => {
+                        if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
+                            qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
+                        } 
+                        else if (/^Type[\s:\-\)\.]/i.test(line)) {
+                            let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
+                            if (tVal.includes('essay')) qType = 'essay';
+                            else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
+                            else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
+                            else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
+                            else qType = 'multiple-choice';
+                        }
+                        else if (/^Rubrics?[\s:\-\)\.]/i.test(line) || /^Criteria[\s:\-\)\.]/i.test(line)) {
+                            rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
+                            qType = 'essay';
+                        }
+                        else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
+                            let ptsMatch = line.match(/\d+/);
+                            if (ptsMatch) points = parseInt(ptsMatch[0], 10);
+                        }
+                        else if (/^[A-D][\)\.\:\-]/i.test(line)) {
+                            let optKey = line.charAt(0).toUpperCase();
+                            let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
+                            options[optKey] = optVal;
+                        } 
+                        else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
+                            answer = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim();
+                        } 
+                        else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
+                            explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
+                        }
+                    });
+
+                    if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText)) {
+                        if (Object.keys(options).length === 0 && !answer) {
+                            qType = 'essay';
+                            if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kelebanse ng sagot.";
+                            if (points === 1) points = 10;
+                        }
+                    }
+
+                    if (qText) {
+                        questionsList.push({
+                            question: qText,
+                            type: qType,
+                            options: options,
+                            answer: answer || "N/A (Essay/Constructed Response)",
+                            explanation: explanation || (rubrics ? `Criteria for Judging: ${rubrics}` : "Walang nakasaad na paliwanag."),
+                            rubrics: rubrics,
+                            points: points
+                        });
+                    }
                 });
+
+                if (questionsList.length === 0) {
+                    alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
+                    return;
+                }
+
+                socket.emit('updatePlainQuestionsData', questionsList);
+                closeInsertModal();
+                alert(`Tagumpay! Awtomatikong nabasa ang ${questionsList.length} tanong sa LAHAT ng screen! 🚀`);
+            } catch (err) {
+                alert("May error sa pagbasa ng text.");
             }
-        });
-
-        if (questionsList.length === 0) {
-            alert("Hindi nabasa ang mga tanong. Pakisuri ang format.");
-            return;
         }
-
-        // ⭐ ISINAVE SA LOCALSTORAGE PARA HINDI MAWALA KAHIT MAG-RESET O SURRENDER
-        localStorage.setItem('myCustomQuizQuestions', JSON.stringify(questionsList));
-
-        socket.emit('updatePlainQuestionsData', questionsList);
-        closeInsertModal();
-        alert(`Tagumpay! Nabasa at nailagay ang ${questionsList.length} tanong sa LAHAT ng screen! 🚀`);
-    } catch (err) {
-        alert("May error sa pagbasa ng text.");
-    }
-}
 
         socket.on('applyCustomQuestionsList', (questionsList) => {
             globalQuestionsList = questionsList;
@@ -2695,7 +2698,7 @@ function savePlainQuestions() {
                 document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
             } else {
                 document.body.classList.add('is-fullscreen');
-                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
+                document.getElementById('fs-btn').innerText = "⛶ Exit Full";
             }
         });
 
