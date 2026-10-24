@@ -2404,7 +2404,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        function savePlainQuestions() {
+       function savePlainQuestions() {
             try {
                 let rawInput = document.getElementById('custom-questions-plaintext').value;
                 if (!rawInput || !rawInput.trim()) {
@@ -2421,7 +2421,8 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     .replace(/\r/g, '\n')
                     .trim();
 
-                let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
+                // Pinalawig ang regex para masagap ang kahit anong format ng numbering (Q1, 1., A., [1], atbp.)
+                let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question|\d+[\.\)\-]|[A-Z][\.\)\-])\s+)/i);
                 let questionsList = [];
 
                 rawBlocks.forEach(block => {
@@ -2439,10 +2440,16 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     let points = 1;
 
                     lines.forEach(line => {
-                        if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
-                            qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
-                        } 
-                        else if (/^Type[\s:\-\)\.]/i.test(line)) {
+                        // Basahin ang tanong kahit anong format ng numbering ang gamitin
+                        if (/^(?:Q|Question)?[\s\d\.\-\)]+[:\-\)\.]?\s*/i.test(line) && !qText && !/^[A-D][\)\.\:\-]/i.test(line)) {
+                            qText = line.replace(/^(?:Q|Question)?[\s\d\.\-\)]+[:\-\)\.]?\s*/i, '').trim();
+                            if (!qText) qText = line; // Fallback kung sakaling ma-cut
+                        } else if (!qText) {
+                            qText = line; // Kung sakaling walang explicit number ang unang linya
+                        }
+
+                        // Uri ng tanong
+                        if (/^Type[\s:\-\)\.]/i.test(line)) {
                             let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
                             if (tVal.includes('essay')) qType = 'essay';
                             else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
@@ -2450,31 +2457,37 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                             else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
                             else qType = 'multiple-choice';
                         }
-                        else if (/^Rubrics?[\s:\-\)\.]/i.test(line) || /^Criteria[\s:\-\)\.]/i.test(line)) {
+                        // Rubrics o Criteria
+                        else if (/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i.test(line)) {
                             rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
                             qType = 'essay';
                         }
+                        // Points o Score
                         else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
                             let ptsMatch = line.match(/\d+/);
                             if (ptsMatch) points = parseInt(ptsMatch[0], 10);
                         }
+                        // Multiple choice options (A, B, C, D)
                         else if (/^[A-D][\)\.\:\-]/i.test(line)) {
                             let optKey = line.charAt(0).toUpperCase();
                             let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
                             options[optKey] = optVal;
                         } 
-                        else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
-                            answer = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim();
+                        // Answer key (Ans, Answer, Key, Tamang Sagot)
+                        else if /^(?:Ans(?:wer)?|Key|Tamang\s+Sagot)[\s:\-\)\.]/i.test(line)) {
+                            answer = line.replace(/^(?:Ans(?:wer)?|Key|Tamang\s+Sagot)[\s:\-\)\.]/i, '').trim();
                         } 
-                        else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
-                            explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
+                        // Explanation o Rationale
+                        else if (/^(?:Exp(?:lanation)?|Rationale|Note)[\s:\-\)\.]/i.test(line)) {
+                            explanation = line.replace(/^(?:Exp(?:lanation)?|Rationale|Note)[\s:\-\)\.]/i, '').trim();
                         }
                     });
 
-                    if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText)) {
+                    // Awtomatikong i-set bilang Essay kung may kinalaman sa paliwanag o walang choices
+                    if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText) || /paano/i.test(qText) || /bakit/i.test(qText)) {
                         if (Object.keys(options).length === 0 && !answer) {
                             qType = 'essay';
-                            if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kelebanse ng sagot.";
+                            if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kalidad ng Pagpapaliwanag.";
                             if (points === 1) points = 10;
                         }
                     }
@@ -2484,8 +2497,8 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                             question: qText,
                             type: qType,
                             options: options,
-                            answer: answer || "N/A (Essay/Constructed Response)",
-                            explanation: explanation || (rubrics ? `Criteria for Judging: ${rubrics}` : "Walang nakasaad na paliwanag."),
+                            answer: answer || "N/A (Constructed Response)",
+                            explanation: explanation || (rubrics ? `Criteria: ${rubrics}` : "Walang nakasaad na paliwanag."),
                             rubrics: rubrics,
                             points: points
                         });
@@ -2493,7 +2506,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 });
 
                 if (questionsList.length === 0) {
-                    alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
+                    alert("Hindi nabasa ang mga tanong. Pakisuri ang format.");
                     return;
                 }
 
