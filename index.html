@@ -2729,6 +2729,45 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             const reviewSec = document.getElementById('review-section');
             if (reviewSec) reviewSec.style.display = "block";
         }
+// Idagdag o palitan ang socket listener para sa answerFeedback upang lumabas ang pop-up ng tama o mali
+socket.on('answerFeedback', (data) => {
+    const popup = document.getElementById('feedback-popup');
+    if (!popup) return;
+
+    if (data.isCorrect) {
+        popup.className = "feedback-correct";
+        popup.innerText = `✨ Tama! +${data.earnedPoints} Pts 🎉`;
+    } else {
+        popup.className = "feedback-wrong";
+        popup.innerText = `❌ Mali! (${data.earnedPoints} Pts)`;
+    }
+
+    popup.style.display = "block";
+    
+    // Awtomatikong itago ang pop-up pagkalipas ng 1.5 segundo para hindi makasagabal
+    setTimeout(() => {
+        popup.style.display = "none";
+    }, 1500);
+});
+
+// Ayusin din ang pag-update ng state ng iskor sa client side
+socket.on('updateState', (state) => {
+    if (state.groupScores) {
+        latestGroupScores = state.groupScores;
+        if (myGroup && latestGroupScores[myGroup] !== undefined) {
+            document.getElementById('group-score-display').innerText = `Score: ${latestGroupScores[myGroup]} / ${totalMaxScore}`;
+        }
+    }
+    if (state.photos) {
+        attorneyPhotos = state.photos;
+    }
+    if (state.completedStatus) {
+        groupCompletedStatus = state.completedStatus;
+    }
+    if (isJudgeRole && currentMode === 'group') {
+        renderScoreboardAndPodium();
+    }
+});
 
         function verifyJudgePassword() {
             const pass = document.getElementById('judge-pass-input').value;
