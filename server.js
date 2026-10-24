@@ -25,7 +25,7 @@ let individualScoreHistoryArchive = [];
 let individualParticipants = {}; 
 let individualScores = {};       
 
-let customQuestionsList = [
+let globalQuestionsList = [
     {
         question: "Ayon sa Kautusang Pampamahalaan at Code of Ethics, ano ang pangunahing batayan ng pagpaparusa o pagdidisiplina ng isang guro sa mag-aaral?",
         type: "multiple-choice",
@@ -137,7 +137,7 @@ io.on('connection', (socket) => {
     socket.emit('gameModeUpdated', currentMode);
     socket.emit('gameState', { isGameStarted });
     socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
-    socket.emit('applyCustomQuestionsList', customQuestionsList);
+    socket.emit('applyCustomQuestionsList', globalQuestionsList);
     socket.emit('timerUpdate', groupTimers);
     socket.emit('photoArchiveUpdated', serverPhotoArchive);
     socket.emit('groupHistoryUpdated', groupScoreHistoryArchive);
@@ -163,6 +163,7 @@ io.on('connection', (socket) => {
 
         io.emit('gameModeUpdated', currentMode);
         io.emit('resetState');
+        io.emit('applyCustomQuestionsList', globalQuestionsList);
         io.emit('gameState', { isGameStarted: false });
         io.emit('timerUpdate', groupTimers);
         io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
@@ -185,12 +186,11 @@ io.on('connection', (socket) => {
         }
     });
 
-// === SUBMIT INDIVIDUAL ANSWER ===
+    // === SUBMIT INDIVIDUAL ANSWER ===
     socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
         const question = globalQuestionsList[questionIndex];
         if (!question) return;
 
-        // Gagamitin din ang Smart Checker para sa Individual Mode
         const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
 
         if (result.isCorrect || result.earnedPoints > 0) {
@@ -238,8 +238,8 @@ io.on('connection', (socket) => {
 
     socket.on('updatePlainQuestionsData', (questionsList) => {
         if (questionsList && questionsList.length > 0) {
-            customQuestionsList = questionsList;
-            io.emit('applyCustomQuestionsList', customQuestionsList);
+            globalQuestionsList = questionsList;
+            io.emit('applyCustomQuestionsList', globalQuestionsList);
         }
     });
 
@@ -291,12 +291,11 @@ io.on('connection', (socket) => {
         io.emit('timerUpdate', groupTimers);
     });
 
-// === SUBMIT GROUP ANSWER ===
+    // === SUBMIT GROUP ANSWER ===
     socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
         const question = globalQuestionsList[questionIndex];
         if (!question) return;
 
-        // Gagamitin ang ating bagong Smart Checker
         const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
 
         if (result.isCorrect || result.earnedPoints > 0) {
@@ -320,37 +319,26 @@ io.on('connection', (socket) => {
         });
     });
 
-
-    // 2. RESET GAME HANDLER
-  // === RESET GAME (Preserving Questions in Realtime) ===
+    // === RESET GAME (Preserving Questions in Realtime) ===
     socket.on('resetGame', () => {
-        // I-reset LANG ang mga scores at game status
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         individualScores = {};
         isGameStarted = false;
 
-        // I-broadcast ang reset pero I-SEND ULIT ANG GLOBAL QUESTIONS para HINDI MABURA sa screen
         io.emit('resetState');
-        io.emit('applyCustomQuestionsList', globalQuestionsList); // Prevents question disappearance
+        io.emit('applyCustomQuestionsList', globalQuestionsList); // Siguraduhing naibabalik ang mga tanong
+        io.emit('gameState', { isGameStarted: false });
+        io.emit('timerUpdate', groupTimers);
         io.emit('updateState', {
             groupScores,
             photos: attorneyPhotos,
             completedStatus: groupCompletedStatus,
             mode: currentMode
         });
-    });
-
-        individualParticipants = {};
-        individualScores = {};
-
-        io.emit('resetState');
-        io.emit('gameState', { isGameStarted: false });
-        io.emit('timerUpdate', groupTimers);
-        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
         io.emit('individualParticipantsUpdated', individualParticipants);
         io.emit('individualScoresUpdated', individualScores);
     });
-}); // <--- SIGURADUHING NASA DULO ITO BAGO ANG PORT PARA MAISARA ANG CONNECTION
+});
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
