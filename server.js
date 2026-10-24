@@ -40,6 +40,74 @@ let customQuestionsList = [
     }
 ];
 
+// ==========================================
+// HELPER 1: Pang-linis ng Text (Case-insensitive & Space Tolerance)
+// ==========================================
+function normalizeText(text) {
+    if (!text) return "";
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ')       // Ginagawang iisang space ang maramihang spaces
+        .replace(/[^\w\s]/gi, ''); // Tinatanggal ang mga espesyal na karakter/bantas
+}
+
+// ==========================================
+// HELPER 2: Smart Answer & Essay Checker
+// ==========================================
+function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
+    const normUser = normalizeText(userAnswer);
+    const normCorrect = normalizeText(correctAnswerKey);
+
+    if (!normUser) return { isCorrect: false, earnedPoints: 0 };
+
+    // A. Kapag HINDI Essay (Multiple Choice, True/False, Identification, Enumeration)
+    if (questionType !== 'essay') {
+        // Tamang-tama ang salita (kahit iba ang capital/small letters o spaces)
+        if (normUser === normCorrect) {
+            return { isCorrect: true, earnedPoints: maxPoints };
+        }
+        // Kung napasama ang tamang keyword
+        if (normCorrect.length > 2 && normUser.includes(normCorrect)) {
+            return { isCorrect: true, earnedPoints: maxPoints };
+        }
+        return { isCorrect: false, earnedPoints: 0 };
+    }
+
+    // B. Kapag ESSAY (Smart Consideration batay sa Keywords/Content)
+    const keywords = normCorrect.split(' ').filter(word => word.length > 3);
+    
+    // Kapag walang piho na key answer, basta may nai-type na essay (10+ characters)
+    if (keywords.length === 0) {
+        return normUser.length >= 10 
+            ? { isCorrect: true, earnedPoints: maxPoints } 
+            : { isCorrect: false, earnedPoints: Math.ceil(maxPoints * 0.5) };
+    }
+
+    let matchedCount = 0;
+    keywords.forEach(kw => {
+        if (normUser.includes(kw)) {
+            matchedCount++;
+        }
+    });
+
+    const matchRatio = matchedCount / keywords.length;
+
+    if (matchRatio >= 0.5) {
+        // High Consideration: Perfect score
+        return { isCorrect: true, earnedPoints: maxPoints };
+    } else if (matchRatio >= 0.2 || normUser.length >= 15) {
+        // Consideration / Partial Points
+        const partial = Math.max(1, Math.ceil(maxPoints * 0.7));
+        return { isCorrect: true, earnedPoints: partial };
+    } else {
+        // Effort points para sa nag-essay
+        const effortPts = Math.max(1, Math.floor(maxPoints * 0.3));
+        return { isCorrect: false, earnedPoints: effortPts };
+    }
+}
+
 function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoints) {
     if (!essayText || typeof essayText !== 'string') return 0;
     let text = essayText.trim().toLowerCase();
@@ -117,50 +185,28 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer, answeredCount }, callback) => {
-        let qObj = customQuestionsList[questionIndex];
-        let earnedPoints = 0;
-        let isCorrect = false;
+// === SUBMIT INDIVIDUAL ANSWER ===
+    socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
+        const question = globalQuestionsList[questionIndex];
+        if (!question) return;
 
-        if (qObj) {
-            if (qObj.type === 'essay') {
-                earnedPoints = evaluateSmartEssayScore(answer, qObj.question, qObj.rubrics || qObj.explanation, qObj.points || 10);
-                isCorrect = earnedPoints > 0;
-            } else {
-                let cleanUserAns = String(answer).trim().toLowerCase();
-                let cleanCorrectAns = String(qObj.answer).trim().toLowerCase();
-                if (cleanUserAns === cleanCorrectAns || (cleanCorrectAns !== 'n/a' && cleanUserAns.includes(cleanCorrectAns))) {
-                    isCorrect = true;
-                    earnedPoints = qObj.points || 1;
-                }
-            }
+        // Gagamitin din ang Smart Checker para sa Individual Mode
+        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
+
+        if (result.isCorrect || result.earnedPoints > 0) {
+            individualScores[fullName] = (individualScores[fullName] || 0) + result.earnedPoints;
         }
 
-        if (individualParticipants[socket.id]) {
-            individualParticipants[socket.id].score = (individualParticipants[socket.id].score || 0) + earnedPoints;
-            individualScores[individualParticipants[socket.id].fullName] = individualParticipants[socket.id].score;
-            
-            let existingIndex = individualScoreHistoryArchive.findIndex(item => item.fullName === individualParticipants[socket.id].fullName);
-            if (existingIndex >= 0) {
-                individualScoreHistoryArchive[existingIndex].score = individualParticipants[socket.id].score;
-            } else {
-                individualScoreHistoryArchive.push({
-                    id: String(Date.now() + Math.random()),
-                    fullName: individualParticipants[socket.id].fullName,
-                    score: individualParticipants[socket.id].score,
-                    date: new Date().toLocaleDateString(),
-                    time: new Date().toLocaleTimeString()
-                });
-            }
-        }
+        const responseData = {
+            isCorrect: result.isCorrect,
+            earnedPoints: result.earnedPoints,
+            maxPoints: question.points || 1,
+            qType: question.type
+        };
 
-        io.emit('individualParticipantsUpdated', individualParticipants);
+        if (typeof callback === 'function') callback(responseData);
+
         io.emit('individualScoresUpdated', individualScores);
-        io.emit('individualHistoryUpdated', individualScoreHistoryArchive);
-
-        if (typeof callback === 'function') {
-            callback({ isCorrect, earnedPoints, maxPoints: qObj ? (qObj.points || 1) : 1 });
-        }
     });
 
     socket.on('deleteGroupHistoryItem', (id) => {
@@ -245,83 +291,54 @@ io.on('connection', (socket) => {
         io.emit('timerUpdate', groupTimers);
     });
 
-    socket.on('submitAnswer', ({ groupName, questionIndex, answer, answeredCount }) => {
-        if (groupScores[groupName] !== undefined && !groupCompletedStatus[groupName]) {
-            let qObj = customQuestionsList[questionIndex];
-            let earnedPoints = 0;
-            let isCorrect = false;
+// === SUBMIT GROUP ANSWER ===
+    socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
+        const question = globalQuestionsList[questionIndex];
+        if (!question) return;
 
-            if (qObj) {
-                if (qObj.type === 'essay') {
-                    earnedPoints = evaluateSmartEssayScore(answer, qObj.question, qObj.rubrics || qObj.explanation, qObj.points || 10);
-                    isCorrect = earnedPoints > 0;
-                } else {
-                    let cleanUserAns = String(answer).trim().toLowerCase();
-                    let cleanCorrectAns = String(qObj.answer).trim().toLowerCase();
-                    if (cleanUserAns === cleanCorrectAns || (cleanCorrectAns !== 'n/a' && cleanUserAns.includes(cleanCorrectAns))) {
-                        isCorrect = true;
-                        earnedPoints = qObj.points || 1;
-                        if (groupTimers[groupName] !== undefined) {
-                            groupTimers[groupName] += 5; 
-                        }
-                    } else {
-                        earnedPoints = 0;
-                        isCorrect = false;
-                    }
-                }
-            }
+        // Gagamitin ang ating bagong Smart Checker
+        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
 
-            socket.emit('answerFeedback', { 
-                isCorrect, 
-                questionId: `q${questionIndex + 1}`, 
-                answer, 
-                earnedPoints, 
-                maxPoints: qObj ? (qObj.points || 1) : 1,
-                qType: qObj ? qObj.type : 'multiple-choice'
-            });
-
-            groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
-            
-            let gHistIndex = groupScoreHistoryArchive.findIndex(item => item.groupName === groupName);
-            if (gHistIndex >= 0) {
-                groupScoreHistoryArchive[gHistIndex].score = groupScores[groupName];
-            } else {
-                groupScoreHistoryArchive.push({
-                    id: String(Date.now() + Math.random()),
-                    groupName: groupName,
-                    score: groupScores[groupName],
-                    date: new Date().toLocaleDateString(),
-                    time: new Date().toLocaleTimeString()
-                });
-            }
-
-            if (answeredCount >= customQuestionsList.length) {
-                groupCompletedStatus[groupName] = true;
-            }
-
-            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
-            io.emit('timerUpdate', groupTimers);
-            io.emit('groupHistoryUpdated', groupScoreHistoryArchive);
-
-            const allCompleted = Object.keys(groupCompletedStatus).every(g => groupCompletedStatus[g]);
-            if (allCompleted) {
-                if (timerInterval) clearInterval(timerInterval);
-                io.emit('timeUp');
-            }
+        if (result.isCorrect || result.earnedPoints > 0) {
+            groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
         }
+
+        socket.emit('answerFeedback', {
+            isCorrect: result.isCorrect,
+            earnedPoints: result.earnedPoints,
+            maxPoints: question.points || 1,
+            questionId: `q${questionIndex + 1}`,
+            answer: answer,
+            qType: question.type
+        });
+
+        io.emit('updateState', { 
+            groupScores, 
+            photos: attorneyPhotos, 
+            completedStatus: groupCompletedStatus, 
+            mode: currentMode 
+        });
     });
 
-    // 2. RESET GAME HANDLER
-    socket.on('resetGame', () => {
-        isGameStarted = false;
-        if (timerInterval) clearInterval(timerInterval);
 
-        Object.keys(groupTimers).forEach(g => { groupTimers[g] = 300; });
-        Object.keys(groupScores).forEach(g => {
-            groupScores[g] = 0;
-            attorneyPhotos[g] = '';
-            groupCompletedStatus[g] = false;
+    // 2. RESET GAME HANDLER
+  // === RESET GAME (Preserving Questions in Realtime) ===
+    socket.on('resetGame', () => {
+        // I-reset LANG ang mga scores at game status
+        groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
+        individualScores = {};
+        isGameStarted = false;
+
+        // I-broadcast ang reset pero I-SEND ULIT ANG GLOBAL QUESTIONS para HINDI MABURA sa screen
+        io.emit('resetState');
+        io.emit('applyCustomQuestionsList', globalQuestionsList); // Prevents question disappearance
+        io.emit('updateState', {
+            groupScores,
+            photos: attorneyPhotos,
+            completedStatus: groupCompletedStatus,
+            mode: currentMode
         });
+    });
 
         individualParticipants = {};
         individualScores = {};
