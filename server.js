@@ -49,8 +49,8 @@ function normalizeText(text) {
         .toString()
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, ' ')       // Ginagawang iisang space ang maramihang spaces
-        .replace(/[^\w\s]/gi, ''); // Tinatanggal ang mga espesyal na karakter/bantas
+        .replace(/\s+/g, ' ')       
+        .replace(/[^\w\s]/gi, ''); 
 }
 
 // ==========================================
@@ -62,23 +62,18 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
 
     if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
-    // A. Kapag HINDI Essay (Multiple Choice, True/False, Identification, Enumeration)
     if (questionType !== 'essay') {
-        // Tamang-tama ang salita (kahit iba ang capital/small letters o spaces)
         if (normUser === normCorrect) {
             return { isCorrect: true, earnedPoints: maxPoints };
         }
-        // Kung napasama ang tamang keyword
         if (normCorrect.length > 2 && normUser.includes(normCorrect)) {
             return { isCorrect: true, earnedPoints: maxPoints };
         }
         return { isCorrect: false, earnedPoints: 0 };
     }
 
-    // B. Kapag ESSAY (Smart Consideration batay sa Keywords/Content)
     const keywords = normCorrect.split(' ').filter(word => word.length > 3);
     
-    // Kapag walang piho na key answer, basta may nai-type na essay (10+ characters)
     if (keywords.length === 0) {
         return normUser.length >= 10 
             ? { isCorrect: true, earnedPoints: maxPoints } 
@@ -95,40 +90,14 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
     const matchRatio = matchedCount / keywords.length;
 
     if (matchRatio >= 0.5) {
-        // High Consideration: Perfect score
         return { isCorrect: true, earnedPoints: maxPoints };
     } else if (matchRatio >= 0.2 || normUser.length >= 15) {
-        // Consideration / Partial Points
         const partial = Math.max(1, Math.ceil(maxPoints * 0.7));
         return { isCorrect: true, earnedPoints: partial };
     } else {
-        // Effort points para sa nag-essay
         const effortPts = Math.max(1, Math.floor(maxPoints * 0.3));
         return { isCorrect: false, earnedPoints: effortPts };
     }
-}
-
-function evaluateSmartEssayScore(essayText, questionText, criteriaText, maxPoints) {
-    if (!essayText || typeof essayText !== 'string') return 0;
-    let text = essayText.trim().toLowerCase();
-    if (text.length < 10) return 0;
-    let maxScore = maxPoints || 10;
-    let combinedContext = ((questionText || "") + " " + (criteriaText || "")).toLowerCase();
-    let words = combinedContext.match(/\b[a-zà-ÿ0-9]{4,}\b/gi) || [];
-    let stopWords = new Set(['e.g.', 'type', 'points', 'para', 'sa', 'mga', 'nang', 'maging', 'dahil', 'ayon', 'kundi', 'rubrics', 'criteria']);
-    let coreKeywords = Array.from(new Set(words.filter(w => !stopWords.has(w))));
-
-    let matchCount = 0;
-    coreKeywords.forEach(kw => { if (text.includes(kw)) matchCount++; });
-    let relevanceRatio = coreKeywords.length > 0 ? (matchCount / coreKeywords.length) : 0.5;
-    if (coreKeywords.length >= 3 && matchCount === 0) return 0;
-
-    let wordCount = text.split(/\s+/).length;
-    let lengthScoreRatio = wordCount >= 30 ? 1.0 : (wordCount >= 15 ? 0.7 : (wordCount >= 8 ? 0.4 : 0.2));
-    let finalRatio = (relevanceRatio * 0.6) + (lengthScoreRatio * 0.4);
-    if (finalRatio < 0.25) return 0;
-    let computedPoints = Math.round(finalRatio * maxScore);
-    return Math.min(Math.max(computedPoints, 0), maxScore);
 }
 
 io.on('connection', (socket) => {
@@ -171,6 +140,23 @@ io.on('connection', (socket) => {
         io.emit('individualScoresUpdated', individualScores);
     });
 
+    // 2. REGISTER ATTORNEY PHOTO & REAL-TIME POPUP
+    socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
+        if (groupName && photo) {
+            attorneyPhotos[groupName] = photo;
+            serverPhotoArchive.push({
+                groupName,
+                photo,
+                timestamp: new Date().toLocaleTimeString()
+            });
+            
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
+            io.emit('photoArchiveUpdated', serverPhotoArchive);
+            io.emit('newAttorneyJoined', { groupName, photo });
+            io.emit('showJudgePopupQueue', [{ groupName, photo }]);
+        }
+    });
+
     socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
         if (fullName) {
             individualParticipants[socket.id] = {
@@ -186,7 +172,41 @@ io.on('connection', (socket) => {
         }
     });
 
-    // === SUBMIT INDIVIDUAL ANSWER ===
+    // 3. SUBMIT GROUP ANSWER & +5 SECONDS BONUS TIME
+    socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
+        const question = globalQuestionsList[questionIndex];
+        if (!question) return;
+
+        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
+
+        if (result.isCorrect || result.earnedPoints > 0) {
+            groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
+            
+            // Dagdag 5 seconds sa timer ng grupong tumama
+            if (groupTimers[groupName] !== undefined && groupTimers[groupName] > 0) {
+                groupTimers[groupName] += 5;
+            }
+        }
+
+        socket.emit('answerFeedback', {
+            isCorrect: result.isCorrect,
+            earnedPoints: result.earnedPoints,
+            maxPoints: question.points || 1,
+            questionId: `q${questionIndex + 1}`,
+            answer: answer,
+            qType: question.type
+        });
+
+        io.emit('timerUpdate', groupTimers);
+        io.emit('updateState', { 
+            groupScores, 
+            photos: attorneyPhotos, 
+            completedStatus: groupCompletedStatus, 
+            mode: currentMode 
+        });
+    });
+
+    // 4. SUBMIT INDIVIDUAL ANSWER
     socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
         const question = globalQuestionsList[questionIndex];
         if (!question) return;
@@ -206,6 +226,31 @@ io.on('connection', (socket) => {
 
         if (typeof callback === 'function') callback(responseData);
 
+        io.emit('individualScoresUpdated', individualScores);
+    });
+
+    // 5. RESET GAME
+    socket.on('resetGame', () => {
+        groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
+        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+        groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
+        groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
+        individualScores = {};
+        isGameStarted = false;
+
+        if (timerInterval) clearInterval(timerInterval);
+
+        io.emit('resetState');
+        io.emit('applyCustomQuestionsList', globalQuestionsList);
+        io.emit('gameState', { isGameStarted: false });
+        io.emit('timerUpdate', groupTimers);
+        io.emit('updateState', {
+            groupScores,
+            photos: attorneyPhotos,
+            completedStatus: groupCompletedStatus,
+            mode: currentMode
+        });
+        io.emit('individualParticipantsUpdated', individualParticipants);
         io.emit('individualScoresUpdated', individualScores);
     });
 
@@ -243,20 +288,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
-        if (groupName && photo) {
-            attorneyPhotos[groupName] = photo;
-            serverPhotoArchive.push({
-                groupName,
-                photo,
-                timestamp: new Date().toLocaleTimeString()
-            });
-            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
-            io.emit('photoArchiveUpdated', serverPhotoArchive);
-            io.emit('newAttorneyJoined', { groupName, photo });
-        }
-    });
-
     socket.on('startTimer', () => {
         isGameStarted = true;
         io.emit('gameState', { isGameStarted });
@@ -289,54 +320,6 @@ io.on('connection', (socket) => {
     socket.on('setTimerDuration', (seconds) => {
         Object.keys(groupTimers).forEach(g => { groupTimers[g] = seconds; });
         io.emit('timerUpdate', groupTimers);
-    });
-
-    // === SUBMIT GROUP ANSWER ===
-    socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
-        const question = globalQuestionsList[questionIndex];
-        if (!question) return;
-
-        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
-
-        if (result.isCorrect || result.earnedPoints > 0) {
-            groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
-        }
-
-        socket.emit('answerFeedback', {
-            isCorrect: result.isCorrect,
-            earnedPoints: result.earnedPoints,
-            maxPoints: question.points || 1,
-            questionId: `q${questionIndex + 1}`,
-            answer: answer,
-            qType: question.type
-        });
-
-        io.emit('updateState', { 
-            groupScores, 
-            photos: attorneyPhotos, 
-            completedStatus: groupCompletedStatus, 
-            mode: currentMode 
-        });
-    });
-
-    // === RESET GAME (Preserving Questions in Realtime) ===
-    socket.on('resetGame', () => {
-        groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
-        individualScores = {};
-        isGameStarted = false;
-
-        io.emit('resetState');
-        io.emit('applyCustomQuestionsList', globalQuestionsList); // Siguraduhing naibabalik ang mga tanong
-        io.emit('gameState', { isGameStarted: false });
-        io.emit('timerUpdate', groupTimers);
-        io.emit('updateState', {
-            groupScores,
-            photos: attorneyPhotos,
-            completedStatus: groupCompletedStatus,
-            mode: currentMode
-        });
-        io.emit('individualParticipantsUpdated', individualParticipants);
-        io.emit('individualScoresUpdated', individualScores);
     });
 });
 
