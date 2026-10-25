@@ -2186,53 +2186,40 @@ body.individual-mode-active, html {
             document.getElementById('game-mode-modal').style.display = 'none'; 
         }
 
-        // Lalabas LAMANG ang instructions kapag pinindot ang Group o Individual button
-     function selectGameMode(mode) {
+        function selectGameMode(mode) {
             currentMode = mode;
             closeGameModeModal();
             socket.emit('setGameMode', mode);
-            
-            // I-set sa true para lumabas ang instructions modal kapag pinindot ang mode
             applyGameModeUI(mode, true); 
         }
-// Para sa Individual Mode completion notification
-socket.on('individualFinished', ({ fullName }) => {
-    const banner = document.getElementById('judge-notification-banner');
-    if (banner) {
-        banner.innerText = `✨ Si ${fullName} ay tapos na sa pagsagot! 🏁`;
-        banner.style.display = 'block';
-        setTimeout(() => {
-            banner.style.display = 'none';
-        }, 4000);
-    }
-});
 
-// Para sa Group Mode completion notification
-socket.on('groupFinished', ({ groupName }) => {
-    const banner = document.getElementById('judge-notification-banner');
-    if (banner) {
-        banner.innerText = `✨ Ang ${groupName} ay tapos na sa pagsagot! 🏁`;
-        banner.style.display = 'block';
-        setTimeout(() => {
-            banner.style.display = 'none';
-        }, 4000);
-    }
-});
+        socket.on('individualFinished', ({ fullName }) => {
+            const banner = document.getElementById('judge-notification-banner');
+            if (banner) {
+                banner.innerText = `✨ Si ${fullName} ay tapos na sa pagsagot! 🏁`;
+                banner.style.display = 'block';
+                setTimeout(() => { banner.style.display = 'none'; }, 4000);
+            }
+        });
 
-// Idagdag ito sa iyong <script> section sa client-side
-socket.on('quizStartedSignal', () => {
-    isGameStarted = true;
-    unlockQuizUI(); // Ito ang mag-aalis ng lock overlay at mag-a-enable ng mga inputs
-});
+        socket.on('groupFinished', ({ groupName }) => {
+            const banner = document.getElementById('judge-notification-banner');
+            if (banner) {
+                banner.innerText = `✨ Ang ${groupName} ay tapos na sa pagsagot! 🏁`;
+                banner.style.display = 'block';
+                setTimeout(() => { banner.style.display = 'none'; }, 4000);
+            }
+        });
 
-// --- IDAGDAG ITO SA CLIENT-SIDE SCRIPT (FRONTEND HTML) ---
-        
-        // Kapag nag-reset ang laro, i-reset ang status pero huwag burahin ang mga tanong
+        socket.on('quizStartedSignal', () => {
+            isGameStarted = true;
+            unlockQuizUI(); 
+        });
+
         socket.on('resetState', () => {
             if (typeof answeredQuestions !== 'undefined') answeredQuestions = {};
             if (typeof isGameStarted !== 'undefined') isGameStarted = false;
             
-            // Isara ang mga modals kung nakabukas man
             const reviewSec = document.getElementById('review-section');
             if (reviewSec) reviewSec.style.display = "none";
             
@@ -2244,7 +2231,6 @@ socket.on('quizStartedSignal', () => {
             }
         });
 
-        // Tinitiyak na laging lumalabas at nananatili ang mga tanong sa screen ng participants
         socket.on('applyCustomQuestionsList', (questionsList) => {
             if (questionsList && questionsList.length > 0) {
                 if (typeof globalQuestionsList !== 'undefined') {
@@ -2256,39 +2242,36 @@ socket.on('quizStartedSignal', () => {
             }
         });
 
-function showParticipantInstructions() {
-    // Sinisigurong sa mobile view (screen width <= 768px) lang ito kusang lalabas
-    if (window.innerWidth <= 768) {
-        if (currentMode === 'individual') {
-            const indivModal = document.getElementById('individual-instructions-modal');
-            if (indivModal) indivModal.classList.add('mobile-show');
-        } else {
-            const groupModal = document.getElementById('instructions-modal');
-            if (groupModal) groupModal.classList.add('mobile-show');
+        function showParticipantInstructions() {
+            if (window.innerWidth <= 768) {
+                if (currentMode === 'individual') {
+                    const indivModal = document.getElementById('individual-instructions-modal');
+                    if (indivModal) indivModal.classList.add('mobile-show');
+                } else {
+                    const groupModal = document.getElementById('instructions-modal');
+                    if (groupModal) groupModal.classList.add('mobile-show');
+                }
+            }
         }
-    }
-}
 
-// Isara ang mobile instructions pagkatapos pindutin ang button
-function closeInstructionsModal() {
-    initAudio();
-    document.getElementById('instructions-modal').style.display = 'none';
-    document.getElementById('instructions-modal').classList.remove('mobile-show');
-}
+        function closeInstructionsModal() {
+            initAudio();
+            document.getElementById('instructions-modal').style.display = 'none';
+            document.getElementById('instructions-modal').classList.remove('mobile-show');
+        }
 
-function closeIndividualInstructionsModal() {
-    initAudio();
-    document.getElementById('individual-instructions-modal').style.display = 'none';
-    document.getElementById('individual-instructions-modal').classList.remove('mobile-show');
-}
+        function closeIndividualInstructionsModal() {
+            initAudio();
+            document.getElementById('individual-instructions-modal').style.display = 'none';
+            document.getElementById('individual-instructions-modal').classList.remove('mobile-show');
+        }
 
-function applyGameModeUI(mode, showAlerts = false) {
+        function applyGameModeUI(mode, showAlerts = false) {
             currentMode = mode;
             const attorneyContainer = document.querySelector('.attorney-buttons-container');
             const indivInstModal = document.getElementById('individual-instructions-modal');
             const groupInstModal = document.getElementById('instructions-modal');
 
-            // Dito natin bubuksan ang kaukulang instructions modal kapag pinindot ang mode button
             if (showAlerts) {
                 if (mode === 'individual') {
                     if (indivInstModal) indivInstModal.style.display = 'flex';
@@ -2298,8 +2281,7 @@ function applyGameModeUI(mode, showAlerts = false) {
                     if (groupInstModal) groupInstModal.style.display = 'flex';
                 }
             }
-            // (Huwag nang galawin ang sumunod na code para sa attorneyContainer)            
-            // Tinitiyak natin na HINDI kusang magbubukas ang modals dito para hindi maistorbo ang user
+
             if (mode === 'individual') {
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
@@ -2322,15 +2304,12 @@ function applyGameModeUI(mode, showAlerts = false) {
             }
         }
 
-        // Pag-load ng page, isara muna ang lahat ng modals para First Page ang makita
         document.addEventListener('DOMContentLoaded', () => {
             const indivInstModal = document.getElementById('individual-instructions-modal');
             const groupInstModal = document.getElementById('instructions-modal');
             if (indivInstModal) indivInstModal.style.display = 'none';
             if (groupInstModal) groupInstModal.style.display = 'none';
         });
-
-        // Realtime Reset Listener para sa Reset at Surrender na hinding-hindi magpapakita ng instructions
 
         function openGroupScoreHistory() {
             closeScoreHistoryModal();
@@ -2404,7 +2383,7 @@ function applyGameModeUI(mode, showAlerts = false) {
 
         function initAudio() {
             if (bgmAudio.paused) {
-                bgmAudio.play().catch(e => console.log("Audio play deferred"));
+                bgmAudio.play().catch(e => {});
             }
         }
 
@@ -2437,22 +2416,11 @@ function applyGameModeUI(mode, showAlerts = false) {
             });
             lockQuizUI();
 
-            // Siguraduhing nakatago ang parehong instructions modal sa simula ng pagbukas ng link
             const groupInstModal = document.getElementById('instructions-modal');
             const indivInstModal = document.getElementById('individual-instructions-modal');
             if (groupInstModal) groupInstModal.style.display = 'none';
             if (indivInstModal) indivInstModal.style.display = 'none';
         });
-
-       function closeInstructionsModal() {
-            initAudio();
-            document.getElementById('instructions-modal').style.display = 'none';
-        }
-
-        function closeIndividualInstructionsModal() {
-            initAudio();
-            document.getElementById('individual-instructions-modal').style.display = 'none';
-        }
 
         function openQuizModeModal() { document.getElementById('quiz-mode-modal').style.display = 'flex'; }
         function closeQuizModeModal() { document.getElementById('quiz-mode-modal').style.display = 'none'; }
@@ -2571,108 +2539,108 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             document.getElementById('insert-modal').style.display = 'none';
         }
 
+        // --- MATATAG NA PARSER NA KAYANG MAGBASA NG LAHAT NG URI NG TANONG (MIXED, T/F, ID, ESSAY) ---
         function savePlainQuestions() {
-    try {
-        let rawInput = document.getElementById('custom-questions-plaintext').value;
-        if (!rawInput || !rawInput.trim()) {
-            alert("Mangyaring maglagay ng text ng mga tanong.");
-            return;
-        }
-
-        let cleanText = rawInput
-            .replace(/♡/g, 'o')
-            .replace(/♥/g, 'o')
-            .replace(/[\u201C\u201D]/g, '"')
-            .replace(/[\u2018\u2019]/g, "'")
-            .replace(/\r\n/g, '\n')
-            .replace(/\r/g, '\n')
-            .trim();
-
-        let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
-        let questionsList = [];
-
-        rawBlocks.forEach(block => {
-            let trimmedBlock = block.trim();
-            if (!trimmedBlock) return;
-
-            let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
-            
-            let qText = "";
-            let qType = "multiple-choice";
-            let options = {};
-            let answer = "";
-            let explanation = "";
-            let rubrics = "";
-            let points = 1;
-
-            lines.forEach(line => {
-                if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
-                    qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
-                } 
-                else if (/^Type[\s:\-\)\.]/i.test(line)) {
-                    let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
-                    if (tVal.includes('essay')) qType = 'essay';
-                    else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
-                    else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
-                    else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
-                    else qType = 'multiple-choice';
+            try {
+                let rawInput = document.getElementById('custom-questions-plaintext').value;
+                if (!rawInput || !rawInput.trim()) {
+                    alert("Mangyaring maglagay ng text ng mga tanong.");
+                    return;
                 }
-                else if (/^Rubrics?[\s:\-\)\.]/i.test(line) || /^Criteria[\s:\-\)\.]/i.test(line)) {
-                    rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
-                    qType = 'essay';
-                }
-                else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
-                    let ptsMatch = line.match(/\d+/);
-                    if (ptsMatch) points = parseInt(ptsMatch[0], 10);
-                }
-                else if (/^[A-D][\)\.\:\-]/i.test(line)) {
-                    let optKey = line.charAt(0).toUpperCase();
-                    let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
-                    options[optKey] = optVal;
-                } 
-                else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
-                    answer = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim();
-                } 
-                else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
-                    explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
-                }
-            });
 
-            // Auto-detect type kung walang nakalagay na "Type:" pero may True/False o Essay clues
-            if (Object.keys(options).length === 0 && (qText.toLowerCase().includes('true') || qText.toLowerCase().includes('false') || answer.toLowerCase() === 'true' || answer.toLowerCase() === 'false')) {
-                qType = 'true-false';
-                options = { A: 'True', B: 'False' };
-            } else if (rubrics || qText.toLowerCase().includes('essay') || qText.toLowerCase().includes('ipaliwanag')) {
-                qType = 'essay';
-            } else if (Object.keys(options).length === 0 && qType === 'multiple-choice') {
-                qType = 'identification';
-            }
+                let cleanText = rawInput
+                    .replace(/♡/g, 'o')
+                    .replace(/♥/g, 'o')
+                    .replace(/[\u201C\u201D]/g, '"')
+                    .replace(/[\u2018\u2019]/g, "'")
+                    .replace(/\r\n/g, '\n')
+                    .replace(/\r/g, '\n')
+                    .trim();
 
-            if (qText) {
-                questionsList.push({
-                    question: qText,
-                    type: qType,
-                    options: options,
-                    answer: answer || "N/A",
-                    explanation: explanation || (rubrics ? `Criteria: ${rubrics}` : "Walang nakasaad na paliwanag."),
-                    rubrics: rubrics,
-                    points: points
+                let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
+                let questionsList = [];
+
+                rawBlocks.forEach(block => {
+                    let trimmedBlock = block.trim();
+                    if (!trimmedBlock) return;
+
+                    let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
+                    
+                    let qText = "";
+                    let qType = "multiple-choice";
+                    let options = {};
+                    let answer = "";
+                    let explanation = "";
+                    let rubrics = "";
+                    let points = 1;
+
+                    lines.forEach(line => {
+                        if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
+                            qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
+                        } 
+                        else if (/^Type[\s:\-\)\.]/i.test(line)) {
+                            let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
+                            if (tVal.includes('essay')) qType = 'essay';
+                            else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
+                            else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
+                            else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
+                            else qType = 'multiple-choice';
+                        }
+                        else if (/^Rubrics?[\s:\-\)\.]/i.test(line) || /^Criteria[\s:\-\)\.]/i.test(line)) {
+                            rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
+                            qType = 'essay';
+                        }
+                        else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
+                            let ptsMatch = line.match(/\d+/);
+                            if (ptsMatch) points = parseInt(ptsMatch[0], 10);
+                        }
+                        else if (/^[A-D][\)\.\:\-]/i.test(line)) {
+                            let optKey = line.charAt(0).toUpperCase();
+                            let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
+                            options[optKey] = optVal;
+                        } 
+                        else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
+                            answer = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim();
+                        } 
+                        else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
+                            explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
+                        }
+                    });
+
+                    if (Object.keys(options).length === 0 && (qText.toLowerCase().includes('true') || qText.toLowerCase().includes('false') || answer.toLowerCase() === 'true' || answer.toLowerCase() === 'false')) {
+                        qType = 'true-false';
+                        options = { A: 'True', B: 'False' };
+                    } else if (rubrics || qText.toLowerCase().includes('essay') || qText.toLowerCase().includes('ipaliwanag')) {
+                        qType = 'essay';
+                    } else if (Object.keys(options).length === 0 && qType === 'multiple-choice') {
+                        qType = 'identification';
+                    }
+
+                    if (qText) {
+                        questionsList.push({
+                            question: qText,
+                            type: qType,
+                            options: options,
+                            answer: answer || "N/A",
+                            explanation: explanation || (rubrics ? `Criteria: ${rubrics}` : "Walang nakasaad na paliwanag."),
+                            rubrics: rubrics,
+                            points: points
+                        });
+                    }
                 });
+
+                if (questionsList.length === 0) {
+                    alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
+                    return;
+                }
+
+                socket.emit('updatePlainQuestionsData', questionsList);
+                closeInsertModal();
+                alert(`Tagumpay! Nabasa ang ${questionsList.length} tanong para sa Mixed/Pumiling Quiz Mode! 🚀`);
+            } catch (err) {
+                alert("May error sa pagbasa ng text.");
             }
-        });
-
-        if (questionsList.length === 0) {
-            alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
-            return;
         }
-
-        socket.emit('updatePlainQuestionsData', questionsList);
-        closeInsertModal();
-        alert(`Tagumpay! Nabasa ang ${questionsList.length} tanong para sa Mixed/Pumiling Quiz Mode! 🚀`);
-    } catch (err) {
-        alert("May error sa pagbasa ng text.");
-    }
-}           
             
         socket.on('applyCustomQuestionsList', (questionsList) => {
             globalQuestionsList = questionsList;
@@ -2783,7 +2751,8 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             if (reviewGrid) reviewGrid.innerHTML = reviewHTML;
 
             answeredQuestions = {};
-            if (myGroup && latestGroupScores[myGroup] !== undefined) {
+            let targetCheckName = (currentMode === 'individual') ? individualFullName : myGroup;
+            if (targetCheckName) {
                 document.getElementById('group-score-display').innerText = `Score: 0 / ${totalMaxScore}`;
             }
         }
@@ -2849,7 +2818,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => {
                     document.body.classList.add('is-fullscreen');
-                }).catch(err => console.log(err));
+                }).catch(err => {});
                 document.getElementById('fs-btn').innerText = "⤓ Exit Full";
             } else {
                 if (document.exitFullscreen) {
@@ -2891,9 +2860,8 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             const reviewSec = document.getElementById('review-section');
             if (reviewSec) reviewSec.style.display = "block";
         }
-// Idagdag o palitan ang socket listener para sa answerFeedback upang lumabas ang pop-up ng tama o mali
-    
-    socket.on('answerFeedback', (data) => {
+
+        socket.on('answerFeedback', (data) => {
             const popup = document.getElementById('feedback-popup');
             if (!popup) return;
 
@@ -2915,8 +2883,9 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         socket.on('updateState', (state) => {
             if (state.groupScores) {
                 latestGroupScores = state.groupScores;
-                if (myGroup && latestGroupScores[myGroup] !== undefined) {
-                    document.getElementById('group-score-display').innerText = `Score: ${latestGroupScores[myGroup]} / ${totalMaxScore}`;
+                let currentActiveName = (currentMode === 'individual') ? individualFullName : myGroup;
+                if (currentActiveName && latestGroupScores[currentActiveName] !== undefined) {
+                    document.getElementById('group-score-display').innerText = `Score: ${latestGroupScores[currentActiveName]} / ${totalMaxScore}`;
                 }
             }
             if (state.photos) {
@@ -2929,6 +2898,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 renderScoreboardAndPodium();
             }
         });
+
         function verifyJudgePassword() {
             const pass = document.getElementById('judge-pass-input').value;
             closePasswordModal();
@@ -2947,7 +2917,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     document.getElementById('teacher-view').classList.remove('hidden');
                     document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
 
-                    // Awtomatikong i-render ang tamang monitor screen batay sa kasalukuyang mode
                     if (currentMode === 'individual') {
                         renderIndividualMonitorLayout(window.currentIndividualScores || {});
                     } else {
@@ -2999,148 +2968,143 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         }
 
-// Para sa Multiple Choice / True-False
-function submitAns(questionIndex, qKey, selectedOpt) {
-    if (answeredQuestions[qKey]) return; // Huwag payagan kung nasagutan na
-    
-    answeredQuestions[qKey] = selectedOpt;
+        // --- TAMANG PAG-ROUTE NG PANGALAN SA INDIVIDUAL O GROUP MODE ---
+        function submitAns(questionIndex, qKey, selectedOpt) {
+            if (answeredQuestions[qKey]) return;
+            answeredQuestions[qKey] = selectedOpt;
 
-    // 1. I-disable ang lahat ng radio buttons sa tanong na ito para hindi na mabago
-    const radioInputs = document.querySelectorAll(`input[name="${qKey}"]`);
-    radioInputs.forEach(input => input.disabled = true);
+            const radioInputs = document.querySelectorAll(`input[name="${qKey}"]`);
+            radioInputs.forEach(input => input.disabled = true);
 
-    // 2. I-lock ang visual style ng card
-    const cardEl = document.getElementById(`card-${qKey}`);
-    if (cardEl) {
-        cardEl.style.opacity = "0.75";
-        cardEl.style.pointerEvents = "none";
-    }
+            const cardEl = document.getElementById(`card-${qKey}`);
+            if (cardEl) {
+                cardEl.style.opacity = "0.75";
+                cardEl.style.pointerEvents = "none";
+            }
 
-    let targetName = (currentMode === 'individual') ? individualFullName : myGroup;
+            let targetName = (currentMode === 'individual') ? individualFullName : myGroup;
 
-socket.emit('submitAnswer', {
-    groupName: targetName, // Ito ang sasalo sa tamang pangalan (ej) o Attorney
-    questionIndex: questionIndex,
-    answer: selectedOpt
-});
-
-// Para sa Essay / Constructed Response
-function triggerEssaySubmit(questionIndex, qKey) {
-    if (answeredQuestions[qKey]) return;
-
-    const textareaEl = document.getElementById(`textarea-${qKey}`);
-    const btnEl = document.getElementById(`btn-done-${qKey}`);
-    const textVal = textareaEl ? textareaEl.value : '';
-
-    if (!textVal || !textVal.trim()) {
-        alert("Mangyaring maglagay ng sagot bago i-submit.");
-        return;
-    }
-
-    answeredQuestions[qKey] = textVal;
-
-    // 1. I-disable ang textarea at button
-    if (textareaEl) textareaEl.disabled = true;
-    if (btnEl) {
-        btnEl.disabled = true;
-        btnEl.innerText = "Na-submit Na! ✔️";
-        btnEl.style.background = "#64748b";
-    }
-
-    // 2. I-lock ang card
-    const cardEl = document.getElementById(`card-${qKey}`);
-    if (cardEl) {
-        cardEl.style.opacity = "0.75";
-        cardEl.style.pointerEvents = "none";
-    }
-
-    // 3. I-emit sa server NANG WALANG ALERT POP-UP
-    socket.emit('submitAnswer', {
-        groupName: myGroup || individualFullName,
-        questionIndex: questionIndex,
-        answer: textVal
-    });
-}
-
-// Para sa Identification / Short Mixed Text
-function triggerMixedTextSubmit(questionIndex, qKey) {
-    if (answeredQuestions[qKey]) return;
-
-    const inputEl = document.getElementById(`input-${qKey}`);
-    const btnEl = document.getElementById(`btn-done-${qKey}`);
-    const textVal = inputEl ? inputEl.value : '';
-
-    if (!textVal || !textVal.trim()) {
-        alert("Mangyaring maglagay ng sagot bago i-submit.");
-        return;
-    }
-
-    answeredQuestions[qKey] = textVal;
-
-    // 1. I-disable ang input at button
-    if (inputEl) inputEl.disabled = true;
-    if (btnEl) {
-        btnEl.disabled = true;
-        btnEl.innerText = "Na-submit Na! ✔️";
-        btnEl.style.background = "#64748b";
-    }
-
-    // 2. I-lock ang card
-    const cardEl = document.getElementById(`card-${qKey}`);
-    if (cardEl) {
-        cardEl.style.opacity = "0.75";
-        cardEl.style.pointerEvents = "none";
-    }
-
-    // 3. I-emit sa server NANG WALANG ALERT POP-UP
-    socket.emit('submitAnswer', {
-        groupName: myGroup || individualFullName,
-        questionIndex: questionIndex,
-        answer: textVal
-    });
-}
-
-function confirmJoinNow() {
-    document.getElementById('camera-modal').style.display = 'none';
-    
-    if (currentMode === 'individual') {
-        socket.emit('registerIndividualParticipant', { fullName: individualFullName, photo: capturedDataUrl });
-    } else {
-        socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
-    }
-
-    const studentWelcome = document.getElementById('student-welcome-overlay');
-    studentWelcome.style.display = 'flex';
-
-    setTimeout(() => {
-        studentWelcome.style.display = 'none';
-        document.getElementById('role-select').classList.add('hidden');
-        document.getElementById('side-profile').style.display = 'none';
-        document.getElementById('qr-wrapper').style.display = 'none';
-        document.getElementById('left-sidebar').style.display = 'none';
-        document.getElementById('judge-speech-box').style.display = 'none';
-        document.getElementById('student-view').classList.remove('hidden');
-        
-        // Dito natin sinisigurong tama ang pagtawag ng pangalan depende sa mode
-        document.getElementById('group-title').innerText = currentMode === 'individual' ? `Dashboard: ${individualFullName}` : `Dashboard: ${myGroup}`;
-        document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
-        
-        document.getElementById('floating-timer-badge').style.display = 'flex';
-
-        if (!isGameStarted) {
-            lockQuizUI();
-        } else {
-            unlockQuizUI();
+            socket.emit('submitAnswer', {
+                groupName: targetName,
+                questionIndex: questionIndex,
+                answer: selectedOpt
+            });
         }
-    }, 1800);
-}
+
+        function triggerEssaySubmit(questionIndex, qKey) {
+            if (answeredQuestions[qKey]) return;
+
+            const textareaEl = document.getElementById(`textarea-${qKey}`);
+            const btnEl = document.getElementById(`btn-done-${qKey}`);
+            const textVal = textareaEl ? textareaEl.value : '';
+
+            if (!textVal || !textVal.trim()) {
+                alert("Mangyaring maglagay ng sagot bago i-submit.");
+                return;
+            }
+
+            answeredQuestions[qKey] = textVal;
+
+            if (textareaEl) textareaEl.disabled = true;
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.innerText = "Na-submit Na! ✔️";
+                btnEl.style.background = "#64748b";
+            }
+
+            const cardEl = document.getElementById(`card-${qKey}`);
+            if (cardEl) {
+                cardEl.style.opacity = "0.75";
+                cardEl.style.pointerEvents = "none";
+            }
+
+            let targetName = (currentMode === 'individual') ? individualFullName : myGroup;
+
+            socket.emit('submitAnswer', {
+                groupName: targetName,
+                questionIndex: questionIndex,
+                answer: textVal
+            });
+        }
+
+        function triggerMixedTextSubmit(questionIndex, qKey) {
+            if (answeredQuestions[qKey]) return;
+
+            const inputEl = document.getElementById(`input-${qKey}`);
+            const btnEl = document.getElementById(`btn-done-${qKey}`);
+            const textVal = inputEl ? inputEl.value : '';
+
+            if (!textVal || !textVal.trim()) {
+                alert("Mangyaring maglagay ng sagot bago i-submit.");
+                return;
+            }
+
+            answeredQuestions[qKey] = textVal;
+
+            if (inputEl) inputEl.disabled = true;
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.innerText = "Na-submit Na! ✔️";
+                btnEl.style.background = "#64748b";
+            }
+
+            const cardEl = document.getElementById(`card-${qKey}`);
+            if (cardEl) {
+                cardEl.style.opacity = "0.75";
+                cardEl.style.pointerEvents = "none";
+            }
+
+            let targetName = (currentMode === 'individual') ? individualFullName : myGroup;
+
+            socket.emit('submitAnswer', {
+                groupName: targetName,
+                questionIndex: questionIndex,
+                answer: textVal
+            });
+        }
+
+        function confirmJoinNow() {
+            document.getElementById('camera-modal').style.display = 'none';
+            
+            if (currentMode === 'individual') {
+                socket.emit('registerIndividualParticipant', { fullName: individualFullName, photo: capturedDataUrl });
+            } else {
+                socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
+            }
+
+            const studentWelcome = document.getElementById('student-welcome-overlay');
+            studentWelcome.style.display = 'flex';
+
+            setTimeout(() => {
+                studentWelcome.style.display = 'none';
+                document.getElementById('role-select').classList.add('hidden');
+                document.getElementById('side-profile').style.display = 'none';
+                document.getElementById('qr-wrapper').style.display = 'none';
+                document.getElementById('left-sidebar').style.display = 'none';
+                document.getElementById('judge-speech-box').style.display = 'none';
+                document.getElementById('student-view').classList.remove('hidden');
+                
+                let activeDashboardName = (currentMode === 'individual') ? individualFullName : myGroup;
+                document.getElementById('group-title').innerText = `Dashboard: ${activeDashboardName}`;
+                document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
+                
+                document.getElementById('floating-timer-badge').style.display = 'flex';
+
+                if (!isGameStarted) {
+                    lockQuizUI();
+                } else {
+                    unlockQuizUI();
+                }
+            }, 1800);
+        }
            
         function startTimer() { 
             socket.emit('startQuiz'); 
             socket.emit('startTimer'); 
         }
         function forceTimeUp() { socket.emit('forceTimeUp'); }
-function resetGame() { 
+
+        function resetGame() { 
             attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
             shownPopups = {};
             groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
@@ -3167,7 +3131,6 @@ function resetGame() {
             const winnerModal = document.getElementById('winner-modal');
             if (winnerModal) winnerModal.style.display = "none";
 
-            // I-reset ang view ng monitor screen pauwi sa simula
             if (isJudgeRole) {
                 if (currentMode === 'individual') {
                     renderIndividualMonitorLayout({});
@@ -3176,7 +3139,6 @@ function resetGame() {
                 }
             }
 
-            // I-lock ulit ang mga tanong at ibalik sa unang panauhin screen ang participant kung kinakailangan
             if (typeof lockQuizUI === 'function') {
                 lockQuizUI();
             }
@@ -3241,100 +3203,31 @@ function resetGame() {
             if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
         }
 
-       // Listener kapag ang isang Group ay tapos na magsagot
-socket.on('groupFinished', ({ groupName }) => {
-    groupCompletedStatus[groupName] = true;
+        socket.on('groupFinished', ({ groupName }) => {
+            groupCompletedStatus[groupName] = true;
 
-    if (isJudgeRole && currentMode === 'group') {
-        renderScoreboardAndPodium();
+            if (isJudgeRole && currentMode === 'group') {
+                renderScoreboardAndPodium();
 
-        const banner = document.getElementById('judge-notification-banner');
-        if (banner) {
-            banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
-            banner.style.display = 'block';
-            setTimeout(() => {
-                banner.style.display = 'none';
-            }, 3000);
-        }
-    }
-});
+                const banner = document.getElementById('judge-notification-banner');
+                if (banner) {
+                    banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
+                    banner.style.display = 'block';
+                    setTimeout(() => { banner.style.display = 'none'; }, 3000);
+                }
+            }
+        });
 
-// Listener kapag ang isang Individual Participant ay tapos na magsagot
-socket.on('individualFinished', ({ fullName }) => {
-    if (isJudgeRole && currentMode === 'individual') {
-        const banner = document.getElementById('judge-notification-banner');
-        if (banner) {
-            banner.innerText = `✨ ${fullName} ay tapos na sa pagsagot sa Individual Mode! 🏁`;
-            banner.style.display = 'block';
-            setTimeout(() => {
-                banner.style.display = 'none';
-            }, 3000);
-        }
-    }
-});
-function renderScoreboardAndPodium() {
-    const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
-    
-    let chartHTML = '';
-    sortedGroups.forEach(([group, score]) => {
-        let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
-        let photoSrc = attorneyPhotos[group] || '/logo.png';
-        let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
-        let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
-        let tSecs = (tSeconds % 60).toString().padStart(2, '0');
-        let timeText = `${tMins}:${tSecs}`;
-        let isUrgent = tSeconds <= 15 && tSeconds > 0;
-        
-        // Tinitingnan kung tapos na ang grupo
-        let isCompleted = groupCompletedStatus[group];
-
-        chartHTML += `
-            <div class="bar-row">
-                <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
-                <div class="bar-label">${group} ${isCompleted ? '✔️' : ''}</div>
-                <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
-                <div class="bar-score">${score}/${totalMaxScore}</div>
-                <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
-            </div>
-        `;
-    });
-    const barChart = document.getElementById('bar-chart');
-    if (barChart) barChart.innerHTML = chartHTML;
-
-    let podiumHTML = '';
-    sortedGroups.forEach(([group, score], idx) => {
-        let heightPercent = totalMaxScore > 0 ? Math.max((score / totalMaxScore) * 100, 8) : 8;
-        let photoSrc = attorneyPhotos[group] || '/logo.png';
-        
-        // Tinitingnan kung tapos na ang grupo
-        let isCompleted = groupCompletedStatus[group];
-        
-        let gradientBg = '';
-        if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
-            gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
-        } else if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.5)) {
-            gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
-        } else {
-            gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
-        }
-
-        podiumHTML += `
-            <div class="podium-col">
-                <div class="rank-label-badge">Top ${idx + 1}</div>
-                <div class="rank-bar-track">
-                    <div class="rank-bar-fill" style="height: ${heightPercent}%; background: ${gradientBg};"></div>
-                </div>
-                <!-- Lalagyan ng completed-frame class kapag tapos na -->
-                <div class="glowing-frame ${isCompleted ? 'completed-frame' : ''}">
-                    <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
-                </div>
-                <div class="animated-attorney-label">${group} ${isCompleted ? '🟢' : ''}</div>
-            </div>
-        `;
-    });
-    const podiumDisplay = document.getElementById('podium-display');
-    if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
-}
+        socket.on('individualFinished', ({ fullName }) => {
+            if (isJudgeRole && currentMode === 'individual') {
+                const banner = document.getElementById('judge-notification-banner');
+                if (banner) {
+                    banner.innerText = `✨ ${fullName} ay tapos na sa pagsagot sa Individual Mode! 🏁`;
+                    banner.style.display = 'block';
+                    setTimeout(() => { banner.style.display = 'none'; }, 3000);
+                }
+            }
+        });
 
         socket.on('showJudgePopupQueue', (queue) => {
             if (isJudgeRole) {
@@ -3394,7 +3287,6 @@ function renderScoreboardAndPodium() {
 
             const judgeTimerBox = document.getElementById('judge-timer-display-box');
             if (judgeTimerBox) {
-                // Tinanggal ang salitang "Timer:" para sa Individual/Group mode o pinalitan ng tamang format
                 judgeTimerBox.innerText = currentMode === 'individual' ? `${timeStr}` : `⏱️ Timer: ${timeStr}`;
             }
 
@@ -3419,68 +3311,39 @@ function renderScoreboardAndPodium() {
             }
         });
 
-socket.on('showJudgePopupQueue', (queue) => {
-            if (isJudgeRole) {
-                let newQueue = queue.filter(item => !shownPopups[item.groupName + item.photo]);
-                newQueue.forEach(item => {
-                    shownPopups[item.groupName + item.photo] = true;
-                });
-                if (newQueue.length > 0) {
-                    playPopupQueue(newQueue, 0);
+        socket.on('gameModeUpdated', (mode) => {
+            currentMode = mode;
+            applyGameModeUI(mode, false);
+
+            if (window.innerWidth <= 768) {
+                if (mode === 'individual') {
+                    const indivModal = document.getElementById('individual-instructions-modal');
+                    if (indivModal) indivModal.style.display = 'flex';
+                } else {
+                    const groupModal = document.getElementById('instructions-modal');
+                    if (groupModal) groupModal.style.display = 'flex';
                 }
             }
         });
 
-        function playPopupQueue(queue, index) {
-            if (index >= queue.length) return;
-            const item = queue[index];
+        socket.on('newAttorneyJoined', ({ groupName, photo }) => {
+            if (isJudgeRole && photo) {
+                const popup = document.getElementById('judge-photo-popup');
+                const titleEl = document.getElementById('judge-popup-title');
+                const imgEl = document.getElementById('judge-popup-img');
 
-            const popup = document.getElementById('judge-photo-popup');
-            document.getElementById('judge-popup-title').innerText = `${item.groupName} entered the court! ⚖️`;
-            document.getElementById('judge-popup-img').src = item.photo || '/logo.png';
-            popup.style.display = 'flex';
+                if (popup && titleEl && imgEl) {
+                    titleEl.innerText = `${groupName} entered the court! ⚖️`;
+                    imgEl.src = photo;
+                    popup.style.display = 'flex';
 
-            setTimeout(() => {
-                popup.style.display = 'none';
-                setTimeout(() => { playPopupQueue(queue, index + 1); }, 400);
-            }, 3000);
-        }
+                    setTimeout(() => {
+                        popup.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        });
 
-// REAL-TIME LISTENER: Pag may pinindot na Game Mode ang Judge, bubukas agad ang Instructions sa Cellphone ng Participants
-socket.on('gameModeUpdated', (mode) => {
-    currentMode = mode;
-    applyGameModeUI(mode, false);
-
-    // Kusa ring magpapakita sa cellphone screen (width <= 768px) sa real-time
-    if (window.innerWidth <= 768) {
-        if (mode === 'individual') {
-            const indivModal = document.getElementById('individual-instructions-modal');
-            if (indivModal) indivModal.style.display = 'flex';
-        } else {
-            const groupModal = document.getElementById('instructions-modal');
-            if (groupModal) groupModal.style.display = 'flex';
-        }
-    }
-});
-       // Agad na mag-pop up ang litrato sa judge monitor kapag may nag-register
-socket.on('newAttorneyJoined', ({ groupName, photo }) => {
-    if (isJudgeRole && photo) {
-        const popup = document.getElementById('judge-photo-popup');
-        const titleEl = document.getElementById('judge-popup-title');
-        const imgEl = document.getElementById('judge-popup-img');
-
-        if (popup && titleEl && imgEl) {
-            titleEl.innerText = `${groupName} entered the court! ⚖️`;
-            imgEl.src = photo;
-            popup.style.display = 'flex';
-
-            // Automatic na mawawala pagkalipas ng 3 segundo
-            setTimeout(() => {
-                popup.style.display = 'none';
-            }, 3000);
-        }
-    }
-});
         socket.on('timeUp', () => {
             bgmAudio.pause();
             urgentAudio.pause();
@@ -3571,130 +3434,131 @@ socket.on('newAttorneyJoined', ({ groupName, photo }) => {
         }
 
         let currentIndividualCompletedStatus = {};
+        let individualParticipants = {};
 
-socket.on('individualScoresUpdated', (data) => {
-    if (data.scores) {
-        window.currentIndividualScores = data.scores;
-        currentIndividualCompletedStatus = data.completedStatus || {};
-    } else {
-        window.currentIndividualScores = data;
-    }
+        socket.on('individualParticipantsUpdated', (participants) => {
+            individualParticipants = participants;
+        });
 
-    if (currentMode === 'individual' && isJudgeRole) {
-        renderIndividualMonitorLayout(window.currentIndividualScores, currentIndividualCompletedStatus);
-    }
-});
+        socket.on('individualScoresUpdated', (data) => {
+            if (data.scores) {
+                window.currentIndividualScores = data.scores;
+                currentIndividualCompletedStatus = data.completedStatus || {};
+            } else {
+                window.currentIndividualScores = data;
+            }
 
-function renderIndividualMonitorLayout(scoresObj, completedObj = {}) {
-    let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
-    const leftBox = document.querySelector('.judge-left-box');
-    const rightBox = document.querySelector('.judge-right-box');
-    
-    if (!leftBox || !rightBox) return;
+            if (currentMode === 'individual' && isJudgeRole) {
+                renderIndividualMonitorLayout(window.currentIndividualScores, currentIndividualCompletedStatus);
+            }
+        });
 
-    let tSeconds = groupTimers['Attorney 1'] !== undefined ? groupTimers['Attorney 1'] : 300;
-    let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
-    let tSecs = (tSeconds % 60).toString().padStart(2, '0');
+        function renderIndividualMonitorLayout(scoresObj, completedObj = {}) {
+            let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
+            const leftBox = document.querySelector('.judge-left-box');
+            const rightBox = document.querySelector('.judge-right-box');
+            
+            if (!leftBox || !rightBox) return;
 
-    let leftHtml = `
-        <div class="header-bar">
-            <span style="font-size:13.5px; color:#c084fc; white-space:nowrap;">⚖️ Court Proceedings</span>
-            <div id="judge-timer-display-box" style="font-size:13.5px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981; white-space:nowrap;">${tMins}:${tSecs}</div>
-            <div style="display:flex; flex-direction:row; align-items:center; gap:4px; flex-wrap:nowrap;">
-                <button class="btn" style="padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="startTimer()">Start Quiz</button>
-                <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                <button class="btn" style="background:var(--danger); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="resetGame()">Reset Game</button>
-            </div>
-        </div>
-        <h3 style="color: #38bdf8; margin: 6px 0; font-size: 13.5px;">👥 All Participants Real-time List</h3>
-        <div style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
-    `;
+            let tSeconds = groupTimers['Attorney 1'] !== undefined ? groupTimers['Attorney 1'] : 300;
+            let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
+            let tSecs = (tSeconds % 60).toString().padStart(2, '0');
 
-   sorted.forEach(([name, sc]) => {
-        // 1. Isang beses lang idedeklara ang isDone gamit ang completedObj
-        let isDone = completedObj[name] || false;
-
-        // 2. Kulay green ang pangalan kapag tapos na
-        let nameColor = isDone ? '#10b981' : '#f3e8ff';
-
-        // 3. Kulay green ang border at glow sa avatar image kapag tapos na
-        let avatarStyle = isDone 
-            ? 'border-radius: 50% !important; border: 3px solid #10b981 !important; box-shadow: 0 0 15px rgba(16,185,129,0.9);' 
-            : 'border-radius: 50% !important; border: 2px solid rgba(255,255,255,0.2);';
-
-        // 4. Pagbuo ng HTML para sa listahan
-        leftHtml += `
-            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid ${isDone ? '#10b981' : 'rgba(255,255,255,0.15)'};">
-                <span style="font-weight: bold; font-size: 12.5px; color: ${nameColor};">
-                    ${name} ${isDone ? '🟢 (Finished)' : ''}
-                </span>
-                <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
-            </div>
-        `;
-    });
-
-    leftHtml += `</div>`;
-    leftBox.innerHTML = leftHtml;
-
-    let top3 = sorted.slice(0, 3);
-    let next6 = sorted.slice(3, 9);
-
-    let rightHtml = `
-        <div class="animated-rank-title" style="font-size: 15px;">👑 Top Rankings (Top 1-9) 🏛️</div>
-        <div class="animated-rank-subtitle" style="font-size: 11px; margin-bottom: 4px;">Individual Mode Leaderboard</div>
-        <div class="indiv-top3-container">
-    `;
-    
-    const heights = ['105px', '82px', '62px'];
-    const colors = [
-        'linear-gradient(180deg, #f472b6, #a855f7)', 
-        'linear-gradient(180deg, #38bdf8, #2563eb)', 
-        'linear-gradient(180deg, #34d399, #059669)'
-    ];
-
-    for (let i = 0; i < 3; i++) {
-        let p = top3[i];
-        let name = p ? p[0] : `Top ${i+1}`;
-        let sc = p ? p[1] : 0;
-        let isDone = completedObj[name] || false;
-
-        rightHtml += `
-            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                <span style="font-size: 10px; font-weight: bold; color: #f472b6; margin-bottom: 2px;">Rank ${i+1}</span>
-                <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
-                    <span style="font-size: 13px; font-weight: bold; color: white;">${sc}</span>
+            let leftHtml = `
+                <div class="header-bar">
+                    <span style="font-size:13.5px; color:#c084fc; white-space:nowrap;">⚖️ Court Proceedings</span>
+                    <div id="judge-timer-display-box" style="font-size:13.5px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981; white-space:nowrap;">${tMins}:${tSecs}</div>
+                    <div style="display:flex; flex-direction:row; align-items:center; gap:4px; flex-wrap:nowrap;">
+                        <button class="btn" style="padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="startTimer()">Start Quiz</button>
+                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                        <button class="btn" style="background:var(--danger); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="resetGame()">Reset Game</button>
+                    </div>
                 </div>
-                <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: ${isDone ? '#10b981' : '#fff'};">
-                    ${name}
-                </span>
-            </div>
-        `;
-    }
-    rightHtml += `</div><div class="indiv-grid-6">`;
+                <h3 style="color: #38bdf8; margin: 6px 0; font-size: 13.5px;">👥 All Participants Real-time List</h3>
+                <div style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
+            `;
 
-    for (let i = 0; i < 6; i++) {
-        let p = next6[i];
-        let name = p ? p[0] : `Participant`;
-        let sc = p ? p[1] : 0;
-        let isDone = completedObj[name] || false;
+            sorted.forEach(([name, sc]) => {
+                let isDone = completedObj[name] || false;
+                let nameColor = isDone ? '#10b981' : '#f3e8ff';
 
-        // Kinukuha ang naka-save na litrato ng individual kung meron man, o default logo
-        let avatarSrc = (individualParticipants && individualParticipants[name] && individualParticipants[name].photo) ? individualParticipants[name].photo : '/logo.png';
+                leftHtml += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid ${isDone ? '#10b981' : 'rgba(255,255,255,0.15)'};">
+                        <span style="font-weight: bold; font-size: 12.5px; color: ${nameColor};">
+                            ${name} ${isDone ? '🟢 (Finished)' : ''}
+                        </span>
+                        <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
+                    </div>
+                `;
+            });
 
-        rightHtml += `
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
-                <img src="${avatarSrc}" class="glow-circle-avatar-large ${isDone ? 'completed-frame' : ''}" alt="Avatar" style="border-radius: 50% !important; ${isDone ? 'border: 3px solid #10b981 !important; box-shadow: 0 0 15px rgba(16,185,129,0.9);' : ''}" />
-                <span style="font-size: 9px; font-weight: bold; margin-top: 2px; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: ${isDone ? '#10b981' : '#e2e8f0'};">
-                    ${name}
-                </span>
-                <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
-            </div>
-        `;
-    }
-    rightHtml += `</div>`;
-    rightBox.innerHTML = rightHtml;
-}
+            leftHtml += `</div>`;
+            leftBox.innerHTML = leftHtml;
 
-               </script>
+            let top3 = sorted.slice(0, 3);
+            let next6 = sorted.slice(3, 9);
+
+            let rightHtml = `
+                <div class="animated-rank-title" style="font-size: 15px;">👑 Top Rankings (Top 1-9) 🏛️</div>
+                <div class="animated-rank-subtitle" style="font-size: 11px; margin-bottom: 4px;">Individual Mode Leaderboard</div>
+                <div class="indiv-top3-container">
+            `;
+            
+            const heights = ['105px', '82px', '62px'];
+            const colors = [
+                'linear-gradient(180deg, #f472b6, #a855f7)', 
+                'linear-gradient(180deg, #38bdf8, #2563eb)', 
+                'linear-gradient(180deg, #34d399, #059669)'
+            ];
+
+            for (let i = 0; i < 3; i++) {
+                let p = top3[i];
+                let name = p ? p[0] : `Top ${i+1}`;
+                let sc = p ? p[1] : 0;
+                let isDone = completedObj[name] || false;
+
+                rightHtml += `
+                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                        <span style="font-size: 10px; font-weight: bold; color: #f472b6; margin-bottom: 2px;">Rank ${i+1}</span>
+                        <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
+                            <span style="font-size: 13px; font-weight: bold; color: white;">${sc}</span>
+                        </div>
+                        <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: ${isDone ? '#10b981' : '#fff'};">
+                            ${name}
+                        </span>
+                    </div>
+                `;
+            }
+            rightHtml += `</div><div class="indiv-grid-6">`;
+
+            for (let i = 0; i < 6; i++) {
+                let p = next6[i];
+                let name = p ? p[0] : `Participant`;
+                let sc = p ? p[1] : 0;
+                let isDone = completedObj[name] || false;
+
+                let avatarSrc = '/logo.png';
+                if (individualParticipants) {
+                    Object.values(individualParticipants).forEach(part => {
+                        if (part.fullName === name && part.photo) {
+                            avatarSrc = part.photo;
+                        }
+                    });
+                }
+
+                rightHtml += `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
+                        <img src="${avatarSrc}" class="glow-circle-avatar-large ${isDone ? 'completed-frame' : ''}" alt="Avatar" style="border-radius: 50% !important; ${isDone ? 'border: 3px solid #10b981 !important; box-shadow: 0 0 15px rgba(16,185,129,0.9);' : ''}" />
+                        <span style="font-size: 9px; font-weight: bold; margin-top: 2px; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: ${isDone ? '#10b981' : '#e2e8f0'};">
+                            ${name}
+                        </span>
+                        <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
+                    </div>
+                `;
+            }
+            rightHtml += `</div>`;
+            rightBox.innerHTML = rightHtml;
+        }
+    </script>
 </body>
 </html>
