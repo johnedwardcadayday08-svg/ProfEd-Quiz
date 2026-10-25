@@ -687,10 +687,17 @@ body.group-mode .top-timer-box {
             will-change: transform;
         }
 
-        .glowing-frame.completed-frame {
-            background: linear-gradient(135deg, #10b981, #34d399) !important;
-            box-shadow: 0 0 22px rgba(16, 185, 129, 0.9) !important;
-        }
+        /* Kapag natapos na ang grupo, magiging neon green ang paligid ng bilog */
+.glowing-frame.completed-frame {
+    background: linear-gradient(135deg, #10b981, #34d399) !important;
+    box-shadow: 0 0 22px rgba(16, 185, 129, 0.9) !important;
+}
+
+/* Avatar Border sa left mini-scoreboard */
+.attorney-avatar-mini.completed-avatar {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.8) !important;
+}
 
         .glowing-frame img {
             width: 100%;
@@ -2084,7 +2091,36 @@ body.individual-mode-active, html {
             applyGameModeUI(mode, true); 
         }
 
+// --- IDAGDAG ITO SA CLIENT-SIDE SCRIPT (FRONTEND HTML) ---
+        
+        // Kapag nag-reset ang laro, i-reset ang status pero huwag burahin ang mga tanong
+        socket.on('resetState', () => {
+            if (typeof answeredQuestions !== 'undefined') answeredQuestions = {};
+            if (typeof isGameStarted !== 'undefined') isGameStarted = false;
+            
+            // Isara ang mga modals kung nakabukas man
+            const reviewSec = document.getElementById('review-section');
+            if (reviewSec) reviewSec.style.display = "none";
+            
+            const winnerModal = document.getElementById('winner-modal');
+            if (winnerModal) winnerModal.style.display = "none";
 
+            if (typeof lockQuizUI === 'function') {
+                lockQuizUI();
+            }
+        });
+
+        // Tinitiyak na laging lumalabas at nananatili ang mga tanong sa screen ng participants
+        socket.on('applyCustomQuestionsList', (questionsList) => {
+            if (questionsList && questionsList.length > 0) {
+                if (typeof globalQuestionsList !== 'undefined') {
+                    globalQuestionsList = questionsList;
+                }
+                if (typeof renderQuestionsUI === 'function') {
+                    renderQuestionsUI(questionsList);
+                }
+            }
+        });
 
 function applyGameModeUI(mode, showAlerts = false) {
             currentMode = mode;
@@ -2118,7 +2154,7 @@ function applyGameModeUI(mode, showAlerts = false) {
                 if (attorneyContainer) {
                     attorneyContainer.innerHTML = `
                         <button class="group-btn attorney-btn-1 animated-group-btn-1" onclick="selectGroup('Attorney 1')">Attorney 1</button>
-                        <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 3</button>
+                        <button class="group-btn attorney-btn-2 animated-group-btn-2" onclick="selectGroup('Attorney 2')">Attorney 2</button>
                         <button class="group-btn attorney-btn-3 animated-group-btn-3" onclick="selectGroup('Attorney 3')">Attorney 3</button>
                         <button class="group-btn attorney-btn-4 animated-group-btn-4" onclick="selectGroup('Attorney 4')">Attorney 4</button>
                     `;
@@ -2669,7 +2705,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 document.getElementById('fs-btn').innerText = "⛶ Fullscreen";
             } else {
                 document.body.classList.add('is-fullscreen');
-                document.getElementById('fs-btn').innerText = "⤓ Exit Full";
+                document.getElementById('fs-btn').innerText = "⛶ Exit Full";
             }
         });
 
@@ -2693,6 +2729,45 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             const reviewSec = document.getElementById('review-section');
             if (reviewSec) reviewSec.style.display = "block";
         }
+// Idagdag o palitan ang socket listener para sa answerFeedback upang lumabas ang pop-up ng tama o mali
+socket.on('answerFeedback', (data) => {
+    const popup = document.getElementById('feedback-popup');
+    if (!popup) return;
+
+    if (data.isCorrect) {
+        popup.className = "feedback-correct";
+        popup.innerText = `✨ Tama! +${data.earnedPoints} Pts 🎉`;
+    } else {
+        popup.className = "feedback-wrong";
+        popup.innerText = `❌ Mali! (${data.earnedPoints} Pts)`;
+    }
+
+    popup.style.display = "block";
+    
+    // Awtomatikong itago ang pop-up pagkalipas ng 1.5 segundo para hindi makasagabal
+    setTimeout(() => {
+        popup.style.display = "none";
+    }, 1500);
+});
+
+// Ayusin din ang pag-update ng state ng iskor sa client side
+socket.on('updateState', (state) => {
+    if (state.groupScores) {
+        latestGroupScores = state.groupScores;
+        if (myGroup && latestGroupScores[myGroup] !== undefined) {
+            document.getElementById('group-score-display').innerText = `Score: ${latestGroupScores[myGroup]} / ${totalMaxScore}`;
+        }
+    }
+    if (state.photos) {
+        attorneyPhotos = state.photos;
+    }
+    if (state.completedStatus) {
+        groupCompletedStatus = state.completedStatus;
+    }
+    if (isJudgeRole && currentMode === 'group') {
+        renderScoreboardAndPodium();
+    }
+});
 
         function verifyJudgePassword() {
             const pass = document.getElementById('judge-pass-input').value;
@@ -2797,234 +2872,60 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }, 1800);
         }
 
-        function startTimer() { socket.emit('startTimer'); }
+        function startTimer() { 
+            socket.emit('startQuiz'); 
+            socket.emit('startTimer'); 
+        }
         function forceTimeUp() { socket.emit('forceTimeUp'); }
         function resetGame() { 
-    socket.emit('resetGame'); 
+            attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+            shownPopups = {};
+            groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
 
-    // Idinagdag para mawala at maitago ang explanation / review section kapag nag-reset
-    const reviewSec = document.getElementById('review-section');
-    if (reviewSec) {
-        reviewSec.style.display = "none";
-    }
-}
+            socket.emit('resetGame'); 
 
-        function submitAns(questionIndex, questionId, answer) {
-            if (!isGameStarted) return;
-            if (answeredQuestions[questionId]) return;
-            answeredQuestions[questionId] = true;
-            
-            const answeredCount = Object.keys(answeredQuestions).length;
-
-            if (currentMode === 'individual') {
-                socket.emit('submitIndividualAnswer', { fullName: individualFullName, questionIndex, answer, answeredCount }, (res) => {
-                    handleIndividualFeedback(res, questionId, answer);
-                });
-            } else {
-                socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer, answeredCount });
-            }
-            
-            const expBox = document.getElementById(`exp-${questionId}`);
-            if (expBox) expBox.style.display = "block";
-
-            if (answeredCount >= totalQuestionsCount) {
-                lockQuizUI();
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    popup.className = "feedback-correct";
-                    popup.innerHTML = "Wait for the results!";
-                    popup.style.display = "block";
-                }
-            }
-        }
-
-        function handleIndividualFeedback(res, questionId, answer) {
-            if (!res) return;
-            const popup = document.getElementById('feedback-popup');
-            if (popup) {
-                popup.className = res.isCorrect ? "feedback-correct" : "feedback-wrong";
-                popup.innerHTML = res.isCorrect ? `✔ CORRECT! (+${res.earnedPoints} Pts)` : "✖ INCORRECT!";
-                popup.style.display = "block";
-                setTimeout(() => { popup.style.display = "none"; }, 2000);
-            }
-            if (questionId && answer) {
-                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
-                if (targetLabel) {
-                    targetLabel.classList.add(res.isCorrect ? "option-correct" : "option-wrong");
-                }
-            }
-        }
-
-        function triggerMixedTextSubmit(questionIndex, questionId) {
-            const textInput = document.getElementById(`input-${questionId}`);
-            if (!textInput) return;
-            const val = textInput.value;
-
-            if (!val || !val.trim()) {
-                alert("Mangyaring i-type muna ang iyong sagot!");
-                return;
-            }
-
-            submitMixedTextAns(questionIndex, questionId, val);
-
-            const btn = document.getElementById(`btn-done-${questionId}`);
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = "Submitted ✔️";
-                btn.style.background = "rgba(148, 163, 184, 0.4)";
-            }
-        }
-
-        function submitMixedTextAns(questionIndex, questionId, answerText) {
-            if (!isGameStarted) return;
-            if (answeredQuestions[questionId]) return;
-            if (!answerText || !answerText.trim()) return;
-            
-            answeredQuestions[questionId] = true;
-            const answeredCount = Object.keys(answeredQuestions).length;
-
-            if (currentMode === 'individual') {
-                socket.emit('submitIndividualAnswer', { fullName: individualFullName, questionIndex, answer: answerText, answeredCount }, (res) => {
-                    handleIndividualFeedback(res, questionId, answerText);
-                });
-            } else {
-                socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: answerText, answeredCount });
-            }
-            
-            const expBox = document.getElementById(`exp-${questionId}`);
-            if (expBox) expBox.style.display = "block";
-
-            const textInput = document.getElementById(`input-${questionId}`);
-            if (textInput) textInput.disabled = true;
-
-            if (answeredCount >= totalQuestionsCount) {
-                lockQuizUI();
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    popup.className = "feedback-correct";
-                    popup.innerHTML = "Wait for the results!";
-                    popup.style.display = "block";
-                }
-            }
-        }
-
-        function triggerEssaySubmit(questionIndex, questionId) {
-            const txtArea = document.getElementById(`textarea-${questionId}`);
-            if (!txtArea) return;
-            const val = txtArea.value;
-
-            if (!val || !val.trim()) {
-                alert("Mangyaring isulat muna ang iyong essay bago pindutin ang Submit!");
-                return;
-            }
-
-            submitEssayAns(questionIndex, questionId, val);
-
-            const btn = document.getElementById(`btn-done-${questionId}`);
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = "Submitted & Evaluated ✔️";
-                btn.style.background = "rgba(148, 163, 184, 0.4)";
-            }
-        }
-
-        function submitEssayAns(questionIndex, questionId, essayText) {
-            if (!isGameStarted) return;
-            if (answeredQuestions[questionId]) return;
-
-            answeredQuestions[questionId] = true;
-            const answeredCount = Object.keys(answeredQuestions).length;
-
-            if (currentMode === 'individual') {
-                socket.emit('submitIndividualAnswer', { fullName: individualFullName, questionIndex, answer: essayText, answeredCount }, (res) => {
-                    handleIndividualFeedback(res, questionId, essayText);
-                });
-            } else {
-                socket.emit('submitAnswer', { groupName: myGroup, questionIndex, answer: essayText, answeredCount });
-            }
-
-            const expBox = document.getElementById(`exp-${questionId}`);
-            if (expBox) expBox.style.display = "block";
-
-            const txtArea = document.getElementById(`textarea-${questionId}`);
-            if (txtArea) txtArea.disabled = true;
-
-            if (answeredCount >= totalQuestionsCount) {
-                lockQuizUI();
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    popup.className = "feedback-correct";
-                    popup.innerHTML = "Wait for the results!";
-                    popup.style.display = "block";
-                }
-            }
-        }
-
-        socket.on('gameState', ({ isGameStarted: started }) => {
-            isGameStarted = started;
-            if (isGameStarted) {
-                unlockQuizUI();
-            } else {
-                lockQuizUI();
-            }
-        });
-
-        socket.on('answerFeedback', ({ isCorrect, questionId, answer, earnedPoints, maxPoints, qType }) => {
-            const answeredCount = Object.keys(answeredQuestions).length;
-            if (answeredCount <= totalQuestionsCount) {
-                const popup = document.getElementById('feedback-popup');
-                if (popup) {
-                    if (qType === 'essay') {
-                        popup.className = earnedPoints > 0 ? "feedback-correct" : "feedback-wrong";
-                        popup.innerHTML = `📝 ESSAY GRADED!<br><span style="font-size:20px;">Score: ${earnedPoints} / ${maxPoints} Points</span>`;
-                    } else {
-                        popup.className = isCorrect ? "feedback-correct" : "feedback-wrong";
-                        popup.innerHTML = isCorrect ? "✔ CORRECT! (+5s Bonus)" : "✖ INCORRECT!";
-                    }
-                    popup.style.display = "block";
-                    setTimeout(() => { popup.style.display = "none"; }, 2000);
-                }
-            }
-            if (questionId && answer) {
-                const targetLabel = document.getElementById(`lbl-${questionId}-${answer}`);
-                if (targetLabel) {
-                    targetLabel.classList.add(isCorrect ? "option-correct" : "option-wrong");
-                }
-            }
-        });
-
-        socket.on('updateState', ({ groupScores, photos, completedStatus, mode }) => {
-            latestGroupScores = groupScores;
-            if (photos) attorneyPhotos = photos;
-            if (completedStatus) groupCompletedStatus = completedStatus;
-
-            if (mode) {
-                currentMode = mode;
-                applyGameModeUI(mode);
+            const reviewSec = document.getElementById('review-section');
+            if (reviewSec) {
+                reviewSec.style.display = "none";
             }
 
             if (isJudgeRole) {
                 if (currentMode === 'individual') {
-                    renderIndividualMonitorLayout(window.currentIndividualScores || {});
+                    renderIndividualMonitorLayout({});
                 } else {
                     renderScoreboardAndPodium();
                 }
             }
+        }
 
-            if (myGroup && groupScores[myGroup] !== undefined) {
-                document.getElementById('group-score-display').innerText = `Score: ${groupScores[myGroup]} / ${totalMaxScore}`;
-            }
+socket.on('quizStarted', () => {
+            isGameStarted = true;
+            unlockQuizUI();
         });
 
-        socket.on('groupFinished', ({ groupName }) => {
+        socket.on('resetState', () => {
+            if (typeof answeredQuestions !== 'undefined') answeredQuestions = {};
+            if (typeof isGameStarted !== 'undefined') isGameStarted = false;
+            
+            attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+            shownPopups = {};
+            groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
+
+            const reviewSec = document.getElementById('review-section');
+            if (reviewSec) reviewSec.style.display = "none";
+            
+            const winnerModal = document.getElementById('winner-modal');
+            if (winnerModal) winnerModal.style.display = "none";
+
+            if (typeof lockQuizUI === 'function') {
+                lockQuizUI();
+            }
+
             if (isJudgeRole) {
-                const banner = document.getElementById('judge-notification-banner');
-                if (banner) {
-                    banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
-                    banner.style.display = 'block';
-                    setTimeout(() => {
-                        banner.style.display = 'none';
-                    }, 3000);
+                if (currentMode === 'individual') {
+                    renderIndividualMonitorLayout({});
+                } else {
+                    renderScoreboardAndPodium();
                 }
             }
         });
@@ -3046,7 +2947,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 chartHTML += `
                     <div class="bar-row">
                         <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
-                        <div class="bar-label">${group}</div>
+                        <div class="bar-label">${group} ${isCompleted ? '✔️' : ''}</div>
                         <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
                         <div class="bar-score">${score}/${totalMaxScore}</div>
                         <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
@@ -3080,13 +2981,93 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                         <div class="glowing-frame ${isCompleted ? 'completed-frame' : ''}">
                             <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
                         </div>
-                        <div class="animated-attorney-label">${group}</div>
+                        <div class="animated-attorney-label">${group} ${isCompleted ? '🟢' : ''}</div>
                     </div>
                 `;
             });
             const podiumDisplay = document.getElementById('podium-display');
             if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
         }
+
+        socket.on('groupFinished', ({ groupName }) => {
+            groupCompletedStatus[groupName] = true;
+
+            if (isJudgeRole) {
+                renderScoreboardAndPodium();
+
+                const banner = document.getElementById('judge-notification-banner');
+                if (banner) {
+                    banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
+                    banner.style.display = 'block';
+                    setTimeout(() => {
+                        banner.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        });
+function renderScoreboardAndPodium() {
+    const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
+    
+    let chartHTML = '';
+    sortedGroups.forEach(([group, score]) => {
+        let percentage = totalMaxScore > 0 ? (score / totalMaxScore) * 100 : 0;
+        let photoSrc = attorneyPhotos[group] || '/logo.png';
+        let tSeconds = groupTimers[group] !== undefined ? groupTimers[group] : 300;
+        let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
+        let tSecs = (tSeconds % 60).toString().padStart(2, '0');
+        let timeText = `${tMins}:${tSecs}`;
+        let isUrgent = tSeconds <= 15 && tSeconds > 0;
+        
+        // Tinitingnan kung tapos na ang grupo
+        let isCompleted = groupCompletedStatus[group];
+
+        chartHTML += `
+            <div class="bar-row">
+                <img src="${photoSrc}" alt="${group}" class="attorney-avatar-mini ${isCompleted ? 'completed-avatar' : ''}" />
+                <div class="bar-label">${group} ${isCompleted ? '✔️' : ''}</div>
+                <div class="bar-track"><div class="bar-fill" style="width: ${percentage}%"></div></div>
+                <div class="bar-score">${score}/${totalMaxScore}</div>
+                <div class="attorney-timer-badge ${isUrgent ? 'urgent-badge' : ''}">⏱️ ${timeText}</div>
+            </div>
+        `;
+    });
+    const barChart = document.getElementById('bar-chart');
+    if (barChart) barChart.innerHTML = chartHTML;
+
+    let podiumHTML = '';
+    sortedGroups.forEach(([group, score], idx) => {
+        let heightPercent = totalMaxScore > 0 ? Math.max((score / totalMaxScore) * 100, 8) : 8;
+        let photoSrc = attorneyPhotos[group] || '/logo.png';
+        
+        // Tinitingnan kung tapos na ang grupo
+        let isCompleted = groupCompletedStatus[group];
+        
+        let gradientBg = '';
+        if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
+            gradientBg = 'linear-gradient(180deg, rgba(52, 211, 153, 0.85), rgba(16, 185, 129, 0.65), rgba(124, 58, 237, 0.55))';
+        } else if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.5)) {
+            gradientBg = 'linear-gradient(180deg, rgba(251, 191, 36, 0.85), rgba(234, 179, 8, 0.65), rgba(124, 58, 237, 0.55))';
+        } else {
+            gradientBg = 'linear-gradient(180deg, rgba(192, 132, 252, 0.85), rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.55))';
+        }
+
+        podiumHTML += `
+            <div class="podium-col">
+                <div class="rank-label-badge">Top ${idx + 1}</div>
+                <div class="rank-bar-track">
+                    <div class="rank-bar-fill" style="height: ${heightPercent}%; background: ${gradientBg};"></div>
+                </div>
+                <!-- Lalagyan ng completed-frame class kapag tapos na -->
+                <div class="glowing-frame ${isCompleted ? 'completed-frame' : ''}">
+                    <img src="${photoSrc}" alt="${group}" style="transform: scaleX(-1);" />
+                </div>
+                <div class="animated-attorney-label">${group} ${isCompleted ? '🟢' : ''}</div>
+            </div>
+        `;
+    });
+    const podiumDisplay = document.getElementById('podium-display');
+    if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
+}
 
         socket.on('showJudgePopupQueue', (queue) => {
             if (isJudgeRole) {
