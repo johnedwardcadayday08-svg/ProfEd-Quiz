@@ -2843,6 +2843,54 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         }
 
+// Para sa Multiple Choice / True-False
+function submitAns(questionIndex, qKey, selectedOpt) {
+    answeredQuestions[qKey] = selectedOpt;
+    
+    // I-emit sa server ang sagot para ma-check sa real-time
+    socket.emit('submitAnswer', {
+        groupName: myGroup || individualFullName,
+        questionIndex: questionIndex,
+        answer: selectedOpt
+    });
+}
+
+// Para sa Essay / Constructed Response
+function triggerEssaySubmit(questionIndex, qKey) {
+    const textVal = document.getElementById(`textarea-${qKey}`).value;
+    if (!textVal || !textVal.trim()) {
+        alert("Mangyaring maglagay ng sagot bago i-submit.");
+        return;
+    }
+    
+    answeredQuestions[qKey] = textVal;
+    socket.emit('submitAnswer', {
+        groupName: myGroup || individualFullName,
+        questionIndex: questionIndex,
+        answer: textVal
+    });
+    
+    alert("Tagumpay na na-submit ang iyong essay! ✨");
+}
+
+// Para sa Identification / Short Mixed Text
+function triggerMixedTextSubmit(questionIndex, qKey) {
+    const textVal = document.getElementById(`input-${qKey}`).value;
+    if (!textVal || !textVal.trim()) {
+        alert("Mangyaring maglagay ng sagot bago i-submit.");
+        return;
+    }
+    
+    answeredQuestions[qKey] = textVal;
+    socket.emit('submitAnswer', {
+        groupName: myGroup || individualFullName,
+        questionIndex: questionIndex,
+        answer: textVal
+    });
+    
+    alert("Tagumpay na na-submit ang iyong sagot! ✨");
+}
+
 function confirmJoinNow() {
             document.getElementById('camera-modal').style.display = 'none';
             
@@ -3173,24 +3221,25 @@ socket.on('showJudgePopupQueue', (queue) => {
             }, 3000);
         }
 
-        socket.on('newAttorneyJoined', ({ groupName, photo }) => {
-            if (isJudgeRole && photo) {
-                const popup = document.getElementById('judge-photo-popup');
-                const titleEl = document.getElementById('judge-popup-title');
-                const imgEl = document.getElementById('judge-popup-img');
+       // Agad na mag-pop up ang litrato sa judge monitor kapag may nag-register
+socket.on('newAttorneyJoined', ({ groupName, photo }) => {
+    if (isJudgeRole && photo) {
+        const popup = document.getElementById('judge-photo-popup');
+        const titleEl = document.getElementById('judge-popup-title');
+        const imgEl = document.getElementById('judge-popup-img');
 
-                if (popup && titleEl && imgEl) {
-                    titleEl.innerText = `${groupName} entered the court! ⚖️`;
-                    imgEl.src = photo;
-                    popup.style.display = 'flex';
+        if (popup && titleEl && imgEl) {
+            titleEl.innerText = `${groupName} entered the court! ⚖️`;
+            imgEl.src = photo;
+            popup.style.display = 'flex';
 
-                    setTimeout(() => {
-                        popup.style.display = 'none';
-                    }, 3000);
-                }
-            }
-        });
-
+            // Automatic na mawawala pagkalipas ng 3 segundo
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 3000);
+        }
+    }
+});
         socket.on('timeUp', () => {
             bgmAudio.pause();
             urgentAudio.pause();

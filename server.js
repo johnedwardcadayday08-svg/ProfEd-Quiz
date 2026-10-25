@@ -141,21 +141,20 @@ io.on('connection', (socket) => {
     });
 
     // 2. REGISTER ATTORNEY PHOTO & REAL-TIME POPUP
-    socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
-        if (groupName && photo) {
-            attorneyPhotos[groupName] = photo;
-            serverPhotoArchive.push({
-                groupName,
-                photo,
-                timestamp: new Date().toLocaleTimeString()
-            });
-            
-            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
-            io.emit('photoArchiveUpdated', serverPhotoArchive);
-            io.emit('newAttorneyJoined', { groupName, photo });
-            io.emit('showJudgePopupQueue', [{ groupName, photo }]);
-        }
-    });
+   socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
+    if (groupName && photo) {
+        attorneyPhotos[groupName] = photo;
+        serverPhotoArchive.push({
+            groupName,
+            photo,
+            timestamp: new Date().toLocaleTimeString()
+        });
+        
+        // Agad na i-broadcast sa judge screen
+        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
+        io.emit('newAttorneyJoined', { groupName, photo });
+    }
+});
 
     socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
         if (fullName) {
