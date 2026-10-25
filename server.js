@@ -6,7 +6,7 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 
-// Siguraduhing maayos ang Socket.io initialization
+// Siguraduhing maayos ang Socket.io initialization[cite: 8]
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -14,11 +14,19 @@ const io = new Server(server, {
     }
 });
 
-// Middleware para sa static files (HTML, CSS, Images)
+// Middleware para sa static files (HTML, CSS, Images)[cite: 8]
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// Global State Variables
+// ---------------------------------------------------------
+// FIX PARA SA "CANNOT GET /" ERROR SA RENDER
+// Nagbibigay ito ng fallback route patungo sa index.html
+// ---------------------------------------------------------
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Global State Variables[cite: 8]
 let currentQuizMode = 'multiple-choice';
 let currentGameMode = 'group';
 let isGameStarted = false;
@@ -35,7 +43,7 @@ let groupHistory = [];
 let individualHistory = [];
 
 // ==========================================
-// MATALINONG PAG-SCORING AT TEXT NORMALIZATION
+// MATALINONG PAG-SCORING AT TEXT NORMALIZATION[cite: 8]
 // ==========================================
 
 function normalizeText(str) {
@@ -44,8 +52,8 @@ function normalizeText(str) {
         .toString()
         .toLowerCase()
         .trim()
-        .replace(/[^\w\s]/gi, '') // Tinatanggal ang mga simbolo at kuwit
-        .replace(/\s+/g, ' ');   // Ginagawang iisang space ang paulit-ulit na space
+        .replace(/[^\w\s]/gi, '') // Tinatanggal ang mga simbolo at kuwit[cite: 8]
+        .replace(/\s+/g, ' ');   // Ginagawang iisang space ang paulit-ulit na space[cite: 8]
 }
 
 function isAnswerCorrect(userAns, correctAns) {
@@ -54,14 +62,14 @@ function isAnswerCorrect(userAns, correctAns) {
 
     if (!cleanUser) return false;
 
-    // 1. Exact match pagkatapos linisin ang spaces at capitalization
+    // 1. Exact match pagkatapos linisin ang spaces at capitalization[cite: 8]
     if (cleanUser === cleanCorrect) return true;
 
-    // 2. Flexible match (kung nakapaloob ang sagot sa criteria)
+    // 2. Flexible match (kung nakapaloob ang sagot sa criteria)[cite: 8]
     if (cleanUser.length >= 3 && cleanCorrect.includes(cleanUser)) return true;
     if (cleanCorrect.length >= 3 && cleanUser.includes(cleanCorrect)) return true;
 
-    // 3. Suporta para sa maramihang posibleng tamang sagot (e.g. "Manila / Maynila")
+    // 3. Suporta para sa maramihang posibleng tamang sagot (e.g. "Manila / Maynila")[cite: 8]
     if (correctAns.includes('/') || correctAns.includes(',')) {
         const validAnswers = correctAns.split(/[/,]/).map(a => normalizeText(a));
         return validAnswers.some(ans => ans === cleanUser || (ans.length >= 3 && cleanUser.includes(ans)));
@@ -71,13 +79,13 @@ function isAnswerCorrect(userAns, correctAns) {
 }
 
 // ==========================================
-// REAL-TIME SOCKET.IO EVENTS
+// REAL-TIME SOCKET.IO EVENTS[cite: 8]
 // ==========================================
 
 io.on('connection', (socket) => {
     console.log(`🔌 Client connected: ${socket.id}`);
 
-    // I-sync ang paunang data sa bagong konektadong client
+    // I-sync ang paunang data sa bagong konektadong client[cite: 8]
     socket.emit('updateState', {
         groupScores: groupScores,
         photos: attorneyPhotos,
@@ -92,25 +100,25 @@ io.on('connection', (socket) => {
         socket.emit('applyCustomQuestionsList', questionsList);
     }
 
-    // Set Game Mode (Group vs Individual)
+    // Set Game Mode (Group vs Individual)[cite: 8]
     socket.on('setGameMode', (mode) => {
         currentGameMode = mode;
         io.emit('gameModeUpdated', mode);
     });
 
-    // Set Quiz Mode (Multiple Choice / Mixed / Long Essay)
+    // Set Quiz Mode (Multiple Choice / Mixed / Long Essay)[cite: 8]
     socket.on('changeQuizMode', (mode) => {
         currentQuizMode = mode;
         io.emit('quizModeUpdated', mode);
     });
 
-    // Bagong Tanong mula sa Plain Text Insert
+    // Bagong Tanong mula sa Plain Text Insert[cite: 8]
     socket.on('updatePlainQuestionsData', (newList) => {
         questionsList = newList;
         io.emit('applyCustomQuestionsList', questionsList);
     });
 
-    // Pagsali ng Attorney / Group Photo
+    // Pagsali ng Attorney / Group Photo[cite: 8]
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         attorneyPhotos[groupName] = photo;
         if (photo) {
@@ -129,7 +137,7 @@ io.on('connection', (socket) => {
         });
     });
 
-    // Pagsali ng Individual Participant
+    // Pagsali ng Individual Participant[cite: 8]
     socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
         if (!fullName) return;
         individualParticipants[socket.id] = { fullName, photo };
@@ -151,7 +159,7 @@ io.on('connection', (socket) => {
         });
     });
 
-    // Matalinong Pagpasa ng Sagot (Submit Answer)
+    // Matalinong Pagpasa ng Sagot (Submit Answer)[cite: 8]
     socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
         if (!questionsList[questionIndex]) return;
 
@@ -165,12 +173,12 @@ io.on('connection', (socket) => {
             isCorrect = normalizeText(answer) === normalizeText(currentQ.answer);
             earnedPoints = isCorrect ? (currentQ.points || 1) : 0;
         } else {
-            // Matalinong pag-score para sa Essay at Identification
+            // Matalinong pag-score para sa Essay at Identification[cite: 8]
             isCorrect = isAnswerCorrect(answer, currentQ.answer);
             earnedPoints = isCorrect ? (currentQ.points || 1) : 0;
         }
 
-        // I-update ang Score sa tamang Mode
+        // I-update ang Score sa tamang Mode[cite: 8]
         if (currentGameMode === 'individual') {
             individualScores[groupName] = (individualScores[groupName] || 0) + earnedPoints;
             io.emit('individualScoresUpdated', {
@@ -180,7 +188,7 @@ io.on('connection', (socket) => {
         } else {
             groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
             if (isCorrect && groupTimers[groupName] !== undefined) {
-                groupTimers[groupName] += 5; // +5 Seconds Bonus
+                groupTimers[groupName] += 5; // +5 Seconds Bonus[cite: 8]
             }
             io.emit('updateState', {
                 groupScores: groupScores,
@@ -189,20 +197,20 @@ io.on('connection', (socket) => {
             });
         }
 
-        // Magpadala ng feedback pabalik sa participant
+        // Magpadala ng feedback pabalik sa participant[cite: 8]
         socket.emit('answerFeedback', {
             isCorrect: isCorrect,
             earnedPoints: earnedPoints
         });
     });
 
-    // Simulan ang Quiz
+    // Simulan ang Quiz[cite: 8]
     socket.on('startQuiz', () => {
         isGameStarted = true;
         io.emit('quizStartedSignal');
     });
 
-    // Simulan / I-update ang Timer
+    // Simulan / I-update ang Timer[cite: 8]
     socket.on('startTimer', () => {
         io.emit('timerUpdate', groupTimers);
     });
@@ -218,7 +226,7 @@ io.on('connection', (socket) => {
         io.emit('timeUp');
     });
 
-    // Reset Game
+    // Reset Game[cite: 8]
     socket.on('resetGame', () => {
         isGameStarted = false;
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
@@ -240,12 +248,12 @@ io.on('connection', (socket) => {
         });
     });
 
-    // Baguhin ang Title sa Screen
+    // Baguhin ang Title sa Screen[cite: 8]
     socket.on('changeAppTitle', (newTitle) => {
         io.emit('titleUpdated', newTitle);
     });
 
-    // Archive & History Management
+    // Archive & History Management[cite: 8]
     socket.on('deleteArchivePhoto', (index) => {
         if (photoArchive[index]) {
             photoArchive.splice(index, 1);
@@ -275,7 +283,7 @@ io.on('connection', (socket) => {
 });
 
 // ==========================================
-// RENDER PORT BINDING & SERVER LISTEN
+// RENDER PORT BINDING & SERVER LISTEN[cite: 8]
 // ==========================================
 
 const PORT = process.env.PORT || 3000;
