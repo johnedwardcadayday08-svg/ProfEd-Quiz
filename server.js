@@ -25,6 +25,10 @@ let individualScoreHistoryArchive = [];
 let individualParticipants = {}; 
 let individualScores = {};       
 
+// Dynamic tracking para sa tapos na magsagot sa Individual Mode
+let individualCompletedStatus = {}; 
+let individualAnswerTracker = {};
+
 let globalQuestionsList = [
     {
         question: "Ayon sa Kautusang Pampamahalaan at Code of Ethics, ano ang pangunahing batayan ng pagpaparusa o pagdidisiplina ng isang guro sa mag-aaral?",
@@ -40,9 +44,6 @@ let globalQuestionsList = [
     }
 ];
 
-// ==========================================
-// HELPER 1: Pang-linis ng Text (Case-insensitive & Space Tolerance)
-// ==========================================
 function normalizeText(text) {
     if (!text) return "";
     return text
@@ -53,9 +54,6 @@ function normalizeText(text) {
         .replace(/[^\w\s]/gi, ''); 
 }
 
-// ==========================================
-// HELPER 2: Smart Answer & Essay Checker (Dynamic batay sa Max Points)
-// ==========================================
 function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
     const normUser = normalizeText(userAnswer);
     const normCorrect = normalizeText(correctAnswerKey);
@@ -118,9 +116,9 @@ io.on('connection', (socket) => {
     socket.emit('groupHistoryUpdated', groupScoreHistoryArchive);
     socket.emit('individualHistoryUpdated', individualScoreHistoryArchive);
     socket.emit('individualParticipantsUpdated', individualParticipants);
-    socket.emit('individualScoresUpdated', individualScores);
+    socket.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
 
-// 1. SET GAME MODE HANDLER
+    // 1. SET GAME MODE HANDLER
     socket.on('setGameMode', (mode) => {
         currentMode = mode;
         isGameStarted = false;
@@ -135,8 +133,9 @@ io.on('connection', (socket) => {
 
         individualParticipants = {};
         individualScores = {};
+        individualCompletedStatus = {};
+        individualAnswerTracker = {};
 
-        // Agad na i-broadcast sa LAHAT ng clients kabilang ang participants
         io.emit('gameModeUpdated', currentMode);
         io.emit('resetState');
         io.emit('applyCustomQuestionsList', globalQuestionsList);
@@ -144,7 +143,7 @@ io.on('connection', (socket) => {
         io.emit('timerUpdate', groupTimers);
         io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
         io.emit('individualParticipantsUpdated', individualParticipants);
-        io.emit('individualScoresUpdated', individualScores);
+        io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
     });
 
     // 2. REGISTER ATTORNEY PHOTO & REAL-TIME POPUP
@@ -171,9 +170,11 @@ io.on('connection', (socket) => {
                 timestamp: new Date().toLocaleTimeString(),
                 date: new Date().toLocaleDateString()
             };
-            individualScores[fullName.trim()] = 0;
+            if (individualScores[fullName.trim()] === undefined) {
+                individualScores[fullName.trim()] = 0;
+            }
             io.emit('individualParticipantsUpdated', individualParticipants);
-            io.emit('individualScoresUpdated', individualScores);
+            io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
         }
     });
 
@@ -209,101 +210,40 @@ io.on('connection', (socket) => {
             mode: currentMode 
         });
     });
-let individualCompletedStatus = {}; 
-let individualAnswerTracker = {};
 
-// Kapag nagpasa ng sagot sa Individual Mode
-socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
-    const question = globalQuestionsList[questionIndex];
-    if (!question) return;
+    // 4. SUBMIT INDIVIDUAL ANSWER (Walang +5 seconds)
+    socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
+        const question = globalQuestionsList[questionIndex];
+        if (!question) return;
 
-    const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
+        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
 
-    if (result.isCorrect || result.earnedPoints > 0) {
-        individualScores[fullName] = (individualScores[fullName] || 0) + result.earnedPoints;
-    }
+        if (result.isCorrect || result.earnedPoints > 0) {
+            individualScores[fullName] = (individualScores[fullName] || 0) + result.earnedPoints;
+        }
 
-    if (!individualAnswerTracker[fullName]) {
-        individualAnswerTracker[fullName] = new Set();
-    }
-    individualAnswerTracker[fullName].add(questionIndex);
+        if (!individualAnswerTracker[fullName]) {
+            individualAnswerTracker[fullName] = new Set();
+        }
+        individualAnswerTracker[fullName].add(questionIndex);
 
-    // Kapag nasagutan na ang lahat ng tanong
-    if (individualAnswerTracker[fullName].size >= globalQuestionsList.length) {
-        individualCompletedStatus[fullName] = true;
-    }
+        if (individualAnswerTracker[fullName].size >= globalQuestionsList.length) {
+            individualCompletedStatus[fullName] = true;
+        }
 
-    const responseData = {
-        isCorrect: result.isCorrect,
-        earnedPoints: result.earnedPoints,
-        maxPoints: question.points || 1,
-        qType: question.type
-    };
+        const responseData = {
+            isCorrect: result.isCorrect,
+            earnedPoints: result.earnedPoints,
+            maxPoints: question.points || 1,
+            qType: question.type
+        };
 
-    if (typeof callback === 'function') callback(responseData);
+        if (typeof callback === 'function') callback(responseData);
 
-    io.emit('individualScoresUpdated', {
-        scores: individualScores,
-        completedStatus: individualCompletedStatus
-    });
-});
-
-// Huwag kalimutang i-clear tuwing magti-trigger ang resetGame at setGameMode
-socket.on('resetGame', () => {
-    // ... iba pang code ng pag-reset ...
-    individualCompletedStatus = {};
-    individualAnswerTracker = {};
-    io.emit('individualParticipantsUpdated', individualParticipants);
-    io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
-});
-
-socket.on('setGameMode', (mode) => {
-    // ... iba pang code ...
-    individualCompletedStatus = {};
-    individualAnswerTracker = {};
-    io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
-});
-
- // Dynamic tracking para sa tapos na magsagot sa Individual Mode
-let individualCompletedStatus = {}; 
-let individualAnswerTracker = {}; // Sumusubaybay sa bilang ng nasagutang tanong ng bawat tao
-
-// I-update ang submitIndividualAnswer event
-socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
-    const question = globalQuestionsList[questionIndex];
-    if (!question) return;
-
-    // Check answer nang WALANG idinaragdag na timer/seconds
-    const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
-
-    if (result.isCorrect || result.earnedPoints > 0) {
-        individualScores[fullName] = (individualScores[fullName] || 0) + result.earnedPoints;
-    }
-
-    // Subaybayan kung nakasagot na sa lahat ng tanong
-    if (!individualAnswerTracker[fullName]) {
-        individualAnswerTracker[fullName] = new Set();
-    }
-    individualAnswerTracker[fullName].add(questionIndex);
-
-    // Kapag pantay na ang nasagutan sa kabuuang bilang ng mga tanong, i-mark bilang Tapos Na
-    if (individualAnswerTracker[fullName].size >= globalQuestionsList.length) {
-        individualCompletedStatus[fullName] = true;
-    }
-
-    const responseData = {
-        isCorrect: result.isCorrect,
-        earnedPoints: result.earnedPoints,
-        maxPoints: question.points || 1,
-        qType: question.type
-    };
-
-    if (typeof callback === 'function') callback(responseData);
-
-    // Agad na i-broadcast sa Judge Monitor ang na-update na score at completion status
-    io.emit('individualScoresUpdated', {
-        scores: individualScores,
-        completedStatus: individualCompletedStatus
+        io.emit('individualScoresUpdated', {
+            scores: individualScores,
+            completedStatus: individualCompletedStatus
+        });
     });
 
     // 5. RESET GAME
@@ -313,6 +253,8 @@ socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callba
         groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
         groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
         individualScores = {};
+        individualCompletedStatus = {};
+        individualAnswerTracker = {};
         isGameStarted = false;
 
         if (timerInterval) clearInterval(timerInterval);
@@ -328,7 +270,7 @@ socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callba
             mode: currentMode
         });
         io.emit('individualParticipantsUpdated', individualParticipants);
-        io.emit('individualScoresUpdated', individualScores);
+        io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
     });
 
     socket.on('deleteGroupHistoryItem', (id) => {
