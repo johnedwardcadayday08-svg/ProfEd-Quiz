@@ -19,6 +19,92 @@
     text-align: center;
 }
 
+// Function para sa pagpasa ng Short Essay o Constructed Response
+        function triggerEssaySubmit(questionIndex, qKey) {
+            if (!myGroup) {
+                alert("Mangyaring pumili muna ng grupo.");
+                return;
+            }
+
+            const textarea = document.getElementById(`textarea-${qKey}`);
+            if (!textarea || !textarea.value.trim()) {
+                alert("Mangyaring maglagay ng sagot sa essay.");
+                return;
+            }
+
+            const answerText = textarea.value.trim();
+            answeredQuestions[qKey] = answerText;
+
+            // I-emit sa server ang sagot para masuri ng smart checker
+            socket.emit('submitAnswer', {
+                groupName: myGroup,
+                questionIndex: questionIndex,
+                answer: answerText
+            });
+
+            textarea.disabled = true;
+            const btn = document.getElementById(`btn-done-${qKey}`);
+            if (btn) btn.disabled = true;
+        }
+
+        // Function para sa Mixed (Identification / Enumeration / True-False na may text field)
+        function triggerMixedTextSubmit(questionIndex, qKey) {
+            if (!myGroup) {
+                alert("Mangyaring pumili muna ng grupo.");
+                return;
+            }
+
+            const inputField = document.getElementById(`input-${qKey}`);
+            if (!inputField || !inputField.value.trim()) {
+                alert("Mangyaring maglagay ng sagot.");
+                return;
+            }
+
+            const answerText = inputField.value.trim();
+            answeredQuestions[qKey] = answerText;
+
+            socket.emit('submitAnswer', {
+                groupName: myGroup,
+                questionIndex: questionIndex,
+                answer: answerText
+            });
+
+            inputField.disabled = true;
+            const btn = document.getElementById(`btn-done-${qKey}`);
+            if (btn) btn.disabled = true;
+        }
+```[cite: 7]
+
+---
+
+### 2. Siguruhing Aktibo ang `answerFeedback` Listener sa Client-Side
+Ilagay o i-verify na nasa iyong JavaScript ang socket listener na ito. Ito ang nagpapalabas ng pop-up (berde kung tama, pula kung mali) at nag-a-update ng iskor sa itaas anuman ang quiz mode na ginagamit:
+
+```javascript
+        socket.on('answerFeedback', (data) => {
+            const popup = document.getElementById('feedback-popup');
+            if (!popup) return;
+
+            // Sinusuportahan nito ang partial points o buong puntos mula sa iba't ibang quiz modes
+            if (data.isCorrect || data.earnedPoints > 0) {
+                popup.className = "feedback-correct";
+                popup.innerText = `✨ Tama! +${data.earnedPoints} Pts 🎉`;
+            } else {
+                popup.className = "feedback-wrong";
+                popup.innerText = `❌ Mali! (${data.earnedPoints} Pts)`;
+            }
+
+            popup.style.display = "block";
+            
+            // Awtomatikong mawawala ang pop-up makalipas ang 1.5 segundo
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 1500);
+        });
+```[cite: 4]
+
+Sa pamamagitan ng mga kaukulang function na ito, gagana na ang real-time scoring, correct/incorrect feedback pop-ups, at bonus time sa **Pure Multiple Choice, Mixed, at Long Essay modes** nang sabay-sabay[cite: 3, 4]!
+
 /* I-center ang Individual Mode Instructions Modal sa mismong gitna ng screen */
 #individual-instructions-modal {
     display: none;
