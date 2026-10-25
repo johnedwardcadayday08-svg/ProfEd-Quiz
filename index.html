@@ -2898,11 +2898,19 @@ socket.on('updateState', (state) => {
             }
         }
 
-socket.on('quizStarted', () => {
-            isGameStarted = true;
-            unlockQuizUI();
+socket.on('gameState', (data) => {
+            isGameStarted = data.isGameStarted;
+            if (isGameStarted) {
+                unlockQuizUI(); // Agad na mag-u-unlock sa participants screen
+            } else {
+                lockQuizUI();   // Mang-i-lock kapag hinto o nireset ang laro
+            }
         });
 
+        socket.on('quizStarted', () => {
+            isGameStarted = true;
+            unlockQuizUI();     // Awtomatikong mag-u-unlock sa realtime
+        });
         socket.on('resetState', () => {
             if (typeof answeredQuestions !== 'undefined') answeredQuestions = {};
             if (typeof isGameStarted !== 'undefined') isGameStarted = false;
