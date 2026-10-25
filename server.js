@@ -211,12 +211,6 @@ io.on('connection', (socket) => {
         });
     });
 
-// Kapag nasagutan na ang lahat ng tanong sa Individual Mode
-    if (individualAnswerTracker[fullName].size >= globalQuestionsList.length) {
-        individualCompletedStatus[fullName] = true;
-        io.emit('individualFinished', { fullName }); // Magpapadala ng notification sa Judge monitor
-    }
-
     // 4. SUBMIT INDIVIDUAL ANSWER (Walang +5 seconds)
     socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
         const question = globalQuestionsList[questionIndex];
@@ -235,6 +229,7 @@ io.on('connection', (socket) => {
 
         if (individualAnswerTracker[fullName].size >= globalQuestionsList.length) {
             individualCompletedStatus[fullName] = true;
+            io.emit('individualFinished', { fullName }); // Magpapadala ng notification sa Judge monitor
         }
 
         const responseData = {
