@@ -3215,22 +3215,37 @@ function resetGame() {
             if (podiumDisplay) podiumDisplay.innerHTML = podiumHTML;
         }
 
-        socket.on('groupFinished', ({ groupName }) => {
-            groupCompletedStatus[groupName] = true;
+       // Listener kapag ang isang Group ay tapos na magsagot
+socket.on('groupFinished', ({ groupName }) => {
+    groupCompletedStatus[groupName] = true;
 
-            if (isJudgeRole) {
-                renderScoreboardAndPodium();
+    if (isJudgeRole && currentMode === 'group') {
+        renderScoreboardAndPodium();
 
-                const banner = document.getElementById('judge-notification-banner');
-                if (banner) {
-                    banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
-                    banner.style.display = 'block';
-                    setTimeout(() => {
-                        banner.style.display = 'none';
-                    }, 3000);
-                }
-            }
-        });
+        const banner = document.getElementById('judge-notification-banner');
+        if (banner) {
+            banner.innerText = `✨ ${groupName} ay tapos na sa pagsagot! 🏁`;
+            banner.style.display = 'block';
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 3000);
+        }
+    }
+});
+
+// Listener kapag ang isang Individual Participant ay tapos na magsagot
+socket.on('individualFinished', ({ fullName }) => {
+    if (isJudgeRole && currentMode === 'individual') {
+        const banner = document.getElementById('judge-notification-banner');
+        if (banner) {
+            banner.innerText = `✨ ${fullName} ay tapos na sa pagsagot sa Individual Mode! 🏁`;
+            banner.style.display = 'block';
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 3000);
+        }
+    }
+});
 function renderScoreboardAndPodium() {
     const sortedGroups = Object.entries(latestGroupScores).sort((a, b) => b[1] - a[1]);
     
@@ -3573,7 +3588,7 @@ function renderIndividualMonitorLayout(scoresObj, completedObj = {}) {
         let isDone = completedObj[name] || false;
         leftHtml += `
             <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid ${isDone ? '#10b981' : 'rgba(255,255,255,0.15)'};">
-                <span style="font-weight: bold; font-size: 12.5px;" class="${isDone ? 'text-completed-green' : ''}">
+                <span style="font-weight: bold; font-size: 12.5px; color: ${isDone ? '#10b981' : '#f3e8ff'};">
                     ${name} ${isDone ? '🟢 (Finished)' : ''}
                 </span>
                 <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
@@ -3611,7 +3626,7 @@ function renderIndividualMonitorLayout(scoresObj, completedObj = {}) {
                 <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
                     <span style="font-size: 13px; font-weight: bold; color: white;">${sc}</span>
                 </div>
-                <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" class="${isDone ? 'text-completed-green' : ''}">
+                <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: ${isDone ? '#10b981' : '#fff'};">
                     ${name}
                 </span>
             </div>
@@ -3625,10 +3640,13 @@ function renderIndividualMonitorLayout(scoresObj, completedObj = {}) {
         let sc = p ? p[1] : 0;
         let isDone = completedObj[name] || false;
 
+        // Kinukuha ang naka-save na litrato ng individual kung meron man, o default logo
+        let avatarSrc = (individualParticipants && individualParticipants[name] && individualParticipants[name].photo) ? individualParticipants[name].photo : '/logo.png';
+
         rightHtml += `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
-                <img src="/logo.png" class="glow-circle-avatar-large ${isDone ? 'completed-frame' : ''}" alt="Avatar" style="border-radius: 50% !important;" />
-                <span style="font-size: 9px; font-weight: bold; margin-top: 2px; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" class="${isDone ? 'text-completed-green' : ''}">
+                <img src="${avatarSrc}" class="glow-circle-avatar-large ${isDone ? 'completed-frame' : ''}" alt="Avatar" style="border-radius: 50% !important; ${isDone ? 'border: 3px solid #10b981 !important; box-shadow: 0 0 15px rgba(16,185,129,0.9);' : ''}" />
+                <span style="font-size: 9px; font-weight: bold; margin-top: 2px; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: ${isDone ? '#10b981' : '#e2e8f0'};">
                     ${name}
                 </span>
                 <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
@@ -3638,6 +3656,7 @@ function renderIndividualMonitorLayout(scoresObj, completedObj = {}) {
     rightHtml += `</div>`;
     rightBox.innerHTML = rightHtml;
 }
-    </script>
+
+               </script>
 </body>
 </html>
