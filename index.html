@@ -2572,106 +2572,108 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         }
 
         function savePlainQuestions() {
-            try {
-                let rawInput = document.getElementById('custom-questions-plaintext').value;
-                if (!rawInput || !rawInput.trim()) {
-                    alert("Mangyaring maglagay ng text ng mga tanong.");
-                    return;
-                }
-
-                let cleanText = rawInput
-                    .replace(/♡/g, 'o')
-                    .replace(/♥/g, 'o')
-                    .replace(/[\u201C\u201D]/g, '"')
-                    .replace(/[\u2018\u2019]/g, "'")
-                    .replace(/\r\n/g, '\n')
-                    .replace(/\r/g, '\n')
-                    .trim();
-
-                let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
-                let questionsList = [];
-
-                rawBlocks.forEach(block => {
-                    let trimmedBlock = block.trim();
-                    if (!trimmedBlock) return;
-
-                    let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
-                    
-                    let qText = "";
-                    let qType = "multiple-choice";
-                    let options = {};
-                    let answer = "";
-                    let explanation = "";
-                    let rubrics = "";
-                    let points = 1;
-
-                    lines.forEach(line => {
-                        if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
-                            qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
-                        } 
-                        else if (/^Type[\s:\-\)\.]/i.test(line)) {
-                            let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
-                            if (tVal.includes('essay')) qType = 'essay';
-                            else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
-                            else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
-                            else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
-                            else qType = 'multiple-choice';
-                        }
-                        else if (/^Rubrics?[\s:\-\)\.]/i.test(line) || /^Criteria[\s:\-\)\.]/i.test(line)) {
-                            rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
-                            qType = 'essay';
-                        }
-                        else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
-                            let ptsMatch = line.match(/\d+/);
-                            if (ptsMatch) points = parseInt(ptsMatch[0], 10);
-                        }
-                        else if (/^[A-D][\)\.\:\-]/i.test(line)) {
-                            let optKey = line.charAt(0).toUpperCase();
-                            let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
-                            options[optKey] = optVal;
-                        } 
-                        else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
-                            answer = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim();
-                        } 
-                        else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
-                            explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
-                        }
-                    });
-
-                    if (rubrics || /essay/i.test(qText) || /explain/i.test(qText) || /ipaliwanag/i.test(qText)) {
-                        if (Object.keys(options).length === 0 && !answer) {
-                            qType = 'essay';
-                            if (!rubrics) rubrics = "Nilalaman, Organisasyon, at Kelebanse ng sagot.";
-                            if (points === 1) points = 10;
-                        }
-                    }
-
-                    if (qText) {
-                        questionsList.push({
-                            question: qText,
-                            type: qType,
-                            options: options,
-                            answer: answer || "N/A (Essay/Constructed Response)",
-                            explanation: explanation || (rubrics ? `Criteria for Judging: ${rubrics}` : "Walang nakasaad na paliwanag."),
-                            rubrics: rubrics,
-                            points: points
-                        });
-                    }
-                });
-
-                if (questionsList.length === 0) {
-                    alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
-                    return;
-                }
-
-                socket.emit('updatePlainQuestionsData', questionsList);
-                closeInsertModal();
-                alert(`Tagumpay! Awtomatikong nabasa ang ${questionsList.length} tanong sa LAHAT ng screen! 🚀`);
-            } catch (err) {
-                alert("May error sa pagbasa ng text.");
-            }
+    try {
+        let rawInput = document.getElementById('custom-questions-plaintext').value;
+        if (!rawInput || !rawInput.trim()) {
+            alert("Mangyaring maglagay ng text ng mga tanong.");
+            return;
         }
 
+        let cleanText = rawInput
+            .replace(/♡/g, 'o')
+            .replace(/♥/g, 'o')
+            .replace(/[\u201C\u201D]/g, '"')
+            .replace(/[\u2018\u2019]/g, "'")
+            .replace(/\r\n/g, '\n')
+            .replace(/\r/g, '\n')
+            .trim();
+
+        let rawBlocks = cleanText.split(/(?=(?:^|\n|\s)(?:Q|Question)[\d\.\s]*[:\-\)\.])/i);
+        let questionsList = [];
+
+        rawBlocks.forEach(block => {
+            let trimmedBlock = block.trim();
+            if (!trimmedBlock) return;
+
+            let lines = trimmedBlock.split('\n').map(l => l.trim()).filter(l => l);
+            
+            let qText = "";
+            let qType = "multiple-choice";
+            let options = {};
+            let answer = "";
+            let explanation = "";
+            let rubrics = "";
+            let points = 1;
+
+            lines.forEach(line => {
+                if (/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i.test(line)) {
+                    qText = line.replace(/^(?:Q|Question)[\d\.\s]*[:\-\)\.]/i, '').trim();
+                } 
+                else if (/^Type[\s:\-\)\.]/i.test(line)) {
+                    let tVal = line.replace(/^Type[\s:\-\)\.]/i, '').trim().toLowerCase();
+                    if (tVal.includes('essay')) qType = 'essay';
+                    else if (tVal.includes('id') || tVal.includes('identification')) qType = 'identification';
+                    else if (tVal.includes('enum') || tVal.includes('enumeration')) qType = 'enumeration';
+                    else if (tVal.includes('true') || tVal.includes('false') || tVal.includes('t/f')) qType = 'true-false';
+                    else qType = 'multiple-choice';
+                }
+                else if (/^Rubrics?[\s:\-\)\.]/i.test(line) || /^Criteria[\s:\-\)\.]/i.test(line)) {
+                    rubrics = line.replace(/^(?:Rubrics?|Criteria)[\s:\-\)\.]/i, '').trim();
+                    qType = 'essay';
+                }
+                else if (/^(?:Points?|Score|Total)[\s:\-\)\.]/i.test(line)) {
+                    let ptsMatch = line.match(/\d+/);
+                    if (ptsMatch) points = parseInt(ptsMatch[0], 10);
+                }
+                else if (/^[A-D][\)\.\:\-]/i.test(line)) {
+                    let optKey = line.charAt(0).toUpperCase();
+                    let optVal = line.substring(1).replace(/^[\)\.\:\-]/, '').trim();
+                    options[optKey] = optVal;
+                } 
+                else if (/^Ans(?:wer)?[\s:\-\)\.]/i.test(line)) {
+                    answer = line.replace(/^Ans(?:wer)?[\s:\-\)\.]/i, '').trim();
+                } 
+                else if (/^Exp(?:lanation)?[\s:\-\)\.]/i.test(line)) {
+                    explanation = line.replace(/^Exp(?:lanation)?[\s:\-\)\.]/i, '').trim();
+                }
+            });
+
+            // Auto-detect type kung walang nakalagay na "Type:" pero may True/False o Essay clues
+            if (Object.keys(options).length === 0 && (qText.toLowerCase().includes('true') || qText.toLowerCase().includes('false') || answer.toLowerCase() === 'true' || answer.toLowerCase() === 'false')) {
+                qType = 'true-false';
+                options = { A: 'True', B: 'False' };
+            } else if (rubrics || qText.toLowerCase().includes('essay') || qText.toLowerCase().includes('ipaliwanag')) {
+                qType = 'essay';
+            } else if (Object.keys(options).length === 0 && qType === 'multiple-choice') {
+                qType = 'identification';
+            }
+
+            if (qText) {
+                questionsList.push({
+                    question: qText,
+                    type: qType,
+                    options: options,
+                    answer: answer || "N/A",
+                    explanation: explanation || (rubrics ? `Criteria: ${rubrics}` : "Walang nakasaad na paliwanag."),
+                    rubrics: rubrics,
+                    points: points
+                });
+            }
+        });
+
+        if (questionsList.length === 0) {
+            alert("Hindi nabasa. Siguraduhing may 'Q:' sa simula ng bawat tanong.");
+            return;
+        }
+
+        socket.emit('updatePlainQuestionsData', questionsList);
+        closeInsertModal();
+        alert(`Tagumpay! Nabasa ang ${questionsList.length} tanong para sa Mixed/Pumiling Quiz Mode! 🚀`);
+    } catch (err) {
+        alert("May error sa pagbasa ng text.");
+    }
+}           
+            
         socket.on('applyCustomQuestionsList', (questionsList) => {
             globalQuestionsList = questionsList;
             renderQuestionsUI(questionsList);
@@ -3014,13 +3016,13 @@ function submitAns(questionIndex, qKey, selectedOpt) {
         cardEl.style.pointerEvents = "none";
     }
 
-    // 3. I-emit sa server ang sagot
-    socket.emit('submitAnswer', {
-        groupName: myGroup || individualFullName,
-        questionIndex: questionIndex,
-        answer: selectedOpt
-    });
-}
+    let targetName = (currentMode === 'individual') ? individualFullName : myGroup;
+
+socket.emit('submitAnswer', {
+    groupName: targetName, // Ito ang sasalo sa tamang pangalan (ej) o Attorney
+    questionIndex: questionIndex,
+    answer: selectedOpt
+});
 
 // Para sa Essay / Constructed Response
 function triggerEssaySubmit(questionIndex, qKey) {
@@ -3099,39 +3101,40 @@ function triggerMixedTextSubmit(questionIndex, qKey) {
 }
 
 function confirmJoinNow() {
-            document.getElementById('camera-modal').style.display = 'none';
-            
-            if (currentMode === 'individual') {
-                socket.emit('registerIndividualParticipant', { fullName: individualFullName, photo: capturedDataUrl });
-            } else {
-                // Ipinapadala ang litrato at pangalan ng grupo sa server para mag-pop up sa monitor
-                socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
-            }
+    document.getElementById('camera-modal').style.display = 'none';
+    
+    if (currentMode === 'individual') {
+        socket.emit('registerIndividualParticipant', { fullName: individualFullName, photo: capturedDataUrl });
+    } else {
+        socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
+    }
 
-            const studentWelcome = document.getElementById('student-welcome-overlay');
-            studentWelcome.style.display = 'flex';
+    const studentWelcome = document.getElementById('student-welcome-overlay');
+    studentWelcome.style.display = 'flex';
 
-            setTimeout(() => {
-                studentWelcome.style.display = 'none';
-                document.getElementById('role-select').classList.add('hidden');
-                document.getElementById('side-profile').style.display = 'none';
-                document.getElementById('qr-wrapper').style.display = 'none';
-                document.getElementById('left-sidebar').style.display = 'none';
-                document.getElementById('judge-speech-box').style.display = 'none';
-                document.getElementById('student-view').classList.remove('hidden');
-                document.getElementById('group-title').innerText = currentMode === 'individual' ? `Dashboard: ${individualFullName}` : `Dashboard: ${myGroup}`;
-                document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
-                
-                document.getElementById('floating-timer-badge').style.display = 'flex';
+    setTimeout(() => {
+        studentWelcome.style.display = 'none';
+        document.getElementById('role-select').classList.add('hidden');
+        document.getElementById('side-profile').style.display = 'none';
+        document.getElementById('qr-wrapper').style.display = 'none';
+        document.getElementById('left-sidebar').style.display = 'none';
+        document.getElementById('judge-speech-box').style.display = 'none';
+        document.getElementById('student-view').classList.remove('hidden');
+        
+        // Dito natin sinisigurong tama ang pagtawag ng pangalan depende sa mode
+        document.getElementById('group-title').innerText = currentMode === 'individual' ? `Dashboard: ${individualFullName}` : `Dashboard: ${myGroup}`;
+        document.getElementById('main-container').style.background = 'var(--card-bg-solid)';
+        
+        document.getElementById('floating-timer-badge').style.display = 'flex';
 
-                if (!isGameStarted) {
-                    lockQuizUI();
-                } else {
-                    unlockQuizUI();
-                }
-            }, 1800);
+        if (!isGameStarted) {
+            lockQuizUI();
+        } else {
+            unlockQuizUI();
         }
-
+    }, 1800);
+}
+           
         function startTimer() { 
             socket.emit('startQuiz'); 
             socket.emit('startTimer'); 
