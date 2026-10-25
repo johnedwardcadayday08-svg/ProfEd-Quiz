@@ -3274,6 +3274,18 @@ socket.on('showJudgePopupQueue', (queue) => {
             }, 3000);
         }
 
+// Real-time listener kapag binago ng judge ang game mode
+socket.on('gameModeUpdated', (mode) => {
+    currentMode = mode;
+    applyGameModeUI(mode, false); // Ina-update ang UI nang hindi sapilitang nagbubukas ng instructions modal sa participants
+
+    // Kung ang participant ay nasa welcome screen, ina-update ang view
+    const roleSelect = document.getElementById('role-select');
+    if (roleSelect && !roleSelect.classList.contains('hidden')) {
+        applyGameModeUI(mode, false);
+    }
+});
+
        // Agad na mag-pop up ang litrato sa judge monitor kapag may nag-register
 socket.on('newAttorneyJoined', ({ groupName, photo }) => {
     if (isJudgeRole && photo) {

@@ -120,7 +120,7 @@ io.on('connection', (socket) => {
     socket.emit('individualParticipantsUpdated', individualParticipants);
     socket.emit('individualScoresUpdated', individualScores);
 
-    // 1. SET GAME MODE HANDLER
+// 1. SET GAME MODE HANDLER
     socket.on('setGameMode', (mode) => {
         currentMode = mode;
         isGameStarted = false;
@@ -136,6 +136,7 @@ io.on('connection', (socket) => {
         individualParticipants = {};
         individualScores = {};
 
+        // Agad na i-broadcast sa LAHAT ng clients kabilang ang participants
         io.emit('gameModeUpdated', currentMode);
         io.emit('resetState');
         io.emit('applyCustomQuestionsList', globalQuestionsList);
