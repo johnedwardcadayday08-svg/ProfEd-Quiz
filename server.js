@@ -62,7 +62,6 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
 
     if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
-    // Para sa Multiple Choice, Identification, True/False
     if (questionType !== 'essay') {
         if (normUser === normCorrect) {
             return { isCorrect: true, earnedPoints: maxPoints };
@@ -73,15 +72,13 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
         return { isCorrect: false, earnedPoints: 0 };
     }
 
-    // Para sa ESSAY / CONSTRUCTED RESPONSE (Dynamic batay sa inserted maxPoints)
     const keywords = normCorrect.split(' ').filter(word => word.length > 3);
     
-    // Kung walang tiyak na keywords mula sa answer key
     if (keywords.length === 0) {
-        if (normUser.length >= 80) return { isCorrect: true, earnedPoints: maxPoints }; // Full Points
-        if (normUser.length >= 40) return { isCorrect: true, earnedPoints: Math.ceil(maxPoints * 0.7) }; // 70%
-        if (normUser.length >= 15) return { isCorrect: true, earnedPoints: Math.ceil(maxPoints * 0.4) }; // 40%
-        return { isCorrect: false, earnedPoints: 0 }; // 0 point kung napakaikli
+        if (normUser.length >= 80) return { isCorrect: true, earnedPoints: maxPoints };
+        if (normUser.length >= 40) return { isCorrect: true, earnedPoints: Math.ceil(maxPoints * 0.7) };
+        if (normUser.length >= 15) return { isCorrect: true, earnedPoints: Math.ceil(maxPoints * 0.4) };
+        return { isCorrect: false, earnedPoints: 0 };
     }
 
     let matchedCount = 0;
@@ -93,47 +90,19 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
 
     const matchRatio = matchedCount / keywords.length;
 
-    // SCORING BATAY SA ITINAKDANG MAX POINTS (Hal. 5 pts, 10 pts, 20 pts)
     if (matchRatio >= 0.7 && normUser.length >= 50) {
-        return { isCorrect: true, earnedPoints: maxPoints }; // Buong puntos
+        return { isCorrect: true, earnedPoints: maxPoints };
     } else if (matchRatio >= 0.5 || (matchRatio >= 0.3 && normUser.length >= 60)) {
-        const earned = Math.max(1, Math.round(maxPoints * 0.8)); // 80% ng points
+        const earned = Math.max(1, Math.round(maxPoints * 0.8));
         return { isCorrect: true, earnedPoints: earned };
     } else if (matchRatio >= 0.3 || normUser.length >= 35) {
-        const earned = Math.max(1, Math.round(maxPoints * 0.5)); // 50% ng points
+        const earned = Math.max(1, Math.round(maxPoints * 0.5));
         return { isCorrect: true, earnedPoints: earned };
     } else if (normUser.length >= 15) {
-        const earned = Math.max(1, Math.round(maxPoints * 0.2)); // 20% konsiderasyon
+        const earned = Math.max(1, Math.round(maxPoints * 0.2));
         return { isCorrect: true, earnedPoints: earned };
     } else {
-        return { isCorrect: false, earnedPoints: 0 }; // 0 point
-    }
-}
-    const keywords = normCorrect.split(' ').filter(word => word.length > 3);
-    
-    if (keywords.length === 0) {
-        return normUser.length >= 10 
-            ? { isCorrect: true, earnedPoints: maxPoints } 
-            : { isCorrect: false, earnedPoints: Math.ceil(maxPoints * 0.5) };
-    }
-
-    let matchedCount = 0;
-    keywords.forEach(kw => {
-        if (normUser.includes(kw)) {
-            matchedCount++;
-        }
-    });
-
-    const matchRatio = matchedCount / keywords.length;
-
-    if (matchRatio >= 0.5) {
-        return { isCorrect: true, earnedPoints: maxPoints };
-    } else if (matchRatio >= 0.2 || normUser.length >= 15) {
-        const partial = Math.max(1, Math.ceil(maxPoints * 0.7));
-        return { isCorrect: true, earnedPoints: partial };
-    } else {
-        const effortPts = Math.max(1, Math.floor(maxPoints * 0.3));
-        return { isCorrect: false, earnedPoints: effortPts };
+        return { isCorrect: false, earnedPoints: 0 };
     }
 }
 
@@ -178,20 +147,19 @@ io.on('connection', (socket) => {
     });
 
     // 2. REGISTER ATTORNEY PHOTO & REAL-TIME POPUP
-   socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
-    if (groupName && photo) {
-        attorneyPhotos[groupName] = photo;
-        serverPhotoArchive.push({
-            groupName,
-            photo,
-            timestamp: new Date().toLocaleTimeString()
-        });
-        
-        // Agad na i-broadcast sa judge screen
-        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
-        io.emit('newAttorneyJoined', { groupName, photo });
-    }
-});
+    socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
+        if (groupName && photo) {
+            attorneyPhotos[groupName] = photo;
+            serverPhotoArchive.push({
+                groupName,
+                photo,
+                timestamp: new Date().toLocaleTimeString()
+            });
+            
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
+            io.emit('newAttorneyJoined', { groupName, photo });
+        }
+    });
 
     socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
         if (fullName) {
@@ -218,7 +186,6 @@ io.on('connection', (socket) => {
         if (result.isCorrect || result.earnedPoints > 0) {
             groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
             
-            // Dagdag 5 seconds sa timer ng grupong tumama
             if (groupTimers[groupName] !== undefined && groupTimers[groupName] > 0) {
                 groupTimers[groupName] += 5;
             }
@@ -240,7 +207,7 @@ io.on('connection', (socket) => {
             completedStatus: groupCompletedStatus, 
             mode: currentMode 
         });
-
+    });
 
     // 4. SUBMIT INDIVIDUAL ANSWER
     socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
@@ -324,13 +291,10 @@ io.on('connection', (socket) => {
         }
     });
 
-// SA SERVER CODE (server.js)
-socket.on('startQuiz', () => {
-    isGameStarted = true;
-    
-    // I-broadcast sa LAHAT ng clients na nagsimula na ang quiz para mag-unlock ang screen
-    io.emit('quizStartedSignal');
-});
+    socket.on('startQuiz', () => {
+        isGameStarted = true;
+        io.emit('quizStartedSignal');
+    });
 
     socket.on('startTimer', () => {
         isGameStarted = true;
@@ -365,7 +329,7 @@ socket.on('startQuiz', () => {
         Object.keys(groupTimers).forEach(g => { groupTimers[g] = seconds; });
         io.emit('timerUpdate', groupTimers);
     });
-
+});
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
