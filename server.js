@@ -54,7 +54,7 @@ function normalizeText(text) {
 }
 
 // ==========================================
-// HELPER 2: Smart Answer & Essay Checker
+// HELPER 2: Smart Answer & Essay Checker (Dynamic batay sa Max Points)
 // ==========================================
 function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
     const normUser = normalizeText(userAnswer);
@@ -62,6 +62,7 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
 
     if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
+    // Para sa Multiple Choice, Identification, True/False
     if (questionType !== 'essay') {
         if (normUser === normCorrect) {
             return { isCorrect: true, earnedPoints: maxPoints };
@@ -72,6 +73,42 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
         return { isCorrect: false, earnedPoints: 0 };
     }
 
+    // Para sa ESSAY / CONSTRUCTED RESPONSE (Dynamic batay sa inserted maxPoints)
+    const keywords = normCorrect.split(' ').filter(word => word.length > 3);
+    
+    // Kung walang tiyak na keywords mula sa answer key
+    if (keywords.length === 0) {
+        if (normUser.length >= 80) return { isCorrect: true, earnedPoints: maxPoints }; // Full Points
+        if (normUser.length >= 40) return { isCorrect: true, earnedPoints: Math.ceil(maxPoints * 0.7) }; // 70%
+        if (normUser.length >= 15) return { isCorrect: true, earnedPoints: Math.ceil(maxPoints * 0.4) }; // 40%
+        return { isCorrect: false, earnedPoints: 0 }; // 0 point kung napakaikli
+    }
+
+    let matchedCount = 0;
+    keywords.forEach(kw => {
+        if (normUser.includes(kw)) {
+            matchedCount++;
+        }
+    });
+
+    const matchRatio = matchedCount / keywords.length;
+
+    // SCORING BATAY SA ITINAKDANG MAX POINTS (Hal. 5 pts, 10 pts, 20 pts)
+    if (matchRatio >= 0.7 && normUser.length >= 50) {
+        return { isCorrect: true, earnedPoints: maxPoints }; // Buong puntos
+    } else if (matchRatio >= 0.5 || (matchRatio >= 0.3 && normUser.length >= 60)) {
+        const earned = Math.max(1, Math.round(maxPoints * 0.8)); // 80% ng points
+        return { isCorrect: true, earnedPoints: earned };
+    } else if (matchRatio >= 0.3 || normUser.length >= 35) {
+        const earned = Math.max(1, Math.round(maxPoints * 0.5)); // 50% ng points
+        return { isCorrect: true, earnedPoints: earned };
+    } else if (normUser.length >= 15) {
+        const earned = Math.max(1, Math.round(maxPoints * 0.2)); // 20% konsiderasyon
+        return { isCorrect: true, earnedPoints: earned };
+    } else {
+        return { isCorrect: false, earnedPoints: 0 }; // 0 point
+    }
+}
     const keywords = normCorrect.split(' ').filter(word => word.length > 3);
     
     if (keywords.length === 0) {

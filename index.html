@@ -2845,9 +2845,22 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
 // Para sa Multiple Choice / True-False
 function submitAns(questionIndex, qKey, selectedOpt) {
-    answeredQuestions[qKey] = selectedOpt;
+    if (answeredQuestions[qKey]) return; // Huwag payagan kung nasagutan na
     
-    // I-emit sa server ang sagot para ma-check sa real-time
+    answeredQuestions[qKey] = selectedOpt;
+
+    // 1. I-disable ang lahat ng radio buttons sa tanong na ito para hindi na mabago
+    const radioInputs = document.querySelectorAll(`input[name="${qKey}"]`);
+    radioInputs.forEach(input => input.disabled = true);
+
+    // 2. I-lock ang visual style ng card
+    const cardEl = document.getElementById(`card-${qKey}`);
+    if (cardEl) {
+        cardEl.style.opacity = "0.75";
+        cardEl.style.pointerEvents = "none";
+    }
+
+    // 3. I-emit sa server ang sagot
     socket.emit('submitAnswer', {
         groupName: myGroup || individualFullName,
         questionIndex: questionIndex,
@@ -2857,38 +2870,78 @@ function submitAns(questionIndex, qKey, selectedOpt) {
 
 // Para sa Essay / Constructed Response
 function triggerEssaySubmit(questionIndex, qKey) {
-    const textVal = document.getElementById(`textarea-${qKey}`).value;
+    if (answeredQuestions[qKey]) return;
+
+    const textareaEl = document.getElementById(`textarea-${qKey}`);
+    const btnEl = document.getElementById(`btn-done-${qKey}`);
+    const textVal = textareaEl ? textareaEl.value : '';
+
     if (!textVal || !textVal.trim()) {
         alert("Mangyaring maglagay ng sagot bago i-submit.");
         return;
     }
-    
+
     answeredQuestions[qKey] = textVal;
+
+    // 1. I-disable ang textarea at button
+    if (textareaEl) textareaEl.disabled = true;
+    if (btnEl) {
+        btnEl.disabled = true;
+        btnEl.innerText = "Na-submit Na! ✔️";
+        btnEl.style.background = "#64748b";
+    }
+
+    // 2. I-lock ang card
+    const cardEl = document.getElementById(`card-${qKey}`);
+    if (cardEl) {
+        cardEl.style.opacity = "0.75";
+        cardEl.style.pointerEvents = "none";
+    }
+
+    // 3. I-emit sa server NANG WALANG ALERT POP-UP
     socket.emit('submitAnswer', {
         groupName: myGroup || individualFullName,
         questionIndex: questionIndex,
         answer: textVal
     });
-    
-    alert("Tagumpay na na-submit ang iyong essay! ✨");
 }
 
 // Para sa Identification / Short Mixed Text
 function triggerMixedTextSubmit(questionIndex, qKey) {
-    const textVal = document.getElementById(`input-${qKey}`).value;
+    if (answeredQuestions[qKey]) return;
+
+    const inputEl = document.getElementById(`input-${qKey}`);
+    const btnEl = document.getElementById(`btn-done-${qKey}`);
+    const textVal = inputEl ? inputEl.value : '';
+
     if (!textVal || !textVal.trim()) {
         alert("Mangyaring maglagay ng sagot bago i-submit.");
         return;
     }
-    
+
     answeredQuestions[qKey] = textVal;
+
+    // 1. I-disable ang input at button
+    if (inputEl) inputEl.disabled = true;
+    if (btnEl) {
+        btnEl.disabled = true;
+        btnEl.innerText = "Na-submit Na! ✔️";
+        btnEl.style.background = "#64748b";
+    }
+
+    // 2. I-lock ang card
+    const cardEl = document.getElementById(`card-${qKey}`);
+    if (cardEl) {
+        cardEl.style.opacity = "0.75";
+        cardEl.style.pointerEvents = "none";
+    }
+
+    // 3. I-emit sa server NANG WALANG ALERT POP-UP
     socket.emit('submitAnswer', {
         groupName: myGroup || individualFullName,
         questionIndex: questionIndex,
         answer: textVal
     });
-    
-    alert("Tagumpay na na-submit ang iyong sagot! ✨");
 }
 
 function confirmJoinNow() {
