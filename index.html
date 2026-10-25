@@ -2195,6 +2195,29 @@ body.individual-mode-active, html {
             // I-set sa true para lumabas ang instructions modal kapag pinindot ang mode
             applyGameModeUI(mode, true); 
         }
+// Para sa Individual Mode completion notification
+socket.on('individualFinished', ({ fullName }) => {
+    const banner = document.getElementById('judge-notification-banner');
+    if (banner) {
+        banner.innerText = `✨ Si ${fullName} ay tapos na sa pagsagot! 🏁`;
+        banner.style.display = 'block';
+        setTimeout(() => {
+            banner.style.display = 'none';
+        }, 4000);
+    }
+});
+
+// Para sa Group Mode completion notification
+socket.on('groupFinished', ({ groupName }) => {
+    const banner = document.getElementById('judge-notification-banner');
+    if (banner) {
+        banner.innerText = `✨ Ang ${groupName} ay tapos na sa pagsagot! 🏁`;
+        banner.style.display = 'block';
+        setTimeout(() => {
+            banner.style.display = 'none';
+        }, 4000);
+    }
+});
 
 // Idagdag ito sa iyong <script> section sa client-side
 socket.on('quizStartedSignal', () => {
@@ -3584,17 +3607,29 @@ function renderIndividualMonitorLayout(scoresObj, completedObj = {}) {
         <div style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
     `;
 
-    sorted.forEach(([name, sc]) => {
+   sorted.forEach(([name, sc]) => {
+        // 1. Isang beses lang idedeklara ang isDone gamit ang completedObj
         let isDone = completedObj[name] || false;
+
+        // 2. Kulay green ang pangalan kapag tapos na
+        let nameColor = isDone ? '#10b981' : '#f3e8ff';
+
+        // 3. Kulay green ang border at glow sa avatar image kapag tapos na
+        let avatarStyle = isDone 
+            ? 'border-radius: 50% !important; border: 3px solid #10b981 !important; box-shadow: 0 0 15px rgba(16,185,129,0.9);' 
+            : 'border-radius: 50% !important; border: 2px solid rgba(255,255,255,0.2);';
+
+        // 4. Pagbuo ng HTML para sa listahan
         leftHtml += `
             <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid ${isDone ? '#10b981' : 'rgba(255,255,255,0.15)'};">
-                <span style="font-weight: bold; font-size: 12.5px; color: ${isDone ? '#10b981' : '#f3e8ff'};">
+                <span style="font-weight: bold; font-size: 12.5px; color: ${nameColor};">
                     ${name} ${isDone ? '🟢 (Finished)' : ''}
                 </span>
                 <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
             </div>
         `;
     });
+
     leftHtml += `</div>`;
     leftBox.innerHTML = leftHtml;
 
