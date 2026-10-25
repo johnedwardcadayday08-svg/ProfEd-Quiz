@@ -288,6 +288,14 @@ io.on('connection', (socket) => {
         }
     });
 
+// SA SERVER CODE (server.js)
+socket.on('startQuiz', () => {
+    isGameStarted = true;
+    
+    // I-broadcast sa LAHAT ng clients na nagsimula na ang quiz para mag-unlock ang screen
+    io.emit('quizStartedSignal');
+});
+
     socket.on('startTimer', () => {
         isGameStarted = true;
         io.emit('gameState', { isGameStarted });

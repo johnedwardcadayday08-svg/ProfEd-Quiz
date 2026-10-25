@@ -2091,6 +2091,12 @@ body.individual-mode-active, html {
             applyGameModeUI(mode, true); 
         }
 
+// Idagdag ito sa iyong <script> section sa client-side
+socket.on('quizStartedSignal', () => {
+    isGameStarted = true;
+    unlockQuizUI(); // Ito ang mag-aalis ng lock overlay at mag-a-enable ng mga inputs
+});
+
 // --- IDAGDAG ITO SA CLIENT-SIDE SCRIPT (FRONTEND HTML) ---
         
         // Kapag nag-reset ang laro, i-reset ang status pero huwag burahin ang mga tanong
