@@ -49,39 +49,37 @@ function normalizeText(text) {
     return text.toString().toLowerCase().trim().replace(/\s+/g, ' ').replace(/[^\w\s]/gi, ''); 
 }
 
+// PINATIBAY NA SMART ANSWER CHECKER PARA SA TRUE/FALSE, IDENTIFICATION, AT ESSAY
 function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
     const normUser = normalizeText(userAnswer);
     const normCorrect = normalizeText(correctAnswerKey);
 
     if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
-    // 1. True/False Handling
-    if (questionType === 'true-false') {
-        let cleanUser = normUser.toLowerCase();
-        let cleanCorrect = normCorrect.toLowerCase();
+    // 1. Suriin kung True/False o kung ang sagot ay katulad ng True/Tama/False/Mali
+    const isTfKeywords = (val) => ['true', 'false', 't', 'f', 'tama', 'mali', 'yes', 'no'].includes(val);
+    if (questionType === 'true-false' || (isTfKeywords(normUser) && isTfKeywords(normCorrect))) {
+        let userBool = ['true', 't', 'tama', 'yes'].includes(normUser);
+        let correctBool = ['true', 't', 'tama', 'yes'].includes(normCorrect);
         
-        let userBool = (cleanUser === 't' || cleanUser === 'true' || cleanUser === 'tama' || cleanUser === 'yes');
-        let correctBool = (cleanCorrect === 't' || cleanCorrect === 'true' || cleanCorrect === 'tama' || cleanCorrect === 'yes');
-
         if (userBool === correctBool) {
             return { isCorrect: true, earnedPoints: maxPoints };
         }
         return { isCorrect: false, earnedPoints: 0 };
     }
 
-    // 2. Multiple Choice & Identification Handling
+    // 2. Identification / Multiple Choice / Short Answer Handling (Maluwag na pagbasa)
     if (questionType !== 'essay') {
-        if (normUser === normCorrect || (normCorrect.length > 2 && normUser.includes(normCorrect)) || (normUser.length > 2 && normCorrect.includes(normUser))) {
+        if (normUser === normCorrect || normUser.includes(normCorrect) || normCorrect.includes(normUser)) {
             return { isCorrect: true, earnedPoints: maxPoints };
         }
         return { isCorrect: false, earnedPoints: 0 };
     }
 
-    // 3. Essay Handling
+    // 3. Essay Handling gamit ang keyword o haba ng sagot
     const keywords = normCorrect.split(' ').filter(word => word.length > 3);
     if (keywords.length === 0) {
-        if (normUser.length >= 80) return { isCorrect: true, earnedPoints: maxPoints };
-        if (normUser.length >= 40) return { isCorrect: true, earnedPoints: Math.ceil(maxPoints * 0.7) };
+        if (normUser.length >= 40) return { isCorrect: true, earnedPoints: maxPoints };
         return { isCorrect: false, earnedPoints: 0 };
     }
 
@@ -89,7 +87,7 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
     keywords.forEach(kw => { if (normUser.includes(kw)) matchedCount++; });
     const matchRatio = matchedCount / keywords.length;
 
-    if (matchRatio >= 0.4 || normUser.length >= 30) {
+    if (matchRatio >= 0.3 || normUser.length >= 25) {
         return { isCorrect: true, earnedPoints: Math.max(1, Math.round(maxPoints * 0.8)) };
     }
     return { isCorrect: false, earnedPoints: 0 };
@@ -267,7 +265,7 @@ io.on('connection', (socket) => {
     socket.on('forceTimeUp', () => {
         if (timerInterval) clearInterval(timerInterval);
         Object.keys(groupTimers).forEach(g => { groupTimers[g] = 0; });
-        io.emit('timerUpdate', groupTimers);
+        io.emit('timerWordUpdate', groupTimers);
         io.emit('timeUp');
     });
 
