@@ -19,6 +19,90 @@
     text-align: center;
 }
 
+/* Responsive at Compact Instructions Modal para sa Mobile View ng Participants */
+#individual-instructions-modal, 
+#instructions-modal {
+    display: none;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 100050 !important;
+    background: rgba(15, 23, 42, 0.92) !important;
+    backdrop-filter: blur(12px) !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+}
+
+.instructions-responsive-box {
+    max-width: 450px !important;
+    width: 95% !important;
+    max-height: 88vh !important;
+    height: auto !important;
+    margin: auto !important;
+    border: 2.5px solid rgba(192, 132, 252, 0.95) !important;
+    border-radius: 20px !important;
+    padding: 14px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)) !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8) !important;
+    overflow-y: auto !important;
+}
+
+.inst-title {
+    font-size: clamp(18px, 4vh, 24px) !important;
+    font-weight: 900 !important;
+    margin: 0 0 2px 0 !important;
+    line-height: 1.15 !important;
+    text-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
+}
+
+.inst-subtitle {
+    color: #f472b6 !important;
+    margin: 2px 0 8px 0 !important;
+    font-size: clamp(13px, 2.5vh, 17px) !important;
+    font-weight: 800 !important;
+}
+
+.inst-content-card {
+    text-align: left !important;
+    font-size: clamp(12px, 2.1vh, 15px) !important;
+    color: #ffffff !important;
+    line-height: 1.4 !important;
+    margin: 4px 0 !important;
+    background: rgba(15, 23, 42, 0.85) !important;
+    padding: 10px 12px !important;
+    border-radius: 14px !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+    max-height: 42vh !important;
+    overflow-y: auto !important; /* Nagbibigay ng malinis na scrollbar kung mahaba ang text sa maliit na screen */
+}
+
+.inst-content-card ul {
+    padding-left: 18px !important;
+    margin: 0 !important;
+}
+
+.inst-content-card li {
+    margin-bottom: 4px !important;
+}
+
+.inst-btn {
+    width: 100% !important;
+    padding: 10px !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    margin-top: 6px !important;
+    border-radius: 14px !important;
+}
+
 /* I-center ang Individual Mode Instructions Modal sa mismong gitna ng screen */
 #individual-instructions-modal {
     display: none;
@@ -3274,10 +3358,25 @@ socket.on('showJudgePopupQueue', (queue) => {
             }, 3000);
         }
 
-// Real-time listener kapag binago ng judge ang game mode
+// Real-time listener para sa Game Mode at pagpapakita ng tamang instructions
 socket.on('gameModeUpdated', (mode) => {
     currentMode = mode;
-    applyGameModeUI(mode, false); // Ina-update ang UI nang hindi sapilitang nagbubukas ng instructions modal sa participants
+    applyGameModeUI(mode, false);
+
+    // Kapag nagbago ang mode, awtomatikong buksan ang angkop na instructions modal sa mga participants
+    const groupInstModal = document.getElementById('instructions-modal');
+    const indivInstModal = document.getElementById('individual-instructions-modal');
+
+    if (groupInstModal && indivInstModal) {
+        if (mode === 'individual') {
+            groupInstModal.style.display = 'none';
+            indivInstModal.style.display = 'flex'; // Lalabas ang Individual Instructions
+        } else {
+            indivInstModal.style.display = 'none';
+            groupInstModal.style.display = 'flex'; // Lalabas ang Group Instructions
+        }
+    }
+});
 
     // Kung ang participant ay nasa welcome screen, ina-update ang view
     const roleSelect = document.getElementById('role-select');
