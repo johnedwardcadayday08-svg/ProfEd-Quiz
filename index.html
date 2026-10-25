@@ -19,6 +19,54 @@
     text-align: center;
 }
 
+/* Real-time Mobile Instructions Styling */
+@media (max-width: 768px) {
+    #instructions-modal, 
+    #individual-instructions-modal {
+        display: none; /* Default na nakatago hanggang pilitin ng Socket io */
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 100050 !important;
+        background: rgba(15, 23, 42, 0.92) !important;
+        backdrop-filter: blur(12px) !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    #instructions-modal .instructions-responsive-box,
+    #individual-instructions-modal .instructions-responsive-box {
+        width: 92vw !important;
+        max-width: 92vw !important;
+        max-height: 85vh !important;
+        padding: 14px 16px !important;
+        overflow-y: auto !important; /* Siguradong mai-scroll at hindi napumutol */
+        -webkit-overflow-scrolling: touch;
+        border-radius: 20px !important;
+    }
+
+    .inst-title {
+        font-size: 18px !important;
+        line-height: 1.2 !important;
+    }
+
+    .inst-content-card {
+        font-size: 12px !important;
+        padding: 10px 12px !important;
+        max-height: 55vh !important;
+        overflow-y: auto !important;
+    }
+
+    .inst-btn {
+        font-size: 14px !important;
+        padding: 10px !important;
+    }
+}
+
 /* Ligtas na code para sa mobile view ng instructions nang hindi ginagalaw ang QR code, judge message, at buttons */
 @media (max-width: 768px) {
     .instructions-responsive-box {
@@ -3343,18 +3391,22 @@ socket.on('showJudgePopupQueue', (queue) => {
             }, 3000);
         }
 
-// Real-time listener kapag binago ng judge ang game mode
+// REAL-TIME LISTENER: Pag may pinindot na Game Mode ang Judge, bubukas agad ang Instructions sa Cellphone ng Participants
 socket.on('gameModeUpdated', (mode) => {
     currentMode = mode;
-    applyGameModeUI(mode, false); // Ina-update ang UI nang hindi sapilitang nagbubukas ng instructions modal sa participants
+    applyGameModeUI(mode, false);
 
-    // Kung ang participant ay nasa welcome screen, ina-update ang view
-    const roleSelect = document.getElementById('role-select');
-    if (roleSelect && !roleSelect.classList.contains('hidden')) {
-        applyGameModeUI(mode, false);
+    // Kusa ring magpapakita sa cellphone screen (width <= 768px) sa real-time
+    if (window.innerWidth <= 768) {
+        if (mode === 'individual') {
+            const indivModal = document.getElementById('individual-instructions-modal');
+            if (indivModal) indivModal.style.display = 'flex';
+        } else {
+            const groupModal = document.getElementById('instructions-modal');
+            if (groupModal) groupModal.style.display = 'flex';
+        }
     }
 });
-
        // Agad na mag-pop up ang litrato sa judge monitor kapag may nag-register
 socket.on('newAttorneyJoined', ({ groupName, photo }) => {
     if (isJudgeRole && photo) {
