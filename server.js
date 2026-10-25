@@ -209,29 +209,101 @@ io.on('connection', (socket) => {
             mode: currentMode 
         });
     });
+let individualCompletedStatus = {}; 
+let individualAnswerTracker = {};
 
-   // 4. SUBMIT INDIVIDUAL ANSWER (Walang +5 seconds, score lang ang a-update)
-    socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
-        const question = globalQuestionsList[questionIndex];
-        if (!question) return;
+// Kapag nagpasa ng sagot sa Individual Mode
+socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
+    const question = globalQuestionsList[questionIndex];
+    if (!question) return;
 
-        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
+    const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
 
-        if (result.isCorrect || result.earnedPoints > 0) {
-            individualScores[fullName] = (individualScores[fullName] || 0) + result.earnedPoints;
-        }
+    if (result.isCorrect || result.earnedPoints > 0) {
+        individualScores[fullName] = (individualScores[fullName] || 0) + result.earnedPoints;
+    }
 
-        const responseData = {
-            isCorrect: result.isCorrect,
-            earnedPoints: result.earnedPoints,
-            maxPoints: question.points || 1,
-            qType: question.type
-        };
+    if (!individualAnswerTracker[fullName]) {
+        individualAnswerTracker[fullName] = new Set();
+    }
+    individualAnswerTracker[fullName].add(questionIndex);
 
-        if (typeof callback === 'function') callback(responseData);
+    // Kapag nasagutan na ang lahat ng tanong
+    if (individualAnswerTracker[fullName].size >= globalQuestionsList.length) {
+        individualCompletedStatus[fullName] = true;
+    }
 
-        // Agad na i-broadcast sa judge monitor ang bagong score ng individual participants
-        io.emit('individualScoresUpdated', individualScores);
+    const responseData = {
+        isCorrect: result.isCorrect,
+        earnedPoints: result.earnedPoints,
+        maxPoints: question.points || 1,
+        qType: question.type
+    };
+
+    if (typeof callback === 'function') callback(responseData);
+
+    io.emit('individualScoresUpdated', {
+        scores: individualScores,
+        completedStatus: individualCompletedStatus
+    });
+});
+
+// Huwag kalimutang i-clear tuwing magti-trigger ang resetGame at setGameMode
+socket.on('resetGame', () => {
+    // ... iba pang code ng pag-reset ...
+    individualCompletedStatus = {};
+    individualAnswerTracker = {};
+    io.emit('individualParticipantsUpdated', individualParticipants);
+    io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
+});
+
+socket.on('setGameMode', (mode) => {
+    // ... iba pang code ...
+    individualCompletedStatus = {};
+    individualAnswerTracker = {};
+    io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
+});
+
+ // Dynamic tracking para sa tapos na magsagot sa Individual Mode
+let individualCompletedStatus = {}; 
+let individualAnswerTracker = {}; // Sumusubaybay sa bilang ng nasagutang tanong ng bawat tao
+
+// I-update ang submitIndividualAnswer event
+socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
+    const question = globalQuestionsList[questionIndex];
+    if (!question) return;
+
+    // Check answer nang WALANG idinaragdag na timer/seconds
+    const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
+
+    if (result.isCorrect || result.earnedPoints > 0) {
+        individualScores[fullName] = (individualScores[fullName] || 0) + result.earnedPoints;
+    }
+
+    // Subaybayan kung nakasagot na sa lahat ng tanong
+    if (!individualAnswerTracker[fullName]) {
+        individualAnswerTracker[fullName] = new Set();
+    }
+    individualAnswerTracker[fullName].add(questionIndex);
+
+    // Kapag pantay na ang nasagutan sa kabuuang bilang ng mga tanong, i-mark bilang Tapos Na
+    if (individualAnswerTracker[fullName].size >= globalQuestionsList.length) {
+        individualCompletedStatus[fullName] = true;
+    }
+
+    const responseData = {
+        isCorrect: result.isCorrect,
+        earnedPoints: result.earnedPoints,
+        maxPoints: question.points || 1,
+        qType: question.type
+    };
+
+    if (typeof callback === 'function') callback(responseData);
+
+    // Agad na i-broadcast sa Judge Monitor ang na-update na score at completion status
+    io.emit('individualScoresUpdated', {
+        scores: individualScores,
+        completedStatus: individualCompletedStatus
     });
 
     // 5. RESET GAME

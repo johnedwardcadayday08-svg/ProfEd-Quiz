@@ -19,6 +19,20 @@
     text-align: center;
 }
 
+/* Kulay green na circle frame at glow effect para sa tapos na magsagot */
+.glowing-frame.completed-frame,
+.glow-circle-avatar-large.completed-frame {
+    border-radius: 50% !important;
+    border: 3.5px solid #10b981 !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.9) !important;
+    background: linear-gradient(135deg, #10b981, #34d399) !important;
+}
+
+.text-completed-green {
+    color: #10b981 !important;
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.6) !important;
+}
+
 /* Real-time Mobile Instructions Styling */
 @media (max-width: 768px) {
     #instructions-modal, 
@@ -3515,106 +3529,115 @@ socket.on('newAttorneyJoined', ({ groupName, photo }) => {
             }
         }
 
-        window.currentIndividualScores = {};
-        socket.on('individualScoresUpdated', (scores) => {
-            window.currentIndividualScores = scores;
-            if (currentMode === 'individual' && isJudgeRole) {
-                renderIndividualMonitorLayout(scores);
-            }
-        });
+        let currentIndividualCompletedStatus = {};
 
-function renderIndividualMonitorLayout(scoresObj) {
-            let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
-            const leftBox = document.querySelector('.judge-left-box');
-            const rightBox = document.querySelector('.judge-right-box');
-            
-            if (!leftBox || !rightBox) return;
+socket.on('individualScoresUpdated', (data) => {
+    if (data.scores) {
+        window.currentIndividualScores = data.scores;
+        currentIndividualCompletedStatus = data.completedStatus || {};
+    } else {
+        window.currentIndividualScores = data;
+    }
 
-            let tSeconds = groupTimers['Attorney 1'] !== undefined ? groupTimers['Attorney 1'] : 300;
-            let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
-            let tSecs = (tSeconds % 60).toString().padStart(2, '0');
+    if (currentMode === 'individual' && isJudgeRole) {
+        renderIndividualMonitorLayout(window.currentIndividualScores, currentIndividualCompletedStatus);
+    }
+});
 
-            let leftHtml = `
-                <div class="header-bar">
-                    <span style="font-size:13.5px; color:#c084fc; white-space:nowrap;">⚖️ Court Proceedings</span>
-                    <div id="judge-timer-display-box" style="font-size:13.5px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981; white-space:nowrap;">${tMins}:${tSecs}</div>
-                    <div style="display:flex; flex-direction:row; align-items:center; gap:4px; flex-wrap:nowrap;">
-                        <button class="btn" style="padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="startTimer()">Start Quiz</button>
-                        <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="forceTimeUp()">⏱️ Time's Up</button>
-                        <button class="btn" style="background:var(--danger); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="resetGame()">Reset Game</button>
-                    </div>
+function renderIndividualMonitorLayout(scoresObj, completedObj = {}) {
+    let sorted = Object.entries(scoresObj).sort((a, b) => b[1] - a[1]);
+    const leftBox = document.querySelector('.judge-left-box');
+    const rightBox = document.querySelector('.judge-right-box');
+    
+    if (!leftBox || !rightBox) return;
+
+    let tSeconds = groupTimers['Attorney 1'] !== undefined ? groupTimers['Attorney 1'] : 300;
+    let tMins = Math.floor(tSeconds / 60).toString().padStart(2, '0');
+    let tSecs = (tSeconds % 60).toString().padStart(2, '0');
+
+    let leftHtml = `
+        <div class="header-bar">
+            <span style="font-size:13.5px; color:#c084fc; white-space:nowrap;">⚖️ Court Proceedings</span>
+            <div id="judge-timer-display-box" style="font-size:13.5px; color:#6ee7b7; background:rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; border:1px solid #10b981; white-space:nowrap;">${tMins}:${tSecs}</div>
+            <div style="display:flex; flex-direction:row; align-items:center; gap:4px; flex-wrap:nowrap;">
+                <button class="btn" style="padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="startTimer()">Start Quiz</button>
+                <button class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="forceTimeUp()">⏱️ Time's Up</button>
+                <button class="btn" style="background:var(--danger); padding: 6px 10px; font-size: 11.5px; margin:0; white-space:nowrap;" onclick="resetGame()">Reset Game</button>
+            </div>
+        </div>
+        <h3 style="color: #38bdf8; margin: 6px 0; font-size: 13.5px;">👥 All Participants Real-time List</h3>
+        <div style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
+    `;
+
+    sorted.forEach(([name, sc]) => {
+        let isDone = completedObj[name] || false;
+        leftHtml += `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid ${isDone ? '#10b981' : 'rgba(255,255,255,0.15)'};">
+                <span style="font-weight: bold; font-size: 12.5px;" class="${isDone ? 'text-completed-green' : ''}">
+                    ${name} ${isDone ? '🟢 (Finished)' : ''}
+                </span>
+                <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
+            </div>
+        `;
+    });
+    leftHtml += `</div>`;
+    leftBox.innerHTML = leftHtml;
+
+    let top3 = sorted.slice(0, 3);
+    let next6 = sorted.slice(3, 9);
+
+    let rightHtml = `
+        <div class="animated-rank-title" style="font-size: 15px;">👑 Top Rankings (Top 1-9) 🏛️</div>
+        <div class="animated-rank-subtitle" style="font-size: 11px; margin-bottom: 4px;">Individual Mode Leaderboard</div>
+        <div class="indiv-top3-container">
+    `;
+    
+    const heights = ['105px', '82px', '62px'];
+    const colors = [
+        'linear-gradient(180deg, #f472b6, #a855f7)', 
+        'linear-gradient(180deg, #38bdf8, #2563eb)', 
+        'linear-gradient(180deg, #34d399, #059669)'
+    ];
+
+    for (let i = 0; i < 3; i++) {
+        let p = top3[i];
+        let name = p ? p[0] : `Top ${i+1}`;
+        let sc = p ? p[1] : 0;
+        let isDone = completedObj[name] || false;
+
+        rightHtml += `
+            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                <span style="font-size: 10px; font-weight: bold; color: #f472b6; margin-bottom: 2px;">Rank ${i+1}</span>
+                <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
+                    <span style="font-size: 13px; font-weight: bold; color: white;">${sc}</span>
                 </div>
-                <h3 style="color: #38bdf8; margin: 6px 0; font-size: 13.5px;">👥 All Participants Real-time List</h3>
-                <div style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
-            `;
+                <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" class="${isDone ? 'text-completed-green' : ''}">
+                    ${name}
+                </span>
+            </div>
+        `;
+    }
+    rightHtml += `</div><div class="indiv-grid-6">`;
 
-            sorted.forEach(([name, sc]) => {
-                // Sinisigurong magiging green ang pangalan kung ang score ay umabot na sa maximum o tapos na
-                let isCompletedIndiv = sc >= (totalMaxScore > 0 ? totalMaxScore : 1);
-                let nameColor = isCompletedIndiv ? '#10b981' : '#f3e8ff';
+    for (let i = 0; i < 6; i++) {
+        let p = next6[i];
+        let name = p ? p[0] : `Participant`;
+        let sc = p ? p[1] : 0;
+        let isDone = completedObj[name] || false;
 
-                leftHtml += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.15);">
-                        <span style="font-weight: bold; color: ${nameColor}; font-size: 12.5px;">${name} ${isCompletedIndiv ? '✔️ (Tapos Na)' : ''}</span>
-                        <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
-                    </div>
-                `;
-            });
-            leftHtml += `</div>`;
-            leftBox.innerHTML = leftHtml;
-
-            let top3 = sorted.slice(0, 3);
-            let next6 = sorted.slice(3, 9);
-
-            let rightHtml = `
-                <div class="animated-rank-title" style="font-size: 15px;">👑 Top Rankings (Top 1-9) 🏛️</div>
-                <div class="animated-rank-subtitle" style="font-size: 11px; margin-bottom: 4px;">Individual Mode Leaderboard</div>
-                <div class="indiv-top3-container">
-            `;
-            
-            const heights = ['105px', '82px', '62px'];
-            const colors = [
-                'linear-gradient(180deg, #f472b6, #a855f7)', 
-                'linear-gradient(180deg, #38bdf8, #2563eb)', 
-                'linear-gradient(180deg, #34d399, #059669)'
-            ];
-
-            for (let i = 0; i < 3; i++) {
-                let p = top3[i];
-                let name = p ? p[0] : `Top ${i+1}`;
-                let sc = p ? p[1] : 0;
-                let isCompleteTop = sc >= (totalMaxScore > 0 ? totalMaxScore : 1);
-
-                rightHtml += `
-                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                        <span style="font-size: 10px; font-weight: bold; color: #f472b6; margin-bottom: 2px;">Rank ${i+1}</span>
-                        <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
-                            <span style="font-size: 13px; font-weight: bold; color: white;">${sc}</span>
-                        </div>
-                        <!-- Ginawang circle ang frame at kulay green ang pangalan kung tapos na -->
-                        <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; color: ${isCompleteTop ? '#10b981' : '#fff'}; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-                    </div>
-                `;
-            }
-            rightHtml += `</div><div class="indiv-grid-6">`;
-
-            for (let i = 0; i < 6; i++) {
-                let p = next6[i];
-                let name = p ? p[0] : `Participant`;
-                let sc = p ? p[1] : 0;
-                let isCompleteGrid = sc >= (totalMaxScore > 0 ? totalMaxScore : 1);
-
-                rightHtml += `
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
-                        <img src="/logo.png" class="glow-circle-avatar-large ${isCompleteGrid ? 'completed-frame' : ''}" alt="Avatar" style="border-radius: 50%; ${isCompleteGrid ? 'border-color: #10b981; box-shadow: 0 0 15px rgba(16,185,129,0.9);' : ''}" />
-                        <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: ${isCompleteGrid ? '#10b981' : '#e2e8f0'}; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
-                        <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
-                    </div>
-                `;
-            }
-            rightHtml += `</div>`;
-            rightBox.innerHTML = rightHtml;
-        }
+        rightHtml += `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
+                <img src="/logo.png" class="glow-circle-avatar-large ${isDone ? 'completed-frame' : ''}" alt="Avatar" style="border-radius: 50% !important;" />
+                <span style="font-size: 9px; font-weight: bold; margin-top: 2px; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" class="${isDone ? 'text-completed-green' : ''}">
+                    ${name}
+                </span>
+                <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
+            </div>
+        `;
+    }
+    rightHtml += `</div>`;
+    rightBox.innerHTML = rightHtml;
+}
     </script>
 </body>
 </html>
