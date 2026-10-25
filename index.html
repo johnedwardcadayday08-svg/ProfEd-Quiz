@@ -19,6 +19,15 @@
     text-align: center;
 }
 
+/* Ligtas na code para sa mobile view ng instructions nang hindi ginagalaw ang QR code, judge message, at buttons */
+@media (max-width: 768px) {
+    .instructions-responsive-box {
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
 /* I-center ang Individual Mode Instructions Modal sa mismong gitna ng screen */
 #individual-instructions-modal {
     display: none;
@@ -515,71 +524,7 @@ body.group-mode .top-timer-box {
         @media (min-width: 769px) {
             .qr-code-wrapper { right: 35px; bottom: 55vh; }
         }
-/* =========================================================
-   MOBILE RESPONSIVE INSTRUCTIONS MODAL (COMPACT & NO CUT-OFF)
-   ========================================================= */
-@media (max-width: 768px) {
-    /* Siguraduhing maayos ang modal container sa mobile view */
-    #instructions-modal, 
-    #individual-instructions-modal {
-        padding: 10px !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
 
-    .instructions-responsive-box {
-        width: 95vw !important;
-        max-width: 95vw !important;
-        max-height: 90vh !important;
-        padding: 14px 16px !important;
-        border-radius: 18px !important;
-        overflow-y: auto !important; /* Pinapayagan ang vertical scrolling para hindi maputol */
-        -webkit-overflow-scrolling: touch;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
-    }
-
-    /* Pinaliliit at pinalilinaw ang pamagat para magkasya */
-    .inst-title {
-        font-size: 18px !important;
-        line-height: 1.2 !important;
-        margin-bottom: 4px !important;
-    }
-
-    .inst-subtitle {
-        font-size: 12px !important;
-        margin-bottom: 8px !important;
-    }
-
-    /* Content Card na Kasya at Scrollable sa Mobile */
-    .inst-content-card {
-        font-size: 12px !important;
-        padding: 10px 12px !important;
-        line-height: 1.4 !important;
-        margin: 6px 0 !important;
-        max-height: 60vh !important;
-        overflow-y: auto !important;
-    }
-
-    .inst-content-card ul {
-        padding-left: 18px !important;
-        margin: 4px 0 !important;
-    }
-
-    .inst-content-card li {
-        margin-bottom: 6px !important;
-    }
-
-    /* Pinaliliit ang button para hindi matakpan ang nilalaman */
-    .inst-btn {
-        font-size: 14px !important;
-        padding: 10px 12px !important;
-        margin-top: 8px !important;
-        border-radius: 12px !important;
-        flex-shrink: 0 !important;
-    }
-}
         @media (max-width: 768px) {
             .side-profile-container { width: 160px; height: 35vh; }
             .qr-code-wrapper {
@@ -2192,24 +2137,22 @@ socket.on('quizStartedSignal', () => {
             }
         });
 
-// Palitan ang kasalukuyang function sa index.html para lumabas ang modal sa participants
-function applyGameModeUI(mode, showAlerts = true) {
-    currentMode = mode;
-    const attorneyContainer = document.querySelector('.attorney-buttons-container');
-    const indivInstModal = document.getElementById('individual-instructions-modal');
-    const groupInstModal = document.getElementById('instructions-modal');
+function applyGameModeUI(mode, showAlerts = false) {
+            currentMode = mode;
+            const attorneyContainer = document.querySelector('.attorney-buttons-container');
+            const indivInstModal = document.getElementById('individual-instructions-modal');
+            const groupInstModal = document.getElementById('instructions-modal');
 
-    // Ipapakita ang modal kapag binuksan o pinalitan ang mode
-    if (showAlerts) {
-        if (mode === 'individual') {
-            if (indivInstModal) indivInstModal.style.display = 'flex';
-            if (groupInstModal) groupInstModal.style.display = 'none';
-        } else {
-            if (indivInstModal) indivInstModal.style.display = 'none';
-            if (groupInstModal) groupInstModal.style.display = 'flex';
-        }
-    }
-}
+            // Dito natin bubuksan ang kaukulang instructions modal kapag pinindot ang mode button
+            if (showAlerts) {
+                if (mode === 'individual') {
+                    if (indivInstModal) indivInstModal.style.display = 'flex';
+                    if (groupInstModal) groupInstModal.style.display = 'none';
+                } else {
+                    if (indivInstModal) indivInstModal.style.display = 'none';
+                    if (groupInstModal) groupInstModal.style.display = 'flex';
+                }
+            }
             // (Huwag nang galawin ang sumunod na code para sa attorneyContainer)            
             // Tinitiyak natin na HINDI kusang magbubukas ang modals dito para hindi maistorbo ang user
             if (mode === 'individual') {
