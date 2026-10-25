@@ -218,6 +218,121 @@ io.on('connection', (socket) => {
         }
     });
 
+// Idagdag sa queue para mag-pop up agad ang litrato sa monitor screen
+            judgePopupQueue.push({ groupName, photo });
+            io.emit('showJudgePopupQueue', judgePopupQueue);
+
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
+            io.emit('photoArchiveUpdated', serverPhotoArchive);
+            io.emit('newAttorneyJoined', { groupName, photo });
+        }
+    });
+
+    // === SUBMIT GROUP ANSWER NA MAY +5 SECONDS BONUS KAPAG TAMA ===
+    socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
+        const question = globalQuestionsList[questionIndex];
+        if (!question) return;
+
+        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
+
+        if (result.isCorrect || result.earnedPoints > 0) {
+            groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
+            
+            // +5 Seconds Bonus Time kapag tama ang sagot!
+            if (groupTimers[groupName] !== undefined) {
+                groupTimers[groupName] += 5;
+            }
+        }
+
+        // I-send ang feedback sa nag-submit
+        socket.emit('answerFeedback', {
+            isCorrect: result.isCorrect,
+            earnedPoints: result.earnedPoints,
+            maxPoints: question.points || 1,
+            questionId: `q${questionIndex + 1}`,
+            answer: answer,
+            qType: question.type
+        });
+
+        // I-update ang timers at scores sa lahat ng screens sa real-time
+        io.emit('timerUpdate', groupTimers);
+        io.emit('updateState', { 
+            groupScores, 
+            photos: attorneyPhotos, 
+            completedStatus: groupCompletedStatus, 
+            mode: currentMode 
+        });
+    });
+});
+```[cite: 3]
+
+---
+
+### 2. I-update ang `index.html` (Client-Side)
+
+Idagdag ang function na ito para sa pagsagot ng mga tanong sa Group Mode (Multiple Choice, etc.) upang maipadala sa server:
+
+```javascript
+        // Function para sa pagpasa ng sagot ng grupo
+        function submitAns(questionIndex, qKey, selectedOption) {
+            if (!myGroup) {
+                alert("Mangyaring pumili muna ng grupo.");
+                return;
+            }
+            
+            // I-mark na nasagot na ang tanong na ito
+            answeredQuestions[qKey] = selectedOption;
+
+            // I-emit sa server ang sagot
+            socket.emit('submitAnswer', {
+                groupName: myGroup,
+                questionIndex: questionIndex,
+                answer: selectedOption
+            });
+
+            // I-disable ang mga options sa tanong na ito pagkatapos masagot
+            const card = document.getElementById(`card-${qKey}`);
+            if (card) {
+                const inputs = card.querySelectorAll('input, button');
+                inputs.forEach(inp => inp.disabled = true);
+            }
+        }
+```[cite: 4]
+
+### 3. Siguruhing Ayos ang Popup Queue Listener sa `index.html`
+I-verify na nasa `index.html` mo ang socket listener na ito para lumabas ang mukha ng mga tumutugon na participants sa monitor ng judge:
+
+```javascript
+        socket.on('showJudgePopupQueue', (queue) => {
+            if (isJudgeRole) {
+                let newQueue = queue.filter(item => !shownPopups[item.groupName + item.photo]);
+                newQueue.forEach(item => {
+                    shownPopups[item.groupName + item.photo] = true;
+                });
+                if (newQueue.length > 0) {
+                    playPopupQueue(newQueue, 0);
+                }
+            }
+        });
+
+        function playPopupQueue(queue, index) {
+            if (index >= queue.length) return;
+            const item = queue[index];
+
+            const popup = document.getElementById('judge-photo-popup');
+            document.getElementById('judge-popup-title').innerText = `${item.groupName} entered the court! ⚖️`;
+            document.getElementById('judge-popup-img').src = item.photo || '/logo.png';
+            popup.style.display = 'flex';
+
+            setTimeout(() => {
+                popup.style.display = 'none';
+                setTimeout(() => { playPopupQueue(queue, index + 1); }, 400);
+            }, 3000);
+        }
+```[cite: 4]
+
+Sa mga pagbabagong ito, kapag pinindot ng participant ang **Join Now**, lilitaw agad ang litrato nila sa monitor ng judge[cite: 3]. Kapag sumagot sila ng tama, lalabas ang feedback, madaragdagan ang score sa itaas, magkakaroon ng +5 seconds ang kanilang timer, at sasabay ito nang real-time sa monitor screen[cite: 3]!
+
     // Sinigurong kasama na rito ang pag-emit ng 'quizStarted' para mag-unlock ang screen
     socket.on('startTimer', () => {
         isGameStarted = true;
