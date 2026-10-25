@@ -5,8 +5,6 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-
-// Siguraduhing maayos ang Socket.io initialization[cite: 8]
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -14,279 +12,289 @@ const io = new Server(server, {
     }
 });
 
-// Middleware para sa static files (HTML, CSS, Images)[cite: 8]
+// Middleware para sa static files mula sa 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// ---------------------------------------------------------
-// FIX PARA SA "CANNOT GET /" ERROR SA RENDER
-// Nagbibigay ito ng fallback route patungo sa index.html
-// ---------------------------------------------------------
+// Catch-all route para maiwasan ang "Cannot GET" error sa Render kapag nag-refresh o nag-direct link
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Global State Variables[cite: 8]
-let currentQuizMode = 'multiple-choice';
-let currentGameMode = 'group';
+let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
+let currentQuizMode = "multiple-choice";
+let currentMode = "group";
 let isGameStarted = false;
 let groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
-let individualScores = {};
-let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-let individualParticipants = {};
-let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
 let groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
-let individualCompletedStatus = {};
-let questionsList = [];
-let photoArchive = [];
-let groupHistory = [];
-let individualHistory = [];
+let attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+let groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
+let timerInterval = null;
+let serverPhotoArchive = [];
 
-// ==========================================
-// MATALINONG PAG-SCORING AT TEXT NORMALIZATION[cite: 8]
-// ==========================================
+let groupScoreHistoryArchive = [];
+let individualScoreHistoryArchive = [];
+let individualParticipants = {}; 
+let individualScores = {};       
 
-function normalizeText(str) {
-    if (!str) return "";
-    return str
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s]/gi, '') // Tinatanggal ang mga simbolo at kuwit[cite: 8]
-        .replace(/\s+/g, ' ');   // Ginagawang iisang space ang paulit-ulit na space[cite: 8]
+let individualCompletedStatus = {}; 
+let groupAnswerTracker = {};
+let individualAnswerTracker = {};
+
+let globalQuestionsList = [
+    {
+        question: "Ayon sa Kautusang Pampamahalaan at Code of Ethics, ano ang pangunahing batayan ng pagpaparusa o pagdidisiplina ng isang guro sa mag-aaral?",
+        type: "multiple-choice",
+        options: {
+            A: "Pisikal na pananakit upang madaling matuto.",
+            B: "Pagpapahiya sa harap ng klase para magsilbing aral.",
+            C: "Nararapat, makatarungan, at naaayon sa batas na hakbang na naglalayong magturo at hindi manakit.",
+            D: "Pagbawas ng malaking marka nang walang sapat na batayan."
+        },
+        answer: "C",
+        explanation: "Ipinagbabawal sa mga guro ang corporal punishment o anumang uri ng pang-aabuso; ang disiplina ay dapat laging may paggalang sa dignidad ng bata."
+    }
+];
+
+function normalizeText(text) {
+    if (!text) return "";
+    return text.toString().toLowerCase().trim().replace(/\s+/g, ' ').replace(/[^\w\s]/gi, ''); 
 }
 
-function isAnswerCorrect(userAns, correctAns) {
-    const cleanUser = normalizeText(userAns);
-    const cleanCorrect = normalizeText(correctAns);
+// PINATIBAY NA SMART ANSWER CHECKER PARA SA TRUE/FALSE, IDENTIFICATION, AT ESSAY
+function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
+    const normUser = normalizeText(userAnswer);
+    const normCorrect = normalizeText(correctAnswerKey);
 
-    if (!cleanUser) return false;
+    if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
-    // 1. Exact match pagkatapos linisin ang spaces at capitalization[cite: 8]
-    if (cleanUser === cleanCorrect) return true;
-
-    // 2. Flexible match (kung nakapaloob ang sagot sa criteria)[cite: 8]
-    if (cleanUser.length >= 3 && cleanCorrect.includes(cleanUser)) return true;
-    if (cleanCorrect.length >= 3 && cleanUser.includes(cleanCorrect)) return true;
-
-    // 3. Suporta para sa maramihang posibleng tamang sagot (e.g. "Manila / Maynila")[cite: 8]
-    if (correctAns.includes('/') || correctAns.includes(',')) {
-        const validAnswers = correctAns.split(/[/,]/).map(a => normalizeText(a));
-        return validAnswers.some(ans => ans === cleanUser || (ans.length >= 3 && cleanUser.includes(ans)));
+    // 1. Suriin kung True/False o kung ang sagot ay katulad ng True/Tama/False/Mali
+    const isTfKeywords = (val) => ['true', 'false', 't', 'f', 'tama', 'mali', 'yes', 'no'].includes(val);
+    if (questionType === 'true-false' || (isTfKeywords(normUser) && isTfKeywords(normCorrect))) {
+        let userBool = ['true', 't', 'tama', 'yes'].includes(normUser);
+        let correctBool = ['true', 't', 'tama', 'yes'].includes(normCorrect);
+        
+        if (userBool === correctBool) {
+            return { isCorrect: true, earnedPoints: maxPoints };
+        }
+        return { isCorrect: false, earnedPoints: 0 };
     }
 
-    return false;
-}
+    // 2. Identification / Multiple Choice / Short Answer Handling (Maluwag na pagbasa)
+    if (questionType !== 'essay') {
+        if (normUser === normCorrect || normUser.includes(normCorrect) || normCorrect.includes(normUser)) {
+            return { isCorrect: true, earnedPoints: maxPoints };
+        }
+        return { isCorrect: false, earnedPoints: 0 };
+    }
 
-// ==========================================
-// REAL-TIME SOCKET.IO EVENTS[cite: 8]
-// ==========================================
+    // 3. Essay Handling gamit ang keyword o haba ng sagot
+    const keywords = normCorrect.split(' ').filter(word => word.length > 3);
+    if (keywords.length === 0) {
+        if (normUser.length >= 40) return { isCorrect: true, earnedPoints: maxPoints };
+        return { isCorrect: false, earnedPoints: 0 };
+    }
+
+    let matchedCount = 0;
+    keywords.forEach(kw => { if (normUser.includes(kw)) matchedCount++; });
+    const matchRatio = matchedCount / keywords.length;
+
+    if (matchRatio >= 0.3 || normUser.length >= 25) {
+        return { isCorrect: true, earnedPoints: Math.max(1, Math.round(maxPoints * 0.8)) };
+    }
+    return { isCorrect: false, earnedPoints: 0 };
+}
 
 io.on('connection', (socket) => {
-    console.log(`🔌 Client connected: ${socket.id}`);
-
-    // I-sync ang paunang data sa bagong konektadong client[cite: 8]
-    socket.emit('updateState', {
-        groupScores: groupScores,
-        photos: attorneyPhotos,
-        completedStatus: groupCompletedStatus
-    });
-    socket.emit('gameModeUpdated', currentGameMode);
+    socket.emit('titleUpdated', currentAppTitle);
     socket.emit('quizModeUpdated', currentQuizMode);
-    socket.emit('photoArchiveUpdated', photoArchive);
-    socket.emit('groupHistoryUpdated', groupHistory);
-    socket.emit('individualHistoryUpdated', individualHistory);
-    if (questionsList.length > 0) {
-        socket.emit('applyCustomQuestionsList', questionsList);
-    }
+    socket.emit('gameModeUpdated', currentMode);
+    socket.emit('gameState', { isGameStarted });
+    socket.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
+    socket.emit('applyCustomQuestionsList', globalQuestionsList);
+    socket.emit('timerUpdate', groupTimers);
+    socket.emit('photoArchiveUpdated', serverPhotoArchive);
+    socket.emit('groupHistoryUpdated', groupScoreHistoryArchive);
+    socket.emit('individualHistoryUpdated', individualScoreHistoryArchive);
+    socket.emit('individualParticipantsUpdated', individualParticipants);
+    socket.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
 
-    // Set Game Mode (Group vs Individual)[cite: 8]
     socket.on('setGameMode', (mode) => {
-        currentGameMode = mode;
-        io.emit('gameModeUpdated', mode);
+        currentMode = mode;
+        isGameStarted = false;
+        if (timerInterval) clearInterval(timerInterval);
+
+        Object.keys(groupTimers).forEach(g => { groupTimers[g] = 300; });
+        Object.keys(groupScores).forEach(g => {
+            groupScores[g] = 0;
+            attorneyPhotos[g] = '';
+            groupCompletedStatus[g] = false;
+        });
+
+        individualParticipants = {};
+        individualScores = {};
+        individualCompletedStatus = {};
+        groupAnswerTracker = {};
+        individualAnswerTracker = {};
+
+        io.emit('gameModeUpdated', currentMode);
+        io.emit('resetState');
+        io.emit('applyCustomQuestionsList', globalQuestionsList);
+        io.emit('gameState', { isGameStarted: false });
+        io.emit('timerUpdate', groupTimers);
+        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
+        io.emit('individualParticipantsUpdated', individualParticipants);
+        io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
     });
 
-    // Set Quiz Mode (Multiple Choice / Mixed / Long Essay)[cite: 8]
-    socket.on('changeQuizMode', (mode) => {
-        currentQuizMode = mode;
-        io.emit('quizModeUpdated', mode);
-    });
-
-    // Bagong Tanong mula sa Plain Text Insert[cite: 8]
-    socket.on('updatePlainQuestionsData', (newList) => {
-        questionsList = newList;
-        io.emit('applyCustomQuestionsList', questionsList);
-    });
-
-    // Pagsali ng Attorney / Group Photo[cite: 8]
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
-        attorneyPhotos[groupName] = photo;
-        if (photo) {
-            photoArchive.push({
-                groupName: groupName,
-                photo: photo,
-                timestamp: new Date().toLocaleString()
-            });
-            io.emit('photoArchiveUpdated', photoArchive);
+        if (groupName && photo) {
+            attorneyPhotos[groupName] = photo;
+            serverPhotoArchive.push({ groupName, photo, timestamp: new Date().toLocaleTimeString() });
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
             io.emit('newAttorneyJoined', { groupName, photo });
         }
-        io.emit('updateState', {
-            groupScores: groupScores,
-            photos: attorneyPhotos,
-            completedStatus: groupCompletedStatus
-        });
     });
 
-    // Pagsali ng Individual Participant[cite: 8]
     socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
-        if (!fullName) return;
-        individualParticipants[socket.id] = { fullName, photo };
-        if (!individualScores[fullName]) {
-            individualScores[fullName] = 0;
-        }
-        if (photo) {
-            photoArchive.push({
-                groupName: fullName,
-                photo: photo,
-                timestamp: new Date().toLocaleString()
-            });
-            io.emit('photoArchiveUpdated', photoArchive);
-        }
-        io.emit('individualParticipantsUpdated', individualParticipants);
-        io.emit('individualScoresUpdated', {
-            scores: individualScores,
-            completedStatus: individualCompletedStatus
-        });
-    });
-
-    // Matalinong Pagpasa ng Sagot (Submit Answer)[cite: 8]
-    socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
-        if (!questionsList[questionIndex]) return;
-
-        const currentQ = questionsList[questionIndex];
-        let isCorrect = false;
-        let earnedPoints = 0;
-
-        const qType = (currentQ.type || 'multiple-choice').toLowerCase();
-
-        if (qType === 'multiple-choice' || qType === 'true-false') {
-            isCorrect = normalizeText(answer) === normalizeText(currentQ.answer);
-            earnedPoints = isCorrect ? (currentQ.points || 1) : 0;
-        } else {
-            // Matalinong pag-score para sa Essay at Identification[cite: 8]
-            isCorrect = isAnswerCorrect(answer, currentQ.answer);
-            earnedPoints = isCorrect ? (currentQ.points || 1) : 0;
-        }
-
-        // I-update ang Score sa tamang Mode[cite: 8]
-        if (currentGameMode === 'individual') {
-            individualScores[groupName] = (individualScores[groupName] || 0) + earnedPoints;
-            io.emit('individualScoresUpdated', {
-                scores: individualScores,
-                completedStatus: individualCompletedStatus
-            });
-        } else {
-            groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
-            if (isCorrect && groupTimers[groupName] !== undefined) {
-                groupTimers[groupName] += 5; // +5 Seconds Bonus[cite: 8]
+        if (fullName) {
+            const cleanName = fullName.trim();
+            individualParticipants[socket.id] = {
+                fullName: cleanName,
+                photo: photo || '',
+                score: 0,
+                timestamp: new Date().toLocaleTimeString(),
+                date: new Date().toLocaleDateString()
+            };
+            if (individualScores[cleanName] === undefined) {
+                individualScores[cleanName] = 0;
             }
-            io.emit('updateState', {
-                groupScores: groupScores,
-                photos: attorneyPhotos,
-                completedStatus: groupCompletedStatus
-            });
+            io.emit('individualParticipantsUpdated', individualParticipants);
+            io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
+        }
+    });
+
+    // UNIFIED SUBMIT ANSWER PARA SA GROUP AT INDIVIDUAL
+    socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
+        const question = globalQuestionsList[questionIndex];
+        if (!question) return;
+
+        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
+
+        if (currentMode === 'group') {
+            if (result.isCorrect || result.earnedPoints > 0) {
+                groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
+                if (groupTimers[groupName] !== undefined && groupTimers[groupName] > 0) {
+                    groupTimers[groupName] += 5;
+                }
+            }
+
+            if (!groupAnswerTracker[groupName]) groupAnswerTracker[groupName] = new Set();
+            groupAnswerTracker[groupName].add(questionIndex);
+
+            if (groupAnswerTracker[groupName].size >= globalQuestionsList.length) {
+                groupCompletedStatus[groupName] = true;
+                io.emit('groupFinished', { groupName });
+            }
+
+            io.emit('timerUpdate', groupTimers);
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
+        } else {
+            // INDIVIDUAL MODE
+            if (result.isCorrect || result.earnedPoints > 0) {
+                individualScores[groupName] = (individualScores[groupName] || 0) + result.earnedPoints;
+            }
+
+            if (!individualAnswerTracker[groupName]) individualAnswerTracker[groupName] = new Set();
+            individualAnswerTracker[groupName].add(questionIndex);
+
+            if (individualAnswerTracker[groupName].size >= globalQuestionsList.length) {
+                individualCompletedStatus[groupName] = true;
+                io.emit('individualFinished', { fullName: groupName });
+            }
+
+            io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
         }
 
-        // Magpadala ng feedback pabalik sa participant[cite: 8]
         socket.emit('answerFeedback', {
-            isCorrect: isCorrect,
-            earnedPoints: earnedPoints
+            isCorrect: result.isCorrect,
+            earnedPoints: result.earnedPoints,
+            maxPoints: question.points || 1,
+            questionId: `q${questionIndex + 1}`,
+            answer: answer,
+            qType: question.type
         });
     });
 
-    // Simulan ang Quiz[cite: 8]
+    socket.on('resetGame', () => {
+        groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
+        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
+        groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
+        groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
+        individualScores = {};
+        individualCompletedStatus = {};
+        groupAnswerTracker = {};
+        individualAnswerTracker = {};
+        isGameStarted = false;
+
+        if (timerInterval) clearInterval(timerInterval);
+
+        io.emit('resetState');
+        io.emit('applyCustomQuestionsList', globalQuestionsList);
+        io.emit('gameState', { isGameStarted: false });
+        io.emit('timerUpdate', groupTimers);
+        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
+        io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
+    });
+
     socket.on('startQuiz', () => {
         isGameStarted = true;
         io.emit('quizStartedSignal');
     });
 
-    // Simulan / I-update ang Timer[cite: 8]
     socket.on('startTimer', () => {
-        io.emit('timerUpdate', groupTimers);
-    });
+        isGameStarted = true;
+        io.emit('gameState', { isGameStarted });
+        if (timerInterval) clearInterval(timerInterval);
 
-    socket.on('setTimerDuration', (seconds) => {
-        Object.keys(groupTimers).forEach(g => {
-            groupTimers[g] = seconds;
-        });
-        io.emit('timerUpdate', groupTimers);
+        timerInterval = setInterval(() => {
+            let activeCount = 0;
+            Object.keys(groupTimers).forEach(g => {
+                if (!groupCompletedStatus[g] && groupTimers[g] > 0) {
+                    groupTimers[g]--;
+                    activeCount++;
+                }
+            });
+            io.emit('timerUpdate', groupTimers);
+            const allFinished = Object.keys(groupTimers).every(g => groupTimers[g] <= 0 || groupCompletedStatus[g]);
+            if (activeCount === 0 || allFinished) {
+                clearInterval(timerInterval);
+                io.emit('timeUp');
+            }
+        }, 1000);
     });
 
     socket.on('forceTimeUp', () => {
+        if (timerInterval) clearInterval(timerInterval);
+        Object.keys(groupTimers).forEach(g => { groupTimers[g] = 0; });
+        io.emit('timerUpdate', groupTimers);
         io.emit('timeUp');
     });
 
-    // Reset Game[cite: 8]
-    socket.on('resetGame', () => {
-        isGameStarted = false;
-        groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
-        individualScores = {};
-        groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
-        groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
-        individualCompletedStatus = {};
-        attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
-
-        io.emit('resetState');
-        io.emit('updateState', {
-            groupScores: groupScores,
-            photos: attorneyPhotos,
-            completedStatus: groupCompletedStatus
-        });
-        io.emit('individualScoresUpdated', {
-            scores: individualScores,
-            completedStatus: individualCompletedStatus
-        });
+    socket.on('setTimerDuration', (seconds) => {
+        Object.keys(groupTimers).forEach(g => { groupTimers[g] = seconds; });
+        io.emit('timerUpdate', groupTimers);
     });
 
-    // Baguhin ang Title sa Screen[cite: 8]
-    socket.on('changeAppTitle', (newTitle) => {
-        io.emit('titleUpdated', newTitle);
-    });
-
-    // Archive & History Management[cite: 8]
-    socket.on('deleteArchivePhoto', (index) => {
-        if (photoArchive[index]) {
-            photoArchive.splice(index, 1);
-            io.emit('photoArchiveUpdated', photoArchive);
+    socket.on('updatePlainQuestionsData', (questionsList) => {
+        if (questionsList && questionsList.length > 0) {
+            globalQuestionsList = questionsList;
+            io.emit('applyCustomQuestionsList', globalQuestionsList);
         }
-    });
-
-    socket.on('clearPhotoArchive', () => {
-        photoArchive = [];
-        io.emit('photoArchiveUpdated', photoArchive);
-    });
-
-    socket.on('deleteGroupHistoryItem', (id) => {
-        groupHistory = groupHistory.filter(item => item.id !== id);
-        io.emit('groupHistoryUpdated', groupHistory);
-    });
-
-    socket.on('deleteIndividualHistoryItem', (id) => {
-        individualHistory = individualHistory.filter(item => item.id !== id);
-        io.emit('individualHistoryUpdated', individualHistory);
-    });
-
-    socket.on('disconnect', () => {
-        delete individualParticipants[socket.id];
-        console.log(`❌ Client disconnected: ${socket.id}`);
     });
 });
 
-// ==========================================
-// RENDER PORT BINDING & SERVER LISTEN[cite: 8]
-// ==========================================
-
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server is successfully running on port ${PORT}`);
+    console.log(`Server is running smoothly on port ${PORT}`);
 });
