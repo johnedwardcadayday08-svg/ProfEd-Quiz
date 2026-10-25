@@ -7,7 +7,6 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-/* I-center ang Individual at Group Instructions modal sa gitna ng screen */
 #individualInstructionModal, 
 #instructionModal {
     display: none;
@@ -19,7 +18,6 @@
     text-align: center;
 }
 
-/* Kulay green na circle frame at glow effect para sa tapos na magsagot */
 .glowing-frame.completed-frame,
 .glow-circle-avatar-large.completed-frame {
     border-radius: 50% !important;
@@ -33,11 +31,10 @@
     text-shadow: 0 0 8px rgba(16, 185, 129, 0.6) !important;
 }
 
-/* Real-time Mobile Instructions Styling */
 @media (max-width: 768px) {
     #instructions-modal, 
     #individual-instructions-modal {
-        display: none; /* Default na nakatago hanggang pilitin ng Socket io */
+        display: none; 
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
@@ -58,7 +55,7 @@
         max-width: 92vw !important;
         max-height: 85vh !important;
         padding: 14px 16px !important;
-        overflow-y: auto !important; /* Siguradong mai-scroll at hindi napumutol */
+        overflow-y: auto !important; 
         -webkit-overflow-scrolling: touch;
         border-radius: 20px !important;
     }
@@ -81,7 +78,6 @@
     }
 }
 
-/* Ligtas na code para sa mobile view ng instructions nang hindi ginagalaw ang QR code, judge message, at buttons */
 @media (max-width: 768px) {
     .instructions-responsive-box {
         max-height: 85vh !important;
@@ -90,9 +86,7 @@
     }
 }
 
-/* Tanging sa cellphone/mobile view lang lalabas at magiging compact ang instructions */
 @media (max-width: 768px) {
-    /* Pilit na pinapalabas ang instructions modal sa mobile kapag naka-trigger */
     #instructions-modal.mobile-show,
     #individual-instructions-modal.mobile-show {
         display: flex !important;
@@ -110,7 +104,6 @@
         align-items: center !important;
     }
 
-    /* Sinisigurong kasya sa mobile screen at hindi putol ang laman */
     @media (max-width: 768px) {
         #instructions-modal .instructions-responsive-box,
         #individual-instructions-modal .instructions-responsive-box {
@@ -124,7 +117,6 @@
     }
 }
 
-/* I-center ang Individual Mode Instructions Modal sa mismong gitna ng screen */
 #individual-instructions-modal {
     display: none;
     position: fixed !important;
@@ -157,7 +149,6 @@
     justify-content: space-between !important;
 }
 
-/* Itaas pa ang individual login box malapit sa "Join as:" at alisin ang scrolling */
 .individual-login-container {
     display: flex !important;
     flex-direction: column !important;
@@ -194,7 +185,6 @@
     margin-top: 4px !important;
 }
 
-/* Pinalaki at ginagawang buo ang espasyo ng kanan na box sa Individual Mode Monitor */
 .indiv-top3-container {
     display: flex;
     justify-content: space-around;
@@ -247,9 +237,6 @@
             touch-action: manipulation;
         }
 
-/* --- DAGDAG PARA SA SINGLE-LINE BUTTONS AT NO-SCROLL LAYOUT --- */
-
-/* Ginagawang iisang line ang mga buttons sa group at individual monitor */
 .monitor-buttons-row, .controls-container, .button-group-inline {
     display: flex;
     flex-direction: row;
@@ -260,7 +247,6 @@
     overflow-x: auto;
 }
 
-/* Tiyaking sakto ang sukat ng mga box sa monitor kapag Individual Mode */
 body.individual-mode-active .judge-main-layout {
     grid-template-columns: 1fr 1.1fr !important;
     gap: 12px !important;
@@ -281,13 +267,11 @@ body.individual-mode-active .judge-right-box {
     overflow: hidden;
 }
 
-/* I-allow lang ang scrolling sa loob ng Realtime List box kapag madami na ang names */
 .realtime-list-container {
     max-height: 50vh;
     overflow-y: auto !important;
 }
 
-/* I-allow ang scrolling sa explanation box kapag lumabas na ito */
 .explanation-container {
     overflow-y: auto !important;
     max-height: 25vh;
@@ -515,7 +499,6 @@ body.individual-mode-active .judge-right-box {
         .timer-btn { background: linear-gradient(135deg, rgba(236, 72, 153, 0.85), rgba(190, 24, 93, 0.85)); }
         .quiz-mode-btn { background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(79, 70, 229, 0.85)); }
 
-/* Itago ang pangkalahatang timer sa itaas kapag nasa Group Mode */
 body[data-mode="group"] .top-timer-container,
 body.group-mode .top-timer-box {
     display: none !important;
@@ -792,13 +775,11 @@ body.group-mode .top-timer-box {
             will-change: transform;
         }
 
-        /* Kapag natapos na ang grupo, magiging neon green ang paligid ng bilog */
 .glowing-frame.completed-frame {
     background: linear-gradient(135deg, #10b981, #34d399) !important;
     box-shadow: 0 0 22px rgba(16, 185, 129, 0.9) !important;
 }
 
-/* Avatar Border sa left mini-scoreboard */
 .attorney-avatar-mini.completed-avatar {
     border-color: #10b981 !important;
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.8) !important;
@@ -1272,7 +1253,6 @@ body.group-mode .top-timer-box {
             }
         }
 
-        /* I-update ang header bar para sa iisang line ng buttons at timer */
 .header-bar { 
     display: flex; 
     justify-content: space-between; 
@@ -1289,7 +1269,6 @@ body.group-mode .top-timer-box {
     gap: 8px;
 }
 
-/* Individual Mode Monitor compact sizing & strict no-scroll */
 body.individual-mode-active, html {
     height: 100vh;
     margin: 0;
@@ -1786,7 +1765,6 @@ body.individual-mode-active, html {
         </div>
     </div>
 
-<!-- UPDATED TIMER MODAL WITH 15m, 20m, 25m, 30m OPTIONS -->
     <div class="modal-overlay" id="timer-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-height: 85vh; overflow-y: auto;">
             <h3 style="color: #f472b6; margin-top: 0;">⏱️ Set Real-Time Timer</h3>
@@ -1801,7 +1779,6 @@ body.individual-mode-active, html {
                 <button class="btn" style="margin:0; padding:10px; background: rgba(99, 102, 241, 0.3); border: 1.5px solid #818cf8;" onclick="selectTimerOption(180)">⏱️ 3 Minutes</button>
                 <button class="btn" style="margin:0; padding:10px; background: rgba(244, 63, 94, 0.3); border: 1.5px solid #f87171;" onclick="selectTimerOption(300)">🔥 5 Minutes</button>
                 
-                <!-- IDINAGDAG NA MGA BAGONG ORAS (Naka-convert sa seconds) -->
                 <button class="btn" style="margin:0; padding:10px; background: rgba(16, 185, 129, 0.35); border: 1.5px solid #10b981;" onclick="selectTimerOption(900)">⏳ 15 Minutes</button>
                 <button class="btn" style="margin:0; padding:10px; background: rgba(56, 189, 248, 0.35); border: 1.5px solid #38bdf8;" onclick="selectTimerOption(1200)">⌛ 20 Minutes</button>
                 <button class="btn" style="margin:0; padding:10px; background: rgba(168, 85, 247, 0.35); border: 1.5px solid #c084fc;" onclick="selectTimerOption(1500)">🕒 25 Minutes</button>
@@ -1889,7 +1866,6 @@ body.individual-mode-active, html {
         <p>📱 SCAN TO JOIN</p>
     </div>
 
-    <!-- GROUP MODE INSTRUCTIONS MODAL -->
     <div class="modal-overlay" id="instructions-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 100000; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(14px); padding: 12px; box-sizing: border-box; overflow: hidden;">
         <div class="modal-card instructions-responsive-box" style="max-width: 98vw; width: 100%; max-height: calc(100vh - 24px); border: 3px solid rgba(192, 132, 252, 0.95); border-radius: 24px; padding: clamp(14px, 2.5vh, 28px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
             <div>
@@ -1920,7 +1896,6 @@ body.individual-mode-active, html {
         </div>
     </div>
 
-    <!-- INDIVIDUAL MODE INSTRUCTIONS MODAL -->
     <div class="modal-overlay" id="individual-instructions-modal" style="display: none; z-index: 100025;">
         <div class="modal-card instructions-responsive-box" style="max-width: 98vw; width: 100%; max-height: calc(100vh - 24px); border: 3px solid #ec4899; background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.99)); text-align: center; margin: auto;">
             <div>
@@ -2014,7 +1989,6 @@ body.individual-mode-active, html {
         </div>
     </div>
 
-    <!-- Game Mode Modal -->
     <div class="modal-overlay" id="game-mode-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 450px;">
             <h3 style="color: #38bdf8;">🎮 Select Game Mode</h3>
@@ -2027,7 +2001,6 @@ body.individual-mode-active, html {
         </div>
     </div>
 
-    <!-- Score History Password Modal -->
     <div class="modal-overlay" id="score-history-auth-modal" style="display: none; z-index: 100010;">
         <div class="modal-card">
             <h3 style="color: #84cc16;">🔒 Score History Archive</h3>
@@ -2040,7 +2013,6 @@ body.individual-mode-active, html {
         </div>
     </div>
 
-    <!-- Score History Selection Modal -->
     <div class="modal-overlay" id="score-history-modal" style="display: none; z-index: 100010;">
         <div class="modal-card" style="max-width: 500px;">
             <h3 style="color: #84cc16;">📊 Select Score History Type</h3>
@@ -2052,7 +2024,6 @@ body.individual-mode-active, html {
         </div>
     </div>
 
-    <!-- Detailed Score History View Modal -->
     <div class="modal-overlay" id="detailed-history-modal" style="display: none; z-index: 100020;">
         <div class="modal-card" style="max-width: 700px; width: 95%; max-height: 85vh; overflow-y: auto;">
             <h3 id="detailed-history-title" style="color: #84cc16; margin-top: 0;">Score History</h3>
@@ -2539,7 +2510,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             document.getElementById('insert-modal').style.display = 'none';
         }
 
-        // --- MATATAG NA PARSER NA KAYANG MAGBASA NG LAHAT NG URI NG TANONG (MIXED, T/F, ID, ESSAY) ---
         function savePlainQuestions() {
             try {
                 let rawInput = document.getElementById('custom-questions-plaintext').value;
@@ -2664,7 +2634,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
         let inputFieldHTML = '';
         let qType = q.type ? q.type.toLowerCase() : 'multiple-choice';
 
-        // 1. Kung Multiple Choice
         if (qType === 'multiple-choice' && q.options && Object.keys(q.options).length > 0) {
             let optionsHTML = '';
             Object.keys(q.options).forEach(optKey => {
@@ -2677,7 +2646,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             });
             inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
         } 
-        // 2. Kung True o False
         else if (qType === 'true-false') {
             inputFieldHTML = `
                 <div class="options">
@@ -2689,7 +2657,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                     </label>
                 </div>`;
         } 
-        // 3. Kung Essay o Long Essay
         else if (qType === 'essay' || currentQuizMode === 'long-essay') {
             inputFieldHTML = `
                 <div class="rubrics-badge-box">
@@ -2700,7 +2667,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerEssaySubmit(${idx}, '${qKey}')">Submit Essay & Auto-Grade 🚀</button>
             `;
         } 
-        // 4. Kung Identification o iba pang uri (Text input)
         else {
             inputFieldHTML = `
                 <div style="margin-top: 8px;">
@@ -2951,7 +2917,6 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             }
         }
 
-        // --- TAMANG PAG-ROUTE NG PANGALAN SA INDIVIDUAL O GROUP MODE ---
         function submitAns(questionIndex, qKey, selectedOpt) {
             if (answeredQuestions[qKey]) return;
             answeredQuestions[qKey] = selectedOpt;
@@ -3352,29 +3317,53 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
             const attorneysListContainer = document.getElementById('attorneys-results-list');
             let resultsHTML = '';
-            ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
-                const score = latestGroupScores[attorney] || 0;
-                const photoSrc = attorneyPhotos[attorney] || '/logo.png';
-                if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
+
+            if (currentMode === 'individual') {
+                const scoresToLoop = window.currentIndividualScores || {};
+                Object.entries(scoresToLoop).forEach(([name, score]) => {
+                    let photoSrc = '/logo.png';
+                    if (individualParticipants) {
+                        Object.values(individualParticipants).forEach(part => {
+                            if (part.fullName === name && part.photo) {
+                                photoSrc = part.photo;
+                            }
+                        });
+                    }
                     resultsHTML += `
                         <div class="result-box-card result-box-innocent">
-                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
+                            <img src="${photoSrc}" alt="${name}" class="result-box-img" />
                             <div>
-                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalMaxScore} Points</h4>
-                                <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
+                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${name} — ${score} / ${totalMaxScore} Points</h4>
+                                <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Outstanding performance! 🎉</p>
                             </div>
                         </div>`;
-                } else {
-                    resultsHTML += `
-                        <div class="result-box-card result-box-failing">
-                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
-                            <div>
-                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalMaxScore} Points</h4>
-                                <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
-                            </div>
-                        </div>`;
-                }
-            });
+                });
+            } else {
+                ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
+                    const score = latestGroupScores[attorney] || 0;
+                    const photoSrc = attorneyPhotos[attorney] || '/logo.png';
+                    if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
+                        resultsHTML += `
+                            <div class="result-box-card result-box-innocent">
+                                <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
+                                <div>
+                                    <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalMaxScore} Points</h4>
+                                    <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
+                                </div>
+                            </div>`;
+                    } else {
+                        resultsHTML += `
+                            <div class="result-box-card result-box-failing">
+                                <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
+                                <div>
+                                    <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalMaxScore} Points</h4>
+                                    <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
+                                </div>
+                            </div>`;
+                    }
+                });
+            }
+
             attorneysListContainer.innerHTML = resultsHTML;
             document.getElementById('winner-modal').style.display = 'flex';
             

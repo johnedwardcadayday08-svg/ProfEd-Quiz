@@ -49,14 +49,12 @@ function normalizeText(text) {
     return text.toString().toLowerCase().trim().replace(/\s+/g, ' ').replace(/[^\w\s]/gi, ''); 
 }
 
-// PINATIBAY NA SMART ANSWER CHECKER PARA SA TRUE/FALSE, IDENTIFICATION, AT ESSAY
 function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
     const normUser = normalizeText(userAnswer);
     const normCorrect = normalizeText(correctAnswerKey);
 
     if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
-    // 1. Suriin kung True/False o kung ang sagot ay katulad ng True/Tama/False/Mali
     const isTfKeywords = (val) => ['true', 'false', 't', 'f', 'tama', 'mali', 'yes', 'no'].includes(val);
     if (questionType === 'true-false' || (isTfKeywords(normUser) && isTfKeywords(normCorrect))) {
         let userBool = ['true', 't', 'tama', 'yes'].includes(normUser);
@@ -68,7 +66,6 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
         return { isCorrect: false, earnedPoints: 0 };
     }
 
-    // 2. Identification / Multiple Choice / Short Answer Handling (Maluwag na pagbasa)
     if (questionType !== 'essay') {
         if (normUser === normCorrect || normUser.includes(normCorrect) || normCorrect.includes(normUser)) {
             return { isCorrect: true, earnedPoints: maxPoints };
@@ -76,7 +73,6 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
         return { isCorrect: false, earnedPoints: 0 };
     }
 
-    // 3. Essay Handling gamit ang keyword o haba ng sagot
     const keywords = normCorrect.split(' ').filter(word => word.length > 3);
     if (keywords.length === 0) {
         if (normUser.length >= 40) return { isCorrect: true, earnedPoints: maxPoints };
@@ -162,7 +158,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // UNIFIED SUBMIT ANSWER PARA SA GROUP AT INDIVIDUAL
     socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
         const question = globalQuestionsList[questionIndex];
         if (!question) return;
@@ -188,7 +183,6 @@ io.on('connection', (socket) => {
             io.emit('timerUpdate', groupTimers);
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
         } else {
-            // INDIVIDUAL MODE
             if (result.isCorrect || result.earnedPoints > 0) {
                 individualScores[groupName] = (individualScores[groupName] || 0) + result.earnedPoints;
             }
