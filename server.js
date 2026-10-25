@@ -1,4 +1,7 @@
-// Function para sa Malinis at Matalinong Pagpapareho ng Text
+// ==========================================
+// MATALINONG PAG-SCORING AT TEXT NORMALIZATION
+// ==========================================
+
 function normalizeText(str) {
     if (!str) return "";
     return str
@@ -9,7 +12,6 @@ function normalizeText(str) {
         .replace(/\s+/g, ' ');   // Ginagawang iisang space ang paulit-ulit na space
 }
 
-// Function para sa Matalinong Pagkompara (Flexible Matching)
 function isAnswerCorrect(userAns, correctAns) {
     const cleanUser = normalizeText(userAns);
     const cleanCorrect = normalizeText(correctAns);
@@ -32,44 +34,52 @@ function isAnswerCorrect(userAns, correctAns) {
     return false;
 }
 
-// Inside Socket.io 'submitAnswer' Event
-socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
-    const currentQ = questionsList[questionIndex];
-    if (!currentQ) return;
+// ==========================================
+// SOCKET.IO 'submitAnswer' EVENT HANDLER
+// ==========================================
 
-    let isCorrect = false;
-    let earnedPoints = 0;
+io.on('connection', (socket) => {
+    // ... (Ilagay ito sa loob ng iyong existing connection listener kung saan naroon ang iba pang socket events)
 
-    const qType = (currentQ.type || 'multiple-choice').toLowerCase();
+    socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
+        // Sinisigurong umiiral ang global list ng mga tanong at scores
+        if (typeof questionsList === 'undefined' || !questionsList[questionIndex]) return;
+        
+        const currentQ = questionsList[questionIndex];
+        let isCorrect = false;
+        let earnedPoints = 0;
 
-    if (qType === 'multiple-choice' || qType === 'true-false') {
-        // Direct letter or option comparison
-        isCorrect = normalizeText(answer) === normalizeText(currentQ.answer);
-        earnedPoints = isCorrect ? (currentQ.points || 1) : 0;
-    } else {
-        // Identification, Enumeration, at Mixed Text
-        isCorrect = isAnswerCorrect(answer, currentQ.answer);
-        earnedPoints = isCorrect ? (currentQ.points || 1) : 0;
-    }
+        const qType = (currentQ.type || 'multiple-choice').toLowerCase();
 
-    // I-update ang Score at magdagdag ng Bonus Time kung Tama
-    if (isCorrect) {
-        groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
-        if (groupTimers[groupName] !== undefined) {
-            groupTimers[groupName] += 5; // +5 Seconds Bonus Time!
+        if (qType === 'multiple-choice' || qType === 'true-false') {
+            // Direct letter or option comparison gamit ang normalizeText para iwas bug sa spaces/caps
+            isCorrect = normalizeText(answer) === normalizeText(currentQ.answer);
+            earnedPoints = isCorrect ? (currentQ.points || 1) : 0;
+        } else {
+            // Identification, Enumeration, Essay, at Mixed Text gamit ang flexible matching
+            isCorrect = isAnswerCorrect(answer, currentQ.answer);
+            earnedPoints = isCorrect ? (currentQ.points || 1) : 0;
         }
-    }
 
-    // Magpadala ng feedback pabalik sa participant
-    socket.emit('answerFeedback', {
-        isCorrect: isCorrect,
-        earnedPoints: earnedPoints
-    });
+        // I-update ang Score at magdagdag ng Bonus Time kung Tama
+        if (typeof groupScores !== 'undefined') {
+            groupScores[groupName] = (groupScores[groupName] || 0) + earnedPoints;
+            if (typeof groupTimers !== 'undefined' && groupTimers[groupName] !== undefined) {
+                groupTimers[groupName] += 5; // +5 Seconds Bonus Time!
+            }
+        }
 
-    // I-broadcast ang na-update na estado sa lahat ng nakakonekta
-    io.emit('updateState', {
-        groupScores: groupScores,
-        photos: attorneyPhotos,
-        completedStatus: groupCompletedStatus
+        // Magpadala ng feedback pabalik sa partikular na participant
+        socket.emit('answerFeedback', {
+            isCorrect: isCorrect,
+            earnedPoints: earnedPoints
+        });
+
+        // I-broadcast ang na-update na estado sa lahat ng nakakonektang screen at monitor
+        io.emit('updateState', {
+            groupScores: typeof groupScores !== 'undefined' ? groupScores : {},
+            photos: typeof attorneyPhotos !== 'undefined' ? attorneyPhotos : {},
+            completedStatus: typeof groupCompletedStatus !== 'undefined' ? groupCompletedStatus : {}
+        });
     });
 });
