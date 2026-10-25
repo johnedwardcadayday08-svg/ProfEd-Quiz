@@ -25,8 +25,8 @@ let individualScoreHistoryArchive = [];
 let individualParticipants = {}; 
 let individualScores = {};       
 
-// Dynamic tracking para sa tapos na magsagot sa Individual Mode
 let individualCompletedStatus = {}; 
+let groupAnswerTracker = {};
 let individualAnswerTracker = {};
 
 let globalQuestionsList = [
@@ -46,12 +46,7 @@ let globalQuestionsList = [
 
 function normalizeText(text) {
     if (!text) return "";
-    return text
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, ' ')       
-        .replace(/[^\w\s]/gi, ''); 
+    return text.toString().toLowerCase().trim().replace(/\s+/g, ' ').replace(/[^\w\s]/gi, ''); 
 }
 
 function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
@@ -61,47 +56,27 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
     if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
     if (questionType !== 'essay') {
-        if (normUser === normCorrect) {
-            return { isCorrect: true, earnedPoints: maxPoints };
-        }
-        if (normCorrect.length > 2 && normUser.includes(normCorrect)) {
+        if (normUser === normCorrect || (normCorrect.length > 2 && normUser.includes(normCorrect))) {
             return { isCorrect: true, earnedPoints: maxPoints };
         }
         return { isCorrect: false, earnedPoints: 0 };
     }
 
     const keywords = normCorrect.split(' ').filter(word => word.length > 3);
-    
     if (keywords.length === 0) {
         if (normUser.length >= 80) return { isCorrect: true, earnedPoints: maxPoints };
         if (normUser.length >= 40) return { isCorrect: true, earnedPoints: Math.ceil(maxPoints * 0.7) };
-        if (normUser.length >= 15) return { isCorrect: true, earnedPoints: Math.ceil(maxPoints * 0.4) };
         return { isCorrect: false, earnedPoints: 0 };
     }
 
     let matchedCount = 0;
-    keywords.forEach(kw => {
-        if (normUser.includes(kw)) {
-            matchedCount++;
-        }
-    });
-
+    keywords.forEach(kw => { if (normUser.includes(kw)) matchedCount++; });
     const matchRatio = matchedCount / keywords.length;
 
-    if (matchRatio >= 0.7 && normUser.length >= 50) {
-        return { isCorrect: true, earnedPoints: maxPoints };
-    } else if (matchRatio >= 0.5 || (matchRatio >= 0.3 && normUser.length >= 60)) {
-        const earned = Math.max(1, Math.round(maxPoints * 0.8));
-        return { isCorrect: true, earnedPoints: earned };
-    } else if (matchRatio >= 0.3 || normUser.length >= 35) {
-        const earned = Math.max(1, Math.round(maxPoints * 0.5));
-        return { isCorrect: true, earnedPoints: earned };
-    } else if (normUser.length >= 15) {
-        const earned = Math.max(1, Math.round(maxPoints * 0.2));
-        return { isCorrect: true, earnedPoints: earned };
-    } else {
-        return { isCorrect: false, earnedPoints: 0 };
+    if (matchRatio >= 0.5 || normUser.length >= 40) {
+        return { isCorrect: true, earnedPoints: Math.max(1, Math.round(maxPoints * 0.8)) };
     }
+    return { isCorrect: false, earnedPoints: 0 };
 }
 
 io.on('connection', (socket) => {
@@ -118,7 +93,6 @@ io.on('connection', (socket) => {
     socket.emit('individualParticipantsUpdated', individualParticipants);
     socket.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
 
-    // 1. SET GAME MODE HANDLER
     socket.on('setGameMode', (mode) => {
         currentMode = mode;
         isGameStarted = false;
@@ -134,6 +108,7 @@ io.on('connection', (socket) => {
         individualParticipants = {};
         individualScores = {};
         individualCompletedStatus = {};
+        groupAnswerTracker = {};
         individualAnswerTracker = {};
 
         io.emit('gameModeUpdated', currentMode);
@@ -146,16 +121,10 @@ io.on('connection', (socket) => {
         io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
     });
 
-    // 2. REGISTER ATTORNEY PHOTO & REAL-TIME POPUP
     socket.on('registerAttorneyPhoto', ({ groupName, photo }) => {
         if (groupName && photo) {
             attorneyPhotos[groupName] = photo;
-            serverPhotoArchive.push({
-                groupName,
-                photo,
-                timestamp: new Date().toLocaleTimeString()
-            });
-            
+            serverPhotoArchive.push({ groupName, photo, timestamp: new Date().toLocaleTimeString() });
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
             io.emit('newAttorneyJoined', { groupName, photo });
         }
@@ -163,34 +132,62 @@ io.on('connection', (socket) => {
 
     socket.on('registerIndividualParticipant', ({ fullName, photo }) => {
         if (fullName) {
+            const cleanName = fullName.trim();
             individualParticipants[socket.id] = {
-                fullName: fullName.trim(),
+                fullName: cleanName,
                 photo: photo || '',
                 score: 0,
                 timestamp: new Date().toLocaleTimeString(),
                 date: new Date().toLocaleDateString()
             };
-            if (individualScores[fullName.trim()] === undefined) {
-                individualScores[fullName.trim()] = 0;
+            if (individualScores[cleanName] === undefined) {
+                individualScores[cleanName] = 0;
             }
             io.emit('individualParticipantsUpdated', individualParticipants);
             io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
         }
     });
 
-    // 3. SUBMIT GROUP ANSWER & +5 SECONDS BONUS TIME
+    // UNIFIED SUBMIT ANSWER PARA SA GROUP AT INDIVIDUAL
     socket.on('submitAnswer', ({ groupName, questionIndex, answer }) => {
         const question = globalQuestionsList[questionIndex];
         if (!question) return;
 
         const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
 
-        if (result.isCorrect || result.earnedPoints > 0) {
-            groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
-            
-            if (groupTimers[groupName] !== undefined && groupTimers[groupName] > 0) {
-                groupTimers[groupName] += 5;
+        if (currentMode === 'group') {
+            if (result.isCorrect || result.earnedPoints > 0) {
+                groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
+                if (groupTimers[groupName] !== undefined && groupTimers[groupName] > 0) {
+                    groupTimers[groupName] += 5;
+                }
             }
+
+            if (!groupAnswerTracker[groupName]) groupAnswerTracker[groupName] = new Set();
+            groupAnswerTracker[groupName].add(questionIndex);
+
+            if (groupAnswerTracker[groupName].size >= globalQuestionsList.length) {
+                groupCompletedStatus[groupName] = true;
+                io.emit('groupFinished', { groupName });
+            }
+
+            io.emit('timerUpdate', groupTimers);
+            io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
+        } else {
+            // INDIVIDUAL MODE
+            if (result.isCorrect || result.earnedPoints > 0) {
+                individualScores[groupName] = (individualScores[groupName] || 0) + result.earnedPoints;
+            }
+
+            if (!individualAnswerTracker[groupName]) individualAnswerTracker[groupName] = new Set();
+            individualAnswerTracker[groupName].add(questionIndex);
+
+            if (individualAnswerTracker[groupName].size >= globalQuestionsList.length) {
+                individualCompletedStatus[groupName] = true;
+                io.emit('individualFinished', { fullName: groupName });
+            }
+
+            io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
         }
 
         socket.emit('answerFeedback', {
@@ -201,53 +198,8 @@ io.on('connection', (socket) => {
             answer: answer,
             qType: question.type
         });
-
-        io.emit('timerUpdate', groupTimers);
-        io.emit('updateState', { 
-            groupScores, 
-            photos: attorneyPhotos, 
-            completedStatus: groupCompletedStatus, 
-            mode: currentMode 
-        });
     });
 
-    // 4. SUBMIT INDIVIDUAL ANSWER (Walang +5 seconds)
-    socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
-        const question = globalQuestionsList[questionIndex];
-        if (!question) return;
-
-        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
-
-        if (result.isCorrect || result.earnedPoints > 0) {
-            individualScores[fullName] = (individualScores[fullName] || 0) + result.earnedPoints;
-        }
-
-        if (!individualAnswerTracker[fullName]) {
-            individualAnswerTracker[fullName] = new Set();
-        }
-        individualAnswerTracker[fullName].add(questionIndex);
-
-        if (individualAnswerTracker[fullName].size >= globalQuestionsList.length) {
-            individualCompletedStatus[fullName] = true;
-            io.emit('individualFinished', { fullName }); // Magpapadala ng notification sa Judge monitor
-        }
-
-        const responseData = {
-            isCorrect: result.isCorrect,
-            earnedPoints: result.earnedPoints,
-            maxPoints: question.points || 1,
-            qType: question.type
-        };
-
-        if (typeof callback === 'function') callback(responseData);
-
-        io.emit('individualScoresUpdated', {
-            scores: individualScores,
-            completedStatus: individualCompletedStatus
-        });
-    });
-
-    // 5. RESET GAME
     socket.on('resetGame', () => {
         groupScores = { 'Attorney 1': 0, 'Attorney 2': 0, 'Attorney 3': 0, 'Attorney 4': 0 };
         attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
@@ -255,6 +207,7 @@ io.on('connection', (socket) => {
         groupTimers = { 'Attorney 1': 300, 'Attorney 2': 300, 'Attorney 3': 300, 'Attorney 4': 300 };
         individualScores = {};
         individualCompletedStatus = {};
+        groupAnswerTracker = {};
         individualAnswerTracker = {};
         isGameStarted = false;
 
@@ -264,48 +217,8 @@ io.on('connection', (socket) => {
         io.emit('applyCustomQuestionsList', globalQuestionsList);
         io.emit('gameState', { isGameStarted: false });
         io.emit('timerUpdate', groupTimers);
-        io.emit('updateState', {
-            groupScores,
-            photos: attorneyPhotos,
-            completedStatus: groupCompletedStatus,
-            mode: currentMode
-        });
-        io.emit('individualParticipantsUpdated', individualParticipants);
+        io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
         io.emit('individualScoresUpdated', { scores: individualScores, completedStatus: individualCompletedStatus });
-    });
-
-    socket.on('deleteGroupHistoryItem', (id) => {
-        groupScoreHistoryArchive = groupScoreHistoryArchive.filter(item => String(item.id) !== String(id));
-        io.emit('groupHistoryUpdated', groupScoreHistoryArchive);
-    });
-
-    socket.on('deleteIndividualHistoryItem', (id) => {
-        individualScoreHistoryArchive = individualScoreHistoryArchive.filter(item => String(item.id) !== String(id));
-        io.emit('individualHistoryUpdated', individualScoreHistoryArchive);
-    });
-
-    socket.on('deleteArchivePhoto', (index) => {
-        if (serverPhotoArchive && serverPhotoArchive[index] !== undefined) {
-            serverPhotoArchive.splice(index, 1);
-            io.emit('photoArchiveUpdated', serverPhotoArchive);
-        }
-    });
-
-    socket.on('changeAppTitle', (newTitle) => {
-        currentAppTitle = newTitle;
-        io.emit('titleUpdated', currentAppTitle);
-    });
-
-    socket.on('changeQuizMode', (mode) => {
-        currentQuizMode = mode;
-        io.emit('quizModeUpdated', currentQuizMode);
-    });
-
-    socket.on('updatePlainQuestionsData', (questionsList) => {
-        if (questionsList && questionsList.length > 0) {
-            globalQuestionsList = questionsList;
-            io.emit('applyCustomQuestionsList', globalQuestionsList);
-        }
     });
 
     socket.on('startQuiz', () => {
@@ -345,6 +258,13 @@ io.on('connection', (socket) => {
     socket.on('setTimerDuration', (seconds) => {
         Object.keys(groupTimers).forEach(g => { groupTimers[g] = seconds; });
         io.emit('timerUpdate', groupTimers);
+    });
+
+    socket.on('updatePlainQuestionsData', (questionsList) => {
+        if (questionsList && questionsList.length > 0) {
+            globalQuestionsList = questionsList;
+            io.emit('applyCustomQuestionsList', globalQuestionsList);
+        }
     });
 });
 
