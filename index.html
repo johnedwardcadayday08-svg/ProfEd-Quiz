@@ -2730,45 +2730,43 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             if (reviewSec) reviewSec.style.display = "block";
         }
 // Idagdag o palitan ang socket listener para sa answerFeedback upang lumabas ang pop-up ng tama o mali
-socket.on('answerFeedback', (data) => {
-    const popup = document.getElementById('feedback-popup');
-    if (!popup) return;
-
-    if (data.isCorrect) {
-        popup.className = "feedback-correct";
-        popup.innerText = `✨ Tama! +${data.earnedPoints} Pts 🎉`;
-    } else {
-        popup.className = "feedback-wrong";
-        popup.innerText = `❌ Mali! (${data.earnedPoints} Pts)`;
-    }
-
-    popup.style.display = "block";
     
-    // Awtomatikong itago ang pop-up pagkalipas ng 1.5 segundo para hindi makasagabal
-    setTimeout(() => {
-        popup.style.display = "none";
-    }, 1500);
-});
+    socket.on('answerFeedback', (data) => {
+            const popup = document.getElementById('feedback-popup');
+            if (!popup) return;
 
-// Ayusin din ang pag-update ng state ng iskor sa client side
-socket.on('updateState', (state) => {
-    if (state.groupScores) {
-        latestGroupScores = state.groupScores;
-        if (myGroup && latestGroupScores[myGroup] !== undefined) {
-            document.getElementById('group-score-display').innerText = `Score: ${latestGroupScores[myGroup]} / ${totalMaxScore}`;
-        }
-    }
-    if (state.photos) {
-        attorneyPhotos = state.photos;
-    }
-    if (state.completedStatus) {
-        groupCompletedStatus = state.completedStatus;
-    }
-    if (isJudgeRole && currentMode === 'group') {
-        renderScoreboardAndPodium();
-    }
-});
+            if (data.isCorrect) {
+                popup.className = "feedback-correct";
+                popup.innerText = `✨ Tama! +${data.earnedPoints} Pts 🎉\n(+5 Secs Bonus Time!)`;
+            } else {
+                popup.className = "feedback-wrong";
+                popup.innerText = `❌ Mali! (${data.earnedPoints} Pts)`;
+            }
 
+            popup.style.display = "block";
+            
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 1500);
+        });
+
+        socket.on('updateState', (state) => {
+            if (state.groupScores) {
+                latestGroupScores = state.groupScores;
+                if (myGroup && latestGroupScores[myGroup] !== undefined) {
+                    document.getElementById('group-score-display').innerText = `Score: ${latestGroupScores[myGroup]} / ${totalMaxScore}`;
+                }
+            }
+            if (state.photos) {
+                attorneyPhotos = state.photos;
+            }
+            if (state.completedStatus) {
+                groupCompletedStatus = state.completedStatus;
+            }
+            if (isJudgeRole && currentMode === 'group') {
+                renderScoreboardAndPodium();
+            }
+        });
         function verifyJudgePassword() {
             const pass = document.getElementById('judge-pass-input').value;
             closePasswordModal();
@@ -2839,12 +2837,13 @@ socket.on('updateState', (state) => {
             }
         }
 
-        function confirmJoinNow() {
+function confirmJoinNow() {
             document.getElementById('camera-modal').style.display = 'none';
             
             if (currentMode === 'individual') {
                 socket.emit('registerIndividualParticipant', { fullName: individualFullName, photo: capturedDataUrl });
             } else {
+                // Ipinapadala ang litrato at pangalan ng grupo sa server para mag-pop up sa monitor
                 socket.emit('registerAttorneyPhoto', { groupName: myGroup, photo: capturedDataUrl });
             }
 
@@ -2877,7 +2876,7 @@ socket.on('updateState', (state) => {
             socket.emit('startTimer'); 
         }
         function forceTimeUp() { socket.emit('forceTimeUp'); }
-        function resetGame() { 
+function resetGame() { 
             attorneyPhotos = { 'Attorney 1': '', 'Attorney 2': '', 'Attorney 3': '', 'Attorney 4': '' };
             shownPopups = {};
             groupCompletedStatus = { 'Attorney 1': false, 'Attorney 2': false, 'Attorney 3': false, 'Attorney 4': false };
@@ -2888,29 +2887,8 @@ socket.on('updateState', (state) => {
             if (reviewSec) {
                 reviewSec.style.display = "none";
             }
-
-            if (isJudgeRole) {
-                if (currentMode === 'individual') {
-                    renderIndividualMonitorLayout({});
-                } else {
-                    renderScoreboardAndPodium();
-                }
-            }
         }
 
-socket.on('gameState', (data) => {
-            isGameStarted = data.isGameStarted;
-            if (isGameStarted) {
-                unlockQuizUI(); // Agad na mag-u-unlock sa participants screen
-            } else {
-                lockQuizUI();   // Mang-i-lock kapag hinto o nireset ang laro
-            }
-        });
-
-        socket.on('quizStarted', () => {
-            isGameStarted = true;
-            unlockQuizUI();     // Awtomatikong mag-u-unlock sa realtime
-        });
         socket.on('resetState', () => {
             if (typeof answeredQuestions !== 'undefined') answeredQuestions = {};
             if (typeof isGameStarted !== 'undefined') isGameStarted = false;
@@ -2925,16 +2903,18 @@ socket.on('gameState', (data) => {
             const winnerModal = document.getElementById('winner-modal');
             if (winnerModal) winnerModal.style.display = "none";
 
-            if (typeof lockQuizUI === 'function') {
-                lockQuizUI();
-            }
-
+            // I-reset ang view ng monitor screen pauwi sa simula
             if (isJudgeRole) {
                 if (currentMode === 'individual') {
                     renderIndividualMonitorLayout({});
                 } else {
                     renderScoreboardAndPodium();
                 }
+            }
+
+            // I-lock ulit ang mga tanong at ibalik sa unang panauhin screen ang participant kung kinakailangan
+            if (typeof lockQuizUI === 'function') {
+                lockQuizUI();
             }
         });
 
@@ -3159,6 +3139,33 @@ function renderScoreboardAndPodium() {
                 }
             }
         });
+
+socket.on('showJudgePopupQueue', (queue) => {
+            if (isJudgeRole) {
+                let newQueue = queue.filter(item => !shownPopups[item.groupName + item.photo]);
+                newQueue.forEach(item => {
+                    shownPopups[item.groupName + item.photo] = true;
+                });
+                if (newQueue.length > 0) {
+                    playPopupQueue(newQueue, 0);
+                }
+            }
+        });
+
+        function playPopupQueue(queue, index) {
+            if (index >= queue.length) return;
+            const item = queue[index];
+
+            const popup = document.getElementById('judge-photo-popup');
+            document.getElementById('judge-popup-title').innerText = `${item.groupName} entered the court! ⚖️`;
+            document.getElementById('judge-popup-img').src = item.photo || '/logo.png';
+            popup.style.display = 'flex';
+
+            setTimeout(() => {
+                popup.style.display = 'none';
+                setTimeout(() => { playPopupQueue(queue, index + 1); }, 400);
+            }, 3000);
+        }
 
         socket.on('newAttorneyJoined', ({ groupName, photo }) => {
             if (isJudgeRole && photo) {
