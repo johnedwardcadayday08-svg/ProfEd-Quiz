@@ -40,7 +40,8 @@ let globalQuestionsList = [
             D: "Pagbawas ng malaking marka nang walang sapat na batayan."
         },
         answer: "C",
-        explanation: "Ipinagbabawal sa mga guro ang corporal punishment o anumang uri ng pang-aabuso; ang disiplina ay dapat laging may paggalang sa dignidad ng bata."
+        explanation: "Ipinagbabawal sa mga guro ang corporal punishment o anumang uri ng pang-aabuso; ang disiplina ay dapat laging may paggalang sa dignidad ng bata.",
+        points: 1
     }
 ];
 
@@ -49,12 +50,20 @@ function normalizeText(text) {
     return text.toString().toLowerCase().trim().replace(/\s+/g, ' ').replace(/[^\w\s]/gi, ''); 
 }
 
-function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
+/**
+ * Matalinong Scoring Algorithm batay sa Rubrics at Points
+ */
+function checkSmartAnswer(userAnswer, questionObj) {
+    const maxPoints = questionObj.points || 1;
+    const questionType = questionObj.type ? questionObj.type.toLowerCase() : 'multiple-choice';
+    const correctAnswerKey = questionObj.answer || "";
+    
     const normUser = normalizeText(userAnswer);
     const normCorrect = normalizeText(correctAnswerKey);
 
     if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
+    // 1. Multiple Choice / True-False
     const isTfKeywords = (val) => ['true', 'false', 't', 'f', 'tama', 'mali', 'yes', 'no'].includes(val);
     if (questionType === 'true-false' || (isTfKeywords(normUser) && isTfKeywords(normCorrect))) {
         let userBool = ['true', 't', 'tama', 'yes'].includes(normUser);
@@ -66,26 +75,81 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
         return { isCorrect: false, earnedPoints: 0 };
     }
 
-    if (questionType !== 'essay') {
+    if (questionType === 'multiple-choice') {
+        if (normUser === normCorrect) {
+            return { isCorrect: true, earnedPoints: maxPoints };
+        }
+        return { isCorrect: false, earnedPoints: 0 };
+    }
+
+    // 2. Identification / Short Answer
+    if (questionType === 'identification' || questionType === 'enumeration') {
         if (normUser === normCorrect || normUser.includes(normCorrect) || normCorrect.includes(normUser)) {
             return { isCorrect: true, earnedPoints: maxPoints };
         }
         return { isCorrect: false, earnedPoints: 0 };
     }
 
-    const keywords = normCorrect.split(' ').filter(word => word.length > 3);
-    if (keywords.length === 0) {
-        if (normUser.length >= 40) return { isCorrect: true, earnedPoints: maxPoints };
-        return { isCorrect: false, earnedPoints: 0 };
+    // 3. Matalinong Essay Scoring (Batay sa Rubrics & Key Concepts)
+    if (questionType === 'essay') {
+        const words = normUser.split(' ').filter(w => w.length > 0);
+        const wordCount = words.length;
+
+        // Sobrang ikling sagot (malayo o hindi sapat sa hinihingi ng essay) -> 0 Points
+        if (wordCount < 4) {
+            return { isCorrect: false, earnedPoints: 0 };
+        }
+
+        let scoreRatio = 0.0;
+
+        // Kunin ang mahahalagang keywords mula sa answer key/explanation
+        const referenceText = normalizeText(`${correctAnswerKey} ${questionObj.explanation || ''}`);
+        const keyTerms = referenceText.split(' ').filter(word => word.length > 3);
+
+        let matchedCount = 0;
+        if (keyTerms.length > 0) {
+            const uniqueTerms = [...new Set(keyTerms)];
+            uniqueTerms.forEach(term => {
+                if (normUser.includes(term)) matchedCount++;
+            });
+            scoreRatio = matchedCount / Math.max(3, uniqueTerms.length);
+        }
+
+        // Pagsusuri sa lalim at haba ng sagot (Quality Factor)
+        let qualityBonus = 0;
+        if (wordCount >= 30) qualityBonus = 0.4;
+        else if (wordCount >= 15) qualityBonus = 0.25;
+        else qualityBonus = 0.1;
+
+        let finalRatio = scoreRatio + qualityBonus;
+
+        // Kung walang koneksyon o sobrang malayo sa paksa
+        if (keyTerms.length > 0 && matchedCount === 0 && wordCount < 15) {
+            return { isCorrect: false, earnedPoints: 0 };
+        }
+
+        // Pag-kalkula ng Puntos batay sa Rubrics Threshold
+        let earned = 0;
+        if (finalRatio >= 0.75) {
+            earned = maxPoints; // Excellent / Full Points
+        } else if (finalRatio >= 0.5) {
+            earned = Math.round(maxPoints * 0.75); // Good
+        } else if (finalRatio >= 0.25) {
+            earned = Math.round(maxPoints * 0.5); // Satisfactory / Partial Credit
+        } else if (wordCount >= 8) {
+            earned = Math.max(1, Math.round(maxPoints * 0.2)); // Minimum partial credit
+        } else {
+            earned = 0;
+        }
+
+        earned = Math.min(maxPoints, earned);
+
+        return {
+            isCorrect: earned > 0,
+            earnedPoints: earned
+        };
     }
 
-    let matchedCount = 0;
-    keywords.forEach(kw => { if (normUser.includes(kw)) matchedCount++; });
-    const matchRatio = matchedCount / keywords.length;
-
-    if (matchRatio >= 0.3 || normUser.length >= 25) {
-        return { isCorrect: true, earnedPoints: Math.max(1, Math.round(maxPoints * 0.8)) };
-    }
     return { isCorrect: false, earnedPoints: 0 };
 }
 
@@ -162,13 +226,13 @@ io.on('connection', (socket) => {
         const question = globalQuestionsList[questionIndex];
         if (!question) return;
 
-        const result = checkSmartAnswer(answer, question.answer, question.type, question.points || 1);
+        const result = checkSmartAnswer(answer, question);
 
         if (currentMode === 'group') {
-            if (result.isCorrect || result.earnedPoints > 0) {
+            if (result.earnedPoints > 0) {
                 groupScores[groupName] = (groupScores[groupName] || 0) + result.earnedPoints;
                 if (groupTimers[groupName] !== undefined && groupTimers[groupName] > 0) {
-                    groupTimers[groupName] += 5;
+                    groupTimers[groupName] += 5; // Bonus time
                 }
             }
 
@@ -183,7 +247,7 @@ io.on('connection', (socket) => {
             io.emit('timerUpdate', groupTimers);
             io.emit('updateState', { groupScores, photos: attorneyPhotos, completedStatus: groupCompletedStatus, mode: currentMode });
         } else {
-            if (result.isCorrect || result.earnedPoints > 0) {
+            if (result.earnedPoints > 0) {
                 individualScores[groupName] = (individualScores[groupName] || 0) + result.earnedPoints;
             }
 

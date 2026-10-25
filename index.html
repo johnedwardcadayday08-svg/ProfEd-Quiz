@@ -2810,23 +2810,33 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             if (reviewSec) reviewSec.style.display = "block";
         }
 
-        socket.on('answerFeedback', (data) => {
+       socket.on('answerFeedback', (data) => {
             const popup = document.getElementById('feedback-popup');
             if (!popup) return;
 
-            if (data.isCorrect) {
+            // Kung essay o may nakuha silang partial/full points
+            if (data.earnedPoints > 0) {
                 popup.className = "feedback-correct";
-                popup.innerText = `✨ Tama! +${data.earnedPoints} Pts 🎉\n(+5 Secs Bonus Time!)`;
+                if (data.qType === 'essay') {
+                    popup.innerText = `✨ Essay Graded!\nNakuha: ${data.earnedPoints} / ${data.maxPoints} Pts 📝🎉`;
+                } else {
+                    popup.className = "feedback-correct";
+                    popup.innerText = `✨ Tama! +${data.earnedPoints} Pts 🎉\n(+5 Secs Bonus Time!)`;
+                }
             } else {
                 popup.className = "feedback-wrong";
-                popup.innerText = `❌ Mali! (${data.earnedPoints} Pts)`;
+                if (data.qType === 'essay') {
+                    popup.innerText = `❌ Mababa o Walang Tugma sa Rubrics\n0 / ${data.maxPoints} Pts`;
+                } else {
+                    popup.innerText = `❌ Mali! (${data.earnedPoints} / ${data.maxPoints} Pts)`;
+                }
             }
 
             popup.style.display = "block";
             
             setTimeout(() => {
                 popup.style.display = "none";
-            }, 1500);
+            }, 2500);
         });
 
         socket.on('updateState', (state) => {
