@@ -55,13 +55,29 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
 
     if (!normUser) return { isCorrect: false, earnedPoints: 0 };
 
-    if (questionType !== 'essay') {
-        if (normUser === normCorrect || (normCorrect.length > 2 && normUser.includes(normCorrect))) {
+    // 1. True/False Handling
+    if (questionType === 'true-false') {
+        let cleanUser = normUser.toLowerCase();
+        let cleanCorrect = normCorrect.toLowerCase();
+        
+        let userBool = (cleanUser === 't' || cleanUser === 'true' || cleanUser === 'tama' || cleanUser === 'yes');
+        let correctBool = (cleanCorrect === 't' || cleanCorrect === 'true' || cleanCorrect === 'tama' || cleanCorrect === 'yes');
+
+        if (userBool === correctBool) {
             return { isCorrect: true, earnedPoints: maxPoints };
         }
         return { isCorrect: false, earnedPoints: 0 };
     }
 
+    // 2. Multiple Choice & Identification Handling
+    if (questionType !== 'essay') {
+        if (normUser === normCorrect || (normCorrect.length > 2 && normUser.includes(normCorrect)) || (normUser.length > 2 && normCorrect.includes(normUser))) {
+            return { isCorrect: true, earnedPoints: maxPoints };
+        }
+        return { isCorrect: false, earnedPoints: 0 };
+    }
+
+    // 3. Essay Handling
     const keywords = normCorrect.split(' ').filter(word => word.length > 3);
     if (keywords.length === 0) {
         if (normUser.length >= 80) return { isCorrect: true, earnedPoints: maxPoints };
@@ -73,7 +89,7 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
     keywords.forEach(kw => { if (normUser.includes(kw)) matchedCount++; });
     const matchRatio = matchedCount / keywords.length;
 
-    if (matchRatio >= 0.5 || normUser.length >= 40) {
+    if (matchRatio >= 0.4 || normUser.length >= 30) {
         return { isCorrect: true, earnedPoints: Math.max(1, Math.round(maxPoints * 0.8)) };
     }
     return { isCorrect: false, earnedPoints: 0 };
