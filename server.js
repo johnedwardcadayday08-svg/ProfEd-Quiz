@@ -240,7 +240,7 @@ io.on('connection', (socket) => {
             completedStatus: groupCompletedStatus, 
             mode: currentMode 
         });
-    });
+
 
     // 4. SUBMIT INDIVIDUAL ANSWER
     socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
@@ -365,7 +365,7 @@ socket.on('startQuiz', () => {
         Object.keys(groupTimers).forEach(g => { groupTimers[g] = seconds; });
         io.emit('timerUpdate', groupTimers);
     });
-});
+
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
