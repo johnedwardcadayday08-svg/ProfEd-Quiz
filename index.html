@@ -2647,116 +2647,99 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
             renderQuestionsUI(questionsList);
         });
 
-        function renderQuestionsUI(questionsList) {
-            totalQuestionsCount = questionsList.length;
-            totalMaxScore = questionsList.reduce((acc, q) => acc + (q.points || 1), 0);
-            
-            const quizContainer = document.getElementById('quiz-questions');
-            const reviewGrid = document.getElementById('review-explanations-grid');
-            
-            let questionsHTML = '';
-            let reviewHTML = '';
+      function renderQuestionsUI(questionsList) {
+    totalQuestionsCount = questionsList.length;
+    totalMaxScore = questionsList.reduce((acc, q) => acc + (q.points || 1), 0);
+    
+    const quizContainer = document.getElementById('quiz-questions');
+    const reviewGrid = document.getElementById('review-explanations-grid');
+    
+    let questionsHTML = '';
+    let reviewHTML = '';
 
-            questionsList.forEach((q, idx) => {
-                let qNum = idx + 1;
-                let qKey = `q${qNum}`;
+    questionsList.forEach((q, idx) => {
+        let qNum = idx + 1;
+        let qKey = `q${qNum}`;
 
-                let inputFieldHTML = '';
-                let effectiveMode = currentQuizMode;
+        let inputFieldHTML = '';
+        let qType = q.type ? q.type.toLowerCase() : 'multiple-choice';
 
-                if (effectiveMode === 'multiple-choice') {
-                    let opts = q.options && Object.keys(q.options).length > 0 ? q.options : { A: "Option A", B: "Option B", C: "Option C", D: "Option D" };
-                    let optionsHTML = '';
-                    Object.keys(opts).forEach(optKey => {
-                        optionsHTML += `
-                            <label id="lbl-${qKey}-${optKey}">
-                                <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns(${idx}, '${qKey}', '${optKey}')"> 
-                                ${optKey}) ${opts[optKey]}
-                            </label>
-                        `;
-                    });
-                    inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
-                } 
-                else if (effectiveMode === 'long-essay' || q.type === 'essay') {
-                    inputFieldHTML = `
-                        <div class="rubrics-badge-box">
-                            📌 <b>Criteria for Judging:</b> ${q.rubrics || 'Nilalaman at Kaangkupan ng Sagot'}<br>
-                            🎯 <b>Total Points:</b> ${q.points || 10} Points
-                        </div>
-                        <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong kumpletong sagot dito..."></textarea>
-                        <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerEssaySubmit(${idx}, '${qKey}')">Submit Essay & Auto-Grade 🚀</button>
-                    `;
-                }
-                else {
-                    if (q.type === 'multiple-choice' && q.options && Object.keys(q.options).length > 0) {
-                        let optionsHTML = '';
-                        Object.keys(q.options).forEach(optKey => {
-                            optionsHTML += `
-                                <label id="lbl-${qKey}-${optKey}">
-                                    <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns(${idx}, '${qKey}', '${optKey}')"> 
-                                    ${optKey}) ${q.options[optKey]}
-                                </label>
-                            `;
-                        });
-                        inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
-                    } else if (q.type === 'true-false') {
-                        inputFieldHTML = `
-                            <div class="options">
-                                <label id="lbl-${qKey}-True">
-                                    <input type="radio" name="${qKey}" value="True" onchange="submitAns(${idx}, '${qKey}', 'True')"> A) True / Tama
-                                </label>
-                                <label id="lbl-${qKey}-False">
-                                    <input type="radio" name="${qKey}" value="False" onchange="submitAns(${idx}, '${qKey}', 'False')"> B) False / Mali
-                                </label>
-                            </div>`;
-                    } else if (q.type === 'essay') {
-                        inputFieldHTML = `
-                            <div class="rubrics-badge-box">
-                                📌 <b>Criteria / Rubrics:</b> ${q.rubrics || 'Kabuuan ng Kaisipan at Grammar'}<br>
-                                🎯 <b>Max Score:</b> ${q.points || 10} Points
-                            </div>
-                            <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong essay dito..."></textarea>
-                            <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerEssaySubmit(${idx}, '${qKey}')">Submit Essay & Auto-Grade 🚀</button>`;
-                    } else {
-                        inputFieldHTML = `
-                            <div style="margin-top: 8px;">
-                                <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot..." autocomplete="off" />
-                                <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerMixedTextSubmit(${idx}, '${qKey}')">Done & Submit 🚀</button>
-                            </div>`;
-                    }
-                }
-
-                questionsHTML += `
-                    <div class="question-card" id="card-${qKey}">
-                        <p><b>Q${qNum}:</b> ${q.question} <span style="font-size: 12px; color: #f472b6;">(${q.points || 1} pts)</span></p>
-                        ${inputFieldHTML}
-                        <div class="explanation-box" id="exp-${qKey}">
-                            <b>🔍 Paliwanag / Rubrics:</b> ${q.explanation}
-                        </div>
-                    </div>
-                `;
-
-                reviewHTML += `
-                    <div class="explanation-card-item">
-                        <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q${qNum}: ${q.question}</p>
-                        <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;">
-                            <b>Batayan / Tamang Sagot:</b> ${q.answer}<br>
-                            <b>Detaye:</b> ${q.explanation}
-                        </p>
-                    </div>
+        // 1. Kung Multiple Choice
+        if (qType === 'multiple-choice' && q.options && Object.keys(q.options).length > 0) {
+            let optionsHTML = '';
+            Object.keys(q.options).forEach(optKey => {
+                optionsHTML += `
+                    <label id="lbl-${qKey}-${optKey}">
+                        <input type="radio" name="${qKey}" value="${optKey}" onchange="submitAns(${idx}, '${qKey}', '${optKey}')"> 
+                        ${optKey}) ${q.options[optKey]}
+                    </label>
                 `;
             });
-
-            if (quizContainer) quizContainer.innerHTML = questionsHTML;
-            if (reviewGrid) reviewGrid.innerHTML = reviewHTML;
-
-            answeredQuestions = {};
-            let targetCheckName = (currentMode === 'individual') ? individualFullName : myGroup;
-            if (targetCheckName) {
-                document.getElementById('group-score-display').innerText = `Score: 0 / ${totalMaxScore}`;
-            }
+            inputFieldHTML = `<div class="options">${optionsHTML}</div>`;
+        } 
+        // 2. Kung True o False
+        else if (qType === 'true-false') {
+            inputFieldHTML = `
+                <div class="options">
+                    <label id="lbl-${qKey}-True">
+                        <input type="radio" name="${qKey}" value="True" onchange="submitAns(${idx}, '${qKey}', 'True')"> A) True / Tama
+                    </label>
+                    <label id="lbl-${qKey}-False">
+                        <input type="radio" name="${qKey}" value="False" onchange="submitAns(${idx}, '${qKey}', 'False')"> B) False / Mali
+                    </label>
+                </div>`;
+        } 
+        // 3. Kung Essay o Long Essay
+        else if (qType === 'essay' || currentQuizMode === 'long-essay') {
+            inputFieldHTML = `
+                <div class="rubrics-badge-box">
+                    📌 <b>Criteria for Judging:</b> ${q.rubrics || 'Nilalaman at Kaangkupan ng Sagot'}<br>
+                    🎯 <b>Total Points:</b> ${q.points || 10} Points
+                </div>
+                <textarea id="textarea-${qKey}" class="essay-textarea-field" placeholder="Isulat ang iyong kumpletong sagot dito..."></textarea>
+                <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerEssaySubmit(${idx}, '${qKey}')">Submit Essay & Auto-Grade 🚀</button>
+            `;
+        } 
+        // 4. Kung Identification o iba pang uri (Text input)
+        else {
+            inputFieldHTML = `
+                <div style="margin-top: 8px;">
+                    <input type="text" id="input-${qKey}" class="mixed-input-field" placeholder="I-type ang iyong sagot..." autocomplete="off" />
+                    <button id="btn-done-${qKey}" class="essay-done-btn" onclick="triggerMixedTextSubmit(${idx}, '${qKey}')">Done & Submit 🚀</button>
+                </div>`;
         }
 
+        questionsHTML += `
+            <div class="question-card" id="card-${qKey}">
+                <p><b>Q${qNum}:</b> ${q.question} <span style="font-size: 12px; color: #f472b6;">(${q.points || 1} pts)</span></p>
+                ${inputFieldHTML}
+                <div class="explanation-box" id="exp-${qKey}">
+                    <b>🔍 Paliwanag / Rubrics:</b> ${q.explanation}
+                </div>
+            </div>
+        `;
+
+        reviewHTML += `
+            <div class="explanation-card-item">
+                <p style="font-weight: bold; color: #38bdf8; margin-top: 0;">Q${qNum}: ${q.question}</p>
+                <p style="font-size: 12.5px; color: #ecfdf5; background: rgba(16, 185, 129, 0.15); padding: 8px; border-radius: 8px; border-left: 3px solid #10b981;">
+                    <b>Batayan / Tamang Sagot:</b> ${q.answer}<br>
+                    <b>Detaye:</b> ${q.explanation}
+                </p>
+            </div>
+        `;
+    });
+
+    if (quizContainer) quizContainer.innerHTML = questionsHTML;
+    if (reviewGrid) reviewGrid.innerHTML = reviewHTML;
+
+    answeredQuestions = {};
+    let targetCheckName = (currentMode === 'individual') ? individualFullName : myGroup;
+    if (targetCheckName) {
+        document.getElementById('group-score-display').innerText = `Score: 0 / ${totalMaxScore}`;
+    }
+}
+           
         function disableAllRadioInputs(disable) {
             const inputs = document.querySelectorAll('#quiz-questions input[type="radio"], #quiz-questions input[type="text"], #quiz-questions textarea, #quiz-questions button');
             inputs.forEach(input => {
