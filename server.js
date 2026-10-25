@@ -5,21 +5,9 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
-});
+const io = new Server(server);
 
-// Middleware para sa static files mula sa 'public' folder
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json());
-
-// Catch-all route para maiwasan ang "Cannot GET" error sa Render kapag nag-refresh o nag-direct link
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+app.use(express.static(path.join(__dirname)));
 
 let currentAppTitle = "PROFED 5 GROUP 2 QUICK ACTIVITY";
 let currentQuizMode = "multiple-choice";
@@ -277,7 +265,7 @@ io.on('connection', (socket) => {
     socket.on('forceTimeUp', () => {
         if (timerInterval) clearInterval(timerInterval);
         Object.keys(groupTimers).forEach(g => { groupTimers[g] = 0; });
-        io.emit('timerUpdate', groupTimers);
+        io.emit('timerWordUpdate', groupTimers);
         io.emit('timeUp');
     });
 
@@ -295,6 +283,6 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, () => {
     console.log(`Server is running smoothly on port ${PORT}`);
 });

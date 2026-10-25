@@ -2853,7 +2853,7 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
                 popup.innerText = `✨ Tama! +${data.earnedPoints} Pts 🎉\n(+5 Secs Bonus Time!)`;
             } else {
                 popup.className = "feedback-wrong";
-                popup.innerText = `❌ Mali / Mababang Puntos! (${data.earnedPoints} Pts)`;
+                popup.innerText = `❌ Mali! (${data.earnedPoints} Pts)`;
             }
 
             popup.style.display = "block";
@@ -3352,59 +3352,29 @@ Explanation: Sa Pre-Conventional Level, ang moralidad ay ginagabayan ng parusa.`
 
             const attorneysListContainer = document.getElementById('attorneys-results-list');
             let resultsHTML = '';
-            
-            // --- KUNG INDIVIDUAL MODE: IPAPALABAS LAMANG ANG MGA INDIVIDUAL PARTICIPANTS SA VERDICT / RESULTS ---
-            if (currentMode === 'individual') {
-                let sortedIndiv = Object.entries(window.currentIndividualScores || {}).sort((a, b) => b[1] - a[1]);
-                if (sortedIndiv.length === 0) {
-                    resultsHTML = `<p style="color:#cbd5e1; text-align:center; padding:15px;">Walang naitalang individual participant.</p>`;
+            ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
+                const score = latestGroupScores[attorney] || 0;
+                const photoSrc = attorneyPhotos[attorney] || '/logo.png';
+                if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
+                    resultsHTML += `
+                        <div class="result-box-card result-box-innocent">
+                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
+                            <div>
+                                <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalMaxScore} Points</h4>
+                                <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
+                            </div>
+                        </div>`;
                 } else {
-                    sortedIndiv.forEach(([name, score], idx) => {
-                        let avatarSrc = '/logo.png';
-                        if (individualParticipants) {
-                            Object.values(individualParticipants).forEach(part => {
-                                if (part.fullName === name && part.photo) {
-                                    avatarSrc = part.photo;
-                                }
-                            });
-                        }
-                        resultsHTML += `
-                            <div class="result-box-card result-box-innocent">
-                                <img src="${avatarSrc}" alt="${name}" class="result-box-img" />
-                                <div>
-                                    <h4 style="color: #6ee7b7; font-size: 16px; margin: 0 0 4px 0;">Rank #${idx + 1}: ${name}</h4>
-                                    <p style="color: #ecfdf5; font-size: 13px; margin: 2px 0;">Score: ${score} / ${totalMaxScore} Points 🌟</p>
-                                </div>
-                            </div>`;
-                    });
+                    resultsHTML += `
+                        <div class="result-box-card result-box-failing">
+                            <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
+                            <div>
+                                <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalMaxScore} Points</h4>
+                                <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
+                            </div>
+                        </div>`;
                 }
-            } else {
-                // --- KUNG GROUP MODE: ATTORNEY 1 - 4 LAMANG ---
-                ['Attorney 1', 'Attorney 2', 'Attorney 3', 'Attorney 4'].forEach(attorney => {
-                    const score = latestGroupScores[attorney] || 0;
-                    const photoSrc = attorneyPhotos[attorney] || '/logo.png';
-                    if (totalMaxScore > 0 && score >= Math.ceil(totalMaxScore * 0.8)) {
-                        resultsHTML += `
-                            <div class="result-box-card result-box-innocent">
-                                <img src="${photoSrc}" alt="${attorney}" class="result-box-img" />
-                                <div>
-                                    <h4 style="color: #6ee7b7; font-size: 17px; margin: 0 0 4px 0;">✨👑 ${attorney} — ${score} / ${totalMaxScore} Points</h4>
-                                    <p style="color: #ecfdf5; font-size: 13.5px; margin: 2px 0;">Case Closed 🎉 ${attorney} is innocent!</p>
-                                </div>
-                            </div>`;
-                    } else {
-                        resultsHTML += `
-                            <div class="result-box-card result-box-failing">
-                                <img src="${photoSrc}" alt="${attorney}" class="result-box-img" style="width: 50px; height: 50px;" />
-                                <div>
-                                    <h4 style="color: #fda4af; font-size: 14px; margin: 0 0 2px 0;">⚖️ ${attorney} — ${score} / ${totalMaxScore} Points</h4>
-                                    <p style="color: #fff1f2; font-size: 12px; margin: 0;">You belong to jail. ⛓️🥀</p>
-                                </div>
-                            </div>`;
-                    }
-                });
-            }
-
+            });
             attorneysListContainer.innerHTML = resultsHTML;
             document.getElementById('winner-modal').style.display = 'flex';
             
