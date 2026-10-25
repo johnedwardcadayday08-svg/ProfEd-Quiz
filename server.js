@@ -210,7 +210,7 @@ io.on('connection', (socket) => {
         });
     });
 
-    // 4. SUBMIT INDIVIDUAL ANSWER
+   // 4. SUBMIT INDIVIDUAL ANSWER (Walang +5 seconds, score lang ang a-update)
     socket.on('submitIndividualAnswer', ({ fullName, questionIndex, answer }, callback) => {
         const question = globalQuestionsList[questionIndex];
         if (!question) return;
@@ -230,6 +230,7 @@ io.on('connection', (socket) => {
 
         if (typeof callback === 'function') callback(responseData);
 
+        // Agad na i-broadcast sa judge monitor ang bagong score ng individual participants
         io.emit('individualScoresUpdated', individualScores);
     });
 

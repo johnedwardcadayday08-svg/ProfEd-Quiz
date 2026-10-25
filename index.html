@@ -3549,9 +3549,13 @@ function renderIndividualMonitorLayout(scoresObj) {
             `;
 
             sorted.forEach(([name, sc]) => {
+                // Sinisigurong magiging green ang pangalan kung ang score ay umabot na sa maximum o tapos na
+                let isCompletedIndiv = sc >= (totalMaxScore > 0 ? totalMaxScore : 1);
+                let nameColor = isCompletedIndiv ? '#10b981' : '#f3e8ff';
+
                 leftHtml += `
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30,41,59,0.6); padding: 6px 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid rgba(255,255,255,0.15);">
-                        <span style="font-weight: bold; color: #f3e8ff; font-size: 12.5px;">${name}</span>
+                        <span style="font-weight: bold; color: ${nameColor}; font-size: 12.5px;">${name} ${isCompletedIndiv ? '✔️ (Tapos Na)' : ''}</span>
                         <span style="font-weight: bold; color: #34d399; font-size: 12.5px;">${sc} Pts</span>
                     </div>
                 `;
@@ -3579,13 +3583,16 @@ function renderIndividualMonitorLayout(scoresObj) {
                 let p = top3[i];
                 let name = p ? p[0] : `Top ${i+1}`;
                 let sc = p ? p[1] : 0;
+                let isCompleteTop = sc >= (totalMaxScore > 0 ? totalMaxScore : 1);
+
                 rightHtml += `
                     <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
                         <span style="font-size: 10px; font-weight: bold; color: #f472b6; margin-bottom: 2px;">Rank ${i+1}</span>
                         <div class="indiv-rank-bar" style="height: ${heights[i]}; background: ${colors[i]};">
                             <span style="font-size: 13px; font-weight: bold; color: white;">${sc}</span>
                         </div>
-                        <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; color: #fff; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                        <!-- Ginawang circle ang frame at kulay green ang pangalan kung tapos na -->
+                        <span style="font-size: 10px; font-weight: bold; margin-top: 3px; text-align: center; color: ${isCompleteTop ? '#10b981' : '#fff'}; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
                     </div>
                 `;
             }
@@ -3595,10 +3602,12 @@ function renderIndividualMonitorLayout(scoresObj) {
                 let p = next6[i];
                 let name = p ? p[0] : `Participant`;
                 let sc = p ? p[1] : 0;
+                let isCompleteGrid = sc >= (totalMaxScore > 0 ? totalMaxScore : 1);
+
                 rightHtml += `
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px;">
-                        <img src="/logo.png" class="glow-circle-avatar-large" alt="Avatar" />
-                        <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: #e2e8f0; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
+                        <img src="/logo.png" class="glow-circle-avatar-large ${isCompleteGrid ? 'completed-frame' : ''}" alt="Avatar" style="border-radius: 50%; ${isCompleteGrid ? 'border-color: #10b981; box-shadow: 0 0 15px rgba(16,185,129,0.9);' : ''}" />
+                        <span style="font-size: 9px; font-weight: bold; margin-top: 2px; color: ${isCompleteGrid ? '#10b981' : '#e2e8f0'}; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
                         <span style="font-size: 8.5px; font-weight: 800; color: #34d399;">(${sc} Pts)</span>
                     </div>
                 `;
