@@ -49,8 +49,7 @@ function normalizeText(text) {
     return text.toString().toLowerCase().trim().replace(/\s+/g, ' ').replace(/[^\w\s]/gi, ''); 
 }
 
-
-    // MAS MATALINO AT MAHIGPIT NA ESSAY GRADING
+// MAS MATALINO AT MAHIGPIT NA ESSAY GRADING AT SMART CHECKER
 function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints = 1) {
     const normUser = normalizeText(userAnswer);
     const normCorrect = normalizeText(correctAnswerKey);
@@ -107,16 +106,6 @@ function checkSmartAnswer(userAnswer, correctAnswerKey, questionType, maxPoints 
         isCorrect: earnedPoints > 0,
         earnedPoints: earnedPoints
     };
-}
-
-    let matchedCount = 0;
-    keywords.forEach(kw => { if (normUser.includes(kw)) matchedCount++; });
-    const matchRatio = matchedCount / keywords.length;
-
-    if (matchRatio >= 0.3 || normUser.length >= 25) {
-        return { isCorrect: true, earnedPoints: Math.max(1, Math.round(maxPoints * 0.8)) };
-    }
-    return { isCorrect: false, earnedPoints: 0 };
 }
 
 io.on('connection', (socket) => {
@@ -294,6 +283,7 @@ io.on('connection', (socket) => {
         io.emit('timerUpdate', groupTimers);
         
         // I-broadcast ang tamang results modal depende sa mode
+        const totalMaxScore = globalQuestionsList.reduce((acc, q) => acc + (q.points || 1), 0);
         if (currentMode === 'individual') {
             io.emit('triggerIndividualResults', { individualScores, individualParticipants, totalMaxScore });
         } else {
